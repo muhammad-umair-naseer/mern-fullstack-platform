@@ -1,0 +1,144 @@
+/* Base tokens */
+:root {
+  --hero-bg: url("https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2000&q=80");
+  --hero-overlay-start: rgba(10, 15, 25, 0.75);
+  --hero-overlay-end: rgba(10, 15, 25, 0.35);
+  --hero-text: #ffffff;
+  --hero-muted: #e5e7eb;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary: #0ea5e9;
+  --secondary-hover: #0284c7;
+}
+
+.hero {
+  position: relative;
+  min-height: 88vh;
+  display: grid;
+  place-items: center;
+  padding: 0 20px;
+  color: var(--hero-text);
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Background image layer with subtle zoom */
+.hero-image {
+  position: absolute;
+  inset: 0;
+  background: center/cover no-repeat var(--hero-bg);
+  transform: scale(1);
+  transition: transform 30s ease;
+  z-index: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero:hover .hero-image {
+    transform: scale(1.04);
+  }
+}
+
+/* Overlay with gradient for consistent contrast */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, var(--hero-overlay-start) 0%, var(--hero-overlay-end) 50%, rgba(10,15,25,0.75) 100%),
+    linear-gradient(180deg, rgba(10,15,25,0.55), rgba(10,15,25,0.55));
+  z-index: 1;
+}
+
+/* Reduced transparency for legibility */
+@media (prefers-reduced-transparency: reduce) {
+  .hero-overlay {
+    background: rgba(10,15,25,0.88);
+  }
+}
+
+/* Content */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.hero-content h1 {
+  font-size: clamp(2rem, 4vw + 1rem, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+  text-wrap: balance;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 1.2vw + 0.8rem, 1.25rem);
+  color: var(--hero-muted);
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+
+/* CTA group */
+.hero-buttons {
+  display: inline-flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px; /* tap target */
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, color 160ms ease;
+  will-change: transform;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #0b1220,
+    0 0 0 4px #60a5fa;
+  transform: translateY(-1px);
+}
+
+/* Primary and secondary CTAs with strong contrast */
+.btn-primary.cta {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+}
+.btn-primary.cta:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.45);
+}
+
+.btn-secondary.cta-alt {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.35);
+  backdrop-filter: saturate(120%) blur(2px);
+}
+.btn-secondary.cta-alt:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.55);
+  transform: translateY(-1px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .hero { min-height: 75vh; padding: 0 16px; }
+  .btn { width: 100%; }
+}
+
+/* Prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-image { transition: none; transform: none; }
+  .btn { transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease; }
+}

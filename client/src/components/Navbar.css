@@ -1,0 +1,126 @@
+.navbar {
+  background-color: #0e1324; /* deeper to match logo contrast */
+  height: 72px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 72px;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Logo */
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.nav-logo-img {
+  height: 40px;
+  width: auto;
+  border-radius: 6px;
+}
+.nav-logo-text {
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Menu */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+}
+
+.nav-link {
+  color: #e5e7eb;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-bottom: 3px solid transparent;
+  border-radius: 8px;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+.nav-link:hover {
+  color: #7dd3fc; /* from logo accent */
+  border-bottom: 3px solid #4cc9f0;
+  transform: translateY(-1px);
+}
+.nav-link:focus-visible {
+  outline: none;
+  background: rgba(124, 197, 255, 0.12);
+  border-bottom-color: #4cc9f0;
+}
+
+/* Mobile toggle */
+.nav-icon {
+  display: none;
+  color: #fff;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+}
+.nav-icon:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+.bar {
+  display: block;
+  width: 24px;
+  height: 2.5px;
+  margin: 5px 0;
+  background-color: #fff;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+/* Responsive drawer */
+@media screen and (max-width: 960px) {
+  .nav-icon { display: block; order: 3; }
+  .nav-menu {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    position: absolute;
+    top: 72px;
+    left: -110%;
+    opacity: 0;
+    background: #0e1324;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    transition: left 240ms ease, opacity 240ms ease;
+    padding: 8px 0 16px;
+  }
+  .nav-menu.active {
+    left: 0;
+    opacity: 1;
+  }
+  .nav-link {
+    padding: 16px 20px;
+    width: 100%;
+    display: block;
+    border-radius: 0;
+    border-bottom: 0;
+  }
+}
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .nav-link { transition: none; }
+  .nav-menu { transition: none; }
+}

@@ -1,0 +1,95 @@
+/* Container */
+.testimonials-container {
+  padding: 80px 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+/* Headings */
+.testimonials-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1f2a37;
+  text-align: center;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.testimonials-subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 2.5rem;
+}
+
+/* Grid list reset */
+.testimonials-row {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* Card */
+.testimonial-card {
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  border-radius: 16px;
+  padding: 22px 18px 16px;
+  box-shadow:
+    0 1px 1px rgba(0,0,0,0.02),
+    0 10px 24px rgba(17,24,39,0.06);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+}
+.testimonial-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f97316 0%, #ef4444 25%, #2563eb 100%);
+  opacity: 0.9;
+}
+.testimonial-card:hover,
+.testimonial-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.04),
+    0 16px 36px rgba(17,24,39,0.12);
+  border-color: rgba(17,24,39,0.12);
+}
+
+/* Avatar */
+.avatar-wrap {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(249,115,22,0.45), rgba(37,99,235,0.45));
+  margin-bottom: 12px;
+}
+.testimonial-img {
+  width: 78px;
+  height: 78px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  background: #f3f4f6;
+}
+
+/* Quote */
+.testimonial-quote {
+  color: #374151;
+  line-height: 1.7;
+  font-size: 1rem;
+  margin: 8px auto 0;
+  max-width: 520px;
+  quotes: "“" "”" "‘" "’";
+}
+
+/* Name/company */
+.testimonial-name {
+  color: #111827;
+}
+.text-muted { color: #6b7280 !important; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-card { transition: none; }
+}
