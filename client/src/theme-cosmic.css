@@ -6,28 +6,32 @@
    ════════════════════════════════════════════════════════════════════ */
 :root {
   --cx-bg: #07090f;
-  --cx-surface: rgba(17, 20, 30, 0.78);
-  --cx-raised: #161a26;
-  --cx-border: rgba(148, 178, 255, 0.14);
-  --cx-border-strong: rgba(148, 178, 255, 0.24);
-  --cx-text: #e8ecf8;
-  --cx-dim: #b6bfd8;
-  --cx-faint: #8993ad;
+  /* translucent "liquid glass" — low alpha so the cosmic backdrop shows through */
+  --cx-glass: rgba(255, 255, 255, 0.055);
+  --cx-glass-strong: rgba(255, 255, 255, 0.09);
+  --cx-raised: rgba(255, 255, 255, 0.07);
+  --cx-border: rgba(255, 255, 255, 0.12);
+  --cx-border-strong: rgba(255, 255, 255, 0.22);
+  --cx-blur: saturate(150%) blur(20px);
+  --cx-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  --cx-text: #eef1fb;
+  --cx-dim: #c2cbe4;
+  --cx-faint: #97a1bd;
   --cx-accent: #8b5cf6;
   --cx-magenta: #e056e5;
   --cx-signal: #f97316;
 }
 
-/* ─── Surfaces (light → dark) ──────────────────────────────────────── */
-.bg-white { background-color: var(--cx-surface) !important; }
-.bg-slate-50, .bg-gray-50 { background-color: transparent !important; }
-.bg-slate-100, .bg-gray-100 { background-color: rgba(255, 255, 255, 0.04) !important; }
-
-/* glassy panels get a blur + cosmic border */
+/* ─── Surfaces → frosted liquid glass ──────────────────────────────── */
 .bg-white {
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--cx-glass) !important;
+  backdrop-filter: var(--cx-blur);
+  -webkit-backdrop-filter: var(--cx-blur);
+  border: 1px solid var(--cx-border) !important;
+  box-shadow: var(--cx-highlight), 0 12px 40px rgba(0, 0, 0, 0.35) !important;
 }
+.bg-slate-50, .bg-gray-50 { background-color: transparent !important; }
+.bg-slate-100, .bg-gray-100 { background-color: var(--cx-glass) !important; }
 
 /* ─── Text (dark → light/dim) ──────────────────────────────────────── */
 .text-slate-900, .text-gray-900, .text-gray-800, .text-black { color: var(--cx-text) !important; }
@@ -48,7 +52,9 @@ input:not([type="checkbox"]):not([type="radio"]),
 textarea,
 select,
 .form-control {
-  background-color: var(--cx-raised) !important;
+  background: var(--cx-raised) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--cx-text) !important;
   border-color: var(--cx-border) !important;
 }
@@ -94,19 +100,21 @@ input:focus, textarea:focus, select:focus, .form-control:focus {
 .internship-card,
 .blog-card,
 .team-card {
-  background: var(--cx-surface) !important;
+  background: var(--cx-glass) !important;
   border: 1px solid var(--cx-border) !important;
   color: var(--cx-text) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: var(--cx-blur);
+  -webkit-backdrop-filter: var(--cx-blur);
+  box-shadow: var(--cx-highlight), 0 12px 36px rgba(0, 0, 0, 0.3) !important;
 }
 .card:hover,
 .service-preview-card:hover,
 .course-preview-card:hover {
+  background: var(--cx-glass-strong) !important;
   border-color: var(--cx-border-strong) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+  box-shadow: var(--cx-highlight), 0 20px 48px rgba(0, 0, 0, 0.45) !important;
 }
-.blog-card .card-footer { background-color: var(--cx-raised) !important; border-top-color: var(--cx-border) !important; }
+.blog-card .card-footer { background: transparent !important; border-top-color: var(--cx-border) !important; }
 .card-body, .card-title, .card-text { color: inherit !important; }
 .card-text, .card-body p { color: var(--cx-dim) !important; }
 

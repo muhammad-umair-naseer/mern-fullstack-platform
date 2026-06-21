@@ -13,7 +13,7 @@ const BrandLogo = ({ size = 40, className = '' }) => {
   if (!imgFailed) {
     return (
       <img
-        src={`${process.env.PUBLIC_URL}/cortexis-logo.png`}
+        src={`${process.env.PUBLIC_URL}/cortexis-mark.png`}
         width={size}
         height={size}
         alt="Cortexis Solution Hub logo"
