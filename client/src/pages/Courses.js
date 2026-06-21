@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import CourseForm from "./CourseForm";
+import { useIntroTimeline } from "../hooks/useIntroTimeline";
+import { useGridReveal } from "../hooks/useGridReveal";
+import { useModalIntro } from "../hooks/useModalIntro";
 
 // 1) Import local images (ensure files exist and names have no spaces)
 import fullstackImg from "../assets/courses/full-stack-web.png";
@@ -151,6 +153,7 @@ const Courses = () => {
   const [cat, setCat] = useState("All");
   const [showForm, setShowForm] = useState(false);
   const closeBtnRef = useRef(null);
+  const introRef = useIntroTimeline();
 
   const courses = rawCourses;
 
@@ -167,6 +170,9 @@ const Courses = () => {
       return matchesCat && matchesQ;
     });
   }, [q, cat, courses]);
+
+  const gridRef = useGridReveal([filtered]);
+  const panelRef = useModalIntro(showForm);
 
   const openForm = (course) => {
     setSelectedCourse(course);
@@ -192,28 +198,22 @@ const Courses = () => {
       {/* Hero */}
       <header className="relative isolate">
         <div className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 text-white">
-          <div className="max-w-7xl mx-auto px-6 py-20 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+          <div ref={introRef} className="max-w-7xl mx-auto px-6 py-20 md:py-24 grid md:grid-cols-2 gap-10 items-center">
             <div>
-              <motion.h1
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+              <h1
+                data-intro
                 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight"
               >
                 Explore Our Courses
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.1 }}
+              </h1>
+              <p
+                data-intro
                 className="mt-4 text-indigo-100/90 text-lg max-w-xl"
               >
                 Learn in-demand skills with mentor support and real projects. Filter by category or search to find the right program.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
+              </p>
+              <div
+                data-intro
                 className="mt-6 flex flex-wrap gap-3"
               >
                 <a href="#course-list" className="inline-flex items-center px-6 py-3 rounded-full font-semibold bg-white text-indigo-700 shadow-lg hover:bg-indigo-50">
@@ -222,16 +222,14 @@ const Courses = () => {
                 <a href="/contact" className="inline-flex items-center px-6 py-3 rounded-full font-semibold ring-2 ring-white/80 text-white hover:bg-white hover:text-indigo-700">
                   Talk to Advisor
                 </a>
-              </motion.div>
+              </div>
             </div>
-            <motion.img
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
-              img src={coursesHero}
+            <img
+              src={coursesHero}
               alt="Learners in a session"
               className="rounded-2xl shadow-2xl"
               loading="lazy"
+              data-intro
             />
           </div>
         </div>
@@ -268,28 +266,19 @@ const Courses = () => {
       </section>
 
       {/* Courses Grid */}
-      <section id="course-list" className="max-w-7xl mx-auto px-6 py-14">
-        <AnimatePresence mode="popLayout">
-          {filtered.length === 0 ? (
-            <motion.p
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center text-slate-500"
-            >
-              No courses match the current filters. Try clearing search or choosing another category.
-            </motion.p>
-          ) : (
-            <motion.div key="grid" layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filtered.map((course, idx) => (
-                <motion.article
-                  key={`${course.title}-${idx}`}
-                  layout
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, delay: (idx % 6) * 0.06 }}
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition flex flex-col"
-                >
+      <section ref={gridRef} id="course-list" className="max-w-7xl mx-auto px-6 py-14">
+        {filtered.length === 0 ? (
+          <p className="text-center text-slate-500">
+            No courses match the current filters. Try clearing search or choosing another category.
+          </p>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filtered.map((course, idx) => (
+              <article
+                key={`${course.title}-${idx}`}
+                data-card
+                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition flex flex-col"
+              >
                   <div className="relative overflow-hidden">
                     <img
                       src={course.image}
@@ -319,20 +308,17 @@ const Courses = () => {
                         {course.level}
                       </span>
                     </div>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <button
                       onClick={() => openForm(course)}
-                      className="mt-5 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition"
+                      className="mt-5 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition hover:scale-[1.02] active:scale-[0.98] transition-transform"
                     >
                       Register Now
-                    </motion.button>
+                    </button>
                   </div>
-                </motion.article>
+                </article>
               ))}
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
       </section>
 
       {/* Modal */}
@@ -344,9 +330,8 @@ const Courses = () => {
           aria-labelledby="course-register-heading"
           onClick={(e) => e.target === e.currentTarget && closeForm()}
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <div
+            ref={panelRef}
             className="bg-[#0e1124] border border-white/10 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl text-slate-100"
           >
             <div className="sticky top-0 bg-[#0e1124] border-b border-white/10 p-4 flex justify-between items-center rounded-t-xl">
@@ -370,7 +355,7 @@ const Courses = () => {
                 onClose={closeForm}
               />
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </main>

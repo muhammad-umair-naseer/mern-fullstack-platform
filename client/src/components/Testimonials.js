@@ -1,4 +1,5 @@
 import React from "react";
+import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import "./Testimonials.css";
 
 import client1 from "../assets/client 1.jpg";
@@ -8,6 +9,7 @@ import client3 from "../assets/client 3.jpg";
 
 
 const Testimonials = () => {
+  const scope = useRevealOnScroll();
   const testimonials = [
     {
       name: "Arslan Ali",
@@ -39,18 +41,18 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="testimonials-container" aria-labelledby="testimonials-heading">
+    <section className="testimonials-container" aria-labelledby="testimonials-heading" ref={scope}>
       <div className="container">
-        <h2 id="testimonials-heading" className="testimonials-title">
+        <h2 id="testimonials-heading" className="testimonials-title" data-reveal>
           What Clients in Pakistan Say
         </h2>
-        <p className="testimonials-subtitle">Real outcomes from teams we partner with</p>
+        <p className="testimonials-subtitle" data-reveal>Real outcomes from teams we partner with</p>
 
         <ul className="row testimonials-row" role="list" aria-label="Client testimonials">
           {testimonials.map((t, i) => {
             const quoteId = `quote-${i}`;
             return (
-              <li key={i} className="col-md-4 mb-4" role="listitem">
+              <li key={i} className="col-md-4 mb-4" role="listitem" data-reveal>
                 <figure className="card testimonial-card h-100" aria-labelledby={quoteId}>
                   <div className="card-body text-center">
                     <div className="avatar-wrap">

@@ -1,15 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import "./Footer.css";
 
 const Footer = () => {
+  const revealRef = useRevealOnScroll();
   return (
-    <footer className="footer" aria-labelledby="footer-heading">
+    <footer className="footer" aria-labelledby="footer-heading" ref={revealRef}>
       <div className="footer-container">
         <h2 id="footer-heading" className="visually-hidden">Site footer</h2>
 
         <div className="footer-content" role="presentation">
-          <section className="footer-section">
+          <section className="footer-section" data-reveal>
             <h3 className="footer-brand">Cortexis Solution Hub Pvt Ltd</h3>
             <p>Engineering intelligent digital solutions — software, training, and consulting — for teams across Pakistan and beyond.</p>
 
@@ -20,7 +22,7 @@ const Footer = () => {
             </ul>
           </section>
 
-          <nav className="footer-section" aria-label="Quick links">
+          <nav className="footer-section" aria-label="Quick links" data-reveal>
             <h4>Quick Links</h4>
             <ul role="list">
               <li><Link to="/">Home</Link></li>
@@ -30,7 +32,7 @@ const Footer = () => {
             </ul>
           </nav>
 
-          <nav className="footer-section" aria-label="More links">
+          <nav className="footer-section" aria-label="More links" data-reveal>
             <h4>More Links</h4>
             <ul role="list">
               <li><Link to="/internships">Internships</Link></li>
@@ -39,7 +41,7 @@ const Footer = () => {
             </ul>
           </nav>
 
-          <section className="footer-section" aria-label="Contact information">
+          <section className="footer-section" aria-label="Contact information" data-reveal>
             <h4>Contact</h4>
             <address className="contact-block">
               <p><a className="contact-link" href="mailto:cortexis.solution.hub@gmail.com">cortexis.solution.hub@gmail.com</a></p>

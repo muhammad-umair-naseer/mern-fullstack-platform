@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import { useGridReveal } from '../hooks/useGridReveal';
+import { useModalIntro } from '../hooks/useModalIntro';
 
 
 import heroImg from "../assets/services/services-hero.png";
@@ -123,6 +125,9 @@ export default function Services() {
 
   const services = rawServices;
 
+  const introRef = useIntroTimeline();
+  const panelRef = useModalIntro(show);
+
   const filtered = useMemo(() => {
     const qx = q.trim().toLowerCase();
     return services.filter((s) => {
@@ -135,6 +140,8 @@ export default function Services() {
       return mc && mq;
     });
   }, [q, cat, services]);
+
+  const gridRef = useGridReveal([filtered]);
 
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && show && handleClose();
@@ -168,28 +175,22 @@ export default function Services() {
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800 pt-0 mt-0 [padding-block-start:0!important] [margin-block-start:0!important]">
       {/* Hero with absolute gradient to cover any header gap */}
-      <section id="services-hero" className="relative isolate -translate-y-px pt-[env(safe-area-inset-top)]"> <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700" /> <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(255,255,255,0.08),transparent)]" aria-hidden="true" /> <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center text-white min-h-[clamp(24rem,40vh,34rem)] md:min-h-[clamp(30rem,48vh,40rem)] py-12"> {/* content */}
+      <section ref={introRef} id="services-hero" className="relative isolate -translate-y-px pt-[env(safe-area-inset-top)]"> <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700" /> <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(255,255,255,0.08),transparent)]" aria-hidden="true" /> <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center text-white min-h-[clamp(24rem,40vh,34rem)] md:min-h-[clamp(30rem,48vh,40rem)] py-12"> {/* content */}
           <div>
-            <motion.h1
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <h1
+              data-intro
               className="mt-0 text-4xl md:text-5xl font-extrabold leading-tight tracking-tight"
             >
               Explore Our Services
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
+            </h1>
+            <p
+              data-intro
               className="mt-4 text-indigo-100/90 text-lg max-w-xl"
             >
               Strategy, design, development, and cloud—end‑to‑end solutions crafted to accelerate growth.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
+            </p>
+            <div
+              data-intro
               className="mt-6 flex flex-wrap gap-3"
             >
               <a
@@ -204,13 +205,11 @@ export default function Services() {
               >
                 Talk to Advisor
               </a>
-            </motion.div>
+            </div>
           </div>
 
-          <motion.img
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
+          <img
+            data-intro
             src={heroImg}
             alt="Team collaborating on solutions"
             className="rounded-2xl shadow-2xl"
@@ -255,21 +254,17 @@ export default function Services() {
       </section>
 
       {/* Grid */}
-      <section id="services" className="max-w-7xl mx-auto px-6 py-14">
-        <AnimatePresence mode="popLayout">
-          {filtered.length === 0 ? (
-            <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-slate-500">
-              No services match your filters. Try clearing search or picking another category.
-            </motion.p>
-          ) : (
-            <motion.div key="grid" layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section ref={gridRef} id="services" className="max-w-7xl mx-auto px-6 py-14">
+        {filtered.length === 0 ? (
+          <p className="text-center text-slate-500">
+            No services match your filters. Try clearing search or picking another category.
+          </p>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((service, idx) => (
-                <motion.article
+                <article
                   key={`${service.title}-${idx}`}
-                  layout
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, delay: (idx % 6) * 0.06 }}
+                  data-card
                   className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition flex flex-col"
                 >
                   <div className="relative overflow-hidden">
@@ -288,20 +283,17 @@ export default function Services() {
                   <div className="p-6 flex flex-col flex-1">
                     <h3 className="text-lg font-semibold text-slate-900">{service.title}</h3>
                     <p className="text-slate-600 mt-2 flex-1">{service.description}</p>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <button
                       onClick={() => handleOpen(service)}
-                      className="mt-5 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition"
+                      className="mt-5 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition hover:scale-[1.02] active:scale-[0.98] transition-transform"
                     >
                       Learn More
-                    </motion.button>
+                    </button>
                   </div>
-                </motion.article>
+                </article>
               ))}
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
       </section>
 
       {/* Modal */}
@@ -314,9 +306,8 @@ export default function Services() {
           aria-labelledby="service-title"
           aria-describedby="service-desc"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <div
+            ref={panelRef}
             className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
           >
             <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center rounded-t-xl">
@@ -378,7 +369,7 @@ export default function Services() {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>

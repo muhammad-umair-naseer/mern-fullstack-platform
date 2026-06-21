@@ -1,5 +1,6 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import hero  from "../assets/hero About.png";
 import aboutMission from "../assets/our mission About.png";
 import aboutVision from "../assets/our vision About.png";
@@ -13,22 +14,19 @@ import team4 from "../assets/team 4.jpg";
 
 
 
-
-
-
-const fadeUp = (y = 24, d = 0) => ({
-  initial: { opacity: 0, y },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-20% 0px" },
-  transition: { duration: 0.6, delay: d, ease: "easeOut" }
-});
-
 const About = () => {
+  const introRef = useIntroTimeline();
+  const statsRef = useRevealOnScroll();
+  const mvpRef = useRevealOnScroll();
+  const storyRef = useRevealOnScroll();
+  const teamRef = useRevealOnScroll();
+
   return (
     <main className="bg-gray-50 text-gray-800">
       {/* Hero Section */}
 
       <section
+        ref={introRef}
         className="relative isolate bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 text-white py-24 md:py-28"
         aria-labelledby="about-hero-heading"
       >
@@ -42,11 +40,7 @@ const About = () => {
           }}
         />
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-          >
+          <div data-intro>
             <h1
               id="about-hero-heading"
               className="text-4xl md:text-5xl font-extrabold leading-tight mb-5 tracking-tight"
@@ -73,17 +67,13 @@ const About = () => {
                 Explore services
               </a>
             </div>
-          </motion.div>
+          </div>
 
 
-          <motion.img
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-            
-            img src={hero} alt="About hero"
-
-            
+          <img
+            data-intro
+            src={hero}
+            alt="About hero"
             loading="lazy"
             className="rounded-2xl shadow-2xl"
           />
@@ -91,22 +81,22 @@ const About = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="max-w-6xl mx-auto px-6 py-16 md:py-20 grid sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center" aria-label="Company statistics">
+      <section ref={statsRef} className="max-w-6xl mx-auto px-6 py-16 md:py-20 grid sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center" aria-label="Company statistics">
         {[
           { number: "4+", label: "Years of Excellence" },
           { number: "100+", label: "Successful Projects" },
           { number: "10+", label: "Global Markets" },
           { number: "99%", label: "Client Satisfaction" }
         ].map((stat, idx) => (
-          <motion.div key={idx} {...fadeUp(26, idx * 0.1)} whileHover={{ scale: 1.03 }} className="bg-white rounded-2xl p-8 shadow-md">
+          <div key={idx} data-reveal className="bg-white rounded-2xl p-8 shadow-md hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-300">
             <h3 className="text-4xl font-bold text-indigo-700 mb-2">{stat.number}</h3>
             <p className="text-gray-600">{stat.label}</p>
-          </motion.div>
+          </div>
         ))}
       </section>
 
       {/* Mission, Vision, Promise */}
-      <section className="bg-gray-100 py-16 md:py-20" aria-labelledby="mvp-heading">
+      <section ref={mvpRef} className="bg-gray-100 py-16 md:py-20" aria-labelledby="mvp-heading">
         <div className="max-w-6xl mx-auto px-6">
           <h2 id="mvp-heading" className="text-3xl font-bold text-center mb-10">What Drives Us</h2>
           <div className="grid md:grid-cols-3 gap-8 md:gap-10">
@@ -127,29 +117,28 @@ const About = () => {
                 text: "Deliver secure, scalable, and future‑ready products that drive real transformation."
               }
             ].map((item, idx) => (
-              <motion.article key={idx} {...fadeUp(28, idx * 0.15)} whileHover={{ y: -8 }} className="bg-white rounded-2xl shadow-md overflow-hidden">
+              <article key={idx} data-reveal className="bg-white rounded-2xl shadow-md overflow-hidden hover:-translate-y-1 transition-transform duration-300">
                 <img src={item.img} alt={item.title} loading="lazy" className="h-48 w-full object-cover" />
                 <div className="p-6 text-center">
                   <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
                   <p className="text-gray-600">{item.text}</p>
                 </div>
-              </motion.article>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
       {/* Story Section */}
-      <section className="py-16 md:py-20 max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-10 md:gap-12 items-center" aria-labelledby="story-heading">
-        <motion.img
-          whileHover={{ scale: 1.02 }}
-          {...fadeUp(0)}
-          transition={{ duration: 0.7 }}
-            img src={aboutStory} alt="About hero"
+      <section ref={storyRef} className="py-16 md:py-20 max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-10 md:gap-12 items-center" aria-labelledby="story-heading">
+        <img
+          data-reveal
+          src={aboutStory}
+          alt="About hero"
           loading="lazy"
-          className="rounded-2xl shadow-xl"
+          className="rounded-2xl shadow-xl hover:scale-[1.02] transition-transform duration-300"
         />
-        <div>
+        <div data-reveal>
           <h2 id="story-heading" className="text-3xl font-bold mb-5">Our Story</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             We began as a small studio helping local teams digitize workflows. Early wins shaped a simple playbook: keep it clear, ship quickly, measure what matters.</p>
@@ -160,7 +149,7 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="bg-gray-100 py-16 md:py-20 text-center" aria-labelledby="team-heading">
+      <section ref={teamRef} className="bg-gray-100 py-16 md:py-20 text-center" aria-labelledby="team-heading">
         <h2 id="team-heading" className="text-3xl font-bold mb-10">Our Team</h2>
         <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-4 gap-8 px-6">
           {[
@@ -169,7 +158,7 @@ const About = () => {
             { name:"Taimoor Saleem", role: "Head of Strategy", image: team3 },
             { name: "Faisal Imran", role: "Finance Manager", image: team4  }
           ].map((m, idx) => (
-            <motion.article key={idx} {...fadeUp(26, idx * 0.1)} whileHover={{ y: -6 }} className="bg-white rounded-2xl shadow-md p-6">
+            <article key={idx} data-reveal className="bg-white rounded-2xl shadow-md p-6 hover:-translate-y-1 transition-transform duration-300">
               <img
                 src={m.image}
                 alt={`${m.name}, ${m.role}`}
@@ -178,7 +167,7 @@ const About = () => {
               />
               <h3 className="text-lg font-semibold">{m.name}</h3>
               <p className="text-gray-500">{m.role}</p>
-            </motion.article>
+            </article>
           ))}
         </div>
       </section>
@@ -198,6 +187,3 @@ const About = () => {
 };
 
 export default About;
-
-
-

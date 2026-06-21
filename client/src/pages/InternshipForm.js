@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import API_BASE_URL from "../config"; // ✅ use base URL
+import { useIntroTimeline } from '../hooks/useIntroTimeline';
 
 export default function InternshipForm({ internshipTitle, onClose }) {
+  const introRef = useIntroTimeline();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -152,14 +153,13 @@ export default function InternshipForm({ internshipTitle, onClose }) {
   };
 
   return (
-    <motion.form
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <form
+      ref={introRef}
       onSubmit={handleSubmit}
       className="space-y-5"
       noValidate
     >
-      <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+      <div className="rounded-xl border border-white/10 bg-white/5 p-5" data-intro>
         {/* Honeypot */}
         <input
           type="text"
@@ -320,7 +320,7 @@ export default function InternshipForm({ internshipTitle, onClose }) {
       </div>
 
       {/* Actions + Status */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3" data-intro>
         <button
           type="button"
           onClick={() => onClose?.()}
@@ -328,21 +328,19 @@ export default function InternshipForm({ internshipTitle, onClose }) {
         >
           Cancel
         </button>
-        <motion.button
-          whileHover={{ scale: submitting ? 1 : 1.02 }}
-          whileTap={{ scale: submitting ? 1 : 0.98 }}
+        <button
           type="submit"
           disabled={submitting}
-          className={`inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-medium text-white shadow-md ${
+          className={`inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-medium text-white shadow-md hover:scale-[1.02] active:scale-[0.98] transition-transform ${
             submitting ? "bg-indigo-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
           }`}
         >
           {submitting ? "Submitting..." : "Submit Application"}
-        </motion.button>
+        </button>
       </div>
 
       {status && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`text-center mt-3 p-3 rounded-lg ${
+        <div className={`text-center mt-3 p-3 rounded-lg ${
           status.includes("✅")
             ? "bg-green-100 text-green-700 border border-green-200"
             : status.includes("❌")
@@ -350,8 +348,8 @@ export default function InternshipForm({ internshipTitle, onClose }) {
             : "bg-blue-100 text-blue-700 border border-blue-200"
         }`}>
           {status}
-        </motion.div>
+        </div>
       )}
-    </motion.form>
+    </form>
   );
 }

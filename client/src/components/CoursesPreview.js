@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import './CoursesPreview.css';
 import fullstackImg from '../assets/courses/full-stack-web.png';
 import dataSciImg from '../assets/data science.png';
 import uiuxImg from '../assets/courses/ui-ux-bootcamp.png';
 
 const CoursesPreview = () => {
+  const scope = useRevealOnScroll();
   const courses = [
     {
       title: "Full-Stack Web Development",
@@ -28,15 +30,15 @@ const CoursesPreview = () => {
   ];
 
   return (
-    <section className="courses-container" aria-labelledby="courses-heading">
+    <section className="courses-container" aria-labelledby="courses-heading" ref={scope}>
       <div className="container">
-        <h2 id="courses-heading" className="courses-title">Featured Courses</h2>
-        <p className="courses-subtitle">Outcome-driven programs with hands-on projects and expert mentorship</p>
+        <h2 id="courses-heading" className="courses-title" data-reveal>Featured Courses</h2>
+        <p className="courses-subtitle" data-reveal>Outcome-driven programs with hands-on projects and expert mentorship</p>
         <ul className="courses-row row" role="list" aria-label="Featured course cards">
           {courses.map((course, index) => {
             const titleId = `course-title-${index}`;
             return (
-              <li key={index} className="col-md-4 mb-4" role="listitem">
+              <li key={index} className="col-md-4 mb-4" role="listitem" data-reveal>
                 <Link
                   to="/courses"
                   className="card course-preview-card h-100 course-link"
@@ -66,7 +68,7 @@ const CoursesPreview = () => {
             );
           })}
         </ul>
-        <div className="text-center">
+        <div className="text-center" data-reveal>
           <Link to="/courses" className="btn-view-all">View All Courses</Link>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import InternshipForm from "../pages/InternshipForm";
+import { useIntroTimeline } from "../hooks/useIntroTimeline";
+import { useGridReveal } from "../hooks/useGridReveal";
+import { useModalIntro } from "../hooks/useModalIntro";
 
 
 
@@ -46,6 +48,8 @@ const Internships = () => {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
   const closeBtnRef = useRef(null);
+  const introRef = useIntroTimeline();
+  const panelRef = useModalIntro(showForm);
 
   const internships = [
     {
@@ -196,6 +200,8 @@ const Internships = () => {
     });
   }, [q, cat, internships]);
 
+  const gridRef = useGridReveal([filtered]);
+
   const handleApplyClick = (internship) => {
     setSelectedInternship(internship);
     setShowForm(true);
@@ -216,28 +222,22 @@ const Internships = () => {
       {/* Hero */}
       <header className="relative isolate">
         <div className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 text-white">
-          <div className="max-w-7xl mx-auto px-6 py-20 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+          <div ref={introRef} className="max-w-7xl mx-auto px-6 py-20 md:py-24 grid md:grid-cols-2 gap-10 items-center">
             <div>
-              <motion.h1
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+              <h1
+                data-intro
                 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight"
               >
                 Internships at Cortexis Solution Hub
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.1 }}
+              </h1>
+              <p
+                data-intro
                 className="mt-4 text-indigo-100/90 text-lg max-w-xl"
               >
                 Gain real-world experience, mentorship, and a strong portfolio. Apply to roles that match your skills and ambitions.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
+              </p>
+              <div
+                data-intro
                 className="mt-6 flex flex-wrap gap-3"
               >
                 <a href="#open-roles" className="inline-flex items-center px-6 py-3 rounded-full font-semibold bg-white text-indigo-700 shadow-lg hover:bg-indigo-50">
@@ -246,12 +246,10 @@ const Internships = () => {
                 <a href="/contact" className="inline-flex items-center px-6 py-3 rounded-full font-semibold ring-2 ring-white/80 text-white hover:bg-white hover:text-indigo-700">
                   Talk to HR
                 </a>
-              </motion.div>
+              </div>
             </div>
-            <motion.img
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
+            <img
+              data-intro
               src={heroImg}
               alt="Interns collaborating"
               className="rounded-2xl shadow-2xl"
@@ -293,30 +291,21 @@ const Internships = () => {
       </section>
 
       {/* Grid */}
-      <section id="open-roles" className="max-w-7xl mx-auto px-6 py-14">
-        <AnimatePresence mode="popLayout">
+      <section ref={gridRef} id="open-roles" className="max-w-7xl mx-auto px-6 py-14">
           {filtered.length === 0 ? (
-            <motion.p
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            <p
               className="text-center text-slate-500"
             >
               No internships match the current filters. Try clearing search or choosing another category.
-            </motion.p>
+            </p>
           ) : (
-            <motion.div
-              key="grid"
-              layout
+            <div
               className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"
             >
               {filtered.map((internship, idx) => (
-                <motion.article
+                <article
                   key={`${internship.title}-${idx}`}
-                  layout
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, delay: (idx % 6) * 0.06 }}
+                  data-card
                   className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition flex flex-col"
                 >
                   <div className="relative overflow-hidden">
@@ -348,20 +337,17 @@ const Internships = () => {
                         {internship.category}
                       </span>
                     </div>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <button
                       onClick={() => handleApplyClick(internship)}
-                      className="mt-5 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition"
+                      className="mt-5 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition hover:scale-[1.02] active:scale-[0.98] transition-transform"
                     >
                       Apply Now
-                    </motion.button>
+                    </button>
                   </div>
-                </motion.article>
+                </article>
               ))}
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
       </section>
 
       {/* Modal */}
@@ -375,9 +361,8 @@ const Internships = () => {
             if (e.target === e.currentTarget) handleCloseForm();
           }}
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <div
+            ref={panelRef}
             className="bg-[#0e1124] border border-white/10 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl text-slate-100"
           >
             <div className="sticky top-0 bg-[#0e1124] border-b border-white/10 p-4 flex justify-between items-center rounded-t-xl">
@@ -401,7 +386,7 @@ const Internships = () => {
                 onClose={handleCloseForm}
               />
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import axios from 'axios';
 import API_BASE_URL from '../config';
+import { useIntroTimeline } from '../hooks/useIntroTimeline';
 
 const Contact = () => {
+  const introRef = useIntroTimeline();
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [submitStatus, setSubmitStatus] = useState('');
   const [errors, setErrors] = useState({});
@@ -87,13 +88,11 @@ const Contact = () => {
           </div>
 
           {/* Form card — brand surfaces/buttons */}
-          <motion.section
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+          <section
+            ref={introRef}
             className="relative rounded-3xl bg-white p-6 sm:p-8 shadow-cardLg ring-1 ring-slate-200"
           >
-            <div className="mb-6">
+            <div className="mb-6" data-intro>
               <h2 className="text-2xl font-bold text-slate-900">Project brief</h2>
               <p className="text-slate-600">Tell us about goals, users, and timelines.</p>
             </div>
@@ -109,7 +108,7 @@ const Contact = () => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" data-intro>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-slate-700">Name *</label>
@@ -177,17 +176,15 @@ const Contact = () => {
                 {errors.message && <p className="mt-1 text-sm text-rose-600">{errors.message}</p>}
               </div>
 
-              <motion.button
-                whileHover={{ y: -1 }}
-                whileTap={{ y: 0 }}
+              <button
                 disabled={isSubmitting}
                 type="submit"
-                className="inline-flex items-center justify-center px-7 py-3 rounded-xl bg-brand-blue-600 text-white font-semibold shadow-cardLg hover:bg-brand-blue-700 disabled:opacity-70"
+                className="inline-flex items-center justify-center px-7 py-3 rounded-xl bg-brand-blue-600 text-white font-semibold shadow-cardLg hover:bg-brand-blue-700 disabled:opacity-70 hover:-translate-y-0.5 active:translate-y-0 transition-transform"
               >
                 {isSubmitting ? 'Sending…' : 'Send Message'}
-              </motion.button>
+              </button>
             </form>
-          </motion.section>
+          </section>
         </div>
       </section>
     </main>
