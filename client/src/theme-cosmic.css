@@ -6,14 +6,14 @@
    ════════════════════════════════════════════════════════════════════ */
 :root {
   --cx-bg: #07090f;
-  /* translucent "liquid glass" — low alpha so the cosmic backdrop shows through */
-  --cx-glass: rgba(255, 255, 255, 0.055);
-  --cx-glass-strong: rgba(255, 255, 255, 0.09);
-  --cx-raised: rgba(255, 255, 255, 0.07);
-  --cx-border: rgba(255, 255, 255, 0.12);
-  --cx-border-strong: rgba(255, 255, 255, 0.22);
-  --cx-blur: saturate(150%) blur(20px);
-  --cx-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  /* liquid glass — very low alpha + light frost so the cosmic backdrop reads through */
+  --cx-glass: rgba(255, 255, 255, 0.035);
+  --cx-glass-strong: rgba(255, 255, 255, 0.07);
+  --cx-raised: rgba(255, 255, 255, 0.05);
+  --cx-border: rgba(255, 255, 255, 0.1);
+  --cx-border-strong: rgba(255, 255, 255, 0.2);
+  --cx-blur: saturate(140%) blur(10px);
+  --cx-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.16);
   --cx-text: #eef1fb;
   --cx-dim: #c2cbe4;
   --cx-faint: #97a1bd;
@@ -128,5 +128,24 @@ h1, h2, h3, h4, h5, h6 { color: var(--cx-text); }
 
 /* ─── Section default padding bg stays transparent ─────────────────── */
 section { background: transparent; }
+
+/* ─── Translucent colour bands (page heroes / Contact rail) ────────────
+   These were solid purple gradients covering the cosmic backdrop. Drop their
+   alpha and add a glass blur so the stars/globe read through them. */
+[class*="from-indigo-700"],
+[class*="via-sky-700"],
+[class*="to-blue-700"],
+[class*="from-brand-indigo-700"],
+[class*="to-brand-blue-700"] {
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+}
+.from-indigo-700 { --tw-gradient-from: rgba(109, 40, 217, 0.30) var(--tw-gradient-from-position) !important; }
+.via-sky-700 { --tw-gradient-stops: var(--tw-gradient-from), rgba(192, 38, 211, 0.30) var(--tw-gradient-via-position), var(--tw-gradient-to) !important; }
+.to-blue-700 { --tw-gradient-to: rgba(109, 40, 217, 0.30) var(--tw-gradient-to-position) !important; }
+.from-brand-indigo-700 { --tw-gradient-from: rgba(76, 29, 149, 0.32) var(--tw-gradient-from-position) !important; }
+.to-brand-blue-700 { --tw-gradient-to: rgba(109, 40, 217, 0.32) var(--tw-gradient-to-position) !important; }
+
+/* Section CTA band on About uses from-indigo-700 to-blue-700 (no via) — covered above. */
 
 /* ─── Accessibility: respect reduced motion already handled per-file ── */
