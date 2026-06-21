@@ -224,7 +224,7 @@ const Internships = () => {
                 transition={{ duration: 0.6 }}
                 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight"
               >
-                Internships at Dummy Company
+                Internships at Cortexis Solution Hub
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 16 }}

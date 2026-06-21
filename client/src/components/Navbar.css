@@ -1,12 +1,15 @@
 .navbar {
-  background-color: #0e1324; /* deeper to match logo contrast */
+  background: rgba(13, 15, 35, 0.72);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
   height: 72px;
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 999;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  border-bottom: 1px solid rgba(124, 92, 220, 0.25);
+  box-shadow: 0 4px 24px rgba(13, 15, 35, 0.25);
 }
 
 .nav-container {
@@ -24,48 +27,100 @@
 .nav-logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
 }
-.nav-logo-img {
-  height: 40px;
-  width: auto;
-  border-radius: 6px;
+.nav-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  width: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(244, 112, 31, 0.18), rgba(37, 99, 235, 0.18));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.nav-logo:hover .nav-logo-badge {
+  transform: translateY(-1px) rotate(-3deg);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 8px 20px rgba(76, 42, 134, 0.4);
+}
+.nav-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
 }
 .nav-logo-text {
-  color: #ffffff;
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #fb8c3c, #60a5fa 55%, #c4b5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nav-logo-sub {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-top: 3px;
 }
 
 /* Menu */
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   list-style: none;
   margin: 0;
 }
 
 .nav-link {
+  position: relative;
   color: #e5e7eb;
   text-decoration: none;
   padding: 10px 14px;
-  border-bottom: 3px solid transparent;
-  border-radius: 8px;
-  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #f4701f, #60a5fa);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms ease;
 }
 .nav-link:hover {
-  color: #7dd3fc; /* from logo accent */
-  border-bottom: 3px solid #4cc9f0;
+  color: #ffffff;
   transform: translateY(-1px);
+}
+.nav-link:hover::after {
+  transform: scaleX(1);
 }
 .nav-link:focus-visible {
   outline: none;
-  background: rgba(124, 197, 255, 0.12);
-  border-bottom-color: #4cc9f0;
+  background: rgba(124, 197, 255, 0.14);
 }
+
+/* Highlighted CTA link */
+.nav-cta {
+  color: #ffffff;
+  background: linear-gradient(120deg, #4c2a86, #2563eb);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+.nav-cta:hover {
+  background: linear-gradient(120deg, #5b3aa8, #1d4ed8);
+}
+.nav-cta::after { display: none; }
 
 /* Mobile toggle */
 .nav-icon {
@@ -101,8 +156,9 @@
     top: 72px;
     left: -110%;
     opacity: 0;
-    background: #0e1324;
-    border-top: 1px solid rgba(255,255,255,0.12);
+    background: rgba(13, 15, 35, 0.96);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(124, 92, 220, 0.25);
     transition: left 240ms ease, opacity 240ms ease;
     padding: 8px 0 16px;
   }
@@ -115,12 +171,13 @@
     width: 100%;
     display: block;
     border-radius: 0;
-    border-bottom: 0;
   }
+  .nav-link::after { display: none; }
+  .nav-cta { margin: 8px 20px 0; text-align: center; }
 }
 
 /* Prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .nav-link { transition: none; }
+  .nav-link, .nav-link::after, .nav-logo-badge { transition: none; }
   .nav-menu { transition: none; }
 }

@@ -13,7 +13,7 @@ const Testimonials = () => {
       name: "Arslan Ali",
       company: "Karachi Tech Ventures",
       text:
-        "Dummy Company revamped our portal with a clean UI and blazing performance. Leads and demo requests jumped noticeably within weeks.",
+        "Cortexis Solution Hub revamped our portal with a clean UI and blazing performance. Leads and demo requests jumped noticeably within weeks.",
       image: client1
 
     },

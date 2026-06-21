@@ -10,13 +10,13 @@ const Footer = () => {
 
         <div className="footer-content" role="presentation">
           <section className="footer-section">
-            <h3 className="footer-brand">Dummy Company</h3>
-            <p>Transforming ideas into digital reality with cutting‑edge technology solutions across Pakistan.</p>
+            <h3 className="footer-brand">Cortexis Solution Hub</h3>
+            <p>Engineering intelligent digital solutions — software, training, and consulting — for teams across Pakistan and beyond.</p>
 
             <ul className="footer-social" aria-label="Social links" role="list">
               <li><a className="social-link" href="https://www.facebook.com/profile.php" aria-label="Facebook">Fb</a></li>
-              <li><a className="social-link" href="https://www.instagram.com/dummycompany" aria-label="Instagram">IG</a></li>
-              
+              <li><a className="social-link" href="https://www.instagram.com/cortexis.solution.hub" aria-label="Instagram">IG</a></li>
+              <li><a className="social-link" href="https://www.linkedin.com/company/cortexis-solution-hub" aria-label="LinkedIn">in</a></li>
             </ul>
           </section>
 
@@ -42,15 +42,15 @@ const Footer = () => {
           <section className="footer-section" aria-label="Contact information">
             <h4>Contact</h4>
             <address className="contact-block">
-              <p><a className="contact-link" href="mailto:contact@dummycompany.com">contact@dummycompany.com</a></p>
-              <p><a className="contact-link" href="tel:+92347-5769500">+92347-5769500</a></p>
+              <p><a className="contact-link" href="mailto:cortexis.solution.hub@gmail.com">cortexis.solution.hub@gmail.com</a></p>
+              <p><a className="contact-link" href="tel:+923475769500">+92 347-5769500</a></p>
               <p>Islamabad, Pakistan</p>
             </address>
           </section>
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Dummy Company. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Cortexis Solution Hub Pvt Ltd. All rights reserved.</p>
         </div>
       </div>
     </footer>

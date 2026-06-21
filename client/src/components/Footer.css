@@ -35,7 +35,11 @@
 }
 
 .footer-brand {
-  color: #7dd3fc;
+  font-size: 1.35rem;
+  background: linear-gradient(90deg, #fb8c3c, #60a5fa 60%, #c4b5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* Text */

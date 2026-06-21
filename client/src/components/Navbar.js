@@ -1,6 +1,6 @@
 import React, { useState, useId } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.jpg';
+import BrandLogo from './BrandLogo';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -13,9 +13,14 @@ const Navbar = () => {
   return (
     <header className="navbar" role="banner">
       <div className="nav-container">
-        <Link to="/" className="nav-logo" onClick={closeMenu} aria-label="Dummy Company home">
-          <img src={logo} alt="Dummy Company logo" className="nav-logo-img" />
-          <span className="nav-logo-text">Dummy Company</span>
+        <Link to="/" className="nav-logo" onClick={closeMenu} aria-label="Cortexis Solution Hub Pvt Ltd home">
+          <span className="nav-logo-badge">
+            <BrandLogo size={38} />
+          </span>
+          <span className="nav-logo-wrap">
+            <span className="nav-logo-text">Cortexis</span>
+            <span className="nav-logo-sub">Solution Hub</span>
+          </span>
         </Link>
 
         <button
@@ -37,7 +42,7 @@ const Navbar = () => {
           <Link to="/courses" className="nav-link" onClick={closeMenu}>Courses</Link>
           <Link to="/internships" className="nav-link" onClick={closeMenu}>Internships</Link>
           <Link to="/about" className="nav-link" onClick={closeMenu}>About Us</Link>
-          <Link to="/contact" className="nav-link" onClick={closeMenu}>Contact Us</Link>
+          <Link to="/contact" className="nav-link nav-cta" onClick={closeMenu}>Contact Us</Link>
         </nav>
       </div>
     </header>

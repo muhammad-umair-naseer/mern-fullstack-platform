@@ -42,7 +42,7 @@ const Contact = () => {
   };
 
   const chips = [
-    { label: 'Email', value: 'contact@dummycompany.com', href: 'mailto:contact@dummycompany.com' },
+    { label: 'Email', value: 'cortexis.solution.hub@gmail.com', href: 'mailto:cortexis.solution.hub@gmail.com' },
     { label: 'Phone', value: '+92347-5769500', href: 'tel:+92347-5769500' },
     { label: 'Address', value: 'Islamabad, Pakistan', href: 'https://maps.google.com/?q=Islamabd' }
   ];
@@ -58,7 +58,7 @@ const Contact = () => {
           <div className="relative -skew-x-6">
             <div className="skew-x-6 sticky top-10">
               <div className="rounded-3xl bg-white/10 text-white backdrop-blur p-7 shadow-xl ring-1 ring-white/25">
-                <h1 className="text-4xl font-extrabold leading-tight">Contact Dummy Company</h1>
+                <h1 className="text-4xl font-extrabold leading-tight">Contact Cortexis Solution Hub</h1>
                 <p className="text-white/90 mt-2">Response within one business day (PKT). Let’s make something remarkable.</p>
               </div>
 
