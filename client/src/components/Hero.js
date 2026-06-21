@@ -21,10 +21,6 @@ const Hero = () => {
         initial="hidden"
         animate="show"
       >
-        <motion.span className="hero-eyebrow" variants={item}>
-          <span className="hero-eyebrow-dot" /> Cortexis Solution Hub Pvt&nbsp;Ltd
-        </motion.span>
-
         <motion.h1 id="hero-heading" variants={item}>
           Engineering <em className="hero-gradient-text">Intelligent</em> Digital Solutions
         </motion.h1>

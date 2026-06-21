@@ -52,12 +52,14 @@ input:not([type="checkbox"]):not([type="radio"]),
 textarea,
 select,
 .form-control {
-  background: var(--cx-raised) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--cx-text) !important;
-  border-color: var(--cx-border) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
+/* dropdown options render on their own surface — keep them legible */
+select option { background: #0e1124; color: #e8ecf8; }
 input::placeholder, textarea::placeholder { color: var(--cx-faint) !important; }
 input:focus, textarea:focus, select:focus, .form-control:focus {
   border-color: var(--cx-accent) !important;

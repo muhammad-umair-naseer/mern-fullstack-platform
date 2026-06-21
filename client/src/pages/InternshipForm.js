@@ -159,7 +159,7 @@ export default function InternshipForm({ internshipTitle, onClose }) {
       className="space-y-5"
       noValidate
     >
-      <div className="rounded-xl border border-slate-200 bg-white/90 backdrop-blur p-5 shadow-sm">
+      <div className="rounded-xl border border-white/10 bg-white/5 p-5">
         {/* Honeypot */}
         <input
           type="text"

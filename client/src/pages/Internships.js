@@ -378,10 +378,10 @@ const Internships = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            className="bg-[#0e1124] border border-white/10 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl text-slate-100"
           >
-            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center rounded-t-xl">
-              <h3 id="internship-apply-heading" className="text-xl font-semibold">
+            <div className="sticky top-0 bg-[#0e1124] border-b border-white/10 p-4 flex justify-between items-center rounded-t-xl">
+              <h3 id="internship-apply-heading" className="text-xl font-semibold text-white">
                 Apply for {selectedInternship?.title}
               </h3>
               <button
