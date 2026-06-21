@@ -69,7 +69,7 @@
   /* High-contrast focus ring */
   box-shadow:
     0 0 0 2px #ffffff,
-    0 0 0 4px #2563eb,
+    0 0 0 4px #7c3aed,
     0 16px 36px rgba(17, 24, 39, 0.12);
 }
 
@@ -126,7 +126,7 @@
 }
 .badge-primary {
   background-color: #e1effe;
-  color: #1e3a8a;
+  color: #5b21b6;
   border-color: #bfdbfe;
 }
 .badge-neutral {
@@ -147,7 +147,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #2563eb;
+  background-color: #7c3aed;
   color: #ffffff;
   border: none;
   padding: 10px 16px;
@@ -159,7 +159,7 @@
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.24);
 }
 .course-preview-card:hover .course-btn.as-link {
-  background-color: #1d4ed8;
+  background-color: #6d28d9;
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32);
 }
@@ -170,8 +170,8 @@
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  color: #1d4ed8;
-  border: 2px solid #1d4ed8;
+  color: #6d28d9;
+  border: 2px solid #6d28d9;
   padding: 12px 26px;
   border-radius: 999px;
   font-weight: 700;
@@ -182,7 +182,7 @@
 }
 .btn-view-all:hover,
 .btn-view-all:focus-visible {
-  background-color: #1d4ed8;
+  background-color: #6d28d9;
   color: #ffffff;
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(29, 78, 216, 0.28);

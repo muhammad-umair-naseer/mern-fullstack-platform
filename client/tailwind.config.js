@@ -18,14 +18,19 @@ module.exports = {
     },
     extend: {
       colors: {
+        // Remap the default blue/sky/indigo scales to the cosmic palette so
+        // every existing utility (bg-blue-*, via-sky-*, from-indigo-*) becomes
+        // purple/magenta instead of blue — no per-file edits needed.
+        blue: { 50: "#f5f3ff", 100: "#ede9fe", 200: "#ddd6fe", 300: "#c4b5fd", 400: "#a78bfa", 500: "#8b5cf6", 600: "#7c3aed", 700: "#6d28d9", 800: "#5b21b6", 900: "#4c1d95" },
+        indigo: { 50: "#f5f3ff", 100: "#ede9fe", 200: "#ddd6fe", 300: "#c4b5fd", 400: "#a78bfa", 500: "#8b5cf6", 600: "#7c3aed", 700: "#6d28d9", 800: "#5b21b6", 900: "#4c1d95" },
+        sky: { 50: "#fdf4ff", 100: "#fae8ff", 200: "#f5d0fe", 300: "#f0abfc", 400: "#e879f9", 500: "#e056e5", 600: "#c026d3", 700: "#a21caf", 800: "#86198f", 900: "#701a75" },
         // Cortexis Solution Hub — cosmic brand palette
         brand: {
-          // keep legacy keys used by existing pages (Contact, etc.)
           orange: { 400: "#fb8c3c", 500: "#f97316", 600: "#e85d10", signal: "#f97316" },
-          blue: { 400: "#3b9eea", 500: "#2575d6", 600: "#2563eb", 700: "#1d4ed8" },
-          indigo: { 500: "#5b3aa8", 600: "#4c2a86", 700: "#3730a3" },
-          sky: { 400: "#60a5fa", 500: "#38bdf8" },
-          cyan: { 400: "#29abe2" },
+          blue: { 400: "#a78bfa", 500: "#8b5cf6", 600: "#7c3aed", 700: "#6d28d9" },
+          indigo: { 500: "#6d28d9", 600: "#5b21b6", 700: "#4c1d95" },
+          sky: { 400: "#c4b5fd", 500: "#a78bfa" },
+          cyan: { 400: "#e056e5" },
           // cosmic accents (from reference design)
           accent: { DEFAULT: "#8b5cf6", soft: "#a78bfa" },
           magenta: "#e056e5",

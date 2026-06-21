@@ -91,7 +91,7 @@
   align-items: center;
   justify-content: center;
   align-self: stretch;
-  background: #2563eb; /* brand blue */
+  background: #7c3aed; /* brand blue */
   color: #ffffff;
   padding: 10px 14px;
   border-radius: 10px;
@@ -100,7 +100,7 @@
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.24);
 }
 .service-preview-card:hover .service-cta {
-  background: #1d4ed8;
+  background: #6d28d9;
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32);
 }
@@ -108,8 +108,8 @@
 /* View all button */
 .btn-view-all {
   background-color: transparent;
-  color: #1d4ed8;
-  border: 2px solid #1d4ed8;
+  color: #6d28d9;
+  border: 2px solid #6d28d9;
   padding: 12px 28px;
   border-radius: 999px;
   font-weight: 800;
@@ -120,7 +120,7 @@
 }
 .btn-view-all:hover,
 .btn-view-all:focus-visible {
-  background-color: #1d4ed8;
+  background-color: #6d28d9;
   color: #ffffff;
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(29, 78, 216, 0.28);

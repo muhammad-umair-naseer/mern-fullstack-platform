@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './CoursesPreview.css';
+import fullstackImg from '../assets/courses/full-stack-web.png';
+import dataSciImg from '../assets/data science.png';
+import uiuxImg from '../assets/courses/ui-ux-bootcamp.png';
 
 const CoursesPreview = () => {
   const courses = [
@@ -8,19 +11,19 @@ const CoursesPreview = () => {
       title: "Full-Stack Web Development",
       duration: "12 weeks",
       level: "Beginner to Advanced",
-      image: "https://images.unsplash.com/photo-1581276879432-15e50529f34b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: fullstackImg
     },
     {
       title: "Data Science Fundamentals",
       duration: "10 weeks",
       level: "Intermediate",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: dataSciImg
     },
     {
       title: "UI/UX Design Bootcamp",
       duration: "8 weeks",
       level: "Beginner",
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: uiuxImg
     }
   ];
 

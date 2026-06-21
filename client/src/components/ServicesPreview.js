@@ -1,23 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './ServicesPreview.css';
+import webImg from '../assets/services/web-development.png';
+import mobileImg from '../assets/services/mobile-app-development.png';
+import uiuxImg from '../assets/services/ui-ux-design.png';
 
 const ServicesPreview = () => {
   const services = [
     {
       title: "Web Development",
       description: "Custom web applications built with modern technologies.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
+      image: webImg
     },
     {
       title: "Mobile App Development",
       description: "Native and cross-platform mobile applications.",
-      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80"
+      image: mobileImg
     },
     {
       title: "UI/UX Design",
       description: "User-centered design for engaging experiences.",
-      image: "https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=800&q=80"
+      image: uiuxImg
     }
   ];
 

@@ -11,6 +11,7 @@ import ecommerceImg from "../assets/services/ecommerce-solutions.png";
 import pythonImg from "../assets/services/python-development.png";
 import aimlImg from "../assets/services/ai-ml-solutions.png";
 import wordpressImg from "../assets/services/wordpress-development.png";
+import cppImg from "../assets/courses/cpp-development.png";
 
 
 
@@ -88,7 +89,7 @@ const rawServices = [
   {
     title: "C++ Development",
     description: "High-performance applications, system software, and game development using C++.",
-    image: "https://images.unsplash.com/photo-1610563166150-b34df4f3bcd6?auto=format&fit=crop&w=1600&q=80",
+    image: cppImg,
     category: "Development",
     features: ["Low-latency systems", "Engine integrations", "Tooling & CI for C++"],
     deliverables: ["Profiling report", "Benchmarks", "Deployment artifacts"],
