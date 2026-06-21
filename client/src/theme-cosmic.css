@@ -1,0 +1,124 @@
+/* ════════════════════════════════════════════════════════════════════
+   Cortexis Solution Hub — global COSMIC THEME override.
+   Imported last so it reskins the whole app (all pages/components) to the
+   dark cosmic palette without editing every file. Remaps the light Tailwind
+   utilities, the preview-component classes, and the legacy Pages.css surfaces.
+   ════════════════════════════════════════════════════════════════════ */
+:root {
+  --cx-bg: #07090f;
+  --cx-surface: rgba(17, 20, 30, 0.78);
+  --cx-raised: #161a26;
+  --cx-border: rgba(148, 178, 255, 0.14);
+  --cx-border-strong: rgba(148, 178, 255, 0.24);
+  --cx-text: #e8ecf8;
+  --cx-dim: #b6bfd8;
+  --cx-faint: #8993ad;
+  --cx-accent: #8b5cf6;
+  --cx-magenta: #e056e5;
+  --cx-signal: #f97316;
+}
+
+/* ─── Surfaces (light → dark) ──────────────────────────────────────── */
+.bg-white { background-color: var(--cx-surface) !important; }
+.bg-slate-50, .bg-gray-50 { background-color: transparent !important; }
+.bg-slate-100, .bg-gray-100 { background-color: rgba(255, 255, 255, 0.04) !important; }
+
+/* glassy panels get a blur + cosmic border */
+.bg-white {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* ─── Text (dark → light/dim) ──────────────────────────────────────── */
+.text-slate-900, .text-gray-900, .text-gray-800, .text-black { color: var(--cx-text) !important; }
+.text-slate-700, .text-slate-600, .text-gray-700, .text-gray-600 { color: var(--cx-dim) !important; }
+.text-slate-500, .text-slate-400, .text-gray-500 { color: var(--cx-faint) !important; }
+
+/* ─── Borders / rings ──────────────────────────────────────────────── */
+.border-slate-300, .border-slate-200, .border-gray-300, .border-gray-200, .border-gray-100 {
+  border-color: var(--cx-border) !important;
+}
+.ring-slate-200, .ring-slate-100 { --tw-ring-color: var(--cx-border) !important; }
+
+/* keep brand focus rings visible on dark */
+.focus\:ring-brand-sky-400\/60:focus { --tw-ring-color: rgba(139, 92, 246, 0.55) !important; }
+
+/* ─── Form fields everywhere ───────────────────────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select,
+.form-control {
+  background-color: var(--cx-raised) !important;
+  color: var(--cx-text) !important;
+  border-color: var(--cx-border) !important;
+}
+input::placeholder, textarea::placeholder { color: var(--cx-faint) !important; }
+input:focus, textarea:focus, select:focus, .form-control:focus {
+  border-color: var(--cx-accent) !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25) !important;
+}
+
+/* ─── Preview component sections ───────────────────────────────────── */
+.services-container,
+.courses-container,
+.testimonials-container,
+.section,
+.page-container,
+.bg-light {
+  background: transparent !important;
+}
+.section-title, .courses-title, .testimonials-title,
+.testimonials-container h2, .courses-container h2, .services-container h2 {
+  color: var(--cx-text) !important;
+}
+.section-subtitle, .courses-subtitle, .testimonials-subtitle { color: var(--cx-faint) !important; }
+
+/* preview-card titles/copy (component CSS sets these dark) */
+.card-title,
+.service-preview-card .card-title,
+.course-preview-card .card-title,
+.testimonial-name { color: var(--cx-text) !important; }
+.card-text,
+.service-preview-card .card-text,
+.course-preview-card .card-text,
+.testimonial-quote { color: var(--cx-dim) !important; }
+.text-muted { color: var(--cx-faint) !important; }
+
+/* ─── Cards (legacy + preview) ─────────────────────────────────────── */
+.card,
+.service-preview-card,
+.course-preview-card,
+.testimonial-card,
+.service-card,
+.course-card,
+.internship-card,
+.blog-card,
+.team-card {
+  background: var(--cx-surface) !important;
+  border: 1px solid var(--cx-border) !important;
+  color: var(--cx-text) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.card:hover,
+.service-preview-card:hover,
+.course-preview-card:hover {
+  border-color: var(--cx-border-strong) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+}
+.blog-card .card-footer { background-color: var(--cx-raised) !important; border-top-color: var(--cx-border) !important; }
+.card-body, .card-title, .card-text { color: inherit !important; }
+.card-text, .card-body p { color: var(--cx-dim) !important; }
+
+/* ─── Tables ───────────────────────────────────────────────────────── */
+table { color: var(--cx-dim) !important; }
+thead th, th { background: var(--cx-raised) !important; color: var(--cx-accent) !important; border-color: var(--cx-border-strong) !important; }
+td { border-color: var(--cx-border) !important; }
+
+/* ─── Headings default to light when not otherwise coloured ────────── */
+h1, h2, h3, h4, h5, h6 { color: var(--cx-text); }
+
+/* ─── Section default padding bg stays transparent ─────────────────── */
+section { background: transparent; }
+
+/* ─── Accessibility: respect reduced motion already handled per-file ── */

@@ -1,12 +1,29 @@
-import React, { useId } from 'react';
+import React, { useId, useState } from 'react';
 
 /**
- * Cortexis Solution Hub logomark — a split brain/circuit motif.
- * Left hemisphere = brand orange, right hemisphere = brand blue,
- * echoing the company logo. Pure SVG so it scales crisply anywhere.
+ * Cortexis Solution Hub logomark.
+ * Prefers the real logo image at /cortexis-logo.png (drop it in client/public/).
+ * If that file is missing or fails to load, it gracefully falls back to a
+ * built-in SVG recreation of the split brain/circuit mark.
  */
 const BrandLogo = ({ size = 40, className = '' }) => {
   const id = useId();
+  const [imgFailed, setImgFailed] = useState(false);
+
+  if (!imgFailed) {
+    return (
+      <img
+        src={`${process.env.PUBLIC_URL}/cortexis-logo.png`}
+        width={size}
+        height={size}
+        alt="Cortexis Solution Hub logo"
+        className={className}
+        style={{ objectFit: 'contain', display: 'block' }}
+        onError={() => setImgFailed(true)}
+      />
+    );
+  }
+
   const orange = `orange-${id}`;
   const blue = `blue-${id}`;
   return (
