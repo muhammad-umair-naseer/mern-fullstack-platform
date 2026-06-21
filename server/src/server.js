@@ -71,10 +71,10 @@ const __dirname = path.dirname(__filename);
 
 // --- Serve React build in production ---
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/build")));
+  app.use(express.static(path.join(__dirname, "../../client/build")));
 
   // Catch-all to serve React index.html
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/build/index.html"));
+    res.sendFile(path.join(__dirname, "../../client/build/index.html"));
   });
 }
