@@ -1,15 +1,29 @@
 .navbar {
-  background: rgba(13, 15, 35, 0.72);
-  backdrop-filter: saturate(160%) blur(14px);
-  -webkit-backdrop-filter: saturate(160%) blur(14px);
-  height: 72px;
-  display: flex;
-  align-items: center;
   position: sticky;
   top: 0;
   z-index: 999;
-  border-bottom: 1px solid rgba(124, 92, 220, 0.25);
-  box-shadow: 0 4px 24px rgba(13, 15, 35, 0.25);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  background: rgba(7, 9, 15, 0.88);
+  backdrop-filter: saturate(160%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
+}
+/* animated brand underline bar */
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6, #e056e5, #f97316, #8b5cf6, #e056e5);
+  background-size: 200% 100%;
+  animation: navUnderline 5s linear infinite;
+}
+@keyframes navUnderline {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .nav-container {
@@ -37,7 +51,7 @@
   height: 46px;
   width: 46px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(244, 112, 31, 0.18), rgba(37, 99, 235, 0.18));
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(249, 115, 22, 0.16));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   transition: transform 200ms ease, box-shadow 200ms ease;
 }
@@ -51,20 +65,27 @@
   line-height: 1;
 }
 .nav-logo-text {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  background: linear-gradient(90deg, #fb8c3c, #60a5fa 55%, #c4b5fd);
+  letter-spacing: 0.03em;
+  background: linear-gradient(90deg, #7B2D8B, #8b5cf6, #e056e5, #f97316);
+  background-size: 300% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: navGrad 5s ease-in-out infinite;
+}
+@keyframes navGrad {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 .nav-logo-sub {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: #f97316;
   margin-top: 3px;
 }
 
@@ -94,7 +115,7 @@
   bottom: 6px;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #f4701f, #60a5fa);
+  background: linear-gradient(90deg, #8b5cf6, #e056e5, #f97316);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 200ms ease;
@@ -114,11 +135,13 @@
 /* Highlighted CTA link */
 .nav-cta {
   color: #ffffff;
-  background: linear-gradient(120deg, #4c2a86, #2563eb);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(120deg, #8b5cf6, #e056e5 55%, #f97316);
+  background-size: 220% 100%;
+  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.35);
+  animation: navGrad 5s ease-in-out infinite;
 }
 .nav-cta:hover {
-  background: linear-gradient(120deg, #5b3aa8, #1d4ed8);
+  box-shadow: 0 10px 26px rgba(249, 115, 22, 0.4);
 }
 .nav-cta::after { display: none; }
 

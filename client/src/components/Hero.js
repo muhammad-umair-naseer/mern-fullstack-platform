@@ -15,13 +15,6 @@ const item = {
 const Hero = () => {
   return (
     <section className="hero" aria-labelledby="hero-heading">
-      {/* Animated brand gradient + floating orbs */}
-      <div className="hero-gradient" aria-hidden="true"></div>
-      <span className="hero-orb hero-orb--1" aria-hidden="true"></span>
-      <span className="hero-orb hero-orb--2" aria-hidden="true"></span>
-      <span className="hero-orb hero-orb--3" aria-hidden="true"></span>
-      <div className="hero-overlay" aria-hidden="true"></div>
-
       <motion.div
         className="hero-content"
         variants={container}
@@ -29,21 +22,36 @@ const Hero = () => {
         animate="show"
       >
         <motion.span className="hero-eyebrow" variants={item}>
-          Cortexis Solution Hub Pvt&nbsp;Ltd
+          <span className="hero-eyebrow-dot" /> Cortexis Solution Hub Pvt&nbsp;Ltd
         </motion.span>
 
         <motion.h1 id="hero-heading" variants={item}>
-          Engineering <span className="hero-gradient-text">Intelligent</span> Digital Solutions
+          Engineering <em className="hero-gradient-text">Intelligent</em> Digital Solutions
         </motion.h1>
 
         <motion.p className="hero-subtitle" variants={item}>
-          Cortexis Solution Hub builds software, trains talent, and delivers consulting
-          that helps teams ship faster and grow with confidence.
+          We build software, train talent, and deliver consulting that helps teams
+          ship faster and grow with confidence.
         </motion.p>
 
         <motion.div className="hero-buttons" role="group" aria-label="Primary actions" variants={item}>
           <Link to="/services" className="btn btn-primary cta">Explore Services</Link>
           <Link to="/contact" className="btn btn-secondary cta-alt">Talk to an Expert</Link>
+        </motion.div>
+
+        <motion.div className="hero-coords" variants={item}>
+          <div className="coord">
+            <span className="num">50+</span>
+            <span className="lbl">Projects Shipped</span>
+          </div>
+          <div className="coord">
+            <span className="num">12+</span>
+            <span className="lbl">Tech Stacks</span>
+          </div>
+          <div className="coord">
+            <span className="num">24/7</span>
+            <span className="lbl">Support</span>
+          </div>
         </motion.div>
       </motion.div>
     </section>

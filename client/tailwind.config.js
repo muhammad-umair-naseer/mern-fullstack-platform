@@ -18,17 +18,23 @@ module.exports = {
     },
     extend: {
       colors: {
-        // Cortexis Solution Hub brand palette (from the brain/circuit logo)
+        // Cortexis Solution Hub — cosmic brand palette
         brand: {
-          orange: { 400: "#fb8c3c", 500: "#f4701f", 600: "#e85d10" },
+          // keep legacy keys used by existing pages (Contact, etc.)
+          orange: { 400: "#fb8c3c", 500: "#f97316", 600: "#e85d10", signal: "#f97316" },
           blue: { 400: "#3b9eea", 500: "#2575d6", 600: "#2563eb", 700: "#1d4ed8" },
           indigo: { 500: "#5b3aa8", 600: "#4c2a86", 700: "#3730a3" },
           sky: { 400: "#60a5fa", 500: "#38bdf8" },
-          cyan: { 400: "#29abe2" }
+          cyan: { 400: "#29abe2" },
+          // cosmic accents (from reference design)
+          accent: { DEFAULT: "#8b5cf6", soft: "#a78bfa" },
+          magenta: "#e056e5",
+          ink: { DEFAULT: "#07090f", soft: "#0c0f18", surface: "#11141e", raised: "#161a26" }
         }
       },
       fontFamily: {
-        sans: ["Poppins", "Segoe UI", "system-ui", "sans-serif"]
+        sans: ["Space Grotesk", "Segoe UI", "system-ui", "sans-serif"],
+        mono: ["IBM Plex Mono", "ui-monospace", "monospace"]
       },
       boxShadow: {
         card: "0 1px 1px rgba(0,0,0,0.02), 0 8px 24px rgba(17,24,39,0.06)",
@@ -37,9 +43,9 @@ module.exports = {
       },
       borderRadius: { smd: "10px", mdx: "14px", lgx: "16px" },
       backgroundImage: {
-        "grad-hero": "linear-gradient(90deg, #4c2a86, #2563eb)",
-        "grad-accent": "linear-gradient(90deg, #f4701f, #2563eb)",
-        "grad-brand": "linear-gradient(120deg, #4c2a86 0%, #2563eb 45%, #29abe2 70%, #f4701f 100%)"
+        "grad-hero": "linear-gradient(90deg, #8b5cf6, #e056e5)",
+        "grad-accent": "linear-gradient(90deg, #f97316, #8b5cf6)",
+        "grad-brand": "linear-gradient(90deg, #7B2D8B, #8b5cf6, #e056e5, #f97316)"
       },
       keyframes: {
         "gradient-pan": {

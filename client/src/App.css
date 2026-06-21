@@ -8,11 +8,11 @@
 }
 
 body {
-  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Space Grotesk', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color: #1e293b;
-  /* transparent so the global AnimatedBackground shows through */
-  background-color: transparent;
+  color: #e8ecf8;
+  /* cosmic base — the AnimatedBackground paints stars/blobs/globe on top */
+  background-color: #07090f;
 }
 
 .page-container {

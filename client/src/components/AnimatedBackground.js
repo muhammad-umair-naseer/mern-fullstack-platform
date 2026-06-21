@@ -1,52 +1,104 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import './AnimatedBackground.css';
 
 /**
- * Global animated brand backdrop for Cortexis Solution Hub.
- * Fixed behind all content (pointer-events: none, z-index below app).
- * Soft aurora "blobs" in the brand colors drift and morph; a faint grid
- * adds depth. Honors prefers-reduced-motion via the motion-reduce variant.
+ * Cortexis Solution Hub — cosmic animated backdrop.
+ * Starfield + drifting brand blobs + a rising particle field + a slowly
+ * rotating wireframe globe. Fixed behind all content, pointer-events none,
+ * and reduced-motion friendly (see AnimatedBackground.css).
  */
-const Blob = ({ className, style }) => (
-  <div
-    aria-hidden="true"
-    className={`absolute rounded-full blur-3xl opacity-50 mix-blend-multiply motion-reduce:animate-none ${className}`}
-    style={style}
-  />
-);
 
-const AnimatedBackground = () => (
-  <div
-    aria-hidden="true"
-    className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-indigo-50/60"
-  >
-    {/* Aurora blobs in brand palette */}
-    <Blob
-      className="animate-blob"
-      style={{ top: '-8rem', left: '-6rem', width: '34rem', height: '34rem', background: 'radial-gradient(circle at 30% 30%, #4c2a86, transparent 70%)' }}
-    />
-    <Blob
-      className="animate-blob-slow"
-      style={{ top: '20%', right: '-8rem', width: '32rem', height: '32rem', background: 'radial-gradient(circle at 30% 30%, #2563eb, transparent 70%)', animationDelay: '-6s' }}
-    />
-    <Blob
-      className="animate-blob"
-      style={{ bottom: '-10rem', left: '15%', width: '30rem', height: '30rem', background: 'radial-gradient(circle at 30% 30%, #f4701f, transparent 70%)', animationDelay: '-3s' }}
-    />
-    <Blob
-      className="animate-blob-slow"
-      style={{ bottom: '5%', right: '20%', width: '24rem', height: '24rem', background: 'radial-gradient(circle at 30% 30%, #29abe2, transparent 70%)', animationDelay: '-9s' }}
-    />
+// Deterministic pseudo-random so the layout is stable across renders
+// (no Math.random — keeps SSR/build output consistent).
+const rand = (seed) => {
+  const x = Math.sin(seed * 999.13) * 43758.5453;
+  return x - Math.floor(x);
+};
 
-    {/* Faint circuit-style grid */}
-    <div
-      className="absolute inset-0 opacity-[0.04]"
-      style={{
-        backgroundImage:
-          'linear-gradient(to right, #4c2a86 1px, transparent 1px), linear-gradient(to bottom, #4c2a86 1px, transparent 1px)',
-        backgroundSize: '46px 46px'
-      }}
-    />
-  </div>
-);
+const PARTICLE_COLORS = ['#8b5cf6', '#e056e5', '#f97316', '#a78bfa'];
+
+const AnimatedBackground = () => {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 28 }, (_, i) => {
+        const size = 2 + rand(i + 1) * 5;
+        return {
+          left: `${rand(i + 2) * 100}%`,
+          width: `${size}px`,
+          height: `${size}px`,
+          '--pc': PARTICLE_COLORS[i % PARTICLE_COLORS.length],
+          '--dx': `${(rand(i + 3) - 0.5) * 80}px`,
+          animationDuration: `${12 + rand(i + 4) * 16}s`,
+          animationDelay: `${-rand(i + 5) * 18}s`,
+          opacity: 0.5 + rand(i + 6) * 0.4
+        };
+      }),
+    []
+  );
+
+  const meridians = useMemo(
+    () => Array.from({ length: 9 }, (_, i) => `rotateY(${i * 20}deg)`),
+    []
+  );
+
+  const parallels = useMemo(
+    () =>
+      [88, 78, 62, 42].map((pct) => ({
+        width: `${pct}%`,
+        height: `${pct}%`
+      })),
+    []
+  );
+
+  const dots = useMemo(
+    () =>
+      Array.from({ length: 14 }, (_, i) => ({
+        top: `${15 + rand(i + 11) * 70}%`,
+        left: `${12 + rand(i + 21) * 76}%`,
+        animationDelay: `${-rand(i + 31) * 2.6}s`
+      })),
+    []
+  );
+
+  return (
+    <div className="cx-backdrop" aria-hidden="true">
+      <div className="cx-stars" />
+
+      <div className="cx-blob" style={{ width: '36vw', height: '36vw', left: '-8vw', top: '8%', background: 'rgba(139,92,246,0.16)' }} />
+      <div className="cx-blob" style={{ width: '28vw', height: '28vw', right: '6vw', bottom: '4%', background: 'rgba(249,115,22,0.12)', animationDelay: '-5s', animationDuration: '18s' }} />
+      <div className="cx-blob" style={{ width: '20vw', height: '20vw', left: '30%', bottom: '-6%', background: 'rgba(224,86,229,0.10)', animationDelay: '-9s', animationDuration: '16s' }} />
+
+      <div className="cx-particle-field">
+        {particles.map((p, i) => (
+          <span key={i} className="cx-particle" style={p} />
+        ))}
+      </div>
+
+      <div className="cx-globe-stage">
+        <div className="cx-globe" />
+        <div className="cx-globe-grid">
+          {meridians.map((t, i) => (
+            <div key={i} className="cx-meridian" style={{ transform: t }} />
+          ))}
+          {parallels.map((s, i) => (
+            <div key={`p${i}`} className="cx-parallel" style={s} />
+          ))}
+        </div>
+        <div className="cx-globe-dots">
+          {dots.map((d, i) => (
+            <span key={i} className="cx-doc-dot" style={d} />
+          ))}
+        </div>
+        <div className="cx-globe-rim" />
+        <div className="cx-orbit-ring" style={{ width: '104%', height: '104%' }}>
+          <div className="cx-orbit-sat" />
+        </div>
+        <div className="cx-orbit-ring" style={{ width: '118%', height: '118%', animationDuration: '95s' }}>
+          <div className="cx-orbit-sat" style={{ background: '#8b5cf6', boxShadow: '0 0 10px 2px rgba(139,92,246,0.8)' }} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default AnimatedBackground;

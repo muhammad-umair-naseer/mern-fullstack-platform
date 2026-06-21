@@ -1,0 +1,164 @@
+/* ── Cosmic animated backdrop for Cortexis Solution Hub ──────────────
+   Fixed behind all content. Starfield + drifting blobs + rising particle
+   field + a slowly rotating wireframe globe, all in the brand palette. */
+
+.cx-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139, 92, 246, 0.16), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 90%, rgba(249, 115, 22, 0.10), transparent),
+    #07090f;
+}
+
+/* Starfield */
+.cx-stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 70% 65%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 85% 20%, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 10% 60%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 55% 15%, rgba(255, 255, 255, 0.4), transparent);
+  opacity: 0.6;
+  animation: cxTwinkle 7s ease-in-out infinite;
+}
+
+/* Drifting colour blobs */
+.cx-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+  animation: cxBlob 14s ease-in-out infinite;
+}
+
+/* Rising particle field */
+.cx-particle-field { position: absolute; inset: 0; overflow: hidden; }
+.cx-particle {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--pc, #8b5cf6), transparent 70%);
+  animation: cxDrift linear infinite;
+  will-change: transform, opacity;
+}
+
+/* Rotating wireframe globe (decorative, right side) */
+.cx-globe-stage {
+  position: absolute;
+  top: 50%;
+  right: -16vw;
+  transform: translateY(-50%);
+  width: min(58vw, 820px);
+  height: min(58vw, 820px);
+  perspective: 1400px;
+  opacity: 0.85;
+}
+@media (max-width: 991px) {
+  .cx-globe-stage { right: -34vw; top: 34%; width: 120vw; height: 120vw; opacity: 0.4; }
+}
+.cx-globe {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(139, 92, 246, 0.18), transparent 55%),
+    radial-gradient(circle at 70% 75%, rgba(249, 115, 22, 0.16), transparent 55%),
+    #0a0d16;
+  box-shadow: inset -40px -30px 90px rgba(0, 0, 0, 0.65),
+    inset 30px 20px 70px rgba(139, 92, 246, 0.07),
+    0 0 120px rgba(139, 92, 246, 0.06);
+}
+.cx-globe-grid {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: cxSpinY 60s linear infinite;
+  mix-blend-mode: screen;
+}
+.cx-meridian {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 4%, rgba(139, 92, 246, 0.45) 50%, transparent 96%);
+  transform-origin: center;
+}
+.cx-parallel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.cx-globe-rim {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.14);
+}
+.cx-globe-dots {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: cxSpinY 60s linear infinite;
+}
+.cx-doc-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  box-shadow: 0 0 12px 2px rgba(139, 92, 246, 0.75);
+  animation: cxBlip 2.6s ease-in-out infinite;
+}
+.cx-orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px dashed rgba(139, 92, 246, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(72deg);
+  animation: cxSpinY 80s linear infinite reverse;
+}
+.cx-orbit-sat {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  background: #f97316;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.8);
+}
+
+@keyframes cxTwinkle { 0%, 100% { opacity: 0.4 } 50% { opacity: 0.85 } }
+@keyframes cxBlob {
+  0%, 100% { transform: translate(0, 0) scale(1) }
+  33% { transform: translate(3%, -4%) scale(1.06) }
+  66% { transform: translate(-3%, 3%) scale(0.96) }
+}
+@keyframes cxDrift {
+  0% { transform: translateY(0) translateX(0); opacity: 0 }
+  8% { opacity: 1 }
+  92% { opacity: 1 }
+  100% { transform: translateY(-115vh) translateX(var(--dx, 20px)); opacity: 0 }
+}
+@keyframes cxSpinY { from { transform: rotateY(0) } to { transform: rotateY(360deg) } }
+@keyframes cxBlip { 0%, 100% { opacity: 0.25; transform: scale(0.8) } 50% { opacity: 1; transform: scale(1.3) } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-stars, .cx-blob, .cx-particle, .cx-globe-grid, .cx-globe-dots, .cx-orbit-ring, .cx-doc-dot {
+    animation: none !important;
+  }
+}
