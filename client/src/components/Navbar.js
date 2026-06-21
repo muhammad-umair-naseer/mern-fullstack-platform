@@ -19,7 +19,7 @@ const Navbar = () => {
           </span>
           <span className="nav-logo-wrap">
             <span className="nav-logo-text">Cortexis</span>
-            <span className="nav-logo-sub">Solution Hub</span>
+            <span className="nav-logo-sub">Solution Hub Pvt Ltd</span>
           </span>
         </Link>
 

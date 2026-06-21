@@ -10,7 +10,7 @@ const Footer = () => {
 
         <div className="footer-content" role="presentation">
           <section className="footer-section">
-            <h3 className="footer-brand">Cortexis Solution Hub</h3>
+            <h3 className="footer-brand">Cortexis Solution Hub Pvt Ltd</h3>
             <p>Engineering intelligent digital solutions — software, training, and consulting — for teams across Pakistan and beyond.</p>
 
             <ul className="footer-social" aria-label="Social links" role="list">
