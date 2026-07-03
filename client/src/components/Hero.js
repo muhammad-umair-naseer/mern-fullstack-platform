@@ -80,7 +80,19 @@ const Hero = () => {
 
   return (
     <section className="hero" aria-labelledby="hero-heading" ref={scope}>
+      {/* Decorative floating glows for depth */}
+      <div className="hero-orbs" aria-hidden="true">
+        <span className="hero-orb hero-orb--1" />
+        <span className="hero-orb hero-orb--2" />
+        <span className="hero-orb hero-orb--3" />
+      </div>
+
       <div className="hero-content">
+        <span className="hero-badge" data-hero>
+          <span className="hero-badge-dot" />
+          Software&nbsp;·&nbsp;Training&nbsp;·&nbsp;Consulting
+        </span>
+
         <h1 id="hero-heading" data-hero>
           Engineering <em className="hero-gradient-text">Intelligent</em> Digital Solutions
         </h1>
@@ -110,6 +122,11 @@ const Hero = () => {
           ))}
         </div>
       </div>
+
+      <a href="#services-heading" className="hero-scroll" aria-label="Scroll to explore" data-hero>
+        <span className="hero-scroll-text">Scroll</span>
+        <span className="hero-scroll-mouse"><span className="hero-scroll-wheel" /></span>
+      </a>
     </section>
   );
 };

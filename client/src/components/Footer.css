@@ -119,11 +119,37 @@
 
 /* Bottom */
 .footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
   text-align: center;
   padding-top: 18px;
   border-top: 1px solid rgba(148, 163, 184, 0.18);
   color: #94a3b8;
   font-size: 0.95rem;
+}
+.footer-bottom p { margin: 0; }
+.footer-legal {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-legal a {
+  color: #b9c2da;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.footer-legal a:hover {
+  color: #fff;
+  background: linear-gradient(90deg, #8b5cf6, #e056e5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@media (max-width: 640px) {
+  .footer-bottom { justify-content: center; }
 }
 
 /* Visually hidden utility */

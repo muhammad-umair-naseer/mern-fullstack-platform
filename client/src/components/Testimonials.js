@@ -1,5 +1,6 @@
 import React from "react";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
+import SectionHeading from "./SectionHeading";
 import "./Testimonials.css";
 
 import client1 from "../assets/client 1.jpg";
@@ -13,40 +14,34 @@ const Testimonials = () => {
   const testimonials = [
     {
       name: "Arslan Ali",
-      company: "Karachi Tech Ventures",
       text:
         "Cortexis Solution Hub revamped our portal with a clean UI and blazing performance. Leads and demo requests jumped noticeably within weeks.",
       image: client1
-
     },
-
     {
       name: "Usman Ahmed",
-      company: "Lahore Digital Works",
       text:
         "Our Flutter app launch was smooth and on time. Push notifications and offline mode improved retention across the board.",
       image: client2
-         
-      
     },
-
     {
       name: "Idrees Khan",
-      company: "Islamabad EduLabs",
       text:
-      "The team delivered on time with reliable, high-quality code. Communication and workflow were absolutely seamless throughout.",
+        "The team delivered on time with reliable, high-quality code. Communication and workflow were absolutely seamless throughout.",
       image: client3
-         
     },
   ];
 
   return (
     <section className="testimonials-container" aria-labelledby="testimonials-heading" ref={scope}>
       <div className="container">
-        <h2 id="testimonials-heading" className="testimonials-title" data-reveal>
-          What Clients in Pakistan Say
-        </h2>
-        <p className="testimonials-subtitle" data-reveal>Real outcomes from teams we partner with</p>
+        <SectionHeading
+          id="testimonials-heading"
+          eyebrow="Client stories"
+          title="What Clients in Pakistan Say"
+          subtitle="Real outcomes from teams we partner with"
+          titleClassName="testimonials-title"
+        />
 
         <ul className="row testimonials-row" role="list" aria-label="Client testimonials">
           {testimonials.map((t, i) => {
@@ -69,8 +64,6 @@ const Testimonials = () => {
                   </div>
                   <figcaption className="card-footer text-center">
                     <strong className="testimonial-name">{t.name}</strong>
-                    <br />
-                    <small className="text-muted">{t.company}</small>
                   </figcaption>
                 </figure>
               </li>

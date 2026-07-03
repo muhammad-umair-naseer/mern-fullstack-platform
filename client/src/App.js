@@ -6,6 +6,7 @@ import AnimatedBackground from './components/AnimatedBackground';
 import './App.css';
 import './Pages.css';
 import './theme-cosmic.css';
+import './premium.css';
 
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
@@ -14,6 +15,8 @@ const Courses = lazy(() => import('./pages/Courses'));
 const Internships = lazy(() => import('./pages/Internships'));
 
 const Contact = lazy(() => import('./pages/Contact'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 export default function App() {
   return (
@@ -30,6 +33,8 @@ export default function App() {
             <Route path="/internships" element={<Internships />} />
 
             <Route path="/contact" element={<Contact />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </Suspense>
         <Footer />

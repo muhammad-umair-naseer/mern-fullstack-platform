@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
+import SectionHeading from './SectionHeading';
 import './CoursesPreview.css';
 import fullstackImg from '../assets/courses/full-stack-web.png';
 import dataSciImg from '../assets/data science.png';
@@ -32,8 +33,13 @@ const CoursesPreview = () => {
   return (
     <section className="courses-container" aria-labelledby="courses-heading" ref={scope}>
       <div className="container">
-        <h2 id="courses-heading" className="courses-title" data-reveal>Featured Courses</h2>
-        <p className="courses-subtitle" data-reveal>Outcome-driven programs with hands-on projects and expert mentorship</p>
+        <SectionHeading
+          id="courses-heading"
+          eyebrow="Learn with us"
+          title="Featured Courses"
+          subtitle="Outcome-driven programs with hands-on projects and expert mentorship"
+          titleClassName="courses-title"
+        />
         <ul className="courses-row row" role="list" aria-label="Featured course cards">
           {courses.map((course, index) => {
             const titleId = `course-title-${index}`;

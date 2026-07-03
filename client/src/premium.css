@@ -1,0 +1,141 @@
+/* ════════════════════════════════════════════════════════════════════
+   Premium cross-cutting polish. Imported after theme-cosmic.css so it can
+   layer editorial section headings and richer card accents onto the
+   existing cosmic components without touching every file.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Editorial section heading ─────────────────────────────────────── */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2.75rem;
+}
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.95rem;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #c9b6ff;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+}
+.section-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #8b5cf6, #e056e5);
+  box-shadow: 0 0 8px 1px rgba(224, 86, 229, 0.6);
+}
+
+/* Gradient underline accent beneath section titles */
+.section-head .section-title,
+.section-head .courses-title,
+.section-head .testimonials-title {
+  position: relative;
+  margin-bottom: 1.1rem;
+}
+.section-head .section-title::after,
+.section-head .courses-title::after,
+.section-head .testimonials-title::after {
+  content: "";
+  display: block;
+  width: 68px;
+  height: 4px;
+  margin: 0.9rem auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8b5cf6, #e056e5, #f97316);
+}
+
+/* ── Preview cards: gradient top-accent on hover ───────────────────── */
+.service-preview-card,
+.course-preview-card {
+  position: relative;
+}
+.service-preview-card::before,
+.course-preview-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  border-radius: 14px 14px 0 0;
+  background: linear-gradient(90deg, #8b5cf6, #e056e5, #f97316);
+  opacity: 0;
+  transform: scaleX(0.4);
+  transform-origin: left;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 3;
+}
+.service-preview-card:hover::before,
+.course-preview-card:hover::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ── Testimonials: quotation flourish + gradient avatar ring ───────── */
+.testimonial-card { position: relative; overflow: hidden; }
+.testimonial-card .card-body { position: relative; }
+.testimonial-card .card-body::before {
+  content: "\201C";
+  position: absolute;
+  top: -18px;
+  left: 14px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 5.5rem;
+  line-height: 1;
+  color: rgba(139, 92, 246, 0.22);
+  pointer-events: none;
+}
+.testimonial-card .avatar-wrap {
+  display: inline-block;
+  padding: 3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cf6, #e056e5, #f97316);
+}
+.testimonial-card .testimonial-img {
+  display: block;
+  border: 2px solid #0b0e17;
+}
+
+/* ── View-all buttons: gradient fill ───────────────────────────────── */
+.btn-view-all {
+  position: relative;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  color: #d7ddf2 !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.btn-view-all:hover,
+.btn-view-all:focus-visible {
+  color: #fff !important;
+  background: linear-gradient(90deg, #7c3aed, #e056e5) !important;
+  border-color: transparent !important;
+  box-shadow: 0 10px 30px rgba(224, 86, 229, 0.32) !important;
+}
+
+/* ── Solid white CTA (opts out of the global .bg-white glassification) ── */
+.btn-cta-white {
+  background: #ffffff !important;
+  color: #6d28d9 !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28) !important;
+}
+.btn-cta-white:hover {
+  background: #f5f3ff !important;
+  box-shadow: 0 16px 40px rgba(139, 92, 246, 0.32) !important;
+}
+
+@media (max-width: 768px) {
+  .section-head { margin-bottom: 2rem; }
+}

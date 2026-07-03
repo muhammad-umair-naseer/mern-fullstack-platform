@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
+import SectionHeading from './SectionHeading';
 import './ServicesPreview.css';
 import webImg from '../assets/services/web-development.png';
 import mobileImg from '../assets/services/mobile-app-development.png';
@@ -29,8 +30,12 @@ const ServicesPreview = () => {
   return (
     <section className="services-container" aria-labelledby="services-heading" ref={scope}>
       <div className="container">
-        <h2 id="services-heading" className="section-title" data-reveal>Our Services</h2>
-        <p className="section-subtitle" data-reveal>Outcome-focused solutions delivered by experienced engineers and designers</p>
+        <SectionHeading
+          id="services-heading"
+          eyebrow="What we do"
+          title="Our Services"
+          subtitle="Outcome-focused solutions delivered by experienced engineers and designers"
+        />
 
         <ul className="services-row row" role="list" aria-label="Service cards">
           {services.map((service, index) => {

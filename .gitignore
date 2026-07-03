@@ -35,6 +35,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Claude Code local tooling
+.claude/
+
 # Large media files
 uploads/
 *.mp4

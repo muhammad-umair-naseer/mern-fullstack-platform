@@ -36,8 +36,9 @@ const Footer = () => {
             <h4>More Links</h4>
             <ul role="list">
               <li><Link to="/internships">Internships</Link></li>
-             
               <li><Link to="/contact">Contact Us</Link></li>
+              <li><Link to="/terms">Terms &amp; Conditions</Link></li>
+              <li><Link to="/privacy">Privacy Policy</Link></li>
             </ul>
           </nav>
 
@@ -53,6 +54,11 @@ const Footer = () => {
 
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Cortexis Solution Hub Pvt Ltd. All rights reserved.</p>
+          <nav className="footer-legal" aria-label="Legal">
+            <Link to="/terms">Terms &amp; Conditions</Link>
+            <span aria-hidden="true">·</span>
+            <Link to="/privacy">Privacy Policy</Link>
+          </nav>
         </div>
       </div>
     </footer>

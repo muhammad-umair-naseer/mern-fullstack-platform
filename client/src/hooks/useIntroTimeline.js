@@ -20,16 +20,36 @@ export function useIntroTimeline(selector = '[data-intro]', opts = {}) {
       const items = gsap.utils.toArray(selector, scope.current);
       if (!items.length) return;
 
-      gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
-        gsap.from(items, {
-          opacity: 0,
-          y,
-          duration,
-          ease: 'power3.out',
-          stagger,
-          delay,
-        });
+      const mm = gsap.matchMedia();
+
+      // Full motion. fromTo + clearProps guarantees the resting state is the
+      // element's natural position (no leftover transform) even if React
+      // StrictMode double-invokes the effect and interrupts the tween.
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo(
+          items,
+          { opacity: 0, y },
+          {
+            opacity: 1,
+            y: 0,
+            duration,
+            ease: 'power3.out',
+            stagger,
+            delay,
+            overwrite: 'auto',
+            clearProps: 'transform',
+          }
+        );
       });
+
+      // Reduced motion — show everything, no transforms.
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        gsap.set(items, { opacity: 1, y: 0, clearProps: 'transform' });
+      });
+
+      // Revert on cleanup so a StrictMode-interrupted first pass leaves nothing
+      // pinned to its start offset.
+      return () => mm.revert();
     },
     { scope }
   );
