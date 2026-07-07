@@ -43,6 +43,7 @@ const Navbar = () => {
           <Link to="/services" className="nav-link" onClick={closeMenu} data-intro>Services</Link>
           <Link to="/courses" className="nav-link" onClick={closeMenu} data-intro>Courses</Link>
           <Link to="/internships" className="nav-link" onClick={closeMenu} data-intro>Internships</Link>
+          <Link to="/whatsapp-bot" className="nav-link" onClick={closeMenu} data-intro>WhatsApp Bot</Link>
           <Link to="/about" className="nav-link" onClick={closeMenu} data-intro>About Us</Link>
           <Link to="/contact" className="nav-link nav-cta" onClick={closeMenu} data-intro>Contact Us</Link>
         </nav>

@@ -7,7 +7,9 @@ import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 const NAV_OFFSET = 96; // clears the 72px sticky navbar + breathing room
 
 /* Render one content block. Blocks keep pages declarative:
-   { p }  paragraph · { h }  sub-heading · { list } bullet list · { note } callout */
+   { p } paragraph · { h } sub-heading · { list } bullet list (items are strings or
+   { b, t } bold-lead) · { note } callout · { table:{head,rows} } · { cards:[{icon,title,text}] }
+   · { callout:{variant:'info'|'warn', title, text} } */
 function Block({ block }) {
   if (block.h) {
     return <h3 className="mt-7 mb-2 text-lg font-semibold text-slate-900">{block.h}</h3>;
@@ -18,10 +20,76 @@ function Block({ block }) {
         {block.list.map((item, i) => (
           <li key={i} className="flex gap-3 text-slate-600 leading-relaxed">
             <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-brand-accent to-brand-magenta" />
-            <span>{item}</span>
+            <span>
+              {typeof item === 'string' ? (
+                item
+              ) : (
+                <>
+                  <strong className="font-semibold text-slate-900">{item.b}</strong> {item.t}
+                </>
+              )}
+            </span>
           </li>
         ))}
       </ul>
+    );
+  }
+  if (block.table) {
+    return (
+      <div className="my-5 overflow-x-auto rounded-2xl ring-1 ring-slate-200">
+        <table className="w-full min-w-[540px] border-collapse text-sm">
+          <thead>
+            <tr>
+              {block.table.head.map((h, i) => (
+                <th key={i} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {block.table.rows.map((row, ri) => (
+              <tr key={ri}>
+                {row.map((cell, ci) => (
+                  <td key={ci} className="px-4 py-3 align-top text-slate-600">
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+  if (block.callout) {
+    const warn = block.callout.variant === 'warn';
+    return (
+      <div
+        className={`my-5 rounded-2xl border-l-4 bg-white p-5 ring-1 ring-slate-200/70 ${
+          warn ? 'border-amber-400' : 'border-brand-accent'
+        }`}
+      >
+        {block.callout.title && <p className="mb-1 font-semibold text-slate-900">{block.callout.title}</p>}
+        <p className="text-sm leading-relaxed text-slate-600">{block.callout.text}</p>
+      </div>
+    );
+  }
+  if (block.cards) {
+    return (
+      <div className="my-5 grid gap-4 sm:grid-cols-2">
+        {block.cards.map((c, i) => (
+          <div key={i} className="rounded-2xl bg-white p-5 ring-1 ring-slate-200">
+            {c.icon && (
+              <div className="mb-2 text-2xl" aria-hidden>
+                {c.icon}
+              </div>
+            )}
+            <h4 className="text-sm font-semibold text-slate-900">{c.title}</h4>
+            <p className="mt-1 text-sm leading-relaxed text-slate-600">{c.text}</p>
+          </div>
+        ))}
+      </div>
     );
   }
   if (block.note) {
@@ -34,7 +102,11 @@ function Block({ block }) {
   return <p className="my-3 text-slate-600 leading-relaxed">{block.p}</p>;
 }
 
-export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated, sections }) {
+export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated, sections, contactHref = '/contact', crossLink }) {
+  const cross = crossLink || {
+    to: kind === 'privacy' ? '/terms' : '/privacy',
+    label: kind === 'privacy' ? 'Terms & Conditions' : 'Privacy Policy',
+  };
   const heroRef = useIntroTimeline();
   const bodyRef = useRevealOnScroll('[data-reveal]', { y: 32, stagger: 0.08 });
 
@@ -252,16 +324,16 @@ export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated
                 </p>
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                   <Link
-                    to="/contact"
+                    to={contactHref}
                     className="btn-cta-white inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold shadow-lg transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300"
                   >
                     <Mail className="h-4 w-4" /> Contact us
                   </Link>
                   <Link
-                    to={kind === 'privacy' ? '/terms' : '/privacy'}
+                    to={cross.to}
                     className="inline-flex items-center gap-2 rounded-full bg-transparent px-6 py-3 font-semibold text-white ring-2 ring-white/60 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300"
                   >
-                    {kind === 'privacy' ? 'Terms & Conditions' : 'Privacy Policy'}
+                    {cross.label}
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>

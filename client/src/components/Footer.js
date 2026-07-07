@@ -42,6 +42,16 @@ const Footer = () => {
             </ul>
           </nav>
 
+          <nav className="footer-section" aria-label="WhatsApp Bot" data-reveal>
+            <h4>WhatsApp Bot</h4>
+            <ul role="list">
+              <li><Link to="/whatsapp-bot">Overview</Link></li>
+              <li><Link to="/whatsapp-bot/privacy">Privacy Policy</Link></li>
+              <li><Link to="/whatsapp-bot/terms">Terms of Service</Link></li>
+              <li><Link to="/whatsapp-bot/data-deletion">Data Deletion</Link></li>
+            </ul>
+          </nav>
+
           <section className="footer-section" aria-label="Contact information" data-reveal>
             <h4>Contact</h4>
             <address className="contact-block">
