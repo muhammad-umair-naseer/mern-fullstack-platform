@@ -34,7 +34,7 @@
 .bg-slate-100, .bg-gray-100 { background-color: var(--cx-glass) !important; }
 
 /* ─── Text (dark → light/dim) ──────────────────────────────────────── */
-.text-slate-900, .text-gray-900, .text-gray-800, .text-black { color: var(--cx-text) !important; }
+.text-slate-900, .text-slate-800, .text-gray-900, .text-gray-800, .text-black { color: var(--cx-text) !important; }
 .text-slate-700, .text-slate-600, .text-gray-700, .text-gray-600 { color: var(--cx-dim) !important; }
 .text-slate-500, .text-slate-400, .text-gray-500 { color: var(--cx-faint) !important; }
 
