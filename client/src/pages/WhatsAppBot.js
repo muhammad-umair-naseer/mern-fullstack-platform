@@ -81,14 +81,7 @@ export default function WhatsAppBot() {
             </Link>
           </div>
 
-          <div data-intro className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-400">
-            <span className="text-slate-500">Legal:</span>
-            <Link to="/whatsapp-bot/privacy" className="wa-legal-link">Privacy Policy</Link>
-            <span aria-hidden="true" className="text-slate-600">·</span>
-            <Link to="/whatsapp-bot/terms" className="wa-legal-link">Terms of Service</Link>
-            <span aria-hidden="true" className="text-slate-600">·</span>
-            <Link to="/whatsapp-bot/data-deletion" className="wa-legal-link">Data Deletion</Link>
-          </div>
+          
         </div>
 
         {/* ── Chat mockup ──────────────────────────────────────────────── */}
