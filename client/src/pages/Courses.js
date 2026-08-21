@@ -17,10 +17,21 @@ import wordpressImg from "../assets/courses/wordpress-development.webp";
 import aimlImg from "../assets/courses/ai-ml-essentials.webp";
 import uiuxImg from "../assets/courses/ui-ux-bootcamp.webp";
 import graphicsImg from "../assets/courses/graphic-design-ps-ai.webp";
+import aiEngineeringImg from "../assets/courses/ai-engineering.webp";
+import cloudDevopsImg from "../assets/courses/cloud-devops.webp";
+import cybersecurityImg from "../assets/courses/cybersecurity-fundamentals.webp";
+import dataScienceImg from "../assets/courses/data-science-python.webp";
+import digitalMarketingImg from "../assets/courses/digital-marketing.webp";
+import excelImg from "../assets/courses/excel-business-analytics.webp";
+import gitGithubImg from "../assets/courses/git-github.webp";
+import nodeJsImg from "../assets/courses/nodejs-backend.webp";
+import reactNativeImg from "../assets/courses/react-native.webp";
+import softwareTestingImg from "../assets/courses/software-testing-qa.webp";
+import sqlDataImg from "../assets/courses/sql-data-analysis.webp";
+import typescriptImg from "../assets/courses/typescript.webp";
 import coursesHero from "../assets/courses/courses-hero.webp";
 
-// coverKey comes from the course content file, so adding a course means adding
-// its image here (or letting it fall back to the gradient below).
+// coverKey comes from the course content file, mapping each course to its HD WebP image
 const COVERS = {
   "full-stack-web": fullstackImg,
   "frontend-engineering": frontendImg,
@@ -33,6 +44,18 @@ const COVERS = {
   "ai-ml-essentials": aimlImg,
   "ui-ux-bootcamp": uiuxImg,
   "graphic-design-ps-ai": graphicsImg,
+  "ai-engineering": aiEngineeringImg,
+  "cloud-devops": cloudDevopsImg,
+  "cybersecurity-fundamentals": cybersecurityImg,
+  "data-science-python": dataScienceImg,
+  "digital-marketing": digitalMarketingImg,
+  "excel-business-analytics": excelImg,
+  "git-github": gitGithubImg,
+  "nodejs-backend": nodeJsImg,
+  "react-native": reactNativeImg,
+  "software-testing-qa": softwareTestingImg,
+  "sql-data-analysis": sqlDataImg,
+  "typescript": typescriptImg,
 };
 
 // Courses without artwork fall back to a generated cover. Keyed off the
