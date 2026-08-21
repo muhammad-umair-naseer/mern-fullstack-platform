@@ -2,12 +2,15 @@ import Joi from 'joi';
 
 
 export const internshipApplicationSchema = Joi.object({
-name: Joi.string().min(2).max(100).required(),
-email: Joi.string().email().required(),
-phone: Joi.string().allow('', null),
-internshipTitle: Joi.string().min(2).max(200).required(),
-resumeLink: Joi.string().uri().allow('', null),
-coverLetter: Joi.string().allow('', null),
+  name: Joi.string().min(2).max(100).required(),
+  email: Joi.string().email().required(),
+  phone: Joi.string().allow('', null),
+  internshipTitle: Joi.string().min(2).max(200).required(),
+  resumeLink: Joi.string().allow('', null),
+  university: Joi.string().allow('', null),
+  experienceLevel: Joi.string().allow('', null),
+  duration: Joi.string().allow('', null),
+  coverLetter: Joi.string().allow('', null),
 });
 
 

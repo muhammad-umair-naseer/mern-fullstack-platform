@@ -147,32 +147,32 @@ const CourseOutline = () => {
       </header>
 
       <section className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-2xl font-bold text-slate-900 mb-6">Course outline</h2>
+        <h2 className="text-2xl font-extrabold text-black mb-6">Course outline</h2>
 
         <div className="space-y-4">
           {course.chapters.map((ch) => {
             const chDone = ch.lessons.filter((l) => done.has(l.id)).length;
             const chState = gates?.chapters?.find((c) => c.id === ch.id);
             return (
-              <article key={ch.id} className="bg-white rounded-2xl shadow-card overflow-hidden">
-                <div className="p-6 border-b border-white/10">
+              <article key={ch.id} className="bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden">
+                <div className="p-6 border-b border-slate-200 bg-slate-50/50">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wide">
+                      <p className="text-xs font-bold text-orange-600 uppercase tracking-wide">
                         Chapter {ch.position}
                       </p>
-                      <h3 className="mt-1 text-lg font-semibold text-slate-900">{ch.title}</h3>
-                      {ch.summary && <p className="mt-1 text-slate-600 text-sm">{ch.summary}</p>}
+                      <h3 className="mt-1 text-lg font-bold text-black">{ch.title}</h3>
+                      {ch.summary && <p className="mt-1 text-black font-medium text-sm leading-relaxed">{ch.summary}</p>}
                     </div>
                     {enrolled && (
-                      <span className="shrink-0 text-sm text-slate-500">
+                      <span className="shrink-0 text-sm font-bold text-black">
                         {chState && !chState.unlocked ? '🔒 Locked' : `${chDone}/${ch.lessons.length}`}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <ul className="divide-y divide-white/5">
+                <ul className="divide-y divide-slate-200 bg-white">
                   {ch.lessons.map((l) => {
                     const gate = lessonGate(l.id);
                     const locked = enrolled && gate && !gate.unlocked;
@@ -180,12 +180,12 @@ const CourseOutline = () => {
 
                     const marker = (
                       <span
-                        className={`grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs ${
+                        className={`grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs font-bold ${
                           isDone
                             ? 'bg-emerald-500 text-white'
                             : locked
-                            ? 'bg-white/5 text-slate-500'
-                            : 'border border-slate-300 text-slate-500'
+                            ? 'bg-slate-200 text-slate-600'
+                            : 'border-2 border-orange-500 text-orange-600 font-bold'
                         }`}
                       >
                         {isDone ? '✓' : locked ? '🔒' : l.position}
@@ -195,10 +195,10 @@ const CourseOutline = () => {
                     const body = (
                       <>
                         {marker}
-                        <span className={`flex-1 ${locked ? 'text-slate-500' : 'text-slate-700'}`}>
+                        <span className={`flex-1 font-semibold ${locked ? 'text-slate-500' : 'text-black'}`}>
                           {l.title}
                         </span>
-                        <span className="text-xs text-slate-500 shrink-0">{l.minutes} min</span>
+                        <span className="text-xs text-black font-bold shrink-0">{l.minutes} min</span>
                       </>
                     );
 
@@ -206,13 +206,13 @@ const CourseOutline = () => {
                       return (
                         <li key={l.id}>
                           <div
-                            className="flex items-center gap-3 px-6 py-3.5 opacity-70"
+                            className="flex items-center gap-3 px-6 py-3.5 opacity-70 bg-slate-50/30"
                             title={locked ? gate.reason : undefined}
                           >
                             {body}
                           </div>
                           {locked && (
-                            <p className="px-6 pb-3 -mt-1.5 text-xs text-amber-300/80">{gate.reason}</p>
+                            <p className="px-6 pb-3 -mt-1.5 text-xs text-amber-700 font-semibold">{gate.reason}</p>
                           )}
                         </li>
                       );
@@ -222,7 +222,7 @@ const CourseOutline = () => {
                       <li key={l.id}>
                         <Link
                           to={`/learn/${slug}/lesson/${l.id}`}
-                          className="flex items-center gap-3 px-6 py-3.5 hover:bg-white/5 transition"
+                          className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/50 transition"
                         >
                           {body}
                         </Link>
@@ -238,25 +238,25 @@ const CourseOutline = () => {
                     const inner = (
                       <>
                         <span
-                          className={`grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs ${
+                          className={`grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs font-bold ${
                             passed
                               ? 'bg-emerald-500 text-white'
                               : locked
-                              ? 'bg-white/5 text-slate-500'
-                              : 'bg-indigo-500/20 text-indigo-300'
+                              ? 'bg-slate-200 text-slate-600'
+                              : 'bg-orange-100 text-orange-700 border border-orange-300'
                           }`}
                         >
                           {passed ? '✓' : locked ? '🔒' : '?'}
                         </span>
                         <span
-                          className={`flex-1 font-medium ${
-                            locked ? 'text-slate-500' : passed ? 'text-emerald-300' : 'text-indigo-300'
+                          className={`flex-1 font-bold ${
+                            locked ? 'text-slate-500' : passed ? 'text-emerald-700' : 'text-orange-700'
                           }`}
                         >
                           Chapter {ch.position} quiz
                           {passed && ' · passed'}
                         </span>
-                        <span className="text-xs text-slate-500 shrink-0">
+                        <span className="text-xs text-black font-bold shrink-0">
                           {ch.quizCount} questions
                         </span>
                       </>
@@ -266,15 +266,15 @@ const CourseOutline = () => {
                       <li key={`quiz-${ch.id}`}>
                         {!enrolled || locked ? (
                           <>
-                            <div className="flex items-center gap-3 px-6 py-3.5 opacity-70">{inner}</div>
+                            <div className="flex items-center gap-3 px-6 py-3.5 opacity-70 bg-slate-50/30">{inner}</div>
                             {locked && (
-                              <p className="px-6 pb-3 -mt-1.5 text-xs text-amber-300/80">{gate.reason}</p>
+                              <p className="px-6 pb-3 -mt-1.5 text-xs text-amber-700 font-semibold">{gate.reason}</p>
                             )}
                           </>
                         ) : (
                           <Link
                             to={`/learn/${slug}/quiz/${ch.id}`}
-                            className="flex items-center gap-3 px-6 py-3.5 hover:bg-white/5 transition"
+                            className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/50 transition"
                           >
                             {inner}
                           </Link>

@@ -1,0 +1,187 @@
+/* ==========================================================================
+   Cortexis - Glassmorphism Internship Portal
+   ========================================================================== */
+
+.cx-intern-page {
+  position: relative;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #000000;
+  overflow: hidden;
+}
+
+/* Ambient Glassmorphism Backing Glows */
+.cx-intern-glow-1 {
+  position: absolute;
+  top: -100px;
+  left: 10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0) 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.cx-intern-glow-2 {
+  position: absolute;
+  top: 35%;
+  right: 5%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(234, 88, 12, 0.12) 0%, rgba(251, 146, 60, 0) 70%);
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.cx-intern-glow-3 {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(7, 14, 30, 0.06) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glassmorphism Card Containers */
+.cx-glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(249, 115, 22, 0.08);
+  border-radius: 28px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cx-glass-card-dark {
+  background: linear-gradient(145deg, rgba(7, 14, 30, 0.95) 0%, rgba(15, 23, 42, 0.92) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.35);
+  border-radius: 28px;
+  color: #ffffff;
+}
+
+/* Form Input Elements */
+.cx-glass-input {
+  width: 100%;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem;
+  border-radius: 14px;
+  padding: 12px 16px 12px 42px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.cx-glass-input-noicon {
+  padding-left: 16px !important;
+}
+
+.cx-glass-input:focus {
+  outline: none;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.18) !important;
+  background: #ffffff !important;
+}
+
+.cx-glass-input::placeholder {
+  color: #64748b !important;
+  font-weight: 500;
+}
+
+.cx-glass-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+  padding-right: 44px !important;
+  cursor: pointer;
+}
+
+.cx-glass-textarea {
+  width: 100%;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem;
+  border-radius: 14px;
+  padding: 14px 16px;
+  transition: all 0.2s ease;
+  resize: vertical;
+}
+
+.cx-glass-textarea:focus {
+  outline: none;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.18) !important;
+}
+
+.cx-field-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #000000;
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.cx-field-error {
+  margin-top: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Glass Perk Item */
+.cx-glass-perk {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.cx-glass-perk:hover {
+  transform: translateX(4px);
+  border-color: rgba(249, 115, 22, 0.5);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* Success Card Pulse */
+.cx-success-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+  animation: cxPulse 2s infinite;
+}
+
+@keyframes cxPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}

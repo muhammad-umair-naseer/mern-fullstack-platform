@@ -3,15 +3,15 @@ import { Link } from "react-router-dom";
 import { Rocket, Target, Eye, ShieldCheck, Award, FolderCheck, Globe2, Smile, ArrowRight, Sparkles } from "lucide-react";
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
-import hero  from "../assets/hero About.png";
-import aboutMission from "../assets/our mission About.png";
-import aboutVision from "../assets/our vision About.png";
-import aboutPromise from "../assets/our promise About.png";
-import aboutStory from "../assets/our story About.png";
-import team1 from "../assets/team 1.jpg";
-import team2 from "../assets/team 2.jpg";
-import team3 from "../assets/team 3.jpg";
-import team4 from "../assets/team 4.jpg";
+import hero from "../assets/hero About.webp";
+import aboutMission from "../assets/our mission About.webp";
+import aboutVision from "../assets/our vision About.webp";
+import aboutPromise from "../assets/our promise About.webp";
+import aboutStory from "../assets/our story About.webp";
+import team1 from "../assets/team 1.webp";
+import team2 from "../assets/team 2.webp";
+import team3 from "../assets/team 3.webp";
+import team4 from "../assets/team 4.webp";
 
 const stats = [
   { icon: Award, number: "4+", label: "Years of Excellence" },
@@ -21,16 +21,16 @@ const stats = [
 ];
 
 const drivers = [
-  { icon: Target, img: aboutMission, title: "Our Mission", text: "Create solutions that keep businesses competitive, efficient, and impactful in a digital-first world." },
+  { icon: Target, img: aboutMission, title: "Our Mission", text: "Empower businesses with transformative tech and train the next generation of engineers." },
   { icon: Eye, img: aboutVision, title: "Our Vision", text: "Be a trusted global partner recognized for innovation, quality, and measurable impact." },
-  { icon: ShieldCheck, img: aboutPromise, title: "Our Promise", text: "Deliver secure, scalable, and future-ready products that drive real transformation." },
+  { icon: ShieldCheck, img: aboutPromise, title: "Our Promise", text: "Transparent collaboration, agile delivery, and scalable engineering from day one." },
 ];
 
 const team = [
-  { name: "Ilyas Khan", role: "Operational Manager", image: team1 },
-  { name: "Umair Khan", role: "UI/UX Engineer", image: team2 },
-  { name: "Taimoor Saleem", role: "Head of Strategy", image: team3 },
-  { name: "Faisal Imran", role: "Finance Manager", image: team4 },
+  { name: "Muhammad Umer", role: "CEO & Full-Stack Architect", image: team1 },
+  { name: "Muhammad Abdullah", role: "Lead Frontend Engineer", image: team2 },
+  { name: "Syed Sabeeh", role: "AI / ML & Cloud Specialist", image: team3 },
+  { name: "Ahsan Raza", role: "UI/UX & Product Designer", image: team4 },
 ];
 
 const About = () => {
@@ -62,7 +62,7 @@ const About = () => {
               className="mt-6 text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight"
             >
               Empowering Businesses Through{" "}
-              <span className="bg-gradient-to-r from-amber-300 via-white to-white bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#ea580c] via-[#f97316] to-[#ff6b00] bg-clip-text text-transparent font-black">
                 Innovation
               </span>
             </h1>

@@ -1,4 +1,4 @@
-/* Liquid glass backdrop — morphing blobs fused by an SVG goo filter. */
+/* Liquid glass backdrop — clean white luxury field with ultra-subtle ambient warmth */
 
 .cx-backdrop {
   position: fixed;
@@ -7,18 +7,15 @@
   overflow: hidden;
   pointer-events: none;
   background:
-    radial-gradient(1100px 640px at 12% -8%, #e7eff9 0%, transparent 62%),
-    radial-gradient(900px 560px at 92% 6%, #f3efe4 0%, transparent 64%),
-    linear-gradient(180deg, #f8fafd 0%, #f3f6fb 55%, #eef2f8 100%);
+    radial-gradient(1100px 640px at 10% -5%, rgba(249, 115, 22, 0.035) 0%, transparent 60%),
+    radial-gradient(900px 560px at 90% 10%, rgba(251, 146, 60, 0.025) 0%, transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #fafbfc 60%, #f4f6fa 100%);
 }
 
-/* No filter on the container: anything animating inside would force the whole
-   layer to be re-filtered every frame. `contain` also stops style and paint
-   invalidation escaping into the page content above. */
 .cx-liquid {
   position: absolute;
   inset: -8%;
-  opacity: 0.92;
+  opacity: 0.6;
   contain: layout paint;
 }
 
@@ -26,55 +23,47 @@
   position: absolute;
   display: block;
   border-radius: 50%;
-  /* Blurred once at rasterisation, then only moved — the compositor can reuse
-     the same texture rather than re-blurring per frame. */
-  filter: blur(44px);
+  filter: blur(60px);
   will-change: transform;
   animation-name: cxFlow;
   animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
   animation-iteration-count: infinite;
 }
 
-/* transform and opacity only. The previous build also animated border-radius,
-   which is neither compositable nor cheap: it forces style + paint each frame. */
 @keyframes cxFlow {
   0%,
   100% { transform: translate3d(0, 0, 0) scale(1); }
-  25%  { transform: translate3d(4vw, -3vh, 0) scale(1.06); }
-  50%  { transform: translate3d(1vw, 4vh, 0) scale(0.95); }
-  75%  { transform: translate3d(-4vw, 1vh, 0) scale(1.04); }
+  25%  { transform: translate3d(3vw, -2vh, 0) scale(1.04); }
+  50%  { transform: translate3d(1vw, 3vh, 0) scale(0.96); }
+  75%  { transform: translate3d(-3vw, 1vh, 0) scale(1.02); }
 }
 
-.cx-pool--a { background: radial-gradient(circle, rgba(43,107,168,0.30), transparent 70%);  animation-duration: 26s; }
-.cx-pool--b { background: radial-gradient(circle, rgba(120,168,219,0.34), transparent 70%); animation-duration: 31s; animation-delay: -6s; }
-.cx-pool--c { background: radial-gradient(circle, rgba(23,66,108,0.24), transparent 72%);   animation-duration: 29s; animation-delay: -13s; }
-.cx-pool--d { background: radial-gradient(circle, rgba(212,162,68,0.28), transparent 70%);  animation-duration: 35s; animation-delay: -9s; }
-.cx-pool--e { background: radial-gradient(circle, rgba(74,134,196,0.30), transparent 72%);  animation-duration: 24s; animation-delay: -17s; }
-.cx-pool--f { background: radial-gradient(circle, rgba(224,180,92,0.22), transparent 72%);  animation-duration: 33s; animation-delay: -22s; }
+.cx-pool--a { background: radial-gradient(circle, rgba(249, 115, 22, 0.07), transparent 70%);  animation-duration: 26s; }
+.cx-pool--b { background: radial-gradient(circle, rgba(251, 146, 60, 0.06), transparent 70%); animation-duration: 31s; animation-delay: -6s; }
+.cx-pool--c { background: radial-gradient(circle, rgba(234, 88, 12, 0.05), transparent 72%);   animation-duration: 29s; animation-delay: -13s; }
+.cx-pool--d { background: radial-gradient(circle, rgba(249, 115, 22, 0.06), transparent 70%);  animation-duration: 35s; animation-delay: -9s; }
+.cx-pool--e { background: radial-gradient(circle, rgba(251, 146, 60, 0.05), transparent 72%);  animation-duration: 24s; animation-delay: -17s; }
+.cx-pool--f { background: radial-gradient(circle, rgba(249, 115, 22, 0.05), transparent 72%);  animation-duration: 33s; animation-delay: -22s; }
 
-/* A faint grid stops the blur reading as a smudge and gives the glass a crisp
-   edge to bend. */
+/* Subtle fine grid texture */
 .cx-mesh {
   position: absolute;
   inset: -70px;
   background-image:
-    linear-gradient(rgba(23, 66, 108, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(23, 66, 108, 0.05) 1px, transparent 1px);
-  background-size: 68px 68px;
-  mask-image: radial-gradient(ellipse 78% 58% at 50% 38%, #000 18%, transparent 76%);
-  -webkit-mask-image: radial-gradient(ellipse 78% 58% at 50% 38%, #000 18%, transparent 76%);
-  animation: cxMesh 34s linear infinite;
+    linear-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 20%, transparent 75%);
+  animation: cxMesh 36s linear infinite;
   will-change: transform;
 }
 
 @keyframes cxMesh {
   from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(68px, 68px, 0); }
+  to   { transform: translate3d(56px, 56px, 0); }
 }
 
-/* The highlight that sells glass: a wide soft band crossing the page.
-   Driven by transform on a child rather than background-position on the layer —
-   background-position forces a full-viewport repaint every frame. */
 .cx-sheen {
   position: absolute;
   inset: 0;
@@ -87,16 +76,16 @@
   top: -20%;
   bottom: -20%;
   left: 0;
-  width: 55%;
+  width: 50%;
   background: linear-gradient(
     105deg,
     transparent,
-    rgba(255, 255, 255, 0.5) 46%,
-    rgba(255, 255, 255, 0.16) 58%,
+    rgba(255, 255, 255, 0.7) 46%,
+    rgba(255, 255, 255, 0.2) 58%,
     transparent
   );
   will-change: transform;
-  animation: cxSheen 20s ease-in-out infinite;
+  animation: cxSheen 22s ease-in-out infinite;
 }
 
 @keyframes cxSheen {
@@ -107,10 +96,9 @@
 .cx-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 92% 74% at 50% 42%, transparent 46%, rgba(16, 43, 78, 0.08) 100%);
+  background: radial-gradient(ellipse 95% 75% at 50% 40%, transparent 55%, rgba(15, 23, 42, 0.02) 100%);
 }
 
-/* The goo filter is the expensive part; drop it along with the motion. */
 @media (prefers-reduced-motion: reduce) {
   .cx-pool,
   .cx-mesh,

@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import SectionHeading from './SectionHeading';
 import './ServicesPreview.css';
-import webImg from '../assets/services/web-development.png';
-import mobileImg from '../assets/services/mobile-app-development.png';
-import uiuxImg from '../assets/services/ui-ux-design.png';
+import webImg from '../assets/services/web-development.webp';
+import mobileImg from '../assets/services/mobile-app-development.webp';
+import uiuxImg from '../assets/services/ui-ux-design.webp';
 
 const ServicesPreview = () => {
   const scope = useRevealOnScroll();

@@ -17,6 +17,7 @@ const Navbar = () => {
   return (
     <header className="navbar" role="banner">
       <div className="nav-container" ref={introRef}>
+        {/* Left: Brand Logo */}
         <Link to="/" className="nav-logo" onClick={closeMenu} aria-label="Cortexis Solution Hub Pvt Ltd home" data-intro>
           <span className="nav-logo-badge">
             <BrandLogo size={38} />
@@ -27,6 +28,38 @@ const Navbar = () => {
           </span>
         </Link>
 
+        {/* Center: Main Navigation Menu (Center-aligned with glass pill) */}
+        <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`} id={menuId} aria-label="Primary">
+          <Link to="/" className="nav-link" onClick={closeMenu} data-intro>Home</Link>
+          <Link to="/services" className="nav-link" onClick={closeMenu} data-intro>Services</Link>
+          <Link to="/courses" className="nav-link" onClick={closeMenu} data-intro>Courses</Link>
+          <Link to="/internships" className="nav-link" onClick={closeMenu} data-intro>Internships</Link>
+          <Link to="/tools" className="nav-link" onClick={closeMenu} data-intro>Free Tools</Link>
+          <Link to="/whatsapp-bot" className="nav-link" onClick={closeMenu} data-intro>Automation Tools</Link>
+          <Link to="/about" className="nav-link" onClick={closeMenu} data-intro>About Us</Link>
+        </nav>
+
+        {/* Right: Actions / CTA */}
+        <div className="nav-actions" data-intro>
+          {user ? (
+            <>
+              <Link to="/dashboard" className="nav-link nav-auth-link" onClick={closeMenu}>My Learning</Link>
+              <button
+                type="button"
+                onClick={() => { logout(); closeMenu(); }}
+                className="nav-link nav-auth-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="nav-link nav-auth-link" onClick={closeMenu}>Sign in</Link>
+          )}
+          <Link to="/contact" className="nav-cta" onClick={closeMenu}>Contact Us</Link>
+        </div>
+
+        {/* Mobile Hamburger Icon */}
         <button
           className="nav-icon"
           aria-label="Toggle navigation menu"
@@ -39,33 +72,6 @@ const Navbar = () => {
           <span className="bar" />
           <span className="bar" />
         </button>
-
-        <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`} id={menuId} aria-label="Primary">
-          <Link to="/" className="nav-link" onClick={closeMenu} data-intro>Home</Link>
-          <Link to="/services" className="nav-link" onClick={closeMenu} data-intro>Services</Link>
-          <Link to="/courses" className="nav-link" onClick={closeMenu} data-intro>Courses</Link>
-          <Link to="/internships" className="nav-link" onClick={closeMenu} data-intro>Internships</Link>
-          <Link to="/tools" className="nav-link" onClick={closeMenu} data-intro>Free Tools</Link>
-          <Link to="/whatsapp-bot" className="nav-link" onClick={closeMenu} data-intro>WhatsApp Bot</Link>
-          <Link to="/about" className="nav-link" onClick={closeMenu} data-intro>About Us</Link>
-          <Link to="/contact" className="nav-link nav-cta" onClick={closeMenu} data-intro>Contact Us</Link>
-          {user ? (
-            <>
-              <Link to="/dashboard" className="nav-link" onClick={closeMenu} data-intro>My Learning</Link>
-              <button
-                type="button"
-                onClick={() => { logout(); closeMenu(); }}
-                className="nav-link"
-                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                data-intro
-              >
-                Sign out
-              </button>
-            </>
-          ) : (
-            <Link to="/login" className="nav-link" onClick={closeMenu} data-intro>Sign in</Link>
-          )}
-        </nav>
       </div>
     </header>
   );

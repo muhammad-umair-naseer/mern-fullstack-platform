@@ -1,7 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════
-   Premium cross-cutting polish. Imported after theme-cosmic.css so it can
-   layer editorial section headings and richer card accents onto the
-   existing cosmic components without touching every file.
+   Premium cross-cutting polish — Luxury White & Orange Design
    ════════════════════════════════════════════════════════════════════ */
 
 /* ── Editorial section heading ─────────────────────────────────────── */
@@ -20,20 +18,20 @@
   margin-bottom: 1rem;
   border-radius: 999px;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #46587a;
-  background: rgba(43, 107, 168, 0.1);
-  border: 1px solid rgba(43, 107, 168, 0.28);
+  color: #c2410c;
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.25);
 }
 .section-eyebrow-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: linear-gradient(90deg, #2b6ba8, #4a86c4);
-  box-shadow: 0 0 8px 1px rgba(74, 134, 196, 0.6);
+  background: #f97316;
+  box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.6);
 }
 
 /* Gradient underline accent beneath section titles */
@@ -42,6 +40,13 @@
 .section-head .testimonials-title {
   position: relative;
   margin-bottom: 1.1rem;
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+.section-subtitle,
+.courses-subtitle {
+  color: #000000 !important;
+  font-weight: 500 !important;
 }
 .section-head .section-title::after,
 .section-head .courses-title::after,
@@ -52,7 +57,7 @@
   height: 4px;
   margin: 0.9rem auto 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #17426c, #2b6ba8, #4a86c4);
+  background: linear-gradient(90deg, #ea580c, #f97316, #fdba74);
 }
 
 /* ── Preview cards: gradient top-accent on hover ───────────────────── */
@@ -65,9 +70,9 @@
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
-  height: 3px;
+  height: 3.5px;
   border-radius: 14px 14px 0 0;
-  background: linear-gradient(90deg, #17426c, #2b6ba8, #4a86c4);
+  background: linear-gradient(90deg, #ea580c, #f97316, #fdba74);
   opacity: 0;
   transform: scaleX(0.4);
   transform-origin: left;
@@ -81,7 +86,7 @@
 }
 
 /* ── Testimonials: quotation flourish + gradient avatar ring ───────── */
-.testimonial-card { position: relative; overflow: hidden; }
+.testimonial-card { position: relative; overflow: hidden; background: #ffffff !important; }
 .testimonial-card .card-body { position: relative; }
 .testimonial-card .card-body::before {
   content: "\201C";
@@ -91,49 +96,51 @@
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 5.5rem;
   line-height: 1;
-  color: rgba(43, 107, 168, 0.22);
+  color: rgba(249, 115, 22, 0.18);
   pointer-events: none;
 }
 .testimonial-card .avatar-wrap {
   display: inline-block;
   padding: 3px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2b6ba8, #4a86c4, #c8922e);
+  background: linear-gradient(135deg, #ff6b00, #f97316, #fdba74);
 }
 .testimonial-card .testimonial-img {
   display: block;
-  border: 2px solid #0b0e17;
+  border: 2px solid #ffffff;
 }
 
-/* ── View-all buttons: gradient fill ───────────────────────────────── */
+/* ── View-all buttons: luxury orange fill ───────────────────────────────── */
 .btn-view-all {
   position: relative;
-  border: 1px solid rgba(43, 107, 168, 0.4) !important;
-  color: #46587a !important;
-  background: rgba(43, 107, 168, 0.08) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid #f97316 !important;
+  color: #ea580c !important;
+  background: #ffffff !important;
+  font-weight: 600 !important;
+  padding: 10px 24px !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease !important;
 }
 .btn-view-all:hover,
 .btn-view-all:focus-visible {
-  color: #fff !important;
-  background: linear-gradient(90deg, #17426c, #4a86c4) !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #ff6b00, #f97316) !important;
   border-color: transparent !important;
-  box-shadow: 0 10px 30px rgba(74, 134, 196, 0.32) !important;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4) !important;
+  transform: translateY(-2px);
 }
 
-/* ── Solid white CTA (opts out of the global .bg-white glassification) ── */
+/* ── Solid white CTA ── */
 .btn-cta-white {
   background: #ffffff !important;
-  color: #123354 !important;
-  border: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28) !important;
+  color: #ea580c !important;
+  border: 1.5px solid #f97316 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
 }
 .btn-cta-white:hover {
-  background: #eef4fb !important;
-  box-shadow: 0 16px 40px rgba(43, 107, 168, 0.32) !important;
+  background: linear-gradient(135deg, #ff6b00, #f97316) !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 30px rgba(249, 115, 22, 0.35) !important;
 }
 
 @media (max-width: 768px) {

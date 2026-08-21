@@ -42,7 +42,7 @@ const FinalExam = () => {
   if (status === 'loading') {
     return (
       <div className="min-h-[60vh] grid place-items-center">
-        <div className="h-10 w-10 rounded-full border-2 border-indigo-500/30 border-t-indigo-400 animate-spin" />
+        <div className="h-10 w-10 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
       </div>
     );
   }
@@ -50,9 +50,9 @@ const FinalExam = () => {
   if (status === 'error') {
     return (
       <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">Not so fast</h1>
-        <p className="mt-3 text-slate-600">{error}</p>
-        <Link to={`/learn/${slug}`} className="mt-6 inline-block text-indigo-400 hover:underline">
+        <h1 className="text-2xl font-bold text-black">Not so fast</h1>
+        <p className="mt-3 text-black font-medium">{error}</p>
+        <Link to={`/learn/${slug}`} className="mt-6 inline-block text-orange-600 font-bold hover:underline">
           Back to the course
         </Link>
       </main>
@@ -60,31 +60,31 @@ const FinalExam = () => {
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-10">
-      <Link to={`/learn/${slug}`} className="text-sm text-slate-400 hover:text-white">
+    <main className="max-w-3xl mx-auto px-6 py-10 bg-white text-black min-h-screen">
+      <Link to={`/learn/${slug}`} className="text-sm font-bold text-black hover:text-orange-600 transition">
         ← Back to the course
       </Link>
 
       {certificate && (
-        <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
-          <p className="text-2xl font-bold text-emerald-300">Certificate issued</p>
-          <p className="mt-2 text-slate-700">
-            Verification code <span className="font-mono font-semibold">{certificate.code}</span>
+        <div className="mt-6 rounded-2xl border border-emerald-300 bg-emerald-50 p-6 text-center shadow-md">
+          <p className="text-2xl font-black text-emerald-800">🎉 Certificate issued!</p>
+          <p className="mt-2 text-black font-semibold">
+            Verification code: <span className="font-mono font-bold text-black bg-white px-2 py-0.5 rounded border border-emerald-200">{certificate.code}</span>
           </p>
           <Link
             to={`/certificate/${certificate.code}`}
-            className="mt-4 inline-block px-6 py-2.5 rounded-lg bg-emerald-400 text-emerald-950 font-semibold hover:bg-emerald-300"
+            className="mt-4 inline-block px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-md"
           >
             View &amp; print your certificate
           </Link>
         </div>
       )}
 
-      <p className="mt-6 text-xs font-semibold text-indigo-400 uppercase tracking-wide">
+      <p className="mt-6 text-xs font-bold text-orange-600 uppercase tracking-wider">
         Final exam
       </p>
-      <h1 className="mt-1 text-3xl font-extrabold text-slate-900">{payload.course.title}</h1>
-      <p className="mt-2 text-slate-600">
+      <h1 className="mt-1 text-3xl font-extrabold text-black">{payload.course.title}</h1>
+      <p className="mt-2 text-black font-medium leading-relaxed">
         {payload.questions.length} questions · {payload.passMark}% to pass · unlimited retakes. Pass
         and your free certificate is issued automatically.
       </p>

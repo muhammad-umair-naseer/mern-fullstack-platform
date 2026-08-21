@@ -68,19 +68,19 @@ const Contact = () => {
           {/* ── Rail ─────────────────────────────────────────────────── */}
           <div className="relative">
             <div className="sticky top-24 space-y-5">
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-sky-700 to-blue-700 p-8 text-white shadow-2xl ring-1 ring-white/15">
-                <div aria-hidden="true" className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#070e1e] via-[#0b1a30] to-[#0f2744] p-8 text-white shadow-2xl border border-orange-500/30">
+                <div aria-hidden="true" className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-orange-500/10 blur-2xl" />
                 <div className="relative">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium ring-1 ring-white/25 backdrop-blur">
-                    <Sparkles className="h-4 w-4" /> Let’s talk
+                  <span className="inline-flex items-center gap-2 rounded-full bg-orange-500/20 px-4 py-1.5 text-sm font-bold text-orange-300 ring-1 ring-orange-400/40 backdrop-blur">
+                    <Sparkles className="h-4 w-4 text-orange-400" /> Let’s talk
                   </span>
-                  <h1 className="mt-5 text-4xl font-extrabold leading-tight">Contact Cortexis Solution Hub</h1>
-                  <p className="mt-3 text-white/90">Tell us about your goals. We reply within one business day (PKT) to make something remarkable together.</p>
+                  <h1 className="mt-5 text-3xl md:text-4xl font-extrabold leading-tight text-white">Contact Cortexis Solution Hub</h1>
+                  <p className="mt-3 text-slate-200 font-medium">Tell us about your goals. We reply within one business day (PKT) to make something remarkable together.</p>
 
                   <ul className="mt-6 space-y-3">
                     {perks.map((p, i) => (
-                      <li key={i} className="flex items-center gap-3 text-white/90">
-                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/15 ring-1 ring-white/20">
+                      <li key={i} className="flex items-center gap-3 text-slate-100 font-medium">
+                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-orange-500/20 ring-1 ring-orange-400/30 text-orange-300">
                           <p.icon className="h-4 w-4" />
                         </span>
                         <span className="text-sm">{p.text}</span>
@@ -92,13 +92,13 @@ const Contact = () => {
 
               <div className="grid gap-3">
                 {chips.map((c, i) => (
-                  <a key={i} href={c.href} className="group flex items-center gap-4 rounded-2xl bg-white p-4 shadow-card ring-1 ring-slate-200 transition hover:-translate-y-0.5">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-accent to-brand-magenta text-white shadow-glow">
+                  <a key={i} href={c.href} className="group flex items-center gap-4 rounded-2xl bg-white p-4 shadow-card ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:ring-orange-400">
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-glow">
                       <c.icon className="h-5 w-5" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs uppercase tracking-wide text-slate-500">{c.label}</p>
-                      <p className="truncate font-semibold text-slate-800 group-hover:text-slate-900">{c.value}</p>
+                      <p className="text-xs uppercase tracking-wide text-slate-500 font-bold">{c.label}</p>
+                      <p className="truncate font-bold text-black group-hover:text-orange-600">{c.value}</p>
                     </div>
                   </a>
                 ))}
@@ -113,8 +113,8 @@ const Contact = () => {
           >
             <div className="mb-6" data-intro>
               <span className="section-eyebrow"><span className="section-eyebrow-dot" /> Project brief</span>
-              <h2 className="mt-3 text-2xl font-bold text-slate-900">Start the conversation</h2>
-              <p className="mt-1 text-slate-600">Share your goals, users and timelines. The more context you give, the better.</p>
+              <h2 className="mt-3 text-2xl font-extrabold text-black">Start the conversation</h2>
+              <p className="mt-1 text-black font-medium">Share your goals, users and timelines. The more context you give, the better.</p>
             </div>
 
             {submitStatus === 'success' && (

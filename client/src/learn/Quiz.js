@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-// Shared by chapter quizzes and the final exam. The parent owns submission so
-// the same component can post to either endpoint.
+// Shared by chapter quizzes and the final exam.
 const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark }) => {
   const [answers, setAnswers] = useState(() => questions.map(() => -1));
   const [result, setResult] = useState(null);
@@ -38,17 +37,17 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
         <div
           className={`rounded-2xl p-6 border text-center ${
             result.passed
-              ? 'bg-emerald-500/10 border-emerald-500/30'
-              : 'bg-amber-500/10 border-amber-500/30'
+              ? 'bg-emerald-50 border-emerald-300'
+              : 'bg-amber-50 border-amber-300'
           }`}
         >
-          <p className="text-5xl font-extrabold text-slate-900">{result.percent}%</p>
-          <p className="mt-2 text-slate-700">
+          <p className="text-5xl font-black text-black">{result.percent}%</p>
+          <p className="mt-2 text-black font-bold text-base">
             {result.score} of {result.total} correct
             {passMark ? ` · ${passMark}% needed to pass` : ''}
           </p>
-          <p className={`mt-3 font-semibold ${result.passed ? 'text-emerald-300' : 'text-amber-300'}`}>
-            {result.passed ? 'Passed' : 'Not passed yet — review and try again'}
+          <p className={`mt-3 font-extrabold text-lg ${result.passed ? 'text-emerald-700' : 'text-amber-800'}`}>
+            {result.passed ? '🎉 Passed' : 'Not passed yet — review and try again'}
           </p>
         </div>
 
@@ -57,25 +56,25 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
             <li
               key={r.id}
               className={`rounded-xl border p-5 ${
-                r.right ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-rose-500/30 bg-rose-500/5'
+                r.right ? 'border-emerald-300 bg-emerald-50/40' : 'border-rose-300 bg-rose-50/40'
               }`}
             >
-              <p className="font-semibold text-slate-900">
+              <p className="font-bold text-black text-base">
                 {i + 1}. {r.prompt}
               </p>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 text-sm text-black font-medium">
                 Your answer:{' '}
-                <span className={r.right ? 'text-emerald-300' : 'text-rose-300'}>
+                <span className={`font-bold ${r.right ? 'text-emerald-700' : 'text-rose-700'}`}>
                   {r.your >= 0 ? r.options[r.your] : 'Not answered'}
                 </span>
               </p>
               {!r.right && (
-                <p className="mt-1 text-sm text-slate-600">
-                  Correct answer: <span className="text-emerald-300">{r.options[r.correct]}</span>
+                <p className="mt-1 text-sm text-black font-medium">
+                  Correct answer: <span className="text-emerald-700 font-bold">{r.options[r.correct]}</span>
                 </p>
               )}
               {r.explanation && (
-                <p className="mt-3 text-sm text-slate-500 border-l-2 border-white/15 pl-3">
+                <p className="mt-3 text-sm text-black font-medium border-l-4 border-orange-500 pl-3 bg-orange-50/50 py-1 rounded-r">
                   {r.explanation}
                 </p>
               )}
@@ -85,7 +84,7 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
 
         <button
           onClick={retry}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+          className="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 transition shadow-lg"
         >
           Try again
         </button>
@@ -96,26 +95,26 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
   return (
     <div className="space-y-6">
       {error && (
-        <p role="alert" className="rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 px-4 py-3 text-sm">
+        <p role="alert" className="rounded-xl bg-rose-50 border border-rose-300 text-rose-700 px-4 py-3 text-sm font-bold">
           {error}
         </p>
       )}
 
       <ol className="space-y-6">
         {questions.map((q, qi) => (
-          <li key={q.id} className="bg-white rounded-2xl shadow-card p-6">
+          <li key={q.id} className="bg-white rounded-2xl shadow-card border border-slate-200 p-6">
             <fieldset>
-              <legend className="font-semibold text-slate-900 mb-4">
+              <legend className="font-bold text-black text-lg mb-4">
                 {qi + 1}. {q.prompt}
               </legend>
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {q.options.map((opt, oi) => (
                   <label
                     key={oi}
-                    className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition ${
+                    className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition ${
                       answers[qi] === oi
-                        ? 'border-indigo-500 bg-indigo-500/10'
-                        : 'border-slate-300 hover:bg-white/5'
+                        ? 'border-orange-500 bg-orange-50/70 ring-1 ring-orange-400'
+                        : 'border-slate-200 hover:bg-slate-50'
                     }`}
                   >
                     <input
@@ -123,9 +122,9 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
                       name={`q-${q.id}`}
                       checked={answers[qi] === oi}
                       onChange={() => choose(qi, oi)}
-                      className="mt-1 text-indigo-600 focus:ring-indigo-500"
+                      className="mt-1 text-orange-600 focus:ring-orange-500"
                     />
-                    <span className="text-slate-700">{opt}</span>
+                    <span className="text-black font-semibold text-sm sm:text-base leading-snug">{opt}</span>
                   </label>
                 ))}
               </div>
@@ -138,7 +137,7 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
         <button
           onClick={submit}
           disabled={!allAnswered || busy}
-          className="w-full bg-indigo-600 text-white py-3.5 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-glow"
+          className="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg"
         >
           {busy
             ? 'Grading…'

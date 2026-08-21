@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import SectionHeading from './SectionHeading';
 import './CoursesPreview.css';
-import fullstackImg from '../assets/courses/full-stack-web.png';
-import dataSciImg from '../assets/data science.png';
-import uiuxImg from '../assets/courses/ui-ux-bootcamp.png';
+import fullstackImg from '../assets/courses/full-stack-web.webp';
+import dataSciImg from '../assets/data science.webp';
+import uiuxImg from '../assets/courses/ui-ux-bootcamp.webp';
 
 const CoursesPreview = () => {
   const scope = useRevealOnScroll();

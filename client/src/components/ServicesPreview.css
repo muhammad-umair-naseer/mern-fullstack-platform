@@ -1,21 +1,21 @@
 /* Container */
 .services-container {
   padding: 80px 0;
-  background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 100%);
+  background: transparent;
 }
 
 /* Headings */
 .section-title {
   font-size: 2.3rem;
   font-weight: 800;
-  color: #1f2a37;
+  color: #090e17;
   margin-bottom: 0.5rem;
   text-align: center;
   letter-spacing: -0.02em;
 }
 .section-subtitle {
   font-size: 1.05rem;
-  color: #6b7280;
+  color: #475569;
   margin-bottom: 2.5rem;
   text-align: center;
 }
@@ -35,12 +35,12 @@
 
 /* Card */
 .service-preview-card {
-  border: 1px solid rgba(17, 24, 39, 0.06);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 14px;
   background: #ffffff;
   box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.02),
-    0 8px 24px rgba(17, 24, 39, 0.06);
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 8px 24px rgba(15, 23, 42, 0.05);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
   overflow: hidden;
   display: flex;
@@ -50,9 +50,9 @@
 .service-preview-card:focus-visible {
   transform: translateY(-4px);
   box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.04),
-    0 16px 36px rgba(17, 24, 39, 0.12);
-  border-color: rgba(17, 24, 39, 0.12);
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 16px 36px rgba(249, 115, 22, 0.14);
+  border-color: rgba(249, 115, 22, 0.35);
 }
 
 /* Media with soft zoom */
@@ -75,41 +75,41 @@
 .service-preview-card .card-title {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #111827;
+  color: #090e17;
   margin: 0;
 }
 .service-preview-card .card-text {
-  color: #4b5563;
-  line-height: 1.6;
+  color: #475569;
+  line-height: 1.65;
   margin: 0 0 8px 0;
   flex-grow: 1;
 }
 
-/* CTA inside card */
+/* CTA inside card - Luxury Orange */
 .service-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   align-self: stretch;
-  background: #17426c; /* brand blue */
+  background: linear-gradient(135deg, #ff6b00 0%, #f97316 50%, #ea580c 100%);
   color: #ffffff;
   padding: 10px 14px;
   border-radius: 10px;
   font-weight: 700;
   transition: transform 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.24);
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
 }
 .service-preview-card:hover .service-cta {
-  background: #123354;
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32);
+  box-shadow: 0 8px 22px rgba(249, 115, 22, 0.5);
 }
 
 /* View all button */
 .btn-view-all {
-  background-color: transparent;
-  color: #123354;
-  border: 2px solid #123354;
+  background-color: #ffffff;
+  color: #ea580c;
+  border: 1.5px solid #f97316;
   padding: 12px 28px;
   border-radius: 999px;
   font-weight: 800;
@@ -117,13 +117,17 @@
   transition: all 200ms ease;
   margin-top: 18px;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-view-all:hover,
 .btn-view-all:focus-visible {
-  background-color: #123354;
+  background: linear-gradient(135deg, #ff6b00, #f97316);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(29, 78, 216, 0.28);
+  border-color: transparent;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
   outline: none;
 }
 

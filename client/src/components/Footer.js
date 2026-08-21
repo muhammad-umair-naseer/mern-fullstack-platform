@@ -54,7 +54,7 @@ const Footer = () => {
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Cortexis Solution Hub Pvt Ltd. All rights reserved.</p>
           <nav className="footer-legal" aria-label="Legal and secondary">
-            <Link to="/whatsapp-bot">WhatsApp Bot</Link>
+            <Link to="/whatsapp-bot">Automation Tools</Link>
             <span aria-hidden="true">·</span>
             <Link to="/terms">Terms</Link>
             <span aria-hidden="true">·</span>

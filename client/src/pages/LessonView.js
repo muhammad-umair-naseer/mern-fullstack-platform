@@ -53,7 +53,7 @@ const LessonView = () => {
   if (status === 'loading') {
     return (
       <div className="min-h-[60vh] grid place-items-center">
-        <div className="h-10 w-10 rounded-full border-2 border-indigo-500/30 border-t-indigo-400 animate-spin" />
+        <div className="h-10 w-10 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
       </div>
     );
   }
@@ -61,8 +61,8 @@ const LessonView = () => {
   if (status === 'error') {
     return (
       <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">{error}</h1>
-        <Link to={`/learn/${slug}`} className="mt-4 inline-block text-indigo-400 hover:underline">
+        <h1 className="text-2xl font-bold text-black">{error}</h1>
+        <Link to={`/learn/${slug}`} className="mt-4 inline-block text-orange-600 font-bold hover:underline">
           Back to the course
         </Link>
       </main>
@@ -72,14 +72,14 @@ const LessonView = () => {
   const percent = Math.round((lesson.index / lesson.totalLessons) * 100);
 
   return (
-    <main className="text-slate-800">
-      <div className="sticky top-0 z-40 bg-[#0b0e18]/85 backdrop-blur border-b border-white/10">
+    <main className="bg-white text-black min-h-screen">
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
         <div className="max-w-3xl mx-auto px-6 py-3">
-          <div className="flex items-center justify-between gap-4 text-sm">
-            <Link to={`/learn/${slug}`} className="text-slate-400 hover:text-white shrink-0">
+          <div className="flex items-center justify-between gap-4 text-sm font-semibold text-black">
+            <Link to={`/learn/${slug}`} className="text-black hover:text-orange-600 shrink-0 font-bold">
               ← {lesson.courseTitle}
             </Link>
-            <span className="text-slate-500 shrink-0">
+            <span className="text-black font-bold shrink-0">
               Lesson {lesson.index} of {lesson.totalLessons}
             </span>
           </div>
@@ -87,22 +87,22 @@ const LessonView = () => {
         </div>
       </div>
 
-      <article className="max-w-3xl mx-auto px-6 py-10">
-        <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wide">
+      <article className="max-w-3xl mx-auto px-6 py-10 bg-white">
+        <p className="text-xs font-bold text-orange-600 uppercase tracking-wider">
           Chapter {lesson.chapterPosition} · {lesson.chapterTitle}
         </p>
-        <h1 className="mt-2 text-3xl md:text-4xl font-extrabold text-slate-900">{lesson.title}</h1>
-        <p className="mt-2 text-sm text-slate-500">{lesson.minutes} min read</p>
+        <h1 className="mt-2 text-3xl md:text-4xl font-extrabold text-black">{lesson.title}</h1>
+        <p className="mt-2 text-sm text-black font-semibold">{lesson.minutes} min read</p>
 
-        <div className="mt-8">
+        <div className="mt-8 bg-white text-black">
           <Markdown>{lesson.body}</Markdown>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-12 pt-8 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
           {lesson.prev ? (
             <Link
               to={`/learn/${slug}/lesson/${lesson.prev.id}`}
-              className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-white/5 transition"
+              className="px-5 py-2.5 rounded-lg border border-slate-300 text-black font-bold hover:bg-slate-100 transition"
             >
               ← Previous
             </Link>
@@ -113,17 +113,17 @@ const LessonView = () => {
           <button
             onClick={markComplete}
             disabled={saving}
-            className="px-6 py-3 rounded-lg font-semibold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60 transition"
+            className="px-6 py-3 rounded-lg font-bold bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-60 transition shadow-md"
           >
             {saving
               ? 'Saving…'
               : lesson.completed
               ? lesson.next
                 ? 'Next lesson →'
-                : 'Finish course →'
+                : 'Back to course overview'
               : lesson.next
               ? 'Mark complete & continue →'
-              : 'Mark complete & finish →'}
+              : 'Complete course'}
           </button>
         </div>
       </article>

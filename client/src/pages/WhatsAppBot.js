@@ -1,66 +1,66 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MessageSquareText, Clock, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { MessageSquareText, Clock, Sparkles, ArrowRight, ShieldCheck, Zap, Bot } from 'lucide-react';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import './WhatsAppBot.css';
 
 const chips = [
-  { icon: MessageSquareText, label: 'AI replies' },
-  { icon: Clock, label: 'Always on · 24/7' },
-  { icon: Sparkles, label: 'Your brand voice' },
+  { icon: Bot, label: 'AI Workflow Automation' },
+  { icon: MessageSquareText, label: 'Smart WhatsApp Replies' },
+  { icon: Clock, label: '24/7 Uninterrupted Operations' },
+  { icon: Sparkles, label: 'Custom Brand Voice' },
 ];
 
 export default function WhatsAppBot() {
   const ref = useIntroTimeline('[data-intro]', { y: 26, stagger: 0.1 });
 
   return (
-    <main className="relative overflow-hidden text-slate-900">
+    <main className="relative overflow-hidden bg-white text-slate-900 min-h-[calc(100vh-76px)]">
       {/* Floating glows */}
-      <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-20 h-80 w-80 rounded-full bg-brand-accent/25 blur-3xl animate-blob-slow" />
-      <div aria-hidden="true" className="pointer-events-none absolute top-1/3 -right-16 h-96 w-96 rounded-full bg-brand-magenta/20 blur-3xl animate-blob" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-20 h-80 w-80 rounded-full bg-orange-500/10 blur-3xl animate-blob-slow" />
+      <div aria-hidden="true" className="pointer-events-none absolute top-1/3 -right-16 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl animate-blob" />
+      <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-orange-500/5 blur-3xl" />
 
       <section
         ref={ref}
-        className="relative mx-auto grid min-h-[calc(100vh-72px)] max-w-7xl items-center gap-14 px-6 py-16 lg:grid-cols-2 lg:py-24"
+        className="relative mx-auto grid min-h-[calc(100vh-76px)] max-w-7xl items-center gap-14 px-6 py-16 lg:grid-cols-2 lg:py-24"
         aria-labelledby="wa-heading"
       >
         {/* ── Copy ─────────────────────────────────────────────────────── */}
         <div>
           <span
             data-intro
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-300 ring-1 ring-emerald-400/30"
+            className="inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1.5 text-sm font-bold text-orange-800 ring-1 ring-orange-300"
           >
-            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)] wa-pulse" />
-            Coming soon
+            <Zap className="h-4 w-4 text-orange-600" />
+            AI &amp; Automation Platform
           </span>
 
           <h1
             id="wa-heading"
             data-intro
-            className="mt-6 text-5xl font-extrabold leading-[1.02] tracking-tight text-white md:text-6xl"
+            className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-black md:text-5xl lg:text-6xl"
           >
             Cortexis{' '}
-            <span className="bg-gradient-to-r from-brand-accent via-brand-magenta to-brand-orange-500 bg-clip-text text-transparent">
-              WhatsApp Bot
+            <span className="bg-gradient-to-r from-[#ff6b00] via-[#f97316] to-[#ea580c] bg-clip-text text-transparent font-black">
+              Automation Tools
             </span>
           </h1>
-          <p data-intro className="mt-3 font-mono text-xs uppercase tracking-[0.22em] text-slate-400">
+          <p data-intro className="mt-3 font-mono text-xs uppercase tracking-[0.22em] text-orange-700 font-bold">
             by Cortexis Solution Hub Pvt Ltd
           </p>
 
-          <p data-intro className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
-            An AI assistant that replies for your business on WhatsApp, instantly and around the clock,
-            in your brand’s voice. <span className="text-white">Something big is coming.</span>
+          <p data-intro className="mt-6 max-w-xl text-lg leading-relaxed text-black font-medium">
+            Supercharge your business with intelligent AI automation, smart WhatsApp customer agents, and automated workflows that run 24/7. <span className="font-bold text-orange-600">Save hundreds of hours every month.</span>
           </p>
 
           <div data-intro className="mt-7 flex flex-wrap gap-2.5">
             {chips.map((c, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm text-slate-200 ring-1 ring-white/10 backdrop-blur"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-black font-bold border border-slate-200 shadow-sm"
               >
-                <c.icon className="h-4 w-4 text-brand-accent-soft" />
+                <c.icon className="h-4 w-4 text-orange-600" />
                 {c.label}
               </span>
             ))}
@@ -69,36 +69,34 @@ export default function WhatsAppBot() {
           <div data-intro className="mt-9 flex flex-wrap items-center gap-3">
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand-accent to-brand-magenta px-7 py-3 font-semibold text-white shadow-glow transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-accent/50"
+              className="btn-primary inline-flex items-center gap-2 rounded-full px-7 py-3 font-bold text-white shadow-lg transition hover:-translate-y-0.5"
             >
               Get early access <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/whatsapp-bot/privacy"
-              className="inline-flex items-center gap-2 rounded-full bg-transparent px-6 py-3 font-semibold text-white ring-2 ring-white/25 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-accent/40"
+              className="btn-secondary inline-flex items-center gap-2 rounded-full px-6 py-3 font-bold"
             >
-              <ShieldCheck className="h-4 w-4" /> How your data is handled
+              <ShieldCheck className="h-4 w-4" /> Data privacy &amp; security
             </Link>
           </div>
-
-          
         </div>
 
         {/* ── Chat mockup ──────────────────────────────────────────────── */}
         <div data-intro className="wa-stage">
-          <div className="wa-mock" role="img" aria-label="Preview of a WhatsApp conversation answered automatically by the Cortexis assistant">
+          <div className="wa-mock shadow-2xl border border-slate-200" role="img" aria-label="Preview of a WhatsApp conversation answered automatically by the Cortexis assistant">
             <div className="wa-mock-header">
               <span className="wa-avatar" aria-hidden="true">🤖</span>
               <div className="wa-meta">
-                <p className="wa-name">Your Business Assistant</p>
+                <p className="wa-name">Cortexis AI Assistant</p>
                 <p className="wa-status"><span className="wa-online-dot" /> online</p>
               </div>
-              <span className="wa-badge">WhatsApp</span>
+              <span className="wa-badge">Automation</span>
             </div>
             <div className="wa-body">
-              <div className="wa-bubble wa-in">Hi! Do you deliver on weekends? 📦</div>
-              <div className="wa-bubble wa-out">Yes, we deliver 7 days a week, 9am–9pm. Want me to start your order? 🚀</div>
-              <div className="wa-bubble wa-in">What are your prices?</div>
+              <div className="wa-bubble wa-in">Hi! Can you automate our lead qualification and client onboarding? 🚀</div>
+              <div className="wa-bubble wa-out">Absolutely! Cortexis Automation Tools connect your CRM, WhatsApp &amp; database to process leads instantly 24/7. Want to schedule a demo? ⚡</div>
+              <div className="wa-bubble wa-in">Yes please, what are the plans?</div>
               <div className="wa-bubble wa-typing" aria-label="Assistant is typing">
                 <span /><span /><span />
               </div>

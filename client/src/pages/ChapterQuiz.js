@@ -43,7 +43,7 @@ const ChapterQuiz = () => {
   if (status === 'loading') {
     return (
       <div className="min-h-[60vh] grid place-items-center">
-        <div className="h-10 w-10 rounded-full border-2 border-indigo-500/30 border-t-indigo-400 animate-spin" />
+        <div className="h-10 w-10 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
       </div>
     );
   }
@@ -51,8 +51,8 @@ const ChapterQuiz = () => {
   if (status === 'error') {
     return (
       <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">{error}</h1>
-        <Link to={`/learn/${slug}`} className="mt-4 inline-block text-indigo-400 hover:underline">
+        <h1 className="text-2xl font-bold text-black">{error}</h1>
+        <Link to={`/learn/${slug}`} className="mt-4 inline-block text-orange-600 font-bold hover:underline">
           Back to the course
         </Link>
       </main>
@@ -60,15 +60,15 @@ const ChapterQuiz = () => {
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-10">
-      <Link to={`/learn/${slug}`} className="text-sm text-slate-400 hover:text-white">
+    <main className="max-w-3xl mx-auto px-6 py-10 bg-white text-black min-h-screen">
+      <Link to={`/learn/${slug}`} className="text-sm font-bold text-black hover:text-orange-600 transition">
         ← Back to the course
       </Link>
-      <p className="mt-4 text-xs font-semibold text-indigo-400 uppercase tracking-wide">
+      <p className="mt-4 text-xs font-bold text-orange-600 uppercase tracking-wider">
         Chapter {payload.chapter.position} quiz
       </p>
-      <h1 className="mt-1 text-3xl font-extrabold text-slate-900">{payload.chapter.title}</h1>
-      <p className="mt-2 text-slate-600">
+      <h1 className="mt-1 text-3xl font-extrabold text-black">{payload.chapter.title}</h1>
+      <p className="mt-2 text-black font-medium leading-relaxed">
         A practice check that does not affect your certificate. You get instant feedback and can
         retake it as often as you like.
       </p>

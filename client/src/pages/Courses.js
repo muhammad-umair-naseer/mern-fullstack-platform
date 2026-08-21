@@ -6,18 +6,18 @@ import { useIntroTimeline } from "../hooks/useIntroTimeline";
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
 import { useGridReveal } from "../hooks/useGridReveal";
 
-import fullstackImg from "../assets/courses/full-stack-web.png";
-import frontendImg from "../assets/courses/frontend-engineering.png";
-import dsaImg from "../assets/courses/data-structures-algorithms.png";
-import laravelImg from "../assets/courses/laravel-fundamentals.png";
-import flutterImg from "../assets/courses/flutter-mobile.png";
-import pythonImg from "../assets/courses/python-development.png";
-import cppImg from "../assets/courses/cpp-development.png";
-import wordpressImg from "../assets/courses/wordpress-development.png";
-import aimlImg from "../assets/courses/ai-ml-essentials.png";
-import uiuxImg from "../assets/courses/ui-ux-bootcamp.png";
-import graphicsImg from "../assets/courses/graphic-design-ps-ai.png";
-import coursesHero from "../assets/courses/courses-hero.png";
+import fullstackImg from "../assets/courses/full-stack-web.webp";
+import frontendImg from "../assets/courses/frontend-engineering.webp";
+import dsaImg from "../assets/courses/data-structures-algorithms.webp";
+import laravelImg from "../assets/courses/laravel-fundamentals.webp";
+import flutterImg from "../assets/courses/flutter-mobile.webp";
+import pythonImg from "../assets/courses/python-development.webp";
+import cppImg from "../assets/courses/cpp-development.webp";
+import wordpressImg from "../assets/courses/wordpress-development.webp";
+import aimlImg from "../assets/courses/ai-ml-essentials.webp";
+import uiuxImg from "../assets/courses/ui-ux-bootcamp.webp";
+import graphicsImg from "../assets/courses/graphic-design-ps-ai.webp";
+import coursesHero from "../assets/courses/courses-hero.webp";
 
 // coverKey comes from the course content file, so adding a course means adding
 // its image here (or letting it fall back to the gradient below).
@@ -256,27 +256,27 @@ const Courses = () => {
                 </div>
 
                 <div className="p-6 flex flex-col flex-1">
-                  <h3 className="text-lg font-semibold text-slate-900">{course.title}</h3>
-                  <p className="text-slate-600 mt-2 flex-1">{course.summary}</p>
+                  <h3 className="text-lg font-bold text-black">{course.title}</h3>
+                  <p className="text-black font-medium mt-2 flex-1 leading-relaxed">{course.summary}</p>
 
-                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500">
-                    <span className="inline-flex items-center gap-1.5">
+                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-black font-semibold">
+                    <span className="inline-flex items-center gap-1.5 text-black">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M4 5h16v14H4z" stroke="currentColor" strokeWidth="1.6" />
-                        <path d="M4 9h16" stroke="currentColor" strokeWidth="1.6" />
+                        <path d="M4 5h16v14H4z" stroke="currentColor" strokeWidth="1.8" />
+                        <path d="M4 9h16" stroke="currentColor" strokeWidth="1.8" />
                       </svg>
                       {course.chapterCount} chapters
                     </span>
-                    <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1.5 text-black">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 8v4l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+                        <path d="M12 8v4l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
                       </svg>
                       {course.lessonCount} lessons
                     </span>
                   </div>
 
-                  <p className="mt-2 text-xs text-slate-500">{course.level}</p>
+                  <p className="mt-2 text-xs text-black font-semibold">{course.level}</p>
 
                   <Link
                     to={`/learn/${course.slug}`}

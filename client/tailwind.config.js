@@ -18,26 +18,80 @@ module.exports = {
     },
     extend: {
       colors: {
-        // Remap the default blue/sky/indigo scales to the corporate navy
-        // palette so every existing utility (bg-blue-*, via-sky-*,
-        // from-indigo-*) becomes navy/steel instead of purple — no per-file
-        // edits needed. Same trick the cosmic theme used, different target.
-        blue: { 50: "#eef4fb", 100: "#d7e6f5", 200: "#b0cceb", 300: "#7fabdb", 400: "#4a86c4", 500: "#2b6ba8", 600: "#1d5488", 700: "#17426c", 800: "#123354", 900: "#0d2440" },
-        indigo: { 50: "#eef3fa", 100: "#d6e3f2", 200: "#adc6e4", 300: "#7ea3d0", 400: "#4f7db5", 500: "#2f6098", 600: "#234b79", 700: "#1b3b60", 800: "#152e4b", 900: "#101f38" },
-        sky: { 50: "#eef6fb", 100: "#d5eaf5", 200: "#a9d3ea", 300: "#74b6d9", 400: "#3f95c2", 500: "#1f79a8", 600: "#166087", 700: "#134d6c", 800: "#113d56", 900: "#0e3145" },
-        // Cortexis Solution Hub — corporate navy & gold
+        // Remap indigo and blue utilities to premium luxury orange so interactive
+        // elements across pages automatically adopt the luxury orange aesthetic
+        indigo: {
+          50: "#fff7ed",
+          100: "#ffedd5",
+          200: "#fed7aa",
+          300: "#fdba74",
+          400: "#fb923c",
+          500: "#f97316",
+          600: "#ea580c",
+          700: "#c2410c",
+          800: "#9a3412",
+          900: "#7c2d12"
+        },
+        blue: {
+          50: "#fff8f1",
+          100: "#ffedd5",
+          200: "#fed7aa",
+          300: "#fdba74",
+          400: "#fb923c",
+          500: "#f97316",
+          600: "#ea580c",
+          700: "#c2410c",
+          800: "#9a3412",
+          900: "#7c2d12"
+        },
+        sky: {
+          50: "#fffaf5",
+          100: "#ffedd5",
+          200: "#fed7aa",
+          300: "#fdba74",
+          400: "#fb923c",
+          500: "#f97316",
+          600: "#ea580c",
+          700: "#c2410c",
+          800: "#9a3412",
+          900: "#7c2d12"
+        },
+        // Cortexis Solution Hub — luxury palette (Dark Blue + Orange + Crisp White)
         brand: {
-          gold: { 300: "#e2c07a", 400: "#d3a244", 500: "#c8922e", 600: "#b07f24", DEFAULT: "#c8922e" },
-          navy: { 500: "#17426c", 600: "#123354", 700: "#0d2440", 800: "#0a1b32", 900: "#071426" },
-          steel: { 300: "#7fabdb", 400: "#4a86c4", 500: "#2b6ba8", 600: "#1d5488" },
-          orange: { 400: "#e8964a", 500: "#d97b2b", 600: "#bd6620", signal: "#d97b2b" },
-          blue: { 400: "#4a86c4", 500: "#2b6ba8", 600: "#1d5488", 700: "#17426c" },
-          indigo: { 500: "#234b79", 600: "#1b3b60", 700: "#152e4b" },
-          sky: { 400: "#7fabdb", 500: "#4a86c4" },
-          cyan: { 400: "#3f95c2" },
-          accent: { DEFAULT: "#2b6ba8", soft: "#4a86c4" },
-          magenta: "#4a86c4",
-          ink: { DEFAULT: "#071426", soft: "#0a1b32", surface: "#0e2340", raised: "#132c4d" }
+          navy: {
+            50: "#f0f4f8",
+            100: "#d9e2ec",
+            200: "#bcccdc",
+            300: "#9fb3c8",
+            400: "#627d98",
+            500: "#102a43",
+            600: "#0b1a30",
+            700: "#0a1426",
+            800: "#070e1e",
+            900: "#040813",
+            DEFAULT: "#070e1e"
+          },
+          orange: {
+            50: "#fff7ed",
+            100: "#ffedd5",
+            200: "#fed7aa",
+            300: "#fdba74",
+            400: "#fb923c",
+            500: "#f97316",
+            600: "#ea580c",
+            700: "#c2410c",
+            DEFAULT: "#f97316",
+            signal: "#ff6b00"
+          },
+          gold: { 300: "#fed7aa", 400: "#fdba74", 500: "#fb923c", 600: "#f97316", DEFAULT: "#fb923c" },
+          steel: { 300: "#fed7aa", 400: "#fb923c", 500: "#f97316", 600: "#ea580c" },
+          blue: { 400: "#fb923c", 500: "#f97316", 600: "#ea580c", 700: "#c2410c" },
+          indigo: { 500: "#f97316", 600: "#ea580c", 700: "#c2410c" },
+          sky: { 400: "#fdba74", 500: "#fb923c" },
+          cyan: { 400: "#fb923c" },
+          accent: { DEFAULT: "#f97316", soft: "#fb923c" },
+          magenta: "#ea580c",
+          ink: { DEFAULT: "#0f172a", soft: "#1e293b", surface: "#ffffff", raised: "#ffffff" }
         }
       },
       fontFamily: {
@@ -45,15 +99,15 @@ module.exports = {
         mono: ["IBM Plex Mono", "ui-monospace", "monospace"]
       },
       boxShadow: {
-        card: "0 1px 1px rgba(0,0,0,0.02), 0 8px 24px rgba(17,24,39,0.06)",
-        cardLg: "0 2px 6px rgba(0,0,0,0.04), 0 16px 36px rgba(17,24,39,0.12)",
-        glow: "0 10px 40px rgba(13,36,64,0.35), 0 6px 20px rgba(200,146,46,0.16)"
+        card: "0 2px 4px rgba(0,0,0,0.02), 0 8px 24px rgba(15,23,42,0.06)",
+        cardLg: "0 4px 8px rgba(0,0,0,0.03), 0 16px 36px rgba(249,115,22,0.14)",
+        glow: "0 10px 32px rgba(249,115,22,0.35), 0 4px 14px rgba(234,88,12,0.25)"
       },
       borderRadius: { smd: "10px", mdx: "14px", lgx: "16px" },
       backgroundImage: {
-        "grad-hero": "linear-gradient(90deg, #17426c, #2b6ba8)",
-        "grad-accent": "linear-gradient(90deg, #b07f24, #d3a244)",
-        "grad-brand": "linear-gradient(90deg, #0d2440, #17426c, #2b6ba8, #4a86c4)"
+        "grad-hero": "linear-gradient(135deg, #ff6b00, #f97316, #ea580c)",
+        "grad-accent": "linear-gradient(135deg, #ea580c, #f97316, #fdba74)",
+        "grad-brand": "linear-gradient(135deg, #070e1e, #0a1426, #0f2744)"
       },
       keyframes: {
         "gradient-pan": {
