@@ -10,7 +10,7 @@ const sections = [
     id: 'who-we-are',
     title: 'Who we are',
     blocks: [
-      { p: `${COMPANY} (“Cortexis”, “we”, “us”, “our”) operates ${PRODUCT}, a platform that allows businesses to connect their WhatsApp Business Account and deploy an AI-powered assistant that responds to their customers’ messages automatically. This Privacy Policy explains what information we collect, why we collect it, how we use it, and the choices you have — whether you’re a business using ${PRODUCT} (“Business User”) or a customer messaging a business that uses ${PRODUCT} (“End User”).` },
+      { p: `${COMPANY} (“Cortexis”, “we”, “us”, “our”) operates ${PRODUCT}, a platform that allows businesses to connect their WhatsApp Business Account and deploy an AI-powered assistant that responds to their customers’ messages automatically. This Privacy Policy explains what information we collect, why we collect it, how we use it, and the choices you have, whether you’re a business using ${PRODUCT} (“Business User”) or a customer messaging a business that uses ${PRODUCT} (“End User”).` },
       { p: 'This policy applies to our website, our dashboard application, our backend API, and our integration with the WhatsApp Business Platform operated by Meta Platforms, Inc. (“Meta”).' },
     ],
   },
@@ -74,7 +74,7 @@ const sections = [
     title: 'Why we process your data',
     blocks: [
       { cards: [
-        { icon: '📄', title: 'Contract', text: 'To provide the service you’ve signed up for — operating your AI assistant and WhatsApp connection.' },
+        { icon: '📄', title: 'Contract', text: 'To provide the service you’ve signed up for, operating your AI assistant and WhatsApp connection.' },
         { icon: '⚖️', title: 'Legitimate interest', text: 'To secure the platform, prevent abuse, enforce plan limits, and improve reliability.' },
         { icon: '✅', title: 'Consent', text: 'Where you’ve explicitly authorized a connection, such as linking your WhatsApp Business Account via Embedded Signup.' },
         { icon: '🧾', title: 'Legal obligation', text: 'Where retention or disclosure is required by applicable law or a valid legal request.' },
@@ -100,7 +100,7 @@ const sections = [
     blocks: [
       { list: [
         { b: 'Encryption in transit:', t: 'All connections to our platform use TLS/HTTPS encryption.' },
-        { b: 'Encryption at rest:', t: 'Sensitive credentials — including WhatsApp access tokens, two-step verification PINs, and API keys — are encrypted before being stored in our database.' },
+        { b: 'Encryption at rest:', t: 'Sensitive credentials: including WhatsApp access tokens, two-step verification PINs, and API keys, are encrypted before being stored in our database.' },
         { b: 'Access control:', t: 'Each Business User account can only access its own connected WhatsApp accounts, conversations, and configuration data. Ownership is verified on every request.' },
         { b: 'Webhook verification:', t: 'Incoming messages from Meta are cryptographically verified to prevent spoofed or forged data from being processed.' },
         { b: 'Rate limiting:', t: 'Authentication and verification endpoints are rate-limited to reduce the risk of automated abuse.' },
@@ -121,10 +121,10 @@ const sections = [
     blocks: [
       { p: `We rely on the following categories of third-party infrastructure to operate ${PRODUCT}:` },
       { list: [
-        { b: 'Meta / WhatsApp Business Platform —', t: 'for sending and receiving WhatsApp messages, governed additionally by WhatsApp’s Business Policy and Meta’s Privacy Policy.' },
-        { b: 'AI language model providers —', t: 'to generate assistant responses to customer messages in real time.' },
-        { b: 'Cloud hosting and database providers —', t: 'to store account, configuration, and conversation data securely.' },
-        { b: 'SMS/OTP delivery providers —', t: 'to deliver one-time passcodes used for account verification.' },
+        { b: 'Meta / WhatsApp Business Platform', t: 'for sending and receiving WhatsApp messages, governed additionally by WhatsApp’s Business Policy and Meta’s Privacy Policy.' },
+        { b: 'AI language model providers', t: 'to generate assistant responses to customer messages in real time.' },
+        { b: 'Cloud hosting and database providers', t: 'to store account, configuration, and conversation data securely.' },
+        { b: 'SMS/OTP delivery providers', t: 'to deliver one-time passcodes used for account verification.' },
       ] },
       { p: 'Each of these providers is contractually bound to use data only as necessary to provide their service to us, and not for their own independent purposes.' },
     ],
@@ -147,7 +147,7 @@ const sections = [
     title: 'Data deletion requests',
     blocks: [
       { p: `To request deletion of your account, connected WhatsApp data, or conversation history, email us at ${EMAIL} with the phone number or account associated with your ${PRODUCT} account. We will verify the request and process it within 30 days. See our dedicated Data Deletion page for full instructions.` },
-      { callout: { variant: 'warn', title: 'For End Users', text: `If you’ve messaged a business using ${PRODUCT} and want your conversation data deleted, please contact that business directly — they control their own customer conversations. If the business is unable to assist, you may contact us and we will support the request to the extent technically possible.` } },
+      { callout: { variant: 'warn', title: 'For End Users', text: `If you’ve messaged a business using ${PRODUCT} and want your conversation data deleted, please contact that business directly, they control their own customer conversations. If the business is unable to assist, you may contact us and we will support the request to the extent technically possible.` } },
     ],
   },
   {

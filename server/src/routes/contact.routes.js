@@ -34,7 +34,7 @@ return res.status(500).json({ message: 'Internal server error' });
 
 // GET /api/contact/messages (admin/listing)
 router.get('/messages', async (_req, res) => {
-const items = await ContactMessage.find().sort({ createdAt: -1 }).lean();
+const items = ContactMessage.findAll();
 res.json({ data: items });
 });
 

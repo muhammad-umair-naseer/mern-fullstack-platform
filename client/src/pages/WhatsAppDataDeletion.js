@@ -63,7 +63,7 @@ const sections = [
     id: 'end-users',
     title: 'For End Users',
     blocks: [
-      { callout: { variant: 'warn', title: 'Messaged a business that uses our assistant?', text: `If you’ve messaged a business using ${PRODUCT} and want your conversation data deleted, please contact that business directly — they control their own customer conversations. If the business is unable to assist, contact us and we’ll support the request to the extent technically possible.` } },
+      { callout: { variant: 'warn', title: 'Messaged a business that uses our assistant?', text: `If you’ve messaged a business using ${PRODUCT} and want your conversation data deleted, please contact that business directly, they control their own customer conversations. If the business is unable to assist, contact us and we’ll support the request to the extent technically possible.` } },
     ],
   },
   {

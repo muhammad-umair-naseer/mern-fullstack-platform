@@ -1,0 +1,93 @@
+/* Free-tool cards: gradient edge, lift, and a shine that sweeps on hover. */
+
+.cx-tool {
+  position: relative;
+  isolation: isolate;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.cx-tool:hover,
+.cx-tool:focus-within { transform: translateY(-5px); }
+
+/* Accent ring. Drawn with box-shadow rather than a masked gradient pseudo-
+   element: the masked version was styled on all 62 cards even at opacity 0,
+   which dominated style recalc while filtering. */
+.cx-tool {
+  box-shadow: 0 1px 2px rgba(13, 36, 64, 0.05), 0 12px 32px rgba(13, 36, 64, 0.08),
+    inset 0 0 0 0 rgba(43, 107, 168, 0);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cx-tool:hover,
+.cx-tool:focus-within {
+  box-shadow: 0 2px 6px rgba(13, 36, 64, 0.07), 0 22px 44px -14px rgba(13, 36, 64, 0.28),
+    inset 0 0 0 1.5px rgba(43, 107, 168, 0.55);
+}
+
+/* Shine sweep. Travels once per hover rather than looping, so a grid of 62
+   cards never turns into a shimmering wall. */
+.cx-tool::after {
+  content: '';
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.68) 48%,
+    transparent
+  );
+  transform: skewX(-18deg);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cx-tool:hover::after,
+.cx-tool:focus-within::after {
+  display: block;
+  animation: cxToolShine 760ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+@keyframes cxToolShine {
+  from { left: -60%; opacity: 0.9; }
+  to   { left: 130%; opacity: 0; }
+}
+
+/* Icon tile reacts too, so the whole card feels like one object. */
+.cx-tool-icon {
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), background-color 260ms ease;
+}
+.cx-tool:hover .cx-tool-icon {
+  transform: translateY(-2px) rotate(-6deg) scale(1.06);
+}
+
+.cx-tool-arrow {
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cx-tool:hover .cx-tool-arrow { transform: translateX(4px); }
+
+/* A soft wash that fades up from the base on hover. */
+.cx-tool-wash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(43, 107, 168, 0.07));
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+.cx-tool:hover .cx-tool-wash { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-tool,
+  .cx-tool-icon,
+  .cx-tool-arrow { transition: none; }
+  .cx-tool:hover { transform: none; }
+  .cx-tool:hover::after,
+  .cx-tool:focus-within::after { animation: none; }
+}

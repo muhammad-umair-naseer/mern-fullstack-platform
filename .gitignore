@@ -11,8 +11,13 @@ server/build/
 
 # Environment variables
 .env
-.env.local
-.env.production
+.env.*
+server/.env
+server/.env.*
+*.bak
+*.bak*
+!.env.example
+!server/.env.example
 
 # Cache
 .cache/
@@ -54,3 +59,7 @@ uploads/
 # Package managers
 package-lock.json
 yarn.lock
+
+# SQLite write-ahead log sidecars
+*.db-wal
+*.db-shm

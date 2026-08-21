@@ -6,8 +6,8 @@
   -webkit-backdrop-filter: saturate(150%) blur(20px);
   color: #e5e7eb;
   padding: 48px 0 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(16, 43, 78, 0.1);
+  box-shadow: inset 0 1px 0 rgba(16, 43, 78, 0.06);
 }
 
 .footer-container {
@@ -35,7 +35,7 @@
 .footer-section h3,
 .footer-section h4 {
   margin: 0 0 14px;
-  color: #a78bfa;
+  color: #7fabdb;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -44,7 +44,7 @@
   font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: 0.02em;
-  background: linear-gradient(90deg, #7B2D8B, #8b5cf6, #e056e5, #f97316);
+  background: linear-gradient(90deg, #0d2440, #17426c, #2b6ba8, #4a86c4);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -143,7 +143,7 @@
 }
 .footer-legal a:hover {
   color: #fff;
-  background: linear-gradient(90deg, #8b5cf6, #e056e5);
+  background: linear-gradient(90deg, #2b6ba8, #4a86c4);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

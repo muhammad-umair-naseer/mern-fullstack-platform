@@ -1,10 +1,12 @@
 import React, { useState, useId } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import BrandLogo from './BrandLogo';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import './Navbar.css';
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuId = useId();
   const introRef = useIntroTimeline('[data-intro]', { y: -16, stagger: 0.08, duration: 0.5 });
@@ -43,9 +45,26 @@ const Navbar = () => {
           <Link to="/services" className="nav-link" onClick={closeMenu} data-intro>Services</Link>
           <Link to="/courses" className="nav-link" onClick={closeMenu} data-intro>Courses</Link>
           <Link to="/internships" className="nav-link" onClick={closeMenu} data-intro>Internships</Link>
+          <Link to="/tools" className="nav-link" onClick={closeMenu} data-intro>Free Tools</Link>
           <Link to="/whatsapp-bot" className="nav-link" onClick={closeMenu} data-intro>WhatsApp Bot</Link>
           <Link to="/about" className="nav-link" onClick={closeMenu} data-intro>About Us</Link>
           <Link to="/contact" className="nav-link nav-cta" onClick={closeMenu} data-intro>Contact Us</Link>
+          {user ? (
+            <>
+              <Link to="/dashboard" className="nav-link" onClick={closeMenu} data-intro>My Learning</Link>
+              <button
+                type="button"
+                onClick={() => { logout(); closeMenu(); }}
+                className="nav-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                data-intro
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="nav-link" onClick={closeMenu} data-intro>Sign in</Link>
+          )}
         </nav>
       </div>
     </header>

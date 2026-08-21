@@ -75,7 +75,7 @@ const Contact = () => {
                     <Sparkles className="h-4 w-4" /> Let’s talk
                   </span>
                   <h1 className="mt-5 text-4xl font-extrabold leading-tight">Contact Cortexis Solution Hub</h1>
-                  <p className="mt-3 text-white/90">Tell us about your goals — we’ll get back within one business day (PKT) to make something remarkable together.</p>
+                  <p className="mt-3 text-white/90">Tell us about your goals. We reply within one business day (PKT) to make something remarkable together.</p>
 
                   <ul className="mt-6 space-y-3">
                     {perks.map((p, i) => (
@@ -114,7 +114,7 @@ const Contact = () => {
             <div className="mb-6" data-intro>
               <span className="section-eyebrow"><span className="section-eyebrow-dot" /> Project brief</span>
               <h2 className="mt-3 text-2xl font-bold text-slate-900">Start the conversation</h2>
-              <p className="mt-1 text-slate-600">Share your goals, users, and timelines — the more context, the better.</p>
+              <p className="mt-1 text-slate-600">Share your goals, users and timelines. The more context you give, the better.</p>
             </div>
 
             {submitStatus === 'success' && (

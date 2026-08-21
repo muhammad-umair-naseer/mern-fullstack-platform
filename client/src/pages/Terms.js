@@ -9,7 +9,7 @@ const sections = [
     title: 'Acceptance of Terms',
     blocks: [
       { p: `Welcome to ${COMPANY} (“Cortexis”, “we”, “our”, or “us”). These Terms & Conditions (“Terms”) govern your access to and use of our website, applications, courses, internship programs, and related services (collectively, the “Services”).` },
-      { p: 'By accessing or using the Services — including registering for a course, applying for an internship, or submitting a contact request — you confirm that you have read, understood, and agree to be bound by these Terms and our Privacy Policy. If you do not agree, please do not use the Services.' },
+      { p: 'By accessing or using the Services: including registering for a course, applying for an internship, or submitting a contact request, you confirm that you have read, understood, and agree to be bound by these Terms and our Privacy Policy. If you do not agree, please do not use the Services.' },
       { p: 'If you are using the Services on behalf of an organization, you represent that you have authority to bind that organization to these Terms.' },
     ],
   },
@@ -30,10 +30,10 @@ const sections = [
     blocks: [
       { p: 'Cortexis provides software development and consulting, professional training courses, and internship programs. Specific deliverables, schedules, curricula, and fees are described on the relevant pages of the Services or in a separate written agreement.' },
       { list: [
-        'Course Registration — enroll in training programs subject to availability and prerequisites.',
-        'Internship Applications — apply to structured internship tracks; selection is at our discretion.',
-        'Consulting & Development — engagements are governed by a separate statement of work where applicable.',
-        'Contact & Support — submit inquiries through our contact form or listed channels.',
+        'Course Registration: enroll in training programs subject to availability and prerequisites.',
+        'Internship Applications: apply to structured internship tracks; selection is at our discretion.',
+        'Consulting & Development: engagements are governed by a separate statement of work where applicable.',
+        'Contact & Support: submit inquiries through our contact form or listed channels.',
       ] },
       { note: 'We may modify, suspend, or discontinue any part of the Services at any time. Where a change materially affects a paid program you are enrolled in, we will make reasonable efforts to notify you in advance.' },
     ],
@@ -72,7 +72,7 @@ const sections = [
     id: 'ip',
     title: 'Intellectual Property',
     blocks: [
-      { p: `All content on the Services — including text, graphics, logos, course curricula, software, and design — is owned by or licensed to ${COMPANY} and is protected by intellectual property laws.` },
+      { p: `All content on the Services: including text, graphics, logos, course curricula, software, and design, is owned by or licensed to ${COMPANY} and is protected by intellectual property laws.` },
       { p: 'We grant you a limited, non-exclusive, non-transferable license to access and use the materials solely for your personal, non-commercial learning within the program you are enrolled in. All rights not expressly granted are reserved.' },
       { h: 'Your content' },
       { p: 'When you submit materials to us (for example, application details or project work), you retain ownership but grant us a license to use them as necessary to provide and improve the Services and to operate our programs.' },

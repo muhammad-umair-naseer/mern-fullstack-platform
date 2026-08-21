@@ -50,7 +50,7 @@ export default function WhatsAppBot() {
           </p>
 
           <p data-intro className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
-            An AI assistant that replies for your business on WhatsApp — instantly, around the clock,
+            An AI assistant that replies for your business on WhatsApp, instantly and around the clock,
             in your brand’s voice. <span className="text-white">Something big is coming.</span>
           </p>
 
@@ -97,7 +97,7 @@ export default function WhatsAppBot() {
             </div>
             <div className="wa-body">
               <div className="wa-bubble wa-in">Hi! Do you deliver on weekends? 📦</div>
-              <div className="wa-bubble wa-out">Yes — we deliver 7 days a week, 9am–9pm. Want me to start your order? 🚀</div>
+              <div className="wa-bubble wa-out">Yes, we deliver 7 days a week, 9am–9pm. Want me to start your order? 🚀</div>
               <div className="wa-bubble wa-in">What are your prices?</div>
               <div className="wa-bubble wa-typing" aria-label="Assistant is typing">
                 <span /><span /><span />

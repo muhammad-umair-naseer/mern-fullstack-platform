@@ -1,0 +1,48 @@
+import { Router } from 'express';
+import { requireAuth, optionalAuth } from '../middleware/auth.js';
+import {
+  listCourses,
+  getCourseOutline,
+  enroll,
+  myCourses,
+} from '../controllers/catalogue.controller.js';
+import { getLesson, completeLesson } from '../controllers/lesson.controller.js';
+import {
+  getChapterQuiz,
+  submitChapterQuiz,
+  getFinalExam,
+  submitFinalExam,
+} from '../controllers/quiz.controller.js';
+import { verifyCertificate } from '../controllers/certificate.controller.js';
+
+/**
+ * Learning platform routing.
+ *
+ * Handlers live in ../controllers and the rules they enforce in ../services;
+ * this file is only the URL-to-handler map so the surface stays readable.
+ */
+const router = Router();
+
+// --- catalogue -------------------------------------------------------------
+router.get('/courses', optionalAuth, listCourses);
+router.get('/courses/:slug', optionalAuth, getCourseOutline);
+router.post('/courses/:slug/enroll', requireAuth, enroll);
+router.get('/my', requireAuth, myCourses);
+
+// --- lessons ---------------------------------------------------------------
+router.get('/lessons/:id', requireAuth, getLesson);
+router.post('/lessons/:id/complete', requireAuth, completeLesson);
+
+// --- quizzes ---------------------------------------------------------------
+router.get('/quiz/chapter/:chapterId', requireAuth, getChapterQuiz);
+router.post('/quiz/chapter/:chapterId', requireAuth, submitChapterQuiz);
+
+// --- final exam ------------------------------------------------------------
+router.get('/final/:slug', requireAuth, getFinalExam);
+router.post('/final/:slug', requireAuth, submitFinalExam);
+
+// --- certificate -----------------------------------------------------------
+// Public: anyone holding a code can verify it without an account.
+router.get('/certificate/:code', verifyCertificate);
+
+export default router;

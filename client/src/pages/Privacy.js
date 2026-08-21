@@ -19,15 +19,15 @@ const sections = [
       { p: 'We collect information you provide directly and information gathered automatically as you use the Services.' },
       { h: 'Information you provide' },
       { list: [
-        'Contact details — name, email address, and phone number.',
-        'Application data — course registrations and internship applications, including education, experience, and any documents you submit.',
-        'Messages — the content of inquiries you send through our contact form.',
+        'Contact details: name, email address, and phone number.',
+        'Application data: course registrations and internship applications, including education, experience, and any documents you submit.',
+        'Messages: the content of inquiries you send through our contact form.',
       ] },
       { h: 'Information collected automatically' },
       { list: [
-        'Usage data — pages visited, actions taken, and time spent on the Services.',
-        'Device & technical data — browser type, operating system, and general location inferred from your IP address.',
-        'Cookies and similar technologies — used to keep the site working and to understand usage.',
+        'Usage data: pages visited, actions taken, and time spent on the Services.',
+        'Device & technical data: browser type, operating system, and general location inferred from your IP address.',
+        'Cookies and similar technologies: used to keep the site working and to understand usage.',
       ] },
     ],
   },
@@ -53,10 +53,10 @@ const sections = [
     blocks: [
       { p: 'Where applicable law requires it, we process your personal data on one or more of the following bases:' },
       { list: [
-        'Consent — for example, when you submit a form or opt in to communications.',
-        'Contract — to deliver a course or program you enrolled in.',
-        'Legitimate interests — to secure, maintain, and improve the Services.',
-        'Legal obligation — to meet regulatory and record-keeping requirements.',
+        'Consent: for example, when you submit a form or opt in to communications.',
+        'Contract: to deliver a course or program you enrolled in.',
+        'Legitimate interests: to secure, maintain, and improve the Services.',
+        'Legal obligation: to meet regulatory and record-keeping requirements.',
       ] },
     ],
   },
@@ -73,10 +73,10 @@ const sections = [
     blocks: [
       { p: 'We share personal data only as needed and never sell it. Recipients may include:' },
       { list: [
-        'Service providers — trusted vendors who host our infrastructure, deliver email, or provide analytics, acting on our instructions.',
-        'Program partners — where you apply to a jointly delivered internship or course, and only as necessary for that program.',
-        'Legal & safety — authorities when required by law, or to protect the rights, safety, and property of Cortexis, our users, and the public.',
-        'Business transfers — in connection with a merger, acquisition, or sale of assets, subject to this policy.',
+        'Service providers: trusted vendors who host our infrastructure, deliver email, or provide analytics, acting on our instructions.',
+        'Program partners: where you apply to a jointly delivered internship or course, and only as necessary for that program.',
+        'Legal & safety: authorities when required by law, or to protect the rights, safety, and property of Cortexis, our users, and the public.',
+        'Business transfers: in connection with a merger, acquisition, or sale of assets, subject to this policy.',
       ] },
     ],
   },
@@ -84,7 +84,7 @@ const sections = [
     id: 'security',
     title: 'Data Security',
     blocks: [
-      { p: 'We implement reasonable technical and organizational measures — including encryption in transit, access controls, and network protections — to safeguard your information. No method of transmission or storage is completely secure, so we cannot guarantee absolute security, but we work continuously to protect your data.' },
+      { p: 'We implement reasonable technical and organizational measures, including encryption in transit, access controls, and network protections, to safeguard your information. No method of transmission or storage is completely secure, so we cannot guarantee absolute security, but we work continuously to protect your data.' },
     ],
   },
   {

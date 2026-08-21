@@ -29,7 +29,7 @@ return res.status(500).json({ message: 'Internal server error' });
 
 // GET /api/internships/applications (admin/listing)
 router.get('/applications', async (_req, res) => {
-const items = await InternshipApplication.find().sort({ createdAt: -1 }).lean();
+const items = InternshipApplication.findAll();
 res.json({ data: items });
 });
 

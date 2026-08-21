@@ -5,10 +5,13 @@
   height: 72px;
   display: flex;
   align-items: center;
-  background: rgba(7, 9, 15, 0.55);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(150%) blur(16px);
+  -webkit-backdrop-filter: saturate(150%) blur(16px);
+  border-bottom: 1px solid rgba(16, 43, 78, 0.08);
   backdrop-filter: saturate(170%) blur(22px);
   -webkit-backdrop-filter: saturate(170%) blur(22px);
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 -1px 0 rgba(16, 43, 78, 0.05);
 }
 /* animated brand underline bar */
 .navbar::after {
@@ -18,7 +21,7 @@
   right: 0;
   bottom: 0;
   height: 2px;
-  background: linear-gradient(90deg, #8b5cf6, #e056e5, #f97316, #8b5cf6, #e056e5);
+  background: linear-gradient(90deg, #17426c, #2b6ba8, #4a86c4, #2b6ba8, #17426c);
   background-size: 200% 100%;
   animation: navUnderline 5s linear infinite;
 }
@@ -51,13 +54,13 @@
   justify-content: center;
   height: 52px;
   width: 52px;
-  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.55));
+  filter: drop-shadow(0 0 12px rgba(43, 107, 168, 0.55));
   transition: transform 200ms ease, filter 200ms ease;
 }
 .nav-logo-badge img { height: 100%; width: 100%; object-fit: contain; }
 .nav-logo:hover .nav-logo-badge {
   transform: translateY(-1px) scale(1.05);
-  filter: drop-shadow(0 0 18px rgba(249, 115, 22, 0.6));
+  filter: drop-shadow(0 0 18px rgba(200, 146, 46, 0.6));
 }
 .nav-logo-wrap {
   display: flex;
@@ -68,7 +71,7 @@
   font-size: 1.45rem;
   font-weight: 800;
   letter-spacing: 0.03em;
-  background: linear-gradient(90deg, #7B2D8B, #8b5cf6, #e056e5, #f97316);
+  background: linear-gradient(90deg, #0d2440, #17426c, #2b6ba8, #4a86c4);
   background-size: 300% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -85,7 +88,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #f97316;
+  color: #c8922e;
   margin-top: 3px;
 }
 
@@ -100,7 +103,7 @@
 
 .nav-link {
   position: relative;
-  color: #e5e7eb;
+  color: #46587a;
   text-decoration: none;
   padding: 10px 14px;
   border-radius: 10px;
@@ -115,13 +118,13 @@
   bottom: 6px;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #8b5cf6, #e056e5, #f97316);
+  background: linear-gradient(90deg, #17426c, #2b6ba8, #4a86c4);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 200ms ease;
 }
 .nav-link:hover {
-  color: #ffffff;
+  color: #0f2444;
   transform: translateY(-1px);
 }
 .nav-link:hover::after {
@@ -129,26 +132,26 @@
 }
 .nav-link:focus-visible {
   outline: none;
-  background: rgba(124, 197, 255, 0.14);
+  background: rgba(23, 66, 108, 0.07);
 }
 
 /* Highlighted CTA link */
 .nav-cta {
   color: #ffffff;
-  background: linear-gradient(120deg, #8b5cf6, #e056e5 55%, #f97316);
+  background: linear-gradient(120deg, #17426c, #2b6ba8 55%, #4a86c4);
   background-size: 220% 100%;
-  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.35);
+  box-shadow: 0 6px 18px rgba(43, 107, 168, 0.35);
   animation: navGrad 5s ease-in-out infinite;
 }
 .nav-cta:hover {
-  box-shadow: 0 10px 26px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 10px 26px rgba(200, 146, 46, 0.4);
 }
 .nav-cta::after { display: none; }
 
 /* Mobile toggle */
 .nav-icon {
   display: none;
-  color: #fff;
+  color: #0f2444;
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -156,7 +159,7 @@
   border-radius: 8px;
 }
 .nav-icon:focus-visible {
-  outline: 2px solid #8b5cf6;
+  outline: 2px solid #2b6ba8;
   outline-offset: 2px;
 }
 .bar {
@@ -164,7 +167,7 @@
   width: 24px;
   height: 2.5px;
   margin: 5px 0;
-  background-color: #fff;
+  background-color: #0f2444;
   transition: transform 200ms ease, opacity 200ms ease;
 }
 

@@ -165,7 +165,7 @@ export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated
 
   return (
     <main className="relative text-slate-900">
-      {/* Reading-progress bar — sits above the navbar */}
+      {/* Reading-progress bar, sits above the navbar */}
       <div className="fixed inset-x-0 top-0 z-[1000] h-[3px] bg-transparent" aria-hidden="true">
         <div
           className="h-full origin-left bg-grad-brand shadow-[0_0_16px_rgba(224,86,229,0.6)]"

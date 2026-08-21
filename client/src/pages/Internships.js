@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import InternshipForm from "../pages/InternshipForm";
 import { useIntroTimeline } from "../hooks/useIntroTimeline";
+import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
 import { useGridReveal } from "../hooks/useGridReveal";
 import { useModalIntro } from "../hooks/useModalIntro";
 
@@ -45,8 +46,6 @@ const categories = [
 const Internships = () => {
   const [selectedInternship, setSelectedInternship] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState("All");
   const closeBtnRef = useRef(null);
   const introRef = useIntroTimeline();
   const panelRef = useModalIntro(showForm);
@@ -187,18 +186,10 @@ const Internships = () => {
 
   ];
 
-  const filtered = useMemo(() => {
-    const qx = q.trim().toLowerCase();
-    return internships.filter((i) => {
-      const matchesCat = cat === "All" || i.category === cat;
-      const matchesQ =
-        !qx ||
-        i.title.toLowerCase().includes(qx) ||
-        i.description.toLowerCase().includes(qx) ||
-        i.category.toLowerCase().includes(qx);
-      return matchesCat && matchesQ;
-    });
-  }, [q, cat, internships]);
+  const { q, setQ, cat, setCat, filtered } = useCatalogueFilter(
+    internships,
+    (i) => [i.title, i.description, i.category]
+  );
 
   const gridRef = useGridReveal([filtered]);
 

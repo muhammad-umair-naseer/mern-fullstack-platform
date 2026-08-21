@@ -11,7 +11,7 @@
 }
 .wa-legal-link:hover {
   color: #fff;
-  background: linear-gradient(90deg, #8b5cf6, #e056e5);
+  background: linear-gradient(90deg, #2b6ba8, #4a86c4);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -36,7 +36,7 @@
   border-radius: 26px;
   padding: 14px;
   background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(16, 43, 78, 0.12);
   backdrop-filter: saturate(140%) blur(14px);
   -webkit-backdrop-filter: saturate(140%) blur(14px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 30px 70px rgba(0, 0, 0, 0.5);
@@ -53,7 +53,7 @@
   align-items: center;
   gap: 12px;
   padding: 6px 8px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(16, 43, 78, 0.06);
 }
 .wa-avatar {
   display: grid;
@@ -62,11 +62,11 @@
   width: 42px;
   border-radius: 50%;
   font-size: 20px;
-  background: linear-gradient(135deg, #8b5cf6, #e056e5);
-  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, #2b6ba8, #4a86c4);
+  box-shadow: 0 6px 18px rgba(43, 107, 168, 0.4);
 }
 .wa-meta { flex: 1; min-width: 0; line-height: 1.2; }
-.wa-name { margin: 0; font-weight: 600; color: #eef1fb; font-size: 15px; }
+.wa-name { margin: 0; font-weight: 600; color: #0f2444; font-size: 15px; }
 .wa-status {
   margin: 2px 0 0;
   display: flex;
@@ -109,8 +109,8 @@
 }
 .wa-in {
   align-self: flex-start;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(16, 43, 78, 0.06);
+  border: 1px solid rgba(16, 43, 78, 0.1);
   color: #e7ebf7;
   border-bottom-left-radius: 5px;
 }
@@ -138,8 +138,8 @@
   display: inline-flex;
   gap: 5px;
   padding: 13px 16px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(16, 43, 78, 0.06);
+  border: 1px solid rgba(16, 43, 78, 0.1);
   border-bottom-left-radius: 5px;
 }
 .wa-typing span {

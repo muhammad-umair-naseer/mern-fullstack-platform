@@ -10,7 +10,7 @@
 body {
   font-family: 'Space Grotesk', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color: #e8ecf8;
+  color: #0f2444;
   /* cosmic base — the AnimatedBackground paints stars/blobs/globe on top */
   background-color: #07090f;
 }

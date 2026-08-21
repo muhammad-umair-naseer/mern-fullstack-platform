@@ -10,7 +10,7 @@ const sections = [
     id: 'acceptance',
     title: 'Agreement to these Terms',
     blocks: [
-      { p: `These Terms of Service (“Terms”) are a binding agreement between you and ${COMPANY} (“Cortexis”, “we”, “us”, “our”) governing your access to and use of ${PRODUCT} — our platform, website, dashboard, and API that let a business connect a WhatsApp Business Account and deploy an AI assistant to reply to customer messages (the “Service”).` },
+      { p: `These Terms of Service (“Terms”) are a binding agreement between you and ${COMPANY} (“Cortexis”, “we”, “us”, “our”) governing your access to and use of ${PRODUCT}, our platform, website, dashboard, and API that let a business connect a WhatsApp Business Account and deploy an AI assistant to reply to customer messages (the “Service”).` },
       { p: 'By creating an account, connecting a WhatsApp Business Account, or otherwise using the Service, you agree to these Terms and to our Privacy Policy. If you are using the Service on behalf of a business, you represent that you are authorized to bind that business to these Terms.' },
     ],
   },
@@ -102,7 +102,7 @@ const sections = [
     id: 'third-party',
     title: 'Third-party services',
     blocks: [
-      { p: 'The Service depends on third parties — including Meta/WhatsApp, AI language-model providers, cloud hosting, and OTP delivery providers. Their availability and terms are outside our control, and we are not responsible for interruptions, changes, or actions of those providers.' },
+      { p: 'The Service depends on third parties: including Meta/WhatsApp, AI language-model providers, cloud hosting, and OTP delivery providers. Their availability and terms are outside our control, and we are not responsible for interruptions, changes, or actions of those providers.' },
     ],
   },
   {
@@ -116,7 +116,7 @@ const sections = [
     id: 'liability',
     title: 'Limitation of liability',
     blocks: [
-      { p: `To the maximum extent permitted by law, ${COMPANY} shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, revenue, business, or goodwill, arising from your use of the Service — including from messages sent by your assistant.` },
+      { p: `To the maximum extent permitted by law, ${COMPANY} shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, revenue, business, or goodwill, arising from your use of the Service, including from messages sent by your assistant.` },
       { p: 'Where liability cannot be excluded, our total aggregate liability is limited to the amount you paid us for the Service during the three (3) months preceding the event giving rise to the claim.' },
     ],
   },

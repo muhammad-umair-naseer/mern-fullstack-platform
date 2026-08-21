@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
 import { useGridReveal } from '../hooks/useGridReveal';
 import { useModalIntro } from '../hooks/useModalIntro';
 
@@ -117,8 +118,6 @@ const rawServices = [
 const categories = ["All", "Development", "Design", "Marketing", "AI/ML"];
 
 export default function Services() {
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState("All");
   const [active, setActive] = useState(null);
   const [show, setShow] = useState(false);
   const closeBtnRef = useRef(null);
@@ -128,18 +127,10 @@ export default function Services() {
   const introRef = useIntroTimeline();
   const panelRef = useModalIntro(show);
 
-  const filtered = useMemo(() => {
-    const qx = q.trim().toLowerCase();
-    return services.filter((s) => {
-      const mc = cat === "All" || s.category === cat;
-      const mq =
-        !qx ||
-        s.title.toLowerCase().includes(qx) ||
-        s.description.toLowerCase().includes(qx) ||
-        s.category.toLowerCase().includes(qx);
-      return mc && mq;
-    });
-  }, [q, cat, services]);
+  const { q, setQ, cat, setCat, filtered } = useCatalogueFilter(
+    services,
+    (s) => [s.title, s.description, s.category]
+  );
 
   const gridRef = useGridReveal([filtered]);
 
@@ -187,7 +178,7 @@ export default function Services() {
               data-intro
               className="mt-4 text-indigo-100/90 text-lg max-w-xl"
             >
-              Strategy, design, development, and cloud—end‑to‑end solutions crafted to accelerate growth.
+              Strategy, design, development and cloud. End to end solutions built to accelerate growth.
             </p>
             <div
               data-intro

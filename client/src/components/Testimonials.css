@@ -44,7 +44,7 @@
   position: absolute;
   inset: 0 0 auto 0;
   height: 3px;
-  background: linear-gradient(90deg, #f97316 0%, #e056e5 25%, #7c3aed 100%);
+  background: linear-gradient(90deg, #c8922e 0%, #4a86c4 25%, #17426c 100%);
   opacity: 0.9;
 }
 .testimonial-card:hover,

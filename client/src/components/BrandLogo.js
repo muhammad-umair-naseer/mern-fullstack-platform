@@ -37,8 +37,8 @@ const BrandLogo = ({ size = 40, className = '' }) => {
     >
       <defs>
         <linearGradient id={orange} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#fb8c3c" />
-          <stop offset="100%" stopColor="#e85d10" />
+          <stop offset="0%" stopColor="#d3a244" />
+          <stop offset="100%" stopColor="#b07f24" />
         </linearGradient>
         <linearGradient id={blue} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#3b9eea" />

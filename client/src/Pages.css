@@ -27,7 +27,7 @@ body {
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  color: #1a1a2e;
+  color: inherit;
   margin-bottom: 1rem;
   font-weight: 700;
 }
@@ -292,14 +292,13 @@ textarea.form-control {
   font-size: 3.5rem;
   margin-bottom: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: #0f2444;
 }
 
 .hero-content p {
   font-size: 1.5rem;
   margin-bottom: 2rem;
   max-width: 800px;
-  color: #fff;
 }
 
 .hero-buttons {

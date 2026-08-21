@@ -1,0 +1,26 @@
+services:
+  cortexis-website:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cortexis-website
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - DATABASE_FILE=./data/cortexis.db
+      - JWT_SECRET=${JWT_SECRET:-4bb1ae5e13ae44801f68672156c361ef8ff62f7a4161bcbeaeb5157e8f247e5f9356157502a692abe4ba493ff8de6d98}
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - CONTACT_TO=${CONTACT_TO:-}
+      - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
+    volumes:
+      - cortexis_db_data:/app/server/data
+
+volumes:
+  cortexis_db_data:
+    driver: local
