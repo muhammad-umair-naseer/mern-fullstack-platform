@@ -1,0 +1,113 @@
+/* Tech Marquee Component Styles */
+.tech-marquee-wrapper {
+  padding: 42px 0 36px;
+  background: linear-gradient(180deg, rgba(250, 251, 252, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  position: relative;
+}
+
+.tech-marquee-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 0 20px;
+}
+
+.tech-marquee-eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--cx-orange, #f97316);
+  margin-bottom: 6px;
+}
+
+.tech-marquee-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.tech-marquee-track-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+.tech-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: techMarqueeScroll 38s linear infinite;
+  gap: 20px;
+}
+
+.tech-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.tech-marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 9999px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  cursor: default;
+  user-select: none;
+}
+
+.tech-marquee-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(249, 115, 22, 0.4);
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.1);
+}
+
+.tech-icon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.tech-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+@keyframes techMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .tech-marquee-wrapper {
+    padding: 32px 0 28px;
+  }
+  .tech-marquee-title {
+    font-size: 1.1rem;
+  }
+  .tech-marquee-item {
+    padding: 8px 14px;
+    gap: 8px;
+  }
+  .tech-icon {
+    font-size: 1.15rem;
+  }
+  .tech-name {
+    font-size: 0.85rem;
+  }
+}

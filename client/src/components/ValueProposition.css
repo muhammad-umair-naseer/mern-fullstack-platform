@@ -1,0 +1,230 @@
+/* Value Proposition Component Styles */
+.value-prop-section {
+  padding: 80px 0;
+  background: #ffffff;
+  position: relative;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-top: 48px;
+}
+
+.value-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.value-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-color, #f97316);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(15, 23, 42, 0.16);
+  box-shadow: 0 20px 40px var(--accent-glow, rgba(0, 0, 0, 0.08)), 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.value-card:hover::before {
+  opacity: 1;
+}
+
+.value-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.value-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #fafbfc;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color, #f97316);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.value-card:hover .value-icon-box {
+  transform: scale(1.08) rotate(3deg);
+  background: #ffffff;
+}
+
+.value-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.value-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.value-desc {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  flex: 1;
+}
+
+.value-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.highlight-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 5px 12px;
+  border-radius: 8px;
+}
+
+.tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-color, #f97316);
+}
+
+.value-card-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  padding-top: 16px;
+}
+
+.value-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-color, #f97316);
+  text-decoration: none;
+  transition: gap 0.2s ease, opacity 0.2s ease;
+}
+
+.value-link:hover {
+  gap: 10px;
+  opacity: 0.9;
+  text-decoration: none;
+}
+
+/* Impact Metrics Banner */
+.impact-metrics-banner {
+  margin-top: 56px;
+  background: linear-gradient(135deg, #0a1426 0%, #070e1e 100%);
+  border-radius: 20px;
+  padding: 36px 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  box-shadow: 0 16px 36px rgba(7, 14, 30, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.impact-metrics-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.15), transparent 60%);
+  pointer-events: none;
+}
+
+.impact-col {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.impact-num {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.impact-lbl {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
+}
+
+.impact-divider {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .value-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .impact-metrics-banner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .value-prop-section {
+    padding: 60px 0;
+  }
+  .value-card {
+    padding: 24px;
+  }
+  .impact-metrics-banner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .impact-num {
+    font-size: 1.8rem;
+  }
+}

@@ -74,24 +74,62 @@
   border: 2px solid #ffffff;
 }
 
+/* Star Rating */
+.testimonial-rating {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 10px 0 14px;
+}
+
+.star-icon.filled {
+  fill: #f59e0b;
+  color: #f59e0b;
+}
+
 /* Quote */
 .testimonial-quote {
   color: #334155;
-  line-height: 1.7;
-  font-size: 1rem;
-  margin: 8px auto 0;
+  line-height: 1.65;
+  font-size: 0.95rem;
+  margin: 0 auto;
   max-width: 520px;
   quotes: "“" "”" "‘" "’";
 }
 
-/* Name/company */
+/* Name/company/location */
+.testimonial-card .card-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  padding-top: 14px;
+  background: transparent;
+}
+
 .testimonial-name {
   color: #090e17;
   font-weight: 700;
+  font-size: 1.05rem;
 }
+
+.testimonial-role {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cx-orange, #f97316);
+}
+
+.testimonial-location {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
 .text-muted { color: #64748b !important; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .testimonial-card { transition: none; }
 }
+

@@ -8,10 +8,6 @@ import aboutMission from "../assets/our mission About.webp";
 import aboutVision from "../assets/our vision About.webp";
 import aboutPromise from "../assets/our promise About.webp";
 import aboutStory from "../assets/our story About.webp";
-import team1 from "../assets/team 1.webp";
-import team2 from "../assets/team 2.webp";
-import team3 from "../assets/team 3.webp";
-import team4 from "../assets/team 4.webp";
 
 const stats = [
   { icon: Award, number: "4+", label: "Years of Excellence" },
@@ -26,19 +22,11 @@ const drivers = [
   { icon: ShieldCheck, img: aboutPromise, title: "Our Promise", text: "Transparent collaboration, agile delivery, and scalable engineering from day one." },
 ];
 
-const team = [
-  { name: "Muhammad Umer", role: "CEO & Full-Stack Architect", image: team1 },
-  { name: "Muhammad Abdullah", role: "Lead Frontend Engineer", image: team2 },
-  { name: "Syed Sabeeh", role: "AI / ML & Cloud Specialist", image: team3 },
-  { name: "Ahsan Raza", role: "UI/UX & Product Designer", image: team4 },
-];
-
 const About = () => {
   const introRef = useIntroTimeline();
   const statsRef = useRevealOnScroll();
   const mvpRef = useRevealOnScroll();
   const storyRef = useRevealOnScroll();
-  const teamRef = useRevealOnScroll();
 
   return (
     <main className="relative text-slate-900">
@@ -166,29 +154,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* ── Team ─────────────────────────────────────────────────────── */}
-      <section ref={teamRef} className="py-16 md:py-20" aria-labelledby="team-heading">
-        <div className="section-head" data-reveal>
-          <span className="section-eyebrow"><span className="section-eyebrow-dot" /> The people</span>
-          <h2 id="team-heading" className="section-title">Meet Our Team</h2>
-        </div>
-        <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-4 gap-8 px-6">
-          {team.map((m, idx) => (
-            <article key={idx} data-reveal className="group rounded-3xl bg-white p-6 text-center shadow-card ring-1 ring-slate-200 transition duration-300 hover:-translate-y-1.5">
-              <span className="mx-auto mb-4 block h-28 w-28 rounded-full bg-gradient-to-tr from-brand-accent via-brand-magenta to-brand-orange-500 p-[3px]">
-                <img
-                  src={m.image}
-                  alt={`${m.name}, ${m.role}`}
-                  loading="lazy"
-                  className="h-full w-full rounded-full object-cover ring-2 ring-brand-ink transition duration-500 group-hover:scale-105"
-                />
-              </span>
-              <h3 className="text-lg font-semibold text-slate-900">{m.name}</h3>
-              <p className="text-brand-accent-soft text-sm">{m.role}</p>
-            </article>
-          ))}
-        </div>
-      </section>
 
       {/* ── CTA ──────────────────────────────────────────────────────── */}
       <section className="px-6 pb-20">

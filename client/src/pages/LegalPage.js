@@ -202,7 +202,7 @@ export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated
           >
             {title.map((word, i) =>
               word.grad ? (
-                <span key={i} className="bg-gradient-to-r from-amber-300 via-white to-white bg-clip-text text-transparent">
+                <span key={i} className="bg-gradient-to-r from-[#ea580c] via-[#f97316] to-[#ff6b00] bg-clip-text text-transparent font-black">
                   {word.text}
                 </span>
               ) : (
@@ -234,7 +234,7 @@ export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated
               aria-label="On this page"
               className="rounded-3xl bg-white p-6 shadow-cardLg ring-1 ring-slate-200"
             >
-              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                 On this page
               </p>
               <ol className="space-y-1">
@@ -247,14 +247,14 @@ export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated
                         onClick={() => scrollTo(s.id)}
                         aria-current={active ? 'true' : undefined}
                         className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition ${
-                          active ? 'bg-white/10 ring-1 ring-white/15' : 'hover:bg-white/5'
+                          active ? 'bg-orange-50 ring-1 ring-orange-200 font-semibold' : 'hover:bg-slate-50'
                         }`}
                       >
                         <span
                           className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg text-[11px] font-bold transition ${
                             active
-                              ? 'bg-gradient-to-br from-brand-accent to-brand-magenta text-white shadow-glow'
-                              : 'bg-white/10 text-slate-400 group-hover:text-slate-200'
+                              ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-sm'
+                              : 'bg-slate-100 text-slate-500 group-hover:text-slate-800'
                           }`}
                         >
                           {String(i + 1).padStart(2, '0')}
@@ -262,8 +262,8 @@ export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated
                         <span
                           className={`leading-snug ${
                             active
-                              ? 'font-semibold bg-grad-hero bg-clip-text text-transparent'
-                              : 'text-slate-500 group-hover:text-slate-200'
+                              ? 'font-bold text-orange-600'
+                              : 'text-slate-700 group-hover:text-slate-900'
                           }`}
                         >
                           {s.title}

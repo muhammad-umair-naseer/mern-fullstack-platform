@@ -37,11 +37,11 @@ const ServicesPreview = () => {
           subtitle="Outcome-focused solutions delivered by experienced engineers and designers"
         />
 
-        <ul className="services-row row" role="list" aria-label="Service cards">
+        <ul className="services-row row" aria-label="Service cards">
           {services.map((service, index) => {
             const titleId = `service-title-${index}`;
             return (
-              <li key={index} className="col-md-4 mb-4" role="listitem" data-reveal>
+              <li key={index} className="col-md-4 mb-4" data-reveal>
                 <Link to="/services" className="card service-preview-card h-100 service-link" aria-labelledby={titleId}>
                   <div className="service-media">
                     <img src={service.image} className="card-img-top" alt="" loading="lazy" />
