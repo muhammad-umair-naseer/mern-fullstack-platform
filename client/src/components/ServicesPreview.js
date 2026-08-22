@@ -3,27 +3,27 @@ import { Link } from 'react-router-dom';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import SectionHeading from './SectionHeading';
 import './ServicesPreview.css';
-import webImg from '../assets/services/web-development.webp';
-import mobileImg from '../assets/services/mobile-app-development.webp';
-import uiuxImg from '../assets/services/ui-ux-design.webp';
+import customSoftwareImg from '../assets/services/custom-software-development.webp';
+import aiAutomationImg from '../assets/services/ai-automation.webp';
+import saasImg from '../assets/services/saas-platform-development.webp';
 
 const ServicesPreview = () => {
   const scope = useRevealOnScroll();
   const services = [
     {
-      title: "Web Development",
-      description: "Custom web applications built with modern technologies.",
-      image: webImg
+      title: "Custom Software",
+      description: "Enterprise-grade bespoke software and scalable cloud architecture.",
+      image: customSoftwareImg
     },
     {
-      title: "Mobile App Development",
-      description: "Native and cross-platform mobile applications.",
-      image: mobileImg
+      title: "AI Automation",
+      description: "Intelligent autonomous agents and automated LLM workflows.",
+      image: aiAutomationImg
     },
     {
-      title: "UI/UX Design",
-      description: "User-centered design for engaging experiences.",
-      image: uiuxImg
+      title: "SaaS Platform Development",
+      description: "High-growth multi-tenant SaaS platforms built for scale.",
+      image: saasImg
     }
   ];
 

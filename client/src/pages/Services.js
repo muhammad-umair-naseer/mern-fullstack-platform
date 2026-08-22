@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
 import { useGridReveal } from '../hooks/useGridReveal';
@@ -6,6 +6,9 @@ import { useModalIntro } from '../hooks/useModalIntro';
 
 
 import heroImg from "../assets/services/services-hero.webp";
+import customSoftwareImg from "../assets/services/custom-software-development.webp";
+import aiAutomationImg from "../assets/services/ai-automation.webp";
+import saasImg from "../assets/services/saas-platform-development.webp";
 import webImg from "../assets/services/web-development.webp";
 import mobileImg from "../assets/services/mobile-app-development.webp";
 import uiuxImg from "../assets/services/ui-ux-design.webp";
@@ -14,11 +17,47 @@ import ecommerceImg from "../assets/services/ecommerce-solutions.webp";
 import pythonImg from "../assets/services/python-development.webp";
 import aimlImg from "../assets/services/ai-ml-solutions.webp";
 import wordpressImg from "../assets/services/wordpress-development.webp";
-import cppImg from "../assets/courses/cpp-development.webp";
+import cppImg from "../assets/services/cpp-development.webp";
 
 
 
 const rawServices = [
+  {
+    title: "Custom Software Development",
+    description: "Tailored, enterprise-grade software solutions engineered to scale and streamline your mission-critical operations.",
+    image: customSoftwareImg,
+    category: "Development",
+    features: [
+      "Bespoke enterprise architecture & microservices",
+      "High-performance, secure backend systems",
+      "Scalable cloud infrastructure & automated CI/CD",
+    ],
+    deliverables: ["Full source code & documentation", "Architecture blueprint & API specs", "DevOps & cloud deployment guide"],
+  },
+  {
+    title: "AI Automation",
+    description: "End-to-end intelligent automation, autonomous AI agents, and custom LLM workflows to supercharge efficiency.",
+    image: aiAutomationImg,
+    category: "AI/ML",
+    features: [
+      "Custom autonomous AI agents & RAG pipelines",
+      "Intelligent workflow automation & RPA",
+      "LLM fine-tuning, integration & vector search",
+    ],
+    deliverables: ["AI agent workflows & blueprints", "Custom model/API integrations", "Monitoring & orchestration dashboard"],
+  },
+  {
+    title: "SaaS Platform Development",
+    description: "Multi-tenant, high-growth Software-as-a-Service platforms built for global scale, security, and monetization.",
+    image: saasImg,
+    category: "Development",
+    features: [
+      "Multi-tenant architecture & RBAC permissions",
+      "Subscription billing (Stripe/Paddle) & tiers",
+      "Comprehensive admin dashboard & real-time analytics",
+    ],
+    deliverables: ["Complete SaaS production build", "Billing & auth infrastructure", "Admin & analytics portal"],
+  },
   {
     title: "Web Development",
     description: "Custom web applications and responsive websites built with cutting-edge technologies.",
