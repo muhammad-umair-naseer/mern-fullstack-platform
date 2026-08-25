@@ -76,7 +76,28 @@ A key tells React "this element is the same element as last time". With index ke
 ### Name the boundary, not the markup
 
 A good component has one reason to change and a prop list you can read aloud. If you cannot name it without "And" — \`UserProfileAndSettingsPanel\` — it is two components. If it takes eleven props and seven are booleans, it is a configuration object pretending to be a component, which is the problem the next lesson solves.
-        `),
+        `,
+        [
+          q('What does React get back when it calls <Price amount={49} />?', [
+            'A string of HTML that is inserted with innerHTML',
+            'A plain object describing the element, which React diffs against the previous tree',
+            'A live DOM node that is appended to the document immediately',
+            'A promise that resolves once the browser has painted',
+          ], 1, 'Components return element descriptions; React reconciles those objects and touches the DOM only where the two trees differ.'),
+          q('A component calls tags.sort() on its props before rendering the list. What actually goes wrong?', [
+            'Nothing, because props are frozen and the call is ignored',
+            'React throws a read-only property error',
+            'The list renders correctly but the sort runs twice in Strict Mode',
+            'It reorders the parent-owned array in place, and because the reference never changed nothing re-renders',
+          ], 3, 'Mutating a prop edits data the parent still owns while leaving its identity unchanged, so the damage surfaces elsewhere with no re-render to explain it.'),
+          q('Why does Strict Mode deliberately invoke your component twice in development?', [
+            'To halve the number of commits React has to make',
+            'To pre-warm the reconciler cache before the first paint',
+            'To make impure render logic fail loudly, such as side effects or writes to module scope',
+            'To verify that every list item has a key',
+          ], 2, 'A pure render returns the same JSX for the same inputs, so double invocation only breaks components that are doing something they should not during render.'),
+        ]
+      ),
         lesson('Composition Over Configuration', 13, `
 Every long-lived React codebase eventually grows a component like this:
 
@@ -178,7 +199,28 @@ The fix is to hoist the component to module scope and pass what it needs as prop
 ### A practical boundary test
 
 Split a component when a piece of it has its own state that nothing else needs, when a piece is reused in a second place *unchanged*, or when the file has grown past roughly 200 lines and the JSX no longer fits on a screen. Do not split because a file "feels long" — a 300-line component with one job is easier to maintain than six 50-line components that must be read together.
-        `),
+        `,
+        [
+          q('What is the practical problem with a Card that takes showHeader, showDivider, showFooter, footerAlign and four label props?', [
+            'Every new requirement needs another prop, and the flag list becomes a private DSL with no room for a footer containing a checkbox',
+            'It renders measurably slower than a composed card',
+            'React ignores boolean props whose value is false',
+            'A component may not receive more than ten props',
+          ], 0, 'Configuration props only cover the cases someone anticipated, so the first unanticipated requirement has no prop to add.'),
+          q('A Dropdown, a Modal and an accordion row all need open and close behaviour but look nothing alike. What should they share?', [
+            'A base component that each one renders inside',
+            'A higher-order component that injects isOpen as a prop',
+            'A context provider holding the open state for all three',
+            'A custom hook such as useDisclosure, which shares behaviour without any markup opinion',
+          ], 3, 'Behaviour belongs in a hook and structure belongs in a component, so three unrelated-looking components can reuse the same logic.'),
+          q('Which is a good reason to split one component into two?', [
+            'The file has grown past 200 lines while still doing one job',
+            'A piece of it owns state nothing else needs, or is reused unchanged somewhere else',
+            'It receives more than five props',
+            'It renders a list rather than a single element',
+          ], 1, 'Independent state or genuine unchanged reuse marks a real boundary; length alone does not, since one long component with one job beats six that must be read together.'),
+        ]
+      ),
         lesson('Where State Lives', 13, `
 Most React bugs that look mysterious are state in the wrong place. There are only four places it can go, and picking correctly removes whole categories of problem.
 
@@ -258,7 +300,115 @@ function ProductFilters() {
 \`\`\`
 
 Now the filtered view is shareable, survives a refresh, and works with the back button — three features you got for free by choosing the right home for one string. Chapter 3 builds this out with the rest of React Router.
-        `),
+        `,
+        [
+          q('Filters and the page number are pushed into the URL instead of useState. What does that buy?', [
+            'Faster rendering, a smaller bundle and fewer effects',
+            'Links that can be shared, a view that survives a refresh, and a working back button',
+            'Automatic caching, deduplication and retries',
+            'Type safety and validation of the filter values',
+          ], 1, 'The URL is the one state container the browser itself persists, shares and navigates, so putting view-describing state there gets all three behaviours free.'),
+          q('Two sibling components must agree on the selected row. Where does that state belong?', [
+            'In each sibling, kept in step by an effect',
+            'In a global store so any component can read it',
+            'Lifted to their closest common ancestor',
+            'In a ref on the parent, to avoid re-renders',
+          ], 2, 'Lift only as far as the nearest ancestor both siblings share; lifting further re-renders subtrees that do not care.'),
+          q('Teams patch the stale edit form by adding useEffect(() => setName(user.name), [user]). What does that reintroduce?', [
+            'A stale first render, plus a reset that discards whatever the user had already typed',
+            'An infinite render loop that React cannot batch',
+            'A hook-order violation that breaks later hooks',
+            'A memory leak in the input element',
+          ], 0, 'The effect runs after the render that already showed the wrong name, and it fires again on any user change, overwriting whatever was typed.'),
+        ]
+      ),
+        lesson('Prop APIs, Defaults, and Forwarded Refs', 13, `
+A component used in twenty places has an API, and every change to it costs twenty edits. Design the props the way you would design a function signature you cannot cheaply change later.
+
+### Defaults belong in the parameter list
+
+\`\`\`jsx
+function Button({ variant = 'primary', size = 'md', className = '', ...rest }) {
+  return (
+    <button
+      type="button"
+      {...rest}
+      className={\`btn btn--\${variant} btn--\${size} \${className}\`}
+    />
+  );
+}
+\`\`\`
+
+Destructuring defaults are the mechanism for function components — \`defaultProps\` was removed for them in React 19. Note \`type="button"\`: without it a button inside a form submits it, which is the bug Chapter 5 returns to.
+
+### Rest props decide who wins
+
+Where you put \`{...rest}\` is a decision, not a formatting choice. Spread last, as above, and a caller can override \`type\`, attach \`onClick\`, or pass \`data-testid\` and \`aria-label\` straight through to the DOM node. Spread first and your own props win instead. Both are defensible; choosing by accident is not.
+
+\`className\` is the one that must never be left in the spread. If a caller passes \`className="mt-4"\` and you spread it after your own, their utility class replaces every class your component applied and the button renders unstyled. Pull it out of \`rest\` by name and concatenate it — that is what the parameter list above does, and what \`clsx\` does more tidily.
+
+### Forward the ref or the node is unreachable
+
+\`\`\`jsx
+const TextField = forwardRef(function TextField({ label, id, ...rest }, ref) {
+  return (
+    <>
+      <label htmlFor={id}>{label}</label>
+      <input id={id} ref={ref} {...rest} />
+    </>
+  );
+});
+\`\`\`
+
+\`ref\` is not an ordinary prop before React 19 — React consumes it — so a component that does not forward it hands the parent nothing. The symptom is quiet: \`firstInvalidRef.current?.focus()\` after a failed submit finds \`null\`, the optional chain swallows it, and focus management simply never happens. React 19 passes \`ref\` as a normal prop and the wrapper becomes optional, but every input, button and scrollable panel in a design system still needs the ref to reach a real DOM node.
+
+### The polymorphic \`as\` prop
+
+\`\`\`jsx
+function Surface({ as: Tag = 'div', ...rest }) {
+  return <Tag className="surface" {...rest} />;
+}
+
+<Surface as="section" aria-labelledby="billing-heading" />
+<Surface as={Link} to="/courses" />
+\`\`\`
+
+The rename to \`Tag\` is required, not cosmetic. JSX reads a lowercase name as a literal DOM tag, so \`<as {...rest} />\` emits an \`<as>\` element: no error, no styles, no semantics, and a layout that looks broken for reasons the console never mentions. Capitalise the variable and JSX looks the value up in scope instead.
+
+### Keep the surface small
+
+| Smell | Better shape |
+|---|---|
+| \`isPrimary\`, \`isDanger\`, \`isGhost\` | one \`variant\` prop with named values |
+| \`showIcon\` + \`iconName\` + \`iconSide\` | an \`icon\` prop that takes a node |
+| \`onOk\` here, \`onYes\` there, \`onConfirm\` elsewhere | one name across the whole system |
+| Seven booleans | the composition from earlier in this chapter |
+
+Mirror the names people already know — \`value\` with \`onChange\`, \`disabled\`, \`children\` — so your component behaves like the element it wraps. A \`Toggle\` whose change handler is called \`onSwitch\` costs every future reader a trip to the source.
+
+The review test: can someone use this component correctly from the prop names alone, and can you add the next requirement without adding another boolean? If both are yes, the API is finished.
+        `,
+        [
+          q('Surface is written as function Surface({ as = "div", ...rest }) and rendered as <as {...rest} />. What reaches the browser?', [
+            'A div, because as defaults to the string div',
+            'A literal <as> element, because JSX treats a lowercase name as a DOM tag',
+            'A React error about an invalid element type',
+            'Whatever component is named as in the enclosing scope',
+          ], 1, 'JSX only looks a name up in scope when it is capitalised, so the lowercase variable is emitted verbatim as an unknown HTML tag.'),
+          q('Placing {...rest} after your own className and type in the JSX means what?', [
+            'React merges duplicate props automatically',
+            'Extra attributes from the caller are dropped',
+            'Callers can override those values, which should be a deliberate decision rather than an accident of ordering',
+            'The spread applies only to data- and aria- attributes',
+          ], 2, 'Later JSX attributes win, so spread position is what decides whether the component or its caller has the final say.'),
+          q('A parent calls inputRef.current?.focus() on a design-system TextField and nothing happens. The usual cause is', [
+            'the component never forwarded the ref down to the real <input>',
+            'the ref was created with useState instead of useRef',
+            'focus() only works from inside useLayoutEffect',
+            'the input is uncontrolled, so it has no focus method',
+          ], 0, 'Without forwarding, ref never reaches a DOM node, current stays null, and the optional chain hides the failure completely.'),
+        ]
+      ),
       ],
       [
         q('Why does {items.length && <List />} sometimes render a bare 0?', [
@@ -375,7 +525,28 @@ Three benefits are immediate. Impossible states become unrepresentable — you c
 | Logic needs unit tests without a DOM | \`useReducer\` |
 
 The migration is cheap in both directions, so start with \`useState\` and convert when the third related \`useState\` appears in the same component.
-        `),
+        `,
+        [
+          q('What is the difference between useState(buildTree(raw)) and useState(() => buildTree(raw))?', [
+            'The first runs only on mount, the second on every render',
+            'They are identical; the arrow form is a style preference',
+            'The first calls buildTree on every render and throws the result away after mount',
+            'The second delays the state until after the first paint',
+          ], 2, 'Only the lazy form defers the call to mount; the eager form pays the full cost on every single render for a value React ignores.'),
+          q('You set profile.address.city directly and then call setProfile(profile). Nothing re-renders. Why?', [
+            'React compares state by reference, and the reference did not change',
+            'setProfile accepts only an updater function',
+            'React batched the update away because nothing else changed',
+            'Objects placed in state are frozen by React',
+          ], 0, 'State updates are detected by identity, so mutating an object and passing the same reference back looks like no change at all.'),
+          q('Which signal points to useReducer rather than useState?', [
+            'A single boolean the parent toggles',
+            'A value read once from localStorage',
+            'A DOM node you need in order to call focus()',
+            'Several fields that change together under guarded transitions you want to unit test',
+          ], 3, 'Reducers describe transitions in one plain function, which is exactly what related fields with invariants need and what a test can call without rendering.'),
+        ]
+      ),
         lesson('useEffect: Dependencies, Cleanup, and Races', 14, `
 \`useEffect\` is not "run this after render". It is **synchronise this component with something outside React** — a network, a subscription, a browser API, a third-party widget. Every time you reach for it, ask what external system you are syncing with. If the answer is "none", you probably do not need an effect.
 
@@ -451,7 +622,28 @@ function Chart({ options }) {
 \`\`\`
 
 React compares dependencies with \`Object.is\`. Objects, arrays, and functions created during render are new every time. Either memoise them at the source, or depend on the primitive fields you actually use — \`[options.width, options.height]\`.
-        `),
+        `,
+        [
+          q('Why is useEffect(() => { if (submitted) postForm(values); }, [submitted]) the wrong shape?', [
+            'Event logic belongs in the handler; via an effect it runs a render late and fires again if the flag persists',
+            'React forbids conditional statements inside an effect body',
+            'postForm has to be wrapped in useCallback before an effect may call it',
+            'The dependency array should be empty so it only runs once',
+          ], 0, 'An effect is for syncing with an external system, not for reacting to a user event that already had a handler.'),
+          q('function Chart({ options }) { useEffect(() => draw(options), [options]); } loops forever. What is the cause?', [
+            'draw mutates the options object it is given',
+            'Effects re-run whenever they call a function defined outside them',
+            'A dependency array may contain only primitive values',
+            'React compares dependencies with Object.is, and options is a new object on every parent render',
+          ], 3, 'Objects created during the parent render are never identical to the previous ones, so the effect re-runs, re-renders, and repeats.'),
+          q('An effect works normally but misbehaves under Strict Mode double mounting. What does that tell you?', [
+            'Strict Mode is a development-only quirk that should be disabled',
+            'The cleanup is missing or incomplete, and production will break the same way less predictably',
+            'The dependency array needs to be emptied',
+            'The component should be wrapped in React.memo',
+          ], 1, 'An effect with correct cleanup is unaffected by mount, unmount and remount, so a failure there is a real subscription or fetch leak.'),
+        ]
+      ),
         lesson('Refs, Layout Effects, and Custom Hooks', 14, `
 Not every value that changes should trigger a render. \`useRef\` gives you a mutable box that survives renders and never causes one.
 
@@ -543,7 +735,140 @@ if (!user) return null;               // then the early return
 ### Extract a hook when the pattern is the third copy
 
 Two similar effects are a coincidence. Three are a hook. Good candidates from real apps: \`useLocalStorage\`, \`useMediaQuery\`, \`useOnClickOutside\`, \`useDisclosure\` from Chapter 1, and \`useDebouncedValue\` above. Name them for what they give you, not for the hook they wrap.
-        `),
+        `,
+        [
+          q('A tooltip measures its own height and then positions itself. Why useLayoutEffect rather than useEffect?', [
+            'useEffect cannot read from the DOM at all',
+            'It runs after the DOM mutation but before paint, so the tooltip is never visible in the wrong place',
+            'It is a faster implementation of the same hook',
+            'Refs are only populated by the time a layout effect runs',
+          ], 1, 'Measure-then-position work must finish before the browser paints, or the user sees one frame at the wrong coordinates.'),
+          q('Two components both call useDebouncedValue. What do they share?', [
+            'The debounced value, because hooks are module-level singletons',
+            'The timer, so the second caller cancels the first',
+            'The logic only, since each call gets its own independent state and timer',
+            'Nothing, until both are wrapped in the same provider',
+          ], 2, 'A custom hook is a function that calls hooks, so every caller creates a fresh, isolated set of state.'),
+          q('Why is reading ref.current during render off-limits?', [
+            'It makes rendering impure and breaks concurrent features, so refs belong in effects and handlers',
+            'The ref is guaranteed to be null while rendering',
+            'Reading a ref schedules an additional re-render',
+            'It prevents the ref from being attached to a DOM node',
+          ], 0, 'A ref can hold a different value on every read, so consulting it during render makes the output depend on something React does not track.'),
+        ]
+      ),
+        lesson('useId, useSyncExternalStore, and useImperativeHandle', 14, `
+Three hooks sit outside the everyday set. You will not reach for them weekly, but each solves a problem the everyday hooks solve badly.
+
+### useId: ids that survive re-rendering
+
+\`\`\`jsx
+function Field({ label, error, ...rest }) {
+  const id = useId();
+  const errorId = \`\${id}-error\`;
+
+  return (
+    <>
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        aria-invalid={!!error}
+        aria-describedby={error ? errorId : undefined}
+        {...rest}
+      />
+      {error && <p id={errorId} role="alert">{error}</p>}
+    </>
+  );
+}
+\`\`\`
+
+One call namespaces as many ids as the component needs; append suffixes rather than calling \`useId\` once per element. What it replaces is \`Math.random()\` and module-level counters, and it replaces them for two reasons. A fresh id on every render silently detaches \`htmlFor\` and \`aria-describedby\` from the elements they point at, and a counter that starts on the server and restarts in the browser produces different ids in the two passes, which React reports as a hydration mismatch.
+
+The one job \`useId\` must not be given is list keys. Keys come from your data, as Chapter 1 insisted; an id minted during render tells React nothing about which row is which.
+
+### useSyncExternalStore: read a value React does not own
+
+\`navigator.onLine\`, \`window.matchMedia\`, \`localStorage\`, a Redux-style store, a game loop — anything that changes without React being told.
+
+\`\`\`jsx
+function subscribe(callback) {
+  window.addEventListener('online', callback);
+  window.addEventListener('offline', callback);
+  return () => {
+    window.removeEventListener('online', callback);
+    window.removeEventListener('offline', callback);
+  };
+}
+
+export function useOnlineStatus() {
+  return useSyncExternalStore(
+    subscribe,
+    () => navigator.onLine,   // snapshot in the browser
+    () => true                // snapshot during server rendering
+  );
+}
+\`\`\`
+
+The obvious alternative — \`useState\` seeded in a \`useEffect\` — has two defects. It renders once with a guessed value before the effect corrects it, and under concurrent rendering two components can read the same source at different moments and disagree on screen, which React calls tearing. \`useSyncExternalStore\` reads the snapshot synchronously during render and re-reads it whenever the subscription fires.
+
+**The mistake everyone makes once** is returning a fresh object from the snapshot function:
+
+\`\`\`jsx
+() => ({ online: navigator.onLine })   // a new object on every call
+\`\`\`
+
+React compares snapshots with \`Object.is\`, so it sees a change every time, re-renders, reads again, and loops — with a warning that the result of getSnapshot should be cached. Return a primitive, or cache the object and replace it only when the underlying value really changes. Keep \`subscribe\` at module scope too, or every render tears down and rebuilds the subscription.
+
+### useImperativeHandle: a narrow remote control
+
+Some operations are genuinely imperative: play a video, focus a field, scroll a row into view.
+
+\`\`\`jsx
+const VideoPlayer = forwardRef(function VideoPlayer({ src }, ref) {
+  const el = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    play: () => el.current.play(),
+    pause: () => el.current.pause(),
+    seek: (seconds) => { el.current.currentTime = seconds; },
+  }), []);
+
+  return <video ref={el} src={src} />;
+});
+
+// Parent: playerRef.current.seek(30);
+\`\`\`
+
+Expose verbs, never the node itself and never your state. Returning \`el.current\` lets any parent restyle your internals and freezes today's DOM structure into your public API. And when you catch yourself adding a fourth method to keep parent and child in step, the relationship is data rather than commands — pass a prop.
+
+| Hook | Solves |
+|---|---|
+| \`useId\` | Stable, SSR-safe ids for label and ARIA wiring |
+| \`useSyncExternalStore\` | Reading a mutable source outside React without tearing |
+| \`useImperativeHandle\` | Exposing a small imperative API from a component |
+| \`useDebugValue\` | Labelling a custom hook in the DevTools panel |
+        `,
+        [
+          q('Why generate field ids with useId instead of a module-level counter?', [
+            'useId is faster than incrementing a number',
+            'It produces ids that are stable across renders and identical on server and client, so ARIA wiring and hydration both hold',
+            'Counters are not allowed in ES modules',
+            'useId also renders the label element for you',
+          ], 1, 'A counter restarts in the browser and a random id changes every render, and both break the association between a label, its input and its error message.'),
+          q('getSnapshot is written as () => ({ online: navigator.onLine }). What happens?', [
+            'It works correctly, because the object is shallow',
+            'The store is read only once, on mount',
+            'The subscribe callback is never registered',
+            'React loops and warns that the snapshot should be cached, because a new object fails every identity check',
+          ], 3, 'Snapshots are compared with Object.is, so returning a fresh object reports a change on every read and the component re-renders forever.'),
+          q('What should a useImperativeHandle expose to the parent?', [
+            'A narrow set of verbs such as play() and focus(), never the DOM node or internal state',
+            'The component state setters, so the parent can drive it',
+            'The raw ref object it was given',
+            'Everything the parent might plausibly need, to avoid a second release',
+          ], 0, 'A small verb-only surface keeps the internals replaceable; handing back the node makes the current DOM structure part of your public contract.'),
+        ]
+      ),
       ],
       [
         q('Calling setCount(count + 1) three times in one handler increments by 1. Why?', [
@@ -680,7 +1005,28 @@ The selector matters: this component re-renders when the count changes, not when
 5. Only what survives all four is a candidate for a global store.
 
 Following that order, most applications never need a general-purpose state library at all.
-        `),
+        `,
+        [
+          q('The hand-rolled fetch with a cancelled flag is correct code. What is it still missing?', [
+            'A loading state',
+            'Any error handling',
+            'Cancellation when the component unmounts',
+            'A cache, request deduplication, background revalidation and retries',
+          ], 3, 'Correctness is not the same as caching: without those four, every mount refetches, three mounts fire three identical requests, and nothing revalidates.'),
+          q('A list is filtered by level and paged. What belongs in the query key?', [
+            'Only the endpoint name, since filters are a UI concern',
+            'A hash of the response body, so stale data is detected',
+            'Everything the request depends on, so a different filter is simply a different cache entry',
+            'A timestamp, so the entry expires on its own',
+          ], 2, 'The query key is the cache identity, and keying by inputs means switching filters reads or fills a separate entry while the old one stays warm for the back button.'),
+          q('Why does the enrol mutation check if (!res.ok) throw before returning?', [
+            'To make the request retry automatically',
+            'Because fetch only rejects on network failure, so without it onSuccess would run after a 500',
+            'To let the nearest error boundary render instead',
+            'Because invalidateQueries requires a thrown error to work',
+          ], 1, 'A 4xx or 5xx response is still a fulfilled promise, so the mutation must convert it into a rejection itself.'),
+        ]
+      ),
         lesson('Context Without the Re-render Tax', 13, `
 Context solves exactly one problem: passing a value to a deep descendant without threading it through every component in between. It is a **transport mechanism, not a state manager**, and treating it as the latter is how applications end up re-rendering everything on every keystroke.
 
@@ -769,7 +1115,28 @@ In the second version the \`<ExpensiveTree />\` element object is built by the *
 ### Prop drilling is not automatically a problem
 
 Two or three levels of explicit props are readable and greppable. Context trades that for indirection: a component's data source is no longer visible at the call site, and it can no longer be rendered in isolation without a provider — which makes tests (Chapter 5) heavier. Use context for things that are genuinely ambient: theme, current user, locale, a design-system config. Use props for everything else.
-        `),
+        `,
+        [
+          q('Why does useTheme throw when the context value is null instead of just returning it?', [
+            'Context values are not allowed to be null in React',
+            'Every context must declare a default value',
+            'A missing provider becomes a named error instead of a null property crash deep inside a child',
+            'Throwing is what subscribes the component to updates',
+          ], 2, 'The guard converts a confusing runtime crash far from its cause into a message naming the provider you forgot to render.'),
+          q('Why does passing {children} into the provider keep ExpensiveTree from re-rendering when the theme changes?', [
+            'Children are rendered lazily by React',
+            'React.memo is applied to children automatically',
+            'React skips every subtree below a provider',
+            'The element object is created by the parent, which did not re-render, so React sees the identical element and bails out',
+          ], 3, 'A component only re-renders children it creates; an element passed in as a prop is the same object as last time, so React reuses the previous output.'),
+          q('When is prop drilling the better choice?', [
+            'Never, because context is always cheaper',
+            'For two or three explicit levels, which stay greppable and keep the component renderable in a test without a provider',
+            'Only for primitive values such as strings and numbers',
+            'Only when the value never changes after mount',
+          ], 1, 'Context trades visibility for convenience, and at short depths the explicit prop is easier to read and easier to test.'),
+        ]
+      ),
         lesson('Routing with React Router', 14, `
 A single-page app has to answer two questions: what does this URL render, and how do I move between URLs without a full page load? React Router answers both, and the URL becomes the state container Chapter 1 recommended.
 
@@ -865,7 +1232,119 @@ Routes are the natural split point: a visitor to the home page should not downlo
 ### The deployment trap
 
 Hard-refreshing \`/courses/react-basics\` sends a real request to your server for a path that has no file. Static hosts return 404 until you configure a rewrite so every unmatched path serves \`index.html\` — a \`try_files\` rule in nginx, a \`_redirects\` line on Netlify, or the Express catch-all registered *after* the API routes. Everything works in development, then breaks on the first shared link. Check it before launch, not after.
-        `),
+        `,
+        [
+          q('What does <Outlet /> do inside a layout route?', [
+            'Renders the matched child route in place, so the layout stays mounted while children swap',
+            'Redirects to the index route when no child matches',
+            'Renders the error element for the branch',
+            'Exposes the router instance to the rest of the tree',
+          ], 0, 'It is the slot pattern applied to routing, which is why the nav does not remount and sidebar scroll position survives navigation.'),
+          q('const next = params.get("page") + 1 produces "21" on page two. Why?', [
+            'useSearchParams returns numbers as strings only in production builds',
+            'Search params are always strings, so + concatenates instead of adding',
+            'The parameter name does not match the route definition',
+            'React Router URL-encodes numeric values',
+          ], 1, 'Route and search params are strings without exception, so arithmetic on them needs an explicit Number() conversion.'),
+          q('RequireAuth bounces the user to /login for a moment on every refresh of a protected page. What is missing?', [
+            'The replace flag on the Navigate element',
+            'A server-side authorisation check',
+            'An isLoading branch that renders a spinner while the session is still unknown',
+            'A Suspense boundary around the protected route',
+          ], 2, 'Until the session resolves, user is neither present nor absent, so redirecting on that first render redirects a user who is in fact signed in.'),
+        ]
+      ),
+        lesson('Optimistic Updates and Cache Invalidation', 14, `
+A mutation succeeds on the server and the screen is now wrong. Everything fetched before that request is a cache holding pre-mutation truth, and closing that gap is most of the work in a data-heavy UI.
+
+### Three strategies, in increasing order of effort
+
+| Strategy | What the user sees | Cost |
+|---|---|---|
+| Invalidate and refetch | A stale value for one round trip, then the truth | An extra request |
+| Write the response into the cache | Correct immediately after the response | The endpoint must return the updated entity |
+| Optimistic update | Correct before the request even leaves | A rollback path you have to write |
+
+Invalidation is the default, and it is usually enough:
+
+\`\`\`jsx
+const rename = useMutation({
+  mutationFn: ({ id, title }) => api.patch(\`/api/courses/\${id}\`, { title }),
+  onSuccess: () => qc.invalidateQueries({ queryKey: ['courses'] }),
+});
+\`\`\`
+
+\`invalidateQueries\` matches by key **prefix**, so \`['courses']\` also invalidates \`['courses', { level: 'beginner' }]\` and \`['courses', 2]\`. That is exactly what you want after a rename, and it is why keys should read hierarchically: entity first, parameters after. Pass \`exact: true\` when you genuinely mean one entry and no others.
+
+When the endpoint already returns the updated row, skip the refetch:
+
+\`\`\`jsx
+onSuccess: (updated) => qc.setQueryData(['course', updated.id], updated),
+\`\`\`
+
+### The optimistic version, with the two lines people omit
+
+\`\`\`jsx
+const toggleDone = useMutation({
+  mutationFn: ({ id, done }) => api.patch(\`/api/tasks/\${id}\`, { done }),
+
+  onMutate: async ({ id, done }) => {
+    await qc.cancelQueries({ queryKey: ['tasks'] });          // 1
+    const previous = qc.getQueryData(['tasks']);              // 2
+    qc.setQueryData(['tasks'], (old) =>
+      old.map(t => (t.id === id ? { ...t, done } : t))
+    );
+    return { previous };                                       // reaches onError as ctx
+  },
+
+  onError: (_err, _vars, ctx) => qc.setQueryData(['tasks'], ctx.previous),
+  onSettled: () => qc.invalidateQueries({ queryKey: ['tasks'] }),
+});
+\`\`\`
+
+**(1) \`cancelQueries\`.** A background refetch may already be in flight, carrying data from before the change. If it resolves after your optimistic write it overwrites it, and the checkbox visibly flicks back for half a second until the invalidation corrects it again. It is Chapter 2's out-of-order fetch race wearing cache clothes.
+
+**(2) The snapshot.** Without \`previous\` there is nothing to restore, so a rejected request leaves the optimistic lie on screen permanently. \`onError\` is the only place that can put the old value back.
+
+Note \`onSettled\` rather than \`onSuccess\`: reconciling after both outcomes means even the rollback path finishes on server truth.
+
+### Temporary ids
+
+An optimistically added row has no server id yet:
+
+\`\`\`jsx
+const optimistic = { id: \`temp-\${crypto.randomUUID()}\`, title, pending: true };
+\`\`\`
+
+Two rules follow. Key the list by that temporary id (Chapter 1) so the row is not remounted and re-animated when the real id arrives, and disable every action that needs a real id — open, delete, share — while \`pending\` is true. A user who clicks through to \`/tasks/temp-8f3a\` gets a 404 that reads as your app losing their work.
+
+### When not to be optimistic
+
+Optimism is a bet that the server will agree. Take the bet for reversible, low-stakes edits: toggles, reordering, renaming, marking notifications read. Refuse it wherever the server can legitimately say no — booking the last seat, spending a credit, applying a coupon that has expired. Withdrawing a confirmation two seconds after showing it is much worse than a 400 ms spinner that then tells the truth.
+
+And never reach for optimism to paper over a slow endpoint. The fix for a three-second PATCH is the endpoint.
+        `,
+        [
+          q('Why does onMutate call cancelQueries before writing to the cache?', [
+            'To free the memory the previous entry was using',
+            'So a refetch that is already in flight cannot resolve afterwards and overwrite the optimistic value',
+            'To guarantee the mutation itself runs only once',
+            'To reset the retry counter for that query key',
+          ], 1, 'An in-flight request carries pre-mutation data, and if it lands second it clobbers your optimistic write and the UI visibly flips back.'),
+          q('onMutate returns { previous } and onError writes it back. Why snapshot the cache at all?', [
+            'Without a snapshot there is nothing to restore, so a failed request leaves the optimistic lie on screen',
+            'React Query cannot refetch a query after an error',
+            'A mutation cannot be retried unless it returns a context object',
+            'It is what triggers the rollback animation',
+          ], 0, 'The optimistic write destroyed the old value, so the only way back is the copy you took before overwriting it.'),
+          q('Which mutation is the worst candidate for an optimistic update?', [
+            'Toggling a checkbox on a to-do item',
+            'Renaming a folder the user owns',
+            'Booking the last remaining seat, which the server may legitimately refuse',
+            'Marking a notification as read',
+          ], 2, 'Optimism assumes the server will agree, so it is wrong exactly where a refusal is a normal outcome and the rollback would retract a confirmation.'),
+        ]
+      ),
       ],
       [
         q('Which of these is server state rather than client state?', [
@@ -971,7 +1450,28 @@ When the state genuinely must stay high — a filter the table also needs — th
 **Uncontrolled render cascades from context.** A single provider holding fast-changing state re-renders every consumer. Split it, as Chapter 3 showed.
 
 The order that works: measure, move state down, cut the number of rendered nodes, and only then memoise what remains.
-        `),
+        `,
+        [
+          q('The Profiler reports a 22 ms commit. Should you care, and why?', [
+            'It is unmeasurable noise and can be ignored',
+            'It exceeds the 16 ms frame budget at 60 fps, so that commit drops a frame',
+            'It is fine, because only commits over 100 ms matter at all',
+            'It means the component rendered 22 separate times',
+          ], 1, 'One frame at 60 fps is roughly 16 ms, so anything longer than that cannot be committed without missing a frame.'),
+          q('In a Profiler flamegraph, which bar deserves your attention first?', [
+            'The widest bar, because width is time and depth is not',
+            'The tallest bar, because a deep tree is an expensive tree',
+            'The leftmost bar, because it committed first',
+            'The bar with the most props listed',
+          ], 0, 'The flamegraph encodes duration as width, so a deep but narrow stack is cheap and a wide bar is where the time went.'),
+          q('A search input re-renders a heavy table on every keystroke. What does the lesson do before reaching for memoisation?', [
+            'Wrap the table in React.memo',
+            'Debounce the input by 300 ms',
+            'Move the query state down into the component that actually reads it',
+            'Virtualise the table rows',
+          ], 2, 'Relocating state is free and permanent, whereas memoisation is a running cost plus a dependency array that can go stale.'),
+        ]
+      ),
         lesson('memo, useMemo, useCallback — and When Not To', 14, `
 These three tools all trade memory and complexity for skipped work. They are worth it in specific situations and actively harmful everywhere else.
 
@@ -1060,7 +1560,28 @@ Otherwise leave it out. Every \`useMemo\` is a dependency array that can go stal
 ### One note on the future
 
 The React Compiler memoises components and values automatically at build time, based on real data flow rather than hand-written dependency arrays. Where it is enabled, most manual \`useMemo\` and \`useCallback\` becomes redundant. Write code that is correct first; the compiler cannot fix a stale closure you introduced to chase a phantom render.
-        `),
+        `,
+        [
+          q('Which re-render does React.memo NOT prevent?', [
+            'A parent re-rendering and passing exactly the same props',
+            'A state update inside the memoised component itself',
+            'A parent re-rendering because a grandparent did, with identical props passed down',
+            'A parent re-rendering while the memoised child receives no props at all',
+          ], 1, "memo intercepts only the parent-driven path, so the component's own state updates and its context updates go straight through it."),
+          q('const submit = useCallback(() => postForm(values), []) posts the values as they were at mount. What went wrong?', [
+            'useCallback cannot wrap a function that performs async work',
+            'postForm must be memoised as well',
+            'The empty dependency array freezes every value the function closes over',
+            'The callback needs to be declared outside the component',
+          ], 2, 'Emptying the deps to buy a stable identity also pins the closure to the render that created it, which is the stale-closure trap.'),
+          q('useCallback(fn, deps) is exactly equivalent to which call?', [
+            'useMemo(() => fn, deps)',
+            'useRef(fn)',
+            'memo(fn)',
+            'useEffect(() => fn, deps)',
+          ], 0, 'useCallback is useMemo that returns the function itself rather than the result of calling it.'),
+        ]
+      ),
         lesson('Code Splitting and List Virtualisation', 14, `
 Two of the biggest wins in frontend performance are not about React at all: **ship less JavaScript**, and **render fewer DOM nodes**.
 
@@ -1144,7 +1665,125 @@ Forgetting to spread \`style\` onto the row is the classic mistake: every row st
 - Accessibility needs care: keep a real \`role="list"\`/\`role="listitem"\` structure, and remember that a virtualised grid must still expose row and column counts.
 
 Use it above roughly 200 rows, or sooner if each row is complex. Below that, pagination or a "load more" button is simpler and has none of these downsides.
-        `),
+        `,
+        [
+          q('Which of these is the wrong thing to code-split?', [
+            'A route that only administrators ever visit',
+            'A 300 KB charting library behind an analytics tab',
+            'A 4 KB modal used on one page',
+            'A rich text editor loaded when the user starts editing',
+          ], 2, 'Each chunk costs a request and a loading state, so splitting something small makes the app slower and blinkier for no saved bytes.'),
+          q('What does onMouseEnter={() => import("./routes/Analytics")} on a link achieve?', [
+            'It navigates to the route early',
+            'It warms the chunk before the click, so the route renders without waiting on a download',
+            'It prefetches the API data that route will need',
+            'Nothing, since dynamic import only works at module top level',
+          ], 1, 'The dynamic import starts the chunk download on intent, and by the time the click lands the module is already in memory.'),
+          q('Which is a genuine cost of virtualising a list?', [
+            'Every row must be wrapped in React.memo',
+            'Keys are no longer needed on the rows',
+            'The underlying data can no longer be sorted or filtered',
+            'Browser find-in-page and scrollIntoView only see the rows currently rendered',
+          ], 3, 'Rows outside the window do not exist in the DOM, so anything the browser does by searching the DOM cannot find them.'),
+        ]
+      ),
+        lesson('Moving Work Off the Main Thread', 13, `
+The main thread runs your JavaScript, layout, paint and every event handler, one at a time. A 400 ms function does not merely cost 400 ms of computation — for that whole stretch the page cannot scroll, respond to a click, or advance an animation.
+
+### Do less, do it later, do it elsewhere
+
+Take those in order. Removing work beats scheduling it, and scheduling it beats shipping it to another thread, because the other thread charges you a copying fee on the way there and back.
+
+### Yield inside a long loop
+
+A task over 50 ms counts as a long task; past roughly 200 ms the delay is something a user feels. When the work is a loop, break it into chunks and give control back between them:
+
+\`\`\`js
+async function processInChunks(items, work, size = 200) {
+  for (let i = 0; i < items.length; i += size) {
+    for (const item of items.slice(i, i + size)) work(item);
+    await new Promise(resolve => setTimeout(resolve, 0));   // paint and input happen here
+  }
+}
+\`\`\`
+
+Where it is available, \`await scheduler.yield()\` does the same without the timer clamp. Neither makes the work faster; both make the page responsive while it happens, which is precisely what INP measures.
+
+\`requestIdleCallback(fn, { timeout: 2000 })\` covers the other case — work that should happen but not now, such as flushing analytics, warming a cache, or precomputing the next page. Always pass a timeout, because an app that is never idle otherwise never runs the callback at all.
+
+### A worker for genuinely heavy computation
+
+Parsing a 20 MB CSV, building a client-side search index, hashing a file before upload, diffing two large documents: pure computation over data, with no DOM involved.
+
+\`\`\`js
+// csv.worker.js — its own thread, its own global scope
+self.onmessage = (e) => {
+  self.postMessage(parseCsv(e.data));
+};
+\`\`\`
+
+\`\`\`jsx
+function CsvImport({ file }) {
+  const [rows, setRows] = useState([]);
+
+  const worker = useMemo(
+    () => new Worker(new URL('./csv.worker.js', import.meta.url), { type: 'module' }),
+    []
+  );
+
+  useEffect(() => {
+    worker.onmessage = (e) => setRows(e.data);
+    return () => worker.terminate();      // threads do not clean themselves up
+  }, [worker]);
+
+  return <button onClick={() => file.text().then(t => worker.postMessage(t))}>Import</button>;
+}
+\`\`\`
+
+Two facts decide whether this pays. **A worker has no DOM, no \`window\` and no React** — it returns data and the main thread renders it. And **\`postMessage\` copies**: structured-cloning a 50 MB array costs real milliseconds at both ends, so a 5 ms job is slower in a worker than it was in place.
+
+For binary data, transfer ownership instead of copying:
+
+\`\`\`js
+worker.postMessage(buffer, [buffer]);   // moved, not cloned
+console.log(buffer.byteLength);         // 0 — this buffer is now detached
+\`\`\`
+
+That second line is the classic mistake. After a transfer the sender no longer owns the buffer, and code that reads it afterwards finds an empty, detached object rather than the data it wrote a moment ago.
+
+### Choosing
+
+| Work | Where it belongs |
+|---|---|
+| Filtering 500 rows on each keystroke | Main thread; it is already fast enough |
+| Filtering 200,000 rows | A worker, or the server |
+| Anything that touches the DOM or React state | Main thread, always |
+| Resizing an image before upload | Worker, with a transferred buffer |
+| Flushing analytics, warming a cache | requestIdleCallback |
+
+The mistake that undoes all of this is creating the worker inside render, or one per keystroke. Startup plus module parse costs a few milliseconds every time, and every orphaned worker keeps a thread alive. Create one, reuse it, terminate it on unmount.
+        `,
+        [
+          q('What does awaiting a setTimeout of 0 between chunks of a long loop achieve?', [
+            'It yields control so the browser can paint and handle input between chunks',
+            'It makes the loop itself execute faster',
+            'It moves the loop onto a background thread',
+            'It guarantees the whole loop finishes within one frame',
+          ], 0, 'Chunking does not reduce the total work; it inserts gaps in which the browser can run its own tasks, so the page stays responsive.'),
+          q('You postMessage a large ArrayBuffer using the transfer list, then read it on the main thread. What do you find?', [
+            'A complete copy of the data',
+            'The read blocks until the worker replies',
+            'A detached buffer with a byteLength of 0',
+            'The transfer is ignored for buffers above 1 MB',
+          ], 2, 'Transferring moves ownership to the worker rather than cloning, so the sending side is left holding a detached, empty buffer.'),
+          q('Which task is the wrong fit for a Web Worker?', [
+            'Parsing a 20 MB CSV upload',
+            'Reading layout and updating the DOM as the parse progresses',
+            'Building a search index over 50,000 records',
+            'Hashing a file before uploading it',
+          ], 1, 'A worker has no DOM and no window, so anything that measures or mutates the page has to stay on the main thread.'),
+        ]
+      ),
       ],
       [
         q('Which does NOT on its own cause a component to re-render?', [
@@ -1272,7 +1911,28 @@ Validating on every keystroke tells someone their email is invalid after the fir
 - Do disable it while the request is in flight, and reflect that in the label, or you will get duplicate signups from double-clicks.
 - Always pair \`<label htmlFor>\` with \`id\`. Placeholder text is not a label — it disappears when typing starts and is invisible to many screen readers.
 - **Client validation is a convenience, not a defence.** Anyone can post directly to your endpoint, so the server validates the same schema again. That is not duplication; it is the only validation that actually protects your data.
-        `),
+        `,
+        [
+          q('For a 30-field settings page, why does register from React Hook Form beat a controlled input per field?', [
+            'Uncontrolled inputs validate faster than controlled ones',
+            'Controlled inputs cannot be validated by a schema',
+            'register keeps the value in the DOM, so typing causes no re-render of the form at all',
+            'Uncontrolled inputs do not need a submit handler',
+          ], 2, 'Controlled fields re-render the whole form on every keystroke, which is exactly the avoidable work Chapter 4 warns about.'),
+          q('What does mode: "onTouched" actually do?', [
+            'Validates on every keystroke from the first character',
+            'Validates only when the form is submitted',
+            'Waits until the field is first left, then re-validates on every change after that',
+            'Validates on blur every time, and never while typing',
+          ], 2, 'It delays the first error until the user has finished the field, then gives live feedback while they fix it, which is the least hostile timing.'),
+          q('The server replies 409 because the email is already registered. What is the right client response?', [
+            'Throw so that the nearest error boundary renders',
+            'Show a generic toast and clear the form',
+            'Reload the page so the server state is re-read',
+            'Call setError on the email field, so server truth appears where the user can act on it',
+          ], 3, 'Only the server knows this rule, and attaching its verdict to the offending field keeps the correction in one place.'),
+        ]
+      ),
         lesson('Accessibility in React', 13, `
 Accessibility work in React is mostly about not undoing what HTML already does. Roughly 15% of people have a disability of some kind, keyboard users include anyone with a trackpad failure or an injury, and in many jurisdictions this is a legal requirement rather than a nice-to-have.
 
@@ -1362,7 +2022,28 @@ expect(await axe(container)).toHaveNoViolations();
 \`\`\`
 
 Automated tools catch about 30–40% of issues — contrast, missing labels, bad ARIA. The keyboard pass catches most of the rest.
-        `),
+        `,
+        [
+          q('A <button> inside a <form> has no type attribute. What happens when it is clicked?', [
+            'Nothing, until an onClick handler is added',
+            'It resets every field in the form',
+            'It blurs the currently focused element',
+            'It submits the form, because type defaults to submit',
+          ], 3, 'The HTML default is type="submit", so an unlabelled Cancel button submits the form unless you write type="button".'),
+          q('An icon-only close button contains an XIcon. What does the lesson do, and why?', [
+            'aria-label on the button and aria-hidden="true" on the icon, so the control has exactly one clear name',
+            'role="img" on the icon so it is announced alongside the button',
+            'A title element inside the SVG, so the name is announced twice',
+            'tabIndex={0} on the icon so it can be reached with the keyboard',
+          ], 0, 'The button needs a name and the decorative glyph needs to be silent, otherwise a screen reader announces the icon after the real label.'),
+          q('Automated tools such as axe catch roughly what share of accessibility problems?', [
+            'Essentially all of them, if configured correctly',
+            'About 30 to 40 percent, mostly contrast, missing labels and bad ARIA',
+            'Only colour contrast issues',
+            'None at all without a screen reader running',
+          ], 1, 'Automation covers the machine-checkable third, which is why the keyboard pass is still the part that finds the rest.'),
+        ]
+      ),
         lesson('Testing with React Testing Library', 15, `
 The guiding principle of React Testing Library is one sentence: **the more your tests resemble the way your software is used, the more confidence they give you.** Practically, that means you test what a user can see and do, never the internals.
 
@@ -1455,7 +2136,138 @@ function renderWithProviders(ui, { route = '/' } = {}) {
 ### What is worth testing
 
 Test the behaviour a user depends on: the empty state, the error state, that a form submits the right values, that validation messages appear, that a disabled action stays disabled. Do not test that a \`<p>\` has a particular class, or that a child component "received prop x" — those tests break on every refactor and catch nothing. A test suite you are afraid to change is worse than no suite at all.
-        `),
+        `,
+        [
+          q('Why intercept the network with MSW instead of mocking your own api.js module?', [
+            'MSW runs measurably faster in CI',
+            'Jest cannot mock ES modules at all',
+            'It removes the need for async queries',
+            "The component's own fetch code still runs, so the test covers the request it actually makes",
+          ], 3, 'Mocking your own module only proves you called a function you wrote; intercepting at the network layer tests the URL, method and payload too.'),
+          q('Which query asserts that an alert is NOT on screen?', [
+            'getByRole("alert") wrapped in expect().not',
+            'findByRole("alert") with a short timeout',
+            'queryByRole("alert"), because it returns null instead of throwing',
+            'getAllByRole("alert") and a length check',
+          ], 2, 'getBy throws when nothing matches, so the assertion never runs; queryBy is the variant designed for absence.'),
+          q('A test passes with fireEvent.change but fails with user.type. What does that usually mean?', [
+            'userEvent has not been set up correctly',
+            'The test is exposing a real bug, because userEvent fires the full event sequence and respects disabled state and focus order',
+            'fireEvent is deprecated and the test should be deleted',
+            'The input is missing a defaultValue',
+          ], 1, 'One synthetic change event can reach code paths a real user never could, so the stricter simulation is usually right.'),
+        ]
+      ),
+        lesson('Wizards, Field Arrays, and File Uploads', 14, `
+Three form shapes account for most of the difficulty in real products, and each has one mistake that everybody makes first.
+
+### A wizard is one form with several views
+
+Do not mount three separate forms and stitch their values together at the end. Keep one form state and validate a slice of the schema per step:
+
+\`\`\`jsx
+const stepSchemas = [accountSchema, profileSchema, planSchema];
+
+function Wizard() {
+  const [params, setParams] = useSearchParams();
+  const step = Math.min(Number(params.get('step') ?? 0), stepSchemas.length - 1);
+
+  const methods = useForm({
+    resolver: zodResolver(stepSchemas[step]),
+    mode: 'onTouched',
+    defaultValues: draft,
+  });
+
+  const goNext = methods.handleSubmit(() => setParams({ step: String(step + 1) }));
+
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={step === stepSchemas.length - 1 ? methods.handleSubmit(submitAll) : goNext}>
+        {[<AccountStep />, <ProfileStep />, <PlanStep />][step]}
+      </form>
+    </FormProvider>
+  );
+}
+\`\`\`
+
+Three things are earning their place. The step lives in the URL, so refresh and the back button behave (Chapter 1), clamped because \`?step=9\` would otherwise index past the end of the array. \`FormProvider\` lets a field six levels down call \`useFormContext()\` instead of taking \`register\` through five intermediate components. And each step validates only its own fields, so nobody is told about a field they have not reached yet.
+
+**The mistake:** rendering steps conditionally and losing values on Back. React Hook Form keeps the values of unmounted fields by default; turn \`shouldUnregister\` on, or remount the form on each step, and step one is blank when the user returns to check it. When you genuinely want values dropped — an optional branch the user skipped — remove them deliberately with \`unregister\`.
+
+### Field arrays: key by identity, never by index
+
+\`\`\`jsx
+const { fields, append, remove } = useFieldArray({ control, name: 'invitees' });
+
+{fields.map((field, i) => (
+  <div key={field.id}>                                  {/* field.id, not i */}
+    <label htmlFor={\`invitee-\${i}\`}>Email</label>
+    <input id={\`invitee-\${i}\`} {...register(\`invitees.\${i}.email\`)} />
+    <button type="button" onClick={() => remove(i)}>Remove</button>
+  </div>
+))}
+<button type="button" onClick={() => append({ email: '' })}>Add another</button>
+\`\`\`
+
+\`useFieldArray\` generates an \`id\` per row for exactly this purpose. Key by \`i\` instead and Chapter 1's index-key bug arrives with real damage: remove the second row and the third row's half-typed address is still sitting in the input that now represents row two, because React reused that DOM node rather than moving it.
+
+### Uploads: FormData, and XHR when you need progress
+
+\`\`\`js
+function upload(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const body = new FormData();
+    body.append('file', file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () =>
+      xhr.status < 400 ? resolve(JSON.parse(xhr.responseText)) : reject(new Error(xhr.status));
+    xhr.onerror = () => reject(new Error('Network error'));
+
+    xhr.open('POST', '/api/uploads');
+    xhr.send(body);                 // no Content-Type header — the browser adds the boundary
+  });
+}
+\`\`\`
+
+\`fetch\` still exposes no upload progress event, which is the one reason this API is worth remembering. Setting \`Content-Type\` by hand for \`FormData\` is the matching mistake: without the generated multipart boundary the server cannot parse the body at all.
+
+Check type and size on the client for a fast message, then again on the server, because \`accept=".pdf"\` is a file-picker filter and not a check. And revoke previews:
+
+\`\`\`jsx
+useEffect(() => {
+  const url = URL.createObjectURL(file);
+  setPreview(url);
+  return () => URL.revokeObjectURL(url);   // otherwise the blob is held for the whole session
+}, [file]);
+\`\`\`
+
+Finally, keep the wizard honest about unsaved work: autosave the draft with the debounce hook from Chapter 2, and move focus to the new step heading on every step change, exactly as the accessibility topic did after a route change.
+        `,
+        [
+          q('A wizard renders one step at a time, and values entered in step one are gone after the user goes Back. What is the likely cause?', [
+            'React Hook Form keeps only the current step in state, by design',
+            'The step schema for step one is wrong',
+            'The fields were unregistered when the step unmounted, so their values were dropped from form state',
+            'The values failed validation and were discarded',
+          ], 2, 'Unmounting a step removes its inputs, and if unregistering on unmount is enabled their values leave the form state with them.'),
+          q('useFieldArray rows are keyed with key={index}. What does the user actually see?', [
+            'append silently stops working past ten rows',
+            'The rows render in reverse order',
+            'Validation messages attach to the wrong schema',
+            "Removing a middle row leaves the next row's typed value sitting in the reused input",
+          ], 3, 'Index keys make React reuse the DOM node for a different row, so the text typed into row three appears in row two after a removal.'),
+          q('You need a progress bar for a 200 MB upload. What does the lesson use, and why?', [
+            'fetch with a streamed response, because progress arrives in the response body',
+            'XMLHttpRequest, because fetch exposes no upload progress event',
+            'A polling endpoint that reports server-side progress',
+            'Chunked fetch calls of 1 MB each with a manual counter',
+          ], 1, 'Upload progress is the one thing fetch still cannot report, so XHR remains the practical choice for a real progress bar.'),
+        ]
+      ),
       ],
       [
         q('Why should you avoid disabling a submit button while the form is invalid?', [
@@ -1579,7 +2391,28 @@ That is the safety net for the four cases above. Report, do not swallow: an empt
 ### Fallbacks are user interface
 
 Give the fallback \`role="alert"\` so screen readers announce it (Chapter 5), keep it inside your layout so navigation still works, and never print a raw stack trace at a user. Show what failed, offer retry, and send the technical detail to your monitoring tool.
-        `),
+        `,
+        [
+          q('Which method makes an error boundary render its fallback?', [
+            'componentDidCatch, by calling setState with the error',
+            'static getDerivedStateFromError, which returns the new state',
+            'render, by reading an error prop passed from the parent',
+            'componentDidMount, after the first commit',
+          ], 1, 'getDerivedStateFromError produces the fallback state during the render phase; componentDidCatch exists for the side effect of reporting.'),
+          q('A single error boundary at the root of the app is', [
+            'the recommended pattern, since fewer boundaries mean fewer fallbacks to design',
+            'required before Suspense can be used anywhere in the tree',
+            'only a nicer white screen, because boundaries belong around each route and around independent widgets',
+            'sufficient as long as componentDidCatch reports to monitoring',
+          ], 2, 'The point of a boundary is that the rest of the page survives, which only happens when it wraps something the page can do without.'),
+          q('ErrorBoundary is given resetKeys={[courseId]}. What does that achieve?', [
+            'The boundary clears itself when courseId changes, instead of staying tripped for the rest of the session',
+            'It retries the failed render up to three times',
+            'It attaches the course id to the report sent to monitoring',
+            'It keeps the boundary mounted across route changes',
+          ], 0, 'Boundary state persists until something resets it, so without reset keys the user still sees the old record error after navigating to a new one.'),
+        ]
+      ),
         lesson('Builds, Environments, and Source Maps', 14, `
 The dev server and the production build are two different programs. Dev serves unbundled ES modules with hot reload and readable names; \`npm run build\` emits a minified, tree-shaken, content-hashed bundle. Almost every "worked on my machine" bug lives in that gap.
 
@@ -1645,7 +2478,28 @@ The \`proxy\` line makes the app and the API share an origin in development, so 
 - Confirm the SPA rewrite from Chapter 3, or refreshing a deep link 404s.
 - Check import casing. \`./components/navbar\` resolves on a case-insensitive Mac and fails on a Linux build agent — the single most common cause of a build that passes locally and dies in CI.
 - Set every \`VITE_\` variable in CI as well as in your local \`.env\`. A missing one becomes \`undefined\` inside a template string and produces requests to \`undefined/courses\`.
-        `),
+        `,
+        [
+          q('Which Cache-Control pairing matches a hashed production build?', [
+            'index.html immutable for a year, hashed assets no-cache',
+            'Both files no-cache',
+            'Hashed assets immutable for a year, index.html no-cache',
+            'Both files immutable for a year',
+          ], 2, 'The content hash makes an asset URL permanently valid, while index.html is the pointer that must be re-read on every visit.'),
+          q('You restart the container with a new API_URL but do not rebuild. What does the app use?', [
+            'The new URL, from the next page load onwards',
+            'The old value, because it was substituted into the bundle at build time',
+            'The new URL, after the bundle re-hashes itself',
+            'The new URL, but only during server rendering',
+          ], 1, 'Client env vars are compile-time text substitution, so changing the process environment afterwards changes nothing in the shipped JavaScript.'),
+          q('What does build: { sourcemap: "hidden" } mean?', [
+            'No source maps are generated at all',
+            'Maps are inlined into the JavaScript as data URLs',
+            'Maps are generated only for CSS files',
+            'Maps are generated but the bundle carries no link to them, so you upload them to your error tracker instead',
+          ], 3, 'You get readable production stack traces in your monitoring tool without publishing your source to anyone who opens DevTools.'),
+        ]
+      ),
         lesson('Core Web Vitals in a React App', 14, `
 Chapter 4 optimised the render loop. **Core Web Vitals** measure what the person holding the phone experiences, which is a different question and the one search engines report on.
 
@@ -1737,7 +2591,112 @@ Neither makes the work faster — they change *when* it blocks. If the list is s
 ### The mistake to avoid
 
 Tuning until Lighthouse says 100 on a desktop with fibre. Throttle DevTools to Slow 4G with a 4× CPU slowdown, or read your field data. That is the device most of your users are actually holding.
-        `),
+        `,
+        [
+          q('At which percentile should Core Web Vitals be reported?', [
+            'The mean, so a single outlier cannot dominate',
+            'The median, as the typical visitor',
+            'The 75th percentile, because vitals are a distribution and an average hides the worst quarter of visits',
+            'The 99th percentile, to catch every bad session',
+          ], 2, 'Vitals are graded at p75 precisely because the mean flatters a site where one user in four is having a slow, janky visit.'),
+          q('Why does a route-level lazy() chunk on the landing page hurt LCP?', [
+            'The chunk is always larger than the main bundle',
+            'The browser must download, parse and execute JavaScript before the hero element can exist at all',
+            'Suspense fallbacks are excluded from measurement',
+            'lazy disables image preloading for the whole document',
+          ], 1, 'Splitting the front door pushes the largest paint behind a network round trip plus parse time, so split the admin screens instead.'),
+          q('How does INP differ from the FID it replaced?', [
+            'It measures time to first byte instead of interaction',
+            'It measures only the first interaction, more accurately',
+            'It is a lab-only metric produced by Lighthouse',
+            'It samples every interaction in the visit and reports the worst, so one 300 ms handler fails it',
+          ], 3, 'Because INP takes the worst interaction rather than the first, a single expensive keystroke handler is enough to fail the metric.'),
+        ]
+      ),
+        lesson('Release Pipelines, Flags, and Rollback', 13, `
+A deploy should be the least interesting event of the week: one command, a single artifact, reversible in a minute. Everything below exists to protect those three properties.
+
+### The pipeline, stage by stage
+
+| Stage | Command | Fails on |
+|---|---|---|
+| Install | \`npm ci\` | A lockfile that disagrees with package.json |
+| Static checks | \`tsc --noEmit\`, \`eslint .\` | Type errors, hook-rule violations |
+| Tests | \`vitest run\` | The suite from Chapter 5 |
+| Build | \`npm run build\` | Anything the dev server tolerated |
+| Deploy | upload \`dist/\` | — |
+
+\`npm ci\` rather than \`npm install\` is the load-bearing detail. It installs exactly the tree recorded in the lockfile and refuses to reconcile a drifted \`package.json\`, so CI builds what you tested instead of whatever was published to npm this morning.
+
+Keep the whole run under ten minutes. Past that, people stop waiting for it before merging, and a pipeline nobody waits for is decoration.
+
+### Build once, or build per environment — decide knowingly
+
+Environment variables are substituted at build time, so one artifact cannot carry both the staging and the production API URL. There are two honest options:
+
+- **Build per environment.** Simple, and what most teams do. The cost is that the bundle you tested in staging is not byte-for-byte the one you ship.
+- **Build once and fetch \`/config.json\` at boot.** One artifact promoted through every environment. The cost is a request before the app can call an API, plus a config file to deploy and keep correct.
+
+Choose one on purpose. The failure mode is a team that believes it does the first while a stale variable in CI quietly does the second badly.
+
+### Preview deploys
+
+Give every pull request its own URL, pointed at a scratch API with scratch data. Reviewers click instead of imagining, designers check the real thing, and the keyboard pass from Chapter 5 happens before merge rather than after release. Never point a preview environment at the production database; sooner or later somebody tests a delete.
+
+### Old chunks outlive old deploys
+
+Someone has had your tab open since before the last release. They click a lazily loaded route (Chapter 3) and the browser asks for a hashed chunk you deleted twenty minutes ago:
+
+\`\`\`
+TypeError: Failed to fetch dynamically imported module
+\`\`\`
+
+Two fixes, and you want both. Keep the previous few releases' assets on the host for a week — they are small, and content hashes mean nothing ever collides. Then handle the rejection so the tab can rescue itself:
+
+\`\`\`jsx
+const Analytics = lazy(() =>
+  import('./routes/Analytics').catch(() => {
+    window.location.reload();        // this tab is running a build that no longer exists
+    return new Promise(() => {});    // never resolves; the reload takes over
+  })
+);
+\`\`\`
+
+The polite version polls a \`/version.json\` build id and offers a "new version available, reload" banner instead of reloading under the user's cursor mid-sentence.
+
+### Rollback beats forward-fixing
+
+Keep the previous release addressable and switch back to it in one step. Roll back first and diagnose afterwards, with the site healthy while you read stack traces. That only works if a deploy is atomic — every file swapped together, never half-published — and if the API the old bundle expects still exists, which is why backend changes should add fields before they remove them.
+
+### Flags decouple deploying from releasing
+
+\`\`\`jsx
+{flags.newCheckout ? <CheckoutV2 /> : <CheckoutV1 />}
+\`\`\`
+
+Merge a half-built feature behind a flag, ship it dark, enable it for staff, then 1% of users, then everyone — and turn it off in seconds without a build. The tax is real: every flag doubles a code path and every forgotten flag is permanent dead weight, so give each one an owner and a removal date on the day you add it.
+        `,
+        [
+          q('Why does the pipeline run npm ci rather than npm install?', [
+            'It skips devDependencies, which CI does not need',
+            'It caches node_modules between runs automatically',
+            'It is the only npm command permitted in a CI environment',
+            'It installs exactly the tree in the lockfile and fails if the lockfile and package.json disagree',
+          ], 3, 'Reproducibility is the point: CI must build the dependency tree you tested, not resolve fresh versions at install time.'),
+          q('A user with a tab open since before the last deploy clicks a lazy route and sees "Failed to fetch dynamically imported module". What fixes it?', [
+            'Turning off code splitting for that route',
+            'Caching index.html for a year so the tab keeps working',
+            "Retaining the previous release's hashed assets, and reloading the page when a chunk import rejects",
+            'Serving the chunk from a separate domain',
+          ], 2, 'Their index.html references chunks from a build that no longer exists, so keep the old assets around and recover by reloading into the current build.'),
+          q('What does a feature flag give you that a deploy does not?', [
+            'A smaller production bundle',
+            'The ability to enable a feature for 1% of users, or switch it off entirely, without shipping a new build',
+            'Automatic rollback of database migrations',
+            'A faster CI pipeline',
+          ], 1, 'Flags separate the act of shipping code from the act of turning it on, which is what makes a bad release a config change rather than an emergency deploy.'),
+        ]
+      ),
       ],
       [
         q('A rejected fetch inside an onClick handler leaves the screen spinning, even though the component sits inside an error boundary. Why?', [
@@ -1844,7 +2803,28 @@ A chat widget, a tag manager or an analytics snippet on your origin can read the
 ### The rule
 
 Escape by default, sanitise the moment you opt out, validate URLs by protocol, and never let user text reach \`innerHTML\`, \`eval\`, or \`new Function\`. Rendering is not the only sink either — a search term written into \`document.title\`, or a redirect built from \`location.hash\`, is the same bug wearing different clothes.
-        `),
+        `,
+        [
+          q('Why does the sanitiser configure ALLOWED_TAGS rather than stripping known-bad tags?', [
+            'You cannot enumerate every attack, but you can enumerate the handful of tags a comment is allowed to use',
+            'An allow-list runs faster on long documents',
+            'DOMPurify supports nothing else',
+            'Block-lists break markdown rendering',
+          ], 0, 'An allow-list fails closed: anything the attacker invents that you did not list is removed by default.'),
+          q('What does the safeHref helper protect against that React does not?', [
+            'Cross-site request forgery on link clicks',
+            'Broken links that 404',
+            'data: and vbscript: URLs, and URLs handed to location.assign or window.open',
+            'Mixed content warnings on HTTPS pages',
+          ], 2, 'React only ever intervened on the javascript: scheme in JSX attributes, and never on the navigation APIs you call yourself.'),
+          q('What is the recommended way to introduce a CSP to an existing app?', [
+            'Enforce it immediately and fix whatever breaks',
+            'Start in Content-Security-Policy-Report-Only, read the reports for a week, then enforce',
+            'Apply it only to the index.html response',
+            'Allow unsafe-inline first and tighten the policy later',
+          ], 1, 'Report-only mode tells you what the page really loads without breaking it for users while you find out.'),
+        ]
+      ),
         lesson('Auth Tokens, Cookies, and CORS', 14, `
 Where the access token lives decides which attacks you are exposed to. There are two realistic options and they fail in different directions.
 
@@ -1921,7 +2901,28 @@ Skip \`clear()\` on a shared machine and the next person sees the previous user'
 ### The client is not a security boundary
 
 A hidden admin button, the \`RequireAuth\` wrapper from Chapter 3, a disabled input — all of it is user experience. Every one is a DevTools edit away from being bypassed, so the server authorises every request independently, using the session it verified itself.
-        `),
+        `,
+        [
+          q('With credentials: "include", why is Access-Control-Allow-Origin: * rejected?', [
+            'The wildcard is only valid for GET requests',
+            'The browser requires the exact origin plus Access-Control-Allow-Credentials: true',
+            'Cookies are never sent cross-origin under any configuration',
+            'The wildcard form has been deprecated by browsers',
+          ], 1, 'Credentialed requests must name the origin explicitly, so a wildcard can never authorise sending someone cookies.'),
+          q('A dashboard with six queries logs the user out at random once the token expires. What fixes it?', [
+            'Retrying each 401 three times before giving up',
+            'A longer access token lifetime',
+            'Moving the token into localStorage',
+            'One shared refresh promise, so every in-flight 401 waits on the same refresh',
+          ], 3, 'Six parallel refreshes against a backend that rotates refresh tokens means five of them present a token that has already been used.'),
+          q('What does SameSite=lax buy you?', [
+            'It prevents any XSS on the page from reading the cookie',
+            'It encrypts the cookie value in transit',
+            'It keeps the cookie off cross-site POSTs, which removes most CSRF without a token dance',
+            'It scopes the cookie to a single subdomain',
+          ], 2, 'SameSite governs when the browser attaches the cookie, so a form posted from another site simply arrives without a session.'),
+        ]
+      ),
         lesson('Debugging What You Cannot Reproduce', 14, `
 A bug you can reproduce is half fixed. The skill worth building is for the other kind: it happens to one user, on one browser, only in production.
 
@@ -1974,7 +2975,100 @@ const name = user?.profile?.name ?? '';   // the crash is gone, the bug is not
 Optional chaining added at the crash site is a decision to render wrong data silently. Ask why the profile is missing — an unauthenticated request, a race, a bad migration — and fix it there. If you genuinely must guard, log the case so you still learn how often it happens.
 
 Then do the last step, which is Chapter 5's: write the failing test first, watch it fail for the right reason, and only then apply the fix. A bug without a regression test is a bug you have agreed to fix twice.
-        `),
+        `,
+        [
+          q('With "Highlight updates when components render" on, you see outlines flashing on components unrelated to your click. What does that point at?', [
+            'A missing key on a list',
+            'A context whose value changes identity on every provider render',
+            'An unaborted fetch racing with a newer one',
+            'A stale service worker serving old chunks',
+          ], 1, 'Unrelated components repainting together is the visual signature of a context update fanning out to every consumer.'),
+          q('A date bug is reported by one user in another country. Which local reproduction does the lesson suggest first?', [
+            'Run the dev server with a different TZ environment variable',
+            'Switch the browser display language',
+            'Throttle the network to Slow 4G',
+            'Disable all browser extensions',
+          ], 0, 'Forcing a different timezone reproduces the whole class of date bugs on your own machine in one command.'),
+          q('Adding user?.profile?.name ?? "" at the crash site is a mistake because', [
+            'optional chaining costs a measurable amount of performance',
+            '?? and || are not interchangeable in that position',
+            'it silences the crash while rendering wrong data, instead of answering why the profile is missing',
+            'it stops the error monitor from collecting breadcrumbs',
+          ], 2, 'The crash was the only evidence that something upstream is broken, so guarding it converts a loud bug into a silent one.'),
+        ]
+      ),
+        lesson('Dependencies and the Supply Chain', 13, `
+Run \`npm ls --all | wc -l\` on an ordinary React app and the answer is in the thousands. Most of the code you ship was written by people you will never meet, and it runs with your privileges: on the build machine at install time, and in your users' browsers afterwards.
+
+### The lockfile is the artifact
+
+Commit \`package-lock.json\`, review its diffs like code, and install with \`npm ci\` in CI. A range such as \`^1.2.3\` means "anything compatible", so without a lockfile your build installs whatever was published this morning — including the malicious 1.2.4 that was live for three hours before npm pulled it.
+
+A dependency bump whose lockfile diff runs to 400 lines for one patch release is worth reading rather than merging on sight.
+
+### Install time is code execution
+
+A \`postinstall\` script runs arbitrary code on the machine doing the install, with that machine's credentials: your SSH keys locally, your deploy tokens in CI. That is the primary target of npm supply-chain attacks, and it fires before you have run a single line of the package.
+
+\`\`\`
+npm ci --ignore-scripts
+\`\`\`
+
+That works for most frontend trees. The exceptions are packages with native binaries or a browser download — esbuild, sharp, playwright — which you allow explicitly, one at a time. Apply it in CI too, where the credentials are worth more than the ones on any laptop.
+
+### Choosing a dependency
+
+| Signal | Good | Worrying |
+|---|---|---|
+| Last release | Within the past year | Four years ago, with open security issues |
+| Transitive dependencies | Two or three | Ninety |
+| Bundle size | Checked before installing | Never measured |
+| Maintainers | Several, or a funded organisation | One account, no release history |
+| Could you write it yourself? | No, the problem is genuinely hard | Yes, in thirty lines |
+
+That last row matters more than teams admit. A four-line utility package is a permanent account-takeover risk taken on in exchange for four lines of code, while a well-maintained library that gets date arithmetic right is a bargain at 40 KB. Check the cost before installing: Chapter 4's bundle visualiser will find the accidental 300 KB import afterwards, but not installing it is cheaper.
+
+### Auditing without drowning
+
+\`npm audit\` on a fresh app reports dozens of advisories, most of them in dev-only transitive packages. Triage each one with two questions: **is it in the production bundle**, and **is the vulnerable code path reachable from the way we use it?** A regex denial-of-service in a build-time plugin is not the same class of problem as prototype pollution in a library that parses user input at runtime.
+
+\`\`\`
+npm audit --omit=dev     # only what actually ships to browsers
+npm audit fix            # semver-compatible upgrades, safe to review and merge
+npm audit fix --force    # bumps majors and breaks builds; never under time pressure
+\`\`\`
+
+Then keep moving: automated pull requests from Dependabot or Renovate, patch and minor updates grouped and merged on green CI, majors read by a human. Weekly upgrades are boring, and a deferred year is a two-week migration.
+
+### The name is part of the review
+
+Typosquats sit directly beside real packages in search results and in editor autocomplete: \`reacct-router\`, \`crossenv\` for \`cross-env\`, a plausible-looking types package that nobody publishes. Read the name character by character before installing, check the weekly downloads and the repository link, and be most careful with names that arrived from a blog post, a chat log or an AI assistant — confirm the package exists and is the one you mean before you run \`npm i\`.
+
+### What runs on your origin
+
+A CDN \`<script>\` tag is standing permission for that vendor to execute code inside your users' sessions. Add \`integrity\` hashes where the vendor publishes them, self-host what you reasonably can, and count third-party scripts the way you count dependencies: fewer, larger, better maintained. The Content Security Policy from earlier in this chapter is what limits the damage on the day one of them is compromised.
+        `,
+        [
+          q('npm audit reports 43 advisories on a fresh React app. What is the right first move?', [
+            'Run npm audit fix --force until the count reaches zero',
+            'Pin every dependency to an exact version',
+            'Triage each one: is it in the production bundle, and is the vulnerable path reachable from how you use it',
+            'Delete the lockfile and reinstall from scratch',
+          ], 2, 'Most advisories sit in dev-only transitive packages, so severity means nothing until you know whether the code ships and can be reached.'),
+          q('What is the specific risk of a postinstall script?', [
+            'It executes arbitrary code on the installing machine, with whatever credentials that machine holds',
+            'It only runs during production builds, where mistakes are costly',
+            'It rewrites package.json without asking',
+            'It adds a few seconds to the install and nothing more',
+          ], 0, 'The script runs before you have used the package at all, which is why install-time execution is the favourite entry point for supply-chain attacks.'),
+          q('A blog post recommends a package called reacct-hook-form. Before installing it you should', [
+            'install it and see whether the build passes',
+            'read the name character by character and confirm it is the package you mean, since typosquats sit beside real names',
+            'trust it if it has more than 1,000 weekly downloads',
+            'check only that it ships TypeScript types',
+          ], 1, 'Typosquatting relies on a name that looks right at a glance, so the check has to happen before the install, not after.'),
+        ]
+      ),
       ],
       [
         q('React escapes interpolated values automatically. Which of these can still put attacker-supplied HTML into the page?', [
@@ -2001,6 +3095,2028 @@ Then do the last step, which is Chapter 5's: write the failing test first, watch
           'Too many re-renders',
           'A stale closure in a useCallback',
         ], 1, 'macOS filesystems are case-insensitive, so a mis-cased import resolves locally and fails to resolve on the Linux build agent.'),
+      ]
+    ),
+      chapter(
+      'TypeScript in React',
+      'Modelling props, state, and API responses so that whole classes of the runtime bugs you just learned to debug stop compiling.',
+      [
+      lesson('Typing Props, State, and Events', 13, `
+A teammate renames \`userId\` to \`accountId\` on a props type at 4pm. The compiler names eleven call sites before the branch is pushed. In the JavaScript twin of the same repo, that rename shipped, and a billing settings page rendered \`undefined\` for a week, because reading \`props.userId\` off an object that no longer has it is not an error. It is just \`undefined\`.
+
+That is the whole trade. You pay in annotations, and you get paid in renames, deletions and refactors that are safe to do on a Friday.
+
+### Props are a plain type, not React.FC
+
+\`\`\`tsx
+type AvatarProps = {
+  name: string;
+  src?: string;
+  size?: 'sm' | 'md' | 'lg';
+  onSelect?: (name: string) => void;
+};
+
+export function Avatar({ name, src, size = 'md', onSelect }: AvatarProps) {
+  return (
+    <button className={'avatar avatar-' + size} onClick={() => onSelect?.(name)}>
+      {src ? <img src={src} alt="" /> : name.slice(0, 2).toUpperCase()}
+    </button>
+  );
+}
+\`\`\`
+
+Two details do most of the work here. \`size\` is a union of three literals rather than \`string\`, so \`size="medium"\` fails to compile and your editor offers the three real values. And the props type is applied to the parameter, not to the function. \`React.FC<AvatarProps>\` buys a return type check you rarely need, and it fights you the moment the component becomes generic. When a component accepts children, say so: \`children: React.ReactNode\`.
+
+### State that starts empty needs help
+
+\`\`\`tsx
+const [rows, setRows] = useState([]);        // rows is never[]
+setRows(invoices);                           // error: Invoice is not never
+const [rows, setRows] = useState<Invoice[]>([]);      // fixed
+const [selected, setSelected] = useState<Invoice | null>(null);
+\`\`\`
+
+Inference reads the initial value, and an empty array carries no element type. \`useState(null)\` is worse: the state is locked to \`null\` forever. The rule is short. Annotate when the initial value is empty, null or a narrower literal than you want; let inference handle \`useState(0)\` and \`useState('')\`.
+
+### Events
+
+Inline handlers are contextually typed, so annotating them is noise:
+
+\`\`\`tsx
+<input onChange={(e) => setQuery(e.currentTarget.value)} />
+\`\`\`
+
+Extract that handler into a named function and the context is gone, so you supply the type yourself.
+
+| What you are handling | The type to reach for |
+|---|---|
+| Text input change | \`React.ChangeEvent<HTMLInputElement>\` |
+| Form submit | \`React.FormEvent<HTMLFormElement>\` |
+| Button click | \`React.MouseEvent<HTMLButtonElement>\` |
+| Key press in a field | \`React.KeyboardEvent<HTMLInputElement>\` |
+| Select change | \`React.ChangeEvent<HTMLSelectElement>\` |
+
+Now the detail that trips everyone. Inside a typed handler, \`e.currentTarget.value\` compiles and \`e.target.value\` does not. \`currentTarget\` is typed as the element the handler is attached to. \`target\` is whatever the event started on, typed as \`EventTarget\`, which has no \`value\`. People paper over it with \`(e.target as HTMLInputElement).value\`, and that cast is a real lie in delegated handlers, where the target genuinely might be the icon inside the button.
+
+### Refs
+
+\`\`\`tsx
+const inputRef = useRef<HTMLInputElement>(null);   // for a DOM node
+const timerRef = useRef<number | undefined>(undefined);  // a mutable box
+
+inputRef.current.focus();    // error: possibly null
+inputRef.current?.focus();   // correct
+\`\`\`
+
+The null check is not bureaucracy. Before the commit phase from chapter 2, that ref really is null, and the compiler is describing the timeline accurately.
+
+### The one habit that erases the benefit
+
+An \`any\` on a prop. It does not stay local: every value derived from it is unchecked too, silently, forever. \`unknown\` is the honest version, because it refuses to be used until you narrow it. And turn on \`"strict": true\` in \`tsconfig.json\` on day one. Retrofitting \`strictNullChecks\` into a forty thousand line app is a multi week project that teams routinely start and abandon.
+      `,
+        [
+          q('const [rows, setRows] = useState([]) compiles, but setRows(invoices) fails. What is going on?', [
+            'The empty array is inferred as never[], so Invoice is not assignable',
+            'The setter takes its type from the first call rather than the initial value',
+            'Arrays in state must be wrapped in useMemo before they can be replaced',
+            'useState needs a reducer once the state is a collection rather than a scalar',
+          ], 0, 'Inference reads the initial value, and an empty array literal has element type never, so annotating useState<Invoice[]>([]) is the fix.'),
+          q('Inside handleChange(e: React.ChangeEvent<HTMLInputElement>), e.currentTarget.value compiles but e.target.value does not. Why?', [
+            'target exists only on native events, not on React synthetic events',
+            'target is read-only, so TypeScript blocks reads of its properties',
+            'currentTarget is a getter, and TypeScript widens getter results',
+            'target is typed as EventTarget, while currentTarget is typed as the input',
+          ], 3, 'currentTarget is typed as the element the handler was attached to, whereas target is only an EventTarget because the event may have started on a descendant.'),
+          q('A shared Table component types its rows prop as any[]. What is the practical consequence?', [
+            'Rendering slows down, because any adds runtime checks to each access',
+            'Every value read from a row is unchecked, so field name typos compile fine',
+            'The component can no longer be re-exported across a module boundary',
+            'React re-renders the table on every parent render, whatever memo does',
+          ], 1, 'any spreads through everything derived from it, so mistyped field names and wrong operations pass silently for as long as the value is used.'),
+        ]
+      ),
+      lesson('Discriminated Unions and Impossible States', 13, `
+A support ticket arrives with a screenshot: a spinner turning, a red error banner under it, and a table of stale rows behind both. Nobody designed that screen. It assembled itself out of four loose flags.
+
+\`\`\`tsx
+const [data, setData] = useState<Invoice[] | null>(null);
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+const [hasLoaded, setHasLoaded] = useState(false);
+\`\`\`
+
+Four independent values is sixteen combinations. About five of them mean anything.
+
+| isLoading | error | data | What it renders |
+|---|---|---|---|
+| true | null | null | Spinner, correct |
+| false | set | null | Error, correct |
+| false | null | rows | Table, correct |
+| true | set | rows | Spinner, banner and stale table together |
+
+The last row is the screenshot. A retry handler that sets \`isLoading\` to true and forgets to clear \`error\` produces it, and no test asked for that combination because nobody imagined it.
+
+### One tagged value instead of four loose ones
+
+\`\`\`ts
+type InvoiceState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'error'; message: string; failedAt: number }
+  | { status: 'ready'; invoices: Invoice[]; fetchedAt: number };
+\`\`\`
+
+\`status\` is the **discriminant**: a literal type present on every member of the union. Test it and TypeScript narrows the entire object, so \`message\` exists only in the error branch and \`invoices\` only in the ready one. The bad combination is now unwritable rather than merely untested.
+
+\`\`\`tsx
+switch (state.status) {
+  case 'idle':
+  case 'loading':
+    return <Spinner />;
+  case 'error':
+    return <Retry message={state.message} onRetry={refetch} />;
+  case 'ready':
+    return <InvoiceTable rows={state.invoices} />;
+}
+\`\`\`
+
+Reaching for \`state.invoices\` inside the error case is a compile error, not a runtime \`undefined\`.
+
+### The non-null assertion is the tell
+
+The flag version always ends up with \`data!.length\` somewhere. That \`!\` compiles to absolutely nothing. It is a note to the compiler, with no runtime behaviour, and it stops being true at precisely the moment one of the eleven impossible states happens. Search a codebase for \`!.\` and you have a map of its unmodelled states.
+
+### Exhaustiveness, so the next change cannot be quiet
+
+Six months later someone adds \`{ status: 'refreshing'; invoices: Invoice[] }\` for background polling. Nothing points at the twelve switches that now fall straight through and render nothing.
+
+\`\`\`ts
+function assertNever(value: never): never {
+  throw new Error('Unhandled state: ' + JSON.stringify(value));
+}
+
+// as the last branch of every switch
+default:
+  return assertNever(state);
+\`\`\`
+
+In that default branch every handled case has been narrowed away, so \`state\` is \`never\` and the call type checks. Add a member you did not handle and \`state\` narrows to that member instead, which is not assignable to \`never\`, so every unhandled switch in the repository turns red in the same build. One line, and a whole class of silent omissions becomes a compile error.
+
+### Unions work on props too
+
+\`\`\`tsx
+type ButtonProps =
+  | { variant: 'link'; href: string; onClick?: never }
+  | { variant: 'action'; onClick: () => void; href?: never };
+\`\`\`
+
+\`<Button variant="link" href="/invoices" onClick={save} />\` no longer compiles. The \`?: never\` members matter: without them a props object assembled in a variable can carry both keys past the check, because excess property checking only fires on object literals written inline.
+
+Server state from chapter 3 arrives in exactly these shapes, which is why query libraries expose one \`status\` string instead of three booleans. Reducers from chapter 2 pair with it naturally, since the action type is a union as well and the reducer switch gets the same exhaustiveness guarantee.
+
+One near miss to avoid: \`{ status: string; message?: string }\` narrows nothing at all. \`string\` is not a set of cases, and \`message\` stays possibly undefined in every branch. Literal types are the entire mechanism.
+      `,
+        [
+          q('Replacing isLoading, error and data with one status union removes which specific bug from the screen?', [
+            'A spinner and an error banner rendering over stale rows at once',
+            'A fetch that resolves after the component has already unmounted',
+            'A list re-rendering whenever its parent component re-renders',
+            'A response arriving out of order after the user clicks quickly',
+          ], 0, 'Independent flags allow combinations nobody designed, and the tagged union makes the loading plus error plus data combination impossible to represent.'),
+          q('A new member { status: "refreshing" } is added to the union, and a switch whose default branch calls assertNever(state) now fails to compile. Why is that?', [
+            'A default branch is not permitted on a switch over literal types',
+            'state narrows to the unhandled member in default, which is not never',
+            'assertNever throws, and TypeScript forbids throwing inside a switch',
+            'The union passed four members, which requires an enum instead',
+          ], 1, 'The default branch only receives never when every member has been handled, so an unhandled case leaves a real type there and the call is rejected.'),
+          q('The flag based version renders data!.total. What does that ! actually do?', [
+            'It checks the value at runtime and throws when data is null',
+            'It substitutes an empty object so the property read is safe',
+            'It silences the compiler and changes nothing about the runtime',
+            'It postpones the read until the data has finished loading',
+          ], 2, 'A non-null assertion is erased during compilation, so it removes the warning while leaving the exact crash it was warning about.'),
+        ]
+      ),
+      lesson('Generic Components and Typed Hooks', 13, `
+Nine screens use the same \`<DataTable>\`. The API renames \`email\` to \`workEmail\`, the shared type is updated, the build is green, and the table renders a column of empty cells on all nine, because the column keys were plain strings. Strings are where type safety goes to die.
+
+### A component with a type parameter
+
+\`\`\`tsx
+type Column<T> = {
+  key: keyof T;
+  label: string;
+  render?: (row: T) => React.ReactNode;
+};
+
+type DataTableProps<T> = {
+  rows: T[];
+  columns: Column<T>[];
+  getRowId: (row: T) => string;
+  onSelect?: (row: T) => void;
+};
+
+export function DataTable<T>({ rows, columns, getRowId, onSelect }: DataTableProps<T>) {
+  return (
+    <tbody>
+      {rows.map((row) => (
+        <tr key={getRowId(row)} onClick={() => onSelect?.(row)}>
+          {columns.map((col) => (
+            <td key={String(col.key)}>
+              {col.render ? col.render(row) : String(row[col.key])}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  );
+}
+\`\`\`
+
+\`T\` is inferred from \`rows\`, so nothing is annotated at the call site. Pass employees and \`keyof T\` becomes the union of employee field names. \`{ key: 'emial', label: 'Email' }\` fails to compile, \`render\` receives a fully typed row, and \`onSelect\` hands the caller an \`Employee\` rather than an \`any\`. Rename the field and every column list still naming the old key turns red.
+
+Constrain the parameter when the component genuinely needs something: \`function DataTable<T extends { id: string }>\` forces an id. A \`getRowId\` prop is usually the better trade, because it works for rows keyed by \`sku\` or \`invoiceNumber\` too.
+
+### The .tsx parsing trap
+
+\`\`\`tsx
+const first = <T>(items: T[]) => items[0];    // parsed as a JSX tag, error
+const first = <T,>(items: T[]) => items[0];   // the comma disambiguates
+function first<T>(items: T[]) { return items[0]; }   // or avoid it entirely
+\`\`\`
+
+In \`.tsx\` files, \`<T>\` opens an element. The trailing comma is the ugly fix, \`<T extends unknown>\` is the other one, and a function declaration sidesteps the question.
+
+### Hooks that return a tuple need as const
+
+\`\`\`ts
+function useToggle(initial = false) {
+  const [on, setOn] = useState(initial);
+  const toggle = useCallback(() => setOn((v) => !v), []);
+  return [on, toggle] as const;   // readonly [boolean, () => void]
+}
+\`\`\`
+
+Drop \`as const\` and the inferred return type is \`(boolean | (() => void))[]\`. The caller destructures into \`open\` and \`toggleOpen\`, both get that union, and neither is usable without a cast. Arrays widen, objects do not, so a hook returning \`{ on, toggle }\` needs nothing extra. Tuples are worth it only when callers rename the values, which is exactly why \`useState\` returns one.
+
+### Typed context that stops the null checks spreading
+
+Chapter 3 covered the re-render cost of context. Typing has a separate pothole: \`createContext<CartApi>()\` demands a default value nobody has.
+
+\`\`\`tsx
+const CartContext = createContext<CartApi | null>(null);
+
+export function useCart() {
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error('useCart must be used inside <CartProvider>');
+  return ctx;    // CartApi, never null
+}
+\`\`\`
+
+Narrow once, in one place. Every consumer then gets a non-null type and a readable error instead of \`Cannot read properties of null\`.
+
+### Knowing when to stop
+
+| Signal | What it usually means |
+|---|---|
+| Three or more type parameters | The component is doing two jobs, split it |
+| A default of \`T = any\` | Checking is off and the generic is decoration |
+| Casts inside the generic body | The constraint is wrong, fix the constraint |
+| Callers passing \`<Row>\` explicitly | Inference is blocked, usually by a missing prop |
+
+A generic component earns its complexity when several call sites pass different data shapes. Written for one call site, it is a worse version of a plain props type.
+      `,
+        [
+          q('DataTable types its columns as { key: keyof T; label: string }[]. The Employee field email is renamed to workEmail. What happens?', [
+            'The affected column quietly renders empty cells until someone reports it',
+            'The key resolves at runtime, so only the visible label needs changing',
+            'T collapses to any at the call site and checking stops from there on',
+            'Every column list still naming email fails to compile',
+          ], 3, 'keyof T is recomputed from the row type, so the old key is no longer a member of that union and each stale column list is reported.'),
+          q('In a .tsx file, const first = <T>(items: T[]) => items[0]; refuses to parse. What is the cause?', [
+            '<T> reads as the opening of a JSX element, so it needs a trailing comma',
+            'Arrow functions cannot take type parameters in any TypeScript file',
+            'T has to be constrained before it can be used to index an array',
+            'Type parameters are not allowed on values declared with const',
+          ], 0, 'JSX syntax claims angle brackets in .tsx files, so <T,> or <T extends unknown> is required to tell the parser this is a type parameter.'),
+          q('useToggle returns [on, toggle] without as const, and a caller destructures it. What type do both names get?', [
+            'A tuple of exactly boolean then a function, which is what you want',
+            'The union boolean | (() => void), so neither position is usable',
+            'unknown, because inference gives up at a mixed return statement',
+            'A readonly tuple, which then cannot be destructured by the caller',
+          ], 1, 'Array literals widen to a single element type, so both destructured names receive the union and need a cast before either can be used.'),
+        ]
+      ),
+      lesson('Types at the API Boundary', 13, `
+\`await res.json()\` is typed \`any\`. Every type you have written about server data downstream of that line is a claim, not a fact, and the compiler has been agreeing with you out of politeness.
+
+A billing endpoint once started returning \`total\` as \`"149.00"\` instead of \`149\` after a serializer change. The frontend called \`total.toFixed(2)\`, threw for eleven hours across every invoice screen, and \`tsc\` reported zero errors the entire time.
+
+\`\`\`ts
+const res = await fetch('/api/invoices/4173');
+const invoice = (await res.json()) as Invoice;   // no check happened here
+\`\`\`
+
+A cast tells the compiler to stop asking. It generates no code, so it cannot detect anything.
+
+### Parse, do not cast
+
+Chapter 5 used zod to validate what users type. The same schema belongs at the boundary where responses arrive.
+
+\`\`\`ts
+import { z } from 'zod';
+
+const invoiceSchema = z.object({
+  id: z.string(),
+  total: z.number(),
+  status: z.enum(['draft', 'sent', 'paid']),
+  dueAt: z.coerce.date(),
+  lines: z.array(z.object({ sku: z.string(), qty: z.number().int() })),
+});
+
+export type Invoice = z.infer<typeof invoiceSchema>;
+
+export async function getInvoice(id: string): Promise<Invoice> {
+  const res = await fetch('/api/invoices/' + id);
+  if (!res.ok) throw new ApiError(res.status, id);
+  return invoiceSchema.parse(await res.json());
+}
+\`\`\`
+
+\`z.infer\` is the point. The type is derived from the check, so the two cannot drift apart. Change the schema and every use site updates in the same commit. Note \`z.coerce.date()\`: JSON has no date type, so an ISO string arrives and something has to convert it. Doing that at the boundary means no component ever wonders whether \`dueAt\` is a string today.
+
+Where the raw body is still untyped, prefer \`const body: unknown = await res.json()\`. \`unknown\` refuses every operation until you narrow it, which is the behaviour \`any\` should have had.
+
+### Where the failure goes
+
+\`parse\` throws, and that throw is a genuine outage signal: catch it in the data layer, report it with the endpoint and the issue path (\`lines.3.qty\`), and let the error boundary from chapter 6 render the fallback. Use \`safeParse\` when partial success is better than none.
+
+\`\`\`ts
+const parsed = z.array(rowSchema).safeParse(json.rows);
+const rows = parsed.success ? parsed.data : [];
+if (!parsed.success) report('invoice rows rejected', parsed.error.issues[0]);
+\`\`\`
+
+### Three ways to get types, and what each actually guarantees
+
+| Approach | Compile time | Runtime | Cost |
+|---|---|---|---|
+| \`as Invoice\` | Types only | Nothing | Free, until the API changes |
+| OpenAPI or GraphQL codegen | Matches the published contract | Nothing | A generate step in CI |
+| Schema parse | Types inferred from the schema | Every response checked | Kilobytes and milliseconds |
+
+The middle row is worth naming clearly: generated types describe what the spec says, not what the server sent. A stale spec produces confident, wrong types. Codegen and parsing combine well, so generate broadly and parse the handful of endpoints whose silent breakage would cost you a day.
+
+### The cost that only shows up at scale
+
+Validating twenty thousand rows on every poll is real work, a few milliseconds per thousand small objects, all of it on the main thread and all of it visible in the INP numbers from chapter 6. Parse once where the response arrives, never inside render, and for very large payloads validate the envelope strictly while checking only the fields you compute with.
+
+### Your bundler is not checking any of this
+
+Vite, esbuild and SWC strip types. They do not verify them. A completely broken type will run happily in \`npm run dev\` and build a production bundle without complaint. Run \`tsc --noEmit\` in CI beside lint and tests, or you own a type system that only the people with the editor plugin are actually running.
+      `,
+        [
+          q('Code writes (await res.json()) as Invoice, and the API starts sending total as a string. What does the compiler report?', [
+            'Nothing, because a cast is a claim rather than a check',
+            'An error on the cast, since string is not assignable to number',
+            'An error at the first arithmetic operation performed on total',
+            'A warning, but only when strict is enabled in tsconfig.json',
+          ], 0, 'A type assertion emits no code and inspects no values, so it cannot notice that the response stopped matching the declared shape.'),
+          q('Why derive the type with z.infer<typeof invoiceSchema> instead of writing the interface and the schema separately?', [
+            'z.infer produces a smaller bundle than a hand written interface does',
+            'Zod refuses to validate against a type that was declared by hand',
+            'One declaration cannot drift, so a schema change reaches every use site',
+            'Inferred types survive minification, whereas declared types are removed',
+          ], 2, 'Two hand maintained descriptions of the same data eventually disagree, and inferring the type from the schema leaves only one thing to keep correct.'),
+          q('A dashboard validates a twenty thousand row response with zod and INP gets noticeably worse. Which fix keeps the runtime guarantee?', [
+            'Cast the rows instead, since this endpoint is internal and stable',
+            'Wrap the parse in useMemo so it stops running on every render',
+            'Call safeParse rather than parse, which skips the costly checks',
+            'Parse once where the response arrives, and never inside render',
+          ], 3, 'Validation belongs in the fetch layer where it runs once per response, since running it during render repeats the same main thread work on every pass.'),
+        ]
+      ),
+      ],
+      [
+      q('Which props type makes <Button variant="link" href="/invoices" onClick={save} /> a compile error?', [
+        'An interface with variant, href and onClick all marked optional',
+        'A type with onClick required and href typed as string | undefined',
+        'A union of one link member and one action member, each excluding the other key',
+        'A type whose variant field is typed as string rather than a literal union',
+      ], 2, 'Only a discriminated union separates the two valid shapes, so a props object cannot carry both the link key and the action key at once.'),
+      q('Vite builds a bundle from .tsx files that contain obvious type errors. What does that tell you about the pipeline?', [
+        'Types are stripped rather than checked, so CI must run tsc --noEmit',
+        'The errors are warnings because strict mode has not been enabled yet',
+        'Type checking happens later, during minification of the production build',
+        'The tsconfig include patterns are missing the source directory entirely',
+      ], 0, 'esbuild and SWC only remove type syntax for speed, so nothing verifies the types unless a separate compiler run is part of the build.'),
+      q('A generic list component is written for one screen and takes three type parameters, two with any defaults. What is the honest assessment?', [
+        'It is correct, because defaults keep the call sites free of annotations',
+        'The generics are decoration, and a plain props type would check more',
+        'It needs a fourth parameter so the row key can be inferred properly',
+        'It is fine as long as every call site passes the parameters explicitly',
+      ], 1, 'A default of any turns checking off inside the component, so the parameters add ceremony while providing less safety than a concrete props type.'),
+      q('Which combination gives you both compile time safety and a real signal when the server changes shape?', [
+        'Hand written interfaces plus a cast at each fetch call site',
+        'Generated types from the OpenAPI spec, with no runtime validation',
+        'any at the boundary, with narrowing performed inside each component',
+        'A schema parsed at the boundary, with the type inferred from that schema',
+      ], 3, 'Parsing checks the actual response at runtime while inference keeps the static type identical to the schema, so a drifting API fails loudly instead of silently.'),
+      ]
+    ),
+    chapter(
+      'Test Strategy and Automation',
+      'Deciding what deserves a test, driving a real browser with Playwright, and keeping a suite fast and honest enough that a red build actually stops a deploy.',
+      [
+      lesson('Choosing What to Test, and at Which Level', 13, `
+Your suite is green. It has 1,412 tests, runs in eight minutes, and reports 94% line coverage. Checkout has been broken since 06:00, because \`formatMoney\` returns \`$NaN\` when the cart total is zero, and no test ever rendered an empty cart.
+
+Coverage counts which lines executed. It says nothing about which behaviours were checked.
+
+### What each level actually buys
+
+| Level | Example | Cost per test | Catches | Blind to |
+|---|---|---|---|---|
+| Type check | \`tsc --noEmit\` | ~6 s for the repo | Wrong shapes at every call site | Anything about behaviour |
+| Unit | \`formatMoney(0, 'USD')\` | under 1 ms | Pure logic, edge cases | Wiring between parts |
+| Component | \`CartSummary\` empty state | 20 to 80 ms | Render logic, label wiring | The real network, routing, the build |
+| End to end | Sign in, add item, pay | 4 to 15 s | Integration, the shipped bundle | Most branches, because it is too slow |
+
+The trade is not only speed. A failing unit test names the function and the input. A failing end-to-end test tells you that buying a course is broken somewhere across forty files, which is worth knowing and expensive to act on. You want the cheap, precise tests to be numerous and the slow, broad ones to be few and well chosen.
+
+### Choose by risk, not by symmetry
+
+Ratios like "70/20/10" are a distraction. Rank code by how often it changes multiplied by what breaks when it is wrong.
+
+| Area | Change rate | Blast radius | Where the tests go |
+|---|---|---|---|
+| Pricing, tax, discounts | Weekly | Money, refunds, trust | Exhaustive unit tests |
+| Checkout flow | Monthly | Revenue stops | One end-to-end test |
+| Search filters | Weekly | Annoyance | Component tests |
+| Marketing footer | Rarely | Nothing | None |
+
+Table-driven unit tests are where the currency bug should have died:
+
+\`\`\`js
+test.each([
+  [0,    'USD', '$0.00'],
+  [1999, 'USD', '$19.99'],
+  [1999, 'JPY', '¥1,999'],
+  [-500, 'USD', '-$5.00'],
+])('formatMoney(%i, %s)', (minor, currency, expected) => {
+  expect(formatMoney(minor, currency)).toBe(expected);
+});
+\`\`\`
+
+Four rows, under a millisecond, and the zero row is the one nobody wrote.
+
+### Coverage is a floor, never a target
+
+This test executes every line of \`CartSummary\` and asserts almost nothing:
+
+\`\`\`jsx
+test('renders the total', () => {
+  render(<CartSummary items={items} />);
+  expect(screen.getByTestId('total')).toBeInTheDocument();  // passes for "$NaN"
+});
+\`\`\`
+
+Line coverage: 100%. Value: close to zero. The fix is one word longer.
+
+\`\`\`jsx
+expect(screen.getByTestId('total')).toHaveTextContent('$42.00');
+\`\`\`
+
+Mutation testing measures the gap directly. Stryker changes your source on purpose, flipping \`>\` to \`>=\`, replacing a return with \`null\`, and reports how many of those broken versions your suite noticed. A codebase at 94% line coverage and a 58% mutation score is telling you that four assertions in ten are decorative. Chase the mutation score on the pricing module and ignore it everywhere else.
+
+### What is not worth a test
+
+Third-party library behaviour. Framework internals. Whole-DOM snapshots, which fail on every refactor and are approved without reading. Computed styling values. Private helpers reached only through the public function you already test.
+
+### The rule that keeps a suite honest
+
+Every bug you fix earns exactly one test, at the lowest level that would have caught it. The \`$NaN\` bug earns a unit test with a zero total, not another end-to-end run through checkout. Do the opposite for a year and you get the suite from the first paragraph: slow, broad, green, and silent about the thing that is actually broken.
+      `,
+        [
+          q('A suite reports 94% line coverage but a 58% mutation score. What does that gap tell you?', [
+            'Nearly half the codebase is never executed by any test',
+            'The mutation tool is misconfigured and should be ignored',
+            'Plenty of lines run during tests without any assertion checking the result',
+            'Coverage is measured per file while mutation is measured per branch',
+          ], 2, 'Mutation testing breaks the source on purpose, so a low score means deliberately broken code still passes, which happens when tests execute lines but assert almost nothing about them.'),
+          q('A regression is traced to a discount helper that mishandles a 100% off coupon. Where does the new test belong?', [
+            'A unit test on the helper with the 100% coupon as an input row',
+            'An end-to-end test that walks through checkout with that coupon',
+            'A component test that renders the cart with a discount applied',
+            'A visual snapshot of the order summary showing the zero total',
+          ], 0, 'Every fixed bug earns one test at the lowest level that would have caught it, and a pure function that mishandles an input is caught in under a millisecond by a unit test.'),
+          q('Why does the topic argue against a fixed ratio such as 70/20/10 across test levels?', [
+            'Ratios only work for backend services, never for browser code',
+            'Modern tooling makes end-to-end tests as cheap as unit tests',
+            'Coverage tools cannot report on more than one level at a time',
+            'Effort should follow change rate and blast radius, which vary by area',
+          ], 3, 'A pricing module that changes weekly and moves money deserves far more testing than a footer that never changes, so a fixed ratio spends effort where the risk is not.'),
+        ]
+      ),
+      lesson('End-to-End Tests with Playwright', 14, `
+\`await page.waitForTimeout(2000)\` is the most expensive line in most end-to-end suites. Sixty tests, two seconds each, two minutes of a build spent waiting on purpose, and it still goes red on the morning the staging API is slow.
+
+You almost never need it, because of how Playwright locators work.
+
+### A locator is a query, not an element
+
+\`\`\`ts
+const pay = page.getByRole('button', { name: 'Pay $49.00' });
+\`\`\`
+
+Nothing has touched the DOM yet. When you call \`pay.click()\`, Playwright resolves the query, then runs actionability checks: attached to the DOM, visible, stable for two animation frames, enabled, and receiving pointer events rather than sitting under an overlay. If any check fails it re-resolves and tries again until the timeout. The waiting is the API, which is why a spec reads like a description of what a person does.
+
+\`\`\`ts
+import { test, expect } from '@playwright/test';
+
+test('a signed-in user can buy a course', async ({ page }) => {
+  await page.goto('/courses/frontend-engineering');
+  await page.getByRole('button', { name: 'Add to cart' }).click();
+  await page.getByRole('link', { name: /cart \\(1\\)/i }).click();
+
+  await page.getByLabel('Card number').fill('4242424242424242');
+  await page.getByLabel('Expiry').fill('12/30');
+  await page.getByRole('button', { name: 'Pay $49.00' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Order confirmed' })).toBeVisible();
+  await expect(page).toHaveURL(/\\/orders\\/\\d+/);
+});
+\`\`\`
+
+Role and label queries carry over from Chapter 5 for the same reason: \`.btn-primary\` breaks when a designer renames a class, and it never tells you the button was unreachable by keyboard.
+
+### Where the await goes decides whether it retries
+
+Broken, and it will fail roughly once in twenty runs:
+
+\`\`\`ts
+expect(await page.getByTestId('total').textContent()).toBe('$49.00');
+\`\`\`
+
+Fixed:
+
+\`\`\`ts
+await expect(page.getByTestId('total')).toHaveText('$49.00');
+\`\`\`
+
+The first reads the DOM once, the instant the previous line finished, and compares a string. The second is a web-first assertion: \`await expect(locator)\` polls until the text matches or the expect timeout expires. Move the \`await\` inside the parentheses and you have quietly deleted every retry in the file. When a suite starts sprouting \`waitForTimeout\` calls, this is usually the cause.
+
+### Strict mode is a feature
+
+\`page.getByRole('button', { name: 'Delete' })\` on a table of invoices throws a strict mode violation instead of clicking the first match. Scope it to the row and the test says what it means:
+
+\`\`\`ts
+await page
+  .getByRole('row', { name: /Invoice 1042/ })
+  .getByRole('button', { name: 'Delete' })
+  .click();
+\`\`\`
+
+### Config that removes the boring failures
+
+\`\`\`ts
+export default defineConfig({
+  testDir: './e2e',
+  webServer: {
+    command: 'npm run build && npm run preview',
+    url: 'http://localhost:4173',
+    reuseExistingServer: !process.env.CI,
+  },
+  use: { baseURL: 'http://localhost:4173', trace: 'on-first-retry' },
+  retries: process.env.CI ? 2 : 0,
+  projects: [{ name: 'chromium', use: devices['Desktop Chrome'] }],
+});
+\`\`\`
+
+Running against \`preview\` tests the production artifact from Chapter 6, not the dev server, so a minification bug or a bad env substitution shows up here rather than in production. \`trace: 'on-first-retry'\` costs nothing on green runs and hands you a zip containing a DOM snapshot, console output and network log for every step of the failed one. Open it with \`npx playwright show-trace trace.zip\` and scrub through the failure like a video. That is how you debug a failure that only happens in CI without pushing eleven commits to CI.
+
+### Keep the count low on purpose
+
+Twelve to twenty end-to-end tests covering the paths that make money is a healthy suite. Sign up, sign in, buy, refund, cancel. Every additional variation of a form belongs one level down, where it runs in forty milliseconds and names the component that broke.
+      `,
+        [
+          q('Which of these lines silently removes the retrying behaviour Playwright would otherwise give you?', [
+            'await expect(page.getByTestId(\'total\')).toHaveText(\'$49.00\')',
+            'expect(await page.getByTestId(\'total\').textContent()).toBe(\'$49.00\')',
+            'await expect(page.getByTestId(\'total\')).toBeVisible()',
+            'await expect(page.getByTestId(\'total\')).not.toBeEmpty()',
+          ], 1, 'Awaiting inside the parentheses reads the DOM once and compares a plain string, while awaiting the expect call itself polls the locator until it matches or the timeout expires.'),
+          q('A test clicks Delete on a table of invoices and Playwright throws a strict mode violation. What is the right fix?', [
+            'Add .first() so the click lands on the topmost matching row',
+            'Disable strict mode in the Playwright config for that spec file',
+            'Wait for the table to finish loading before issuing the click',
+            'Scope the query to that invoice row, then find the button inside it',
+          ], 3, 'Several buttons match the name, so the test never said which invoice it meant; scoping to the row states the intent and keeps working when the rows reorder.'),
+          q('Why does the config point webServer at the preview build instead of the dev server?', [
+            'The tests then run against the production artifact that will ship',
+            'The dev server cannot serve more than one Playwright worker',
+            'Hot module replacement makes locators resolve to stale elements',
+            'Source maps are generated only when a preview server is running',
+          ], 0, 'Minification, env substitution and bundling only happen in the real build, so testing the preview output catches problems the dev server would have hidden.'),
+        ]
+      ),
+      lesson('Flake, Fixtures, and Deterministic Test Data', 13, `
+A test that fails one run in a hundred sounds like nothing. Run sixty of them and \`0.99^60\` is 0.55, so 45% of your builds are red for no reason. Push the flake rate to 3% per test and 84% of builds fail.
+
+The damage is not the wasted minutes. It is that the team learns to press "re-run" without reading the failure, and the one real regression of the quarter goes out on the second attempt.
+
+### Four sources, four fixes
+
+| Source | What it looks like | Fix |
+|---|---|---|
+| Time | Passes all day, fails at 23:58 UTC | Freeze the clock |
+| Randomness | Two generated users collide once a week | Seed the generator, or namespace per test |
+| Shared data | Fails only when run in parallel | One account per test, created and deleted by a fixture |
+| Order | Passes alone, fails in the suite | Never depend on another test having run |
+
+### Freeze time before the app reads it
+
+\`\`\`ts
+test('shows the renewal warning three days out', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-03-14T10:00:00Z'));
+  await page.goto('/billing');
+  await expect(page.getByText('Renews in 3 days')).toBeVisible();
+});
+\`\`\`
+
+Order matters. Install the clock after \`page.goto\` and the bundle has already called \`Date.now()\` during hydration, so half the page is on real time and half is on fake time. That produces a test that fails once a month and looks unreproducible.
+
+### Build state through the API, not the UI
+
+The slow version signs in through the form in every test. Forty tests at three seconds each is two minutes of typing a password, and the day login breaks, forty tests fail and none of them names the cause.
+
+A fixture does it once, per test, with data nobody else can touch:
+
+\`\`\`ts
+import { test as base } from '@playwright/test';
+
+export const test = base.extend<{ account: Account }>({
+  account: async ({ request }, use, testInfo) => {
+    const email = \`e2e+\${testInfo.testId}@example.test\`;
+    const res = await request.post('/api/test/accounts', {
+      data: { email, plan: 'pro', invoices: 3 },
+    });
+    const account = await res.json();
+
+    await use(account);
+
+    await request.delete(\`/api/test/accounts/\${account.id}\`);
+  },
+});
+\`\`\`
+
+Everything after \`await use(...)\` is teardown, and it runs even when the test failed, so a crashed run does not leave rubbish for the next one. Mount \`/api/test/*\` only when \`ALLOW_TEST_ROUTES\` is set, and never set it in production: a route that creates a paid account on demand is a real vulnerability.
+
+### Unique beats clean
+
+The instinct is to truncate the database between tests. That forces the whole suite to run serially, because worker 2 wipes the rows worker 5 is using. Namespace instead:
+
+\`\`\`ts
+const invoiceName = \`Invoice \${testInfo.testId}\`;
+\`\`\`
+
+One team's suite went from 11 minutes serial to 90 seconds across six workers with no other change, because nothing shared a row any more.
+
+### Retries measure flake, they do not fix it
+
+\`retries: 2\` in CI is a shock absorber, not a cure. Playwright marks those runs \`flaky\` in the report rather than \`passed\`, and that number is the one to watch. A useful rule: any test that passes on retry twice in a week gets an issue with a real diagnosis, or gets quarantined with \`test.fixme\` so it stops teaching the team to ignore red. A permanently retried test is a one-in-three race condition that your users hit and your suite hides.
+
+One more thing worth resisting. When a test fails only in CI, the reflex is to raise its timeout. CI is slower, and slow is a legitimate condition for a real user on a real phone. Read the trace first. Often the test is correct and the app has a race that only shows up under load.
+      `,
+        [
+          q('Sixty independent tests each fail 1% of the time with no real regression. Roughly what share of builds go red?', [
+            'About 1%, since each failure is independent of the others',
+            'About 6%, because retries absorb most of the failures',
+            'About 45%, because the chance compounds across every test',
+            'About 99%, since one flaky test poisons the entire run',
+          ], 2, '0.99 raised to the power of 60 is about 0.55, so a little over half of runs pass cleanly and the rest are red for no real reason.'),
+          q('page.clock.setFixedTime is called after page.goto rather than before it. What goes wrong?', [
+            'The call throws, because a page has already been loaded',
+            'Startup code already read the real clock, so times end up mixed',
+            'Every timer on the page is cancelled and the UI stops updating',
+            'The fixed time applies to the next navigation instead of this one',
+          ], 1, 'The bundle calls Date.now() while it boots, so part of the page is pinned to the fake time and part is on the real clock, producing a failure that looks random.'),
+          q('Why create per-test data through an API fixture rather than truncating the database between tests?', [
+            'API calls produce more readable failure messages than SQL does',
+            'A truncated database resets the clock that scheduled jobs read',
+            'Fixtures run before the browser starts, which saves start-up time',
+            'Truncation forces the suite to run serially, while unique data does not',
+          ], 3, 'Wiping shared rows means one worker destroys what another is using, so the suite must run one test at a time; namespaced data lets several workers run at once safely.'),
+        ]
+      ),
+      lesson('Visual Regression and Automated Accessibility Gates', 14, `
+Someone changes \`--space-3\` from 12px to 16px. Every unit test passes, every end-to-end test passes, and forty screens shift. On the checkout modal the Pay button is now below the fold on a 667px viewport. Nobody notices for nine days, when support asks why mobile conversion dropped.
+
+No assertion you would think to write catches that. A picture does.
+
+### Screenshot small things, not whole pages
+
+\`\`\`ts
+test('empty cart panel', async ({ page }) => {
+  await page.goto('/cart');
+  await expect(page.getByTestId('cart-panel')).toHaveScreenshot('cart-empty.png', {
+    maxDiffPixelRatio: 0.01,
+    mask: [page.getByTestId('promo-countdown')],
+  });
+});
+\`\`\`
+
+The first run writes the baseline, later runs diff against it. Scoping to one component means a header change fails one test with an obvious diff, instead of failing every full-page snapshot in the suite and burying the real regression. \`mask\` paints a solid box over anything genuinely dynamic, such as a countdown or a relative timestamp, so it cannot cause a diff.
+
+### The gotcha that kills most visual suites
+
+Baselines generated on a MacBook fail forever in CI. Font hinting, subpixel antialiasing and emoji rendering all differ between macOS and a Linux container, so a text-heavy component diffs by 3% before anyone touches the CSS. The tempting response is to raise \`maxDiffPixelRatio\` until it passes, which is how a visual suite becomes blind.
+
+Generate baselines in the image CI uses:
+
+\`\`\`bash
+docker run --rm -v "$PWD":/work -w /work \\
+  mcr.microsoft.com/playwright:v1.49.0-noble \\
+  npx playwright test --update-snapshots
+\`\`\`
+
+Then remove the other movement. Playwright disables CSS animations for screenshots by default, but a JavaScript-driven carousel or a spinner you render yourself will still drift, so wait for a settled state before shooting. And treat an updated baseline as a code change: it arrives in a pull request, a human looks at the diff image in the HTML report, and approves it deliberately. A team that runs \`--update-snapshots\` reflexively has a suite that agrees with whatever it sees.
+
+### Accessibility gates that name the problem
+
+\`\`\`ts
+import AxeBuilder from '@axe-core/playwright';
+
+for (const path of ['/', '/courses', '/cart', '/checkout']) {
+  test(\`no axe violations on \${path}\`, async ({ page }) => {
+    await page.goto(path);
+    const { violations } = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .analyze();
+
+    expect(violations.map((v) => \`\${v.id} (\${v.nodes.length})\`)).toEqual([]);
+  });
+}
+\`\`\`
+
+Asserting on mapped strings rather than \`toHaveLength(0)\` is the detail that makes this usable. The failure reads \`color-contrast (4), label (1)\` instead of dumping nine hundred lines of nested objects that nobody reads past line ten.
+
+Inheriting an app with 137 violations? Do not fail the build on all of them, because the gate gets disabled by Friday. Ratchet instead: commit a baseline of known violation ids per route, fail only on ids that are not in it, and delete entries as they are fixed.
+
+\`\`\`json
+{ "/courses": ["color-contrast"], "/checkout": ["label", "aria-required-attr"] }
+\`\`\`
+
+### Automate the keyboard, because axe cannot see it
+
+Chapter 5 put the automated share at roughly a third of real problems. Focus order, focus trapping and whether Escape works are invisible to a static scan, and they are ordinary Playwright assertions:
+
+\`\`\`ts
+await page.getByRole('button', { name: 'Filters' }).click();
+const dialog = page.getByRole('dialog', { name: 'Filters' });
+await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
+
+await page.keyboard.press('Escape');
+await expect(dialog).toBeHidden();
+await expect(page.getByRole('button', { name: 'Filters' })).toBeFocused();
+\`\`\`
+
+That last assertion is the one people leave out, and it is the one that catches the regression users feel: the dialog closes and focus falls back to the top of the document, so the next Tab starts from the skip link instead of the button they just pressed.
+      `,
+        [
+          q('Visual baselines captured on a developer laptop fail in Linux CI even though no CSS changed. Why?', [
+            'Font hinting and antialiasing differ between the two platforms',
+            'Playwright saves baselines with a platform-specific colour profile',
+            'The container always renders at a different device pixel ratio',
+            'CSS animations are disabled during screenshots on macOS only',
+          ], 0, 'Text rendering is not identical across operating systems, so a text-heavy component differs by a few percent before anyone touches a stylesheet.'),
+          q('Why assert on the mapped violation ids rather than on the length of the axe violations array?', [
+            'Mapping lets axe skip rules that are already known to fail',
+            'toHaveLength cannot be used on the array that axe returns',
+            'The failure then names the rules instead of dumping huge objects',
+            'Mapping avoids a deep comparison, so the assertion runs faster',
+          ], 2, 'A readable failure such as "color-contrast (4)" gets fixed, while a wall of nested node objects gets skimmed and eventually ignored.'),
+          q('A dialog closes on Escape and axe reports zero violations. Which regression can still reach users?', [
+            'The dialog is missing an accessible name for screen readers',
+            'Focus lands back at the top of the document, not on the trigger',
+            'The close button has too little contrast against the backdrop',
+            'The dialog element is missing the role attribute it requires',
+          ], 1, 'A static scan reads the markup at one instant and cannot observe where focus travels, so returning focus to the button that opened the dialog needs its own assertion.'),
+        ]
+      ),
+      ],
+      [
+      q('A team adds forty end-to-end tests, one per form validation message. What is the predictable result?', [
+        'Coverage rises, and the pipeline finds bugs earlier than before',
+        'Strict mode violations start appearing across the whole suite',
+        'Visual baselines drift, because more screens are now captured',
+        'The build turns slow and flaky, for checks a component test covers',
+      ], 3, 'Validation branches run in milliseconds one level down, so moving them into a real browser multiplies runtime and timing exposure without adding new information.'),
+      q('Which statement honestly describes what an automated accessibility gate can promise?', [
+        'axe finds the machine-checkable share, so keyboard paths need assertions',
+        'axe plus screenshot diffs together cover essentially every issue',
+        'Screenshot diffs catch focus bugs, so axe only adds colour contrast',
+        'A clean axe run means the page meets WCAG AA for every user',
+      ], 0, 'Static scanning covers roughly a third of real problems, so focus order, focus trapping and Escape behaviour still need explicit tests written by a person.'),
+      q('CI has marked one test flaky after passing on retry for four weeks running. What does the chapter recommend?', [
+        'Raise the timeout for that test until it stops needing a retry',
+        'Increase retries to three so the report stops flagging it',
+        'Diagnose it or quarantine it, because retries only measure flake',
+        'Remove the assertion that fails most often and keep the rest',
+      ], 2, 'A test that only passes on retry is reporting a real race that users can hit, so it needs a diagnosis or an explicit quarantine rather than a bigger shock absorber.'),
+      q('Forty specs each sign in through the login form. Beyond the wasted minutes, what is the real cost?', [
+        'The login form ends up with no coverage anywhere in the suite',
+        'One broken login turns forty failures into a single unclear signal',
+        'Session cookies accumulate until they exceed the header size limit',
+        'Playwright cannot run those specs in parallel across its workers',
+      ], 1, 'When every spec depends on the same flow, a failure there lights up the whole report and hides which behaviour actually regressed.'),
+      ]
+    ),
+    chapter(
+      'Design Systems and Component Libraries',
+      'Turning one team\'s components into a styling architecture, accessible primitives, and a versioned package other teams can safely depend on.',
+      [
+      lesson('Styling Architecture and the Cascade at Scale', 13, `
+A checkout button in a 90,000 line stylesheet needed this selector to turn green:
+
+\`\`\`css
+body.checkout #main .panel .toolbar button.btn.btn-primary {
+  background: #16a34a !important;
+}
+\`\`\`
+
+Nobody wrote that in one sitting. It accreted over two years, one \`!important\` at a time, because each person only needed to beat the person before them. The stylesheet was not badly written. It was written without an architecture.
+
+### Specificity is a tuple, not a score
+
+The browser compares three numbers in order: ids, then classes and attributes and pseudo-classes, then elements. \`#main .panel button\` is \`(1, 1, 1)\`. A thousand class selectors, \`(0, 1000, 0)\`, still lose to one id. That is why a single \`#main\` in a layout file poisons everything underneath it.
+
+Two rules follow. Keep selectors flat, ideally one class, \`(0, 1, 0)\`. And when you write a base style that anyone should be able to override, wrap it in \`:where()\`, which contributes zero specificity:
+
+\`\`\`css
+:where(.prose) :where(h2, h3) { margin-block-start: 1.5em; }
+\`\`\`
+
+That rule now loses to any single class an application writes, which is exactly what you want from a system default.
+
+### Cascade layers end the arms race
+
+\`@layer\` beats specificity outright. An id selector in an earlier layer loses to a lone class in a later one.
+
+\`\`\`css
+@layer reset, base, components, utilities, overrides;
+
+@layer components {
+  #checkout .btn-primary { background: #2563eb; }   /* (1,2,0) */
+}
+@layer utilities {
+  .bg-success { background: #16a34a; }              /* (0,1,0), wins */
+}
+\`\`\`
+
+Declare the order once, at the top, before any layer has content. That single line is the whole contract: the design system ships into \`components\`, applications override in \`overrides\`, and nobody needs \`!important\` again. The part that surprises people is the fallback rule. Unlayered styles beat every layer, which is the opposite of what most developers guess, so a stray global stylesheet outranks your carefully ordered stack.
+
+### Pick one scoping strategy
+
+| Approach | Scoping mechanism | Cost that shows up at scale |
+|---|---|---|
+| Global CSS plus BEM | Naming discipline | Nothing enforces the discipline |
+| CSS Modules | Compiler hashes class names | Dynamic values need custom properties |
+| Runtime CSS in JS | Styles generated during render | Per render cost, ordering surprises |
+| Zero runtime CSS in JS | Extracted at build time | Only statically analysable values |
+| Utility CSS | Atomic classes, no authoring | Long class lists, config becomes the API |
+
+The row people underestimate is runtime CSS in JS. Libraries like styled-components and emotion serialise your template literal, hash it, and insert a rule into a \`<style>\` tag the first time that component renders. Insertion order therefore follows mount order. Two rules of equal specificity resolve differently depending on which component mounted first, so the bug appears only for a user who lands on a deep link instead of navigating there. Server rendering makes it worse: styles must be collected during render, which is the exact thing that blocks streaming HTML.
+
+### Let consumers in
+
+The broken version:
+
+\`\`\`jsx
+export function Badge({ children }) {
+  return <span className="badge">{children}</span>;
+}
+\`\`\`
+
+Any consumer needing a variant now forks it or fights it with a descendant selector. The fixed version merges:
+
+\`\`\`jsx
+import { clsx } from 'clsx';
+
+export function Badge({ className, ...rest }) {
+  return <span className={clsx('badge', className)} {...rest} />;
+}
+\`\`\`
+
+One trap here. The order of names inside the \`class\` attribute means nothing to the cascade, so \`clsx('badge', className)\` does not make the consumer win. What decides the winner is where the rules sit in the stylesheet, which is why the layer declaration above is doing the real work.
+
+### The rule to hold
+
+One class per component, specificity at \`(0, 1, 0)\`, system in a low layer, applications in a high one. When a teammate reaches for \`!important\`, treat it as a bug report about your layer order rather than as a fix.
+      `,
+        [
+          q('A design system ships button styles in `@layer components` using the selector `#app .btn`. An application writes `.btn-danger { background: red }` in `@layer overrides`. Which declaration wins?', [
+            'The system rule, because an id selector outranks a single class',
+            'Neither reliably, because layer order follows stylesheet load order',
+            'The application rule, because a later layer beats any specificity in an earlier layer',
+            'The system rule, because layers only reorder rules of equal specificity',
+          ], 2, 'Cascade layers are compared before specificity, so a single class in a later layer defeats an id selector declared in an earlier one.'),
+          q('Two components styled with a runtime CSS in JS library have selectors of identical specificity. Why can the same page look different depending on how a user arrived at it?', [
+            'Rules are inserted when a component first renders, so mount order sets cascade order',
+            'The library recomputes specificity on each navigation and picks a fresh winner',
+            'Hashed class names are regenerated per route, changing which rule matches',
+            'The browser sorts stylesheet rules alphabetically once a document gets large',
+          ], 0, 'Runtime libraries insert a rule the first time a component renders, so a deep link that mounts the components in the opposite order produces the opposite cascade result.'),
+          q('Why does wrapping a library\'s base selectors in `:where()` make them easier for an application to override?', [
+            'It scopes those rules to the nearest shadow root, hiding them from the page',
+            'It defers the rules until every other stylesheet has finished parsing',
+            'It flags the declarations as low priority, like a reversed !important',
+            'It contributes zero specificity, so any single class selector outranks it',
+          ], 3, 'The `:where()` pseudo-class matches its argument but adds nothing to the specificity tuple, leaving the rule at (0, 0, 0) so a plain class beats it.'),
+        ]
+      ),
+      lesson('Design Tokens, Theming, and Dark Mode', 13, `
+A team ran a script over their stylesheets and found 47 distinct greys, twelve of which differed from a neighbour by a single hex digit. None of that was a decision. It was two years of people eyedropping screenshots. When the dark mode ticket arrived, the estimate came back at six weeks, and the estimate was correct, because all 47 greys had to be found and reasoned about one at a time.
+
+Tokens are how you stop that happening twice.
+
+### Three tiers, and only the middle one gets themed
+
+| Tier | Example | Who is allowed to read it |
+|---|---|---|
+| Primitive | \`--blue-600: #2563eb\` | Only the semantic tier |
+| Semantic | \`--color-action: var(--blue-600)\` | Every component |
+| Component | \`--button-bg: var(--color-action)\` | One component |
+
+A primitive says what a colour is. A semantic token says what it is for: \`--color-surface\`, \`--color-text-muted\`, \`--color-border-strong\`, \`--color-danger\`. Components never mention \`--blue-600\`, and that single restriction is what turns theming into a config change instead of a migration.
+
+Now the mistake almost everyone makes first. They theme the primitives:
+
+\`\`\`css
+:root { --grey-100: #f4f4f5; }
+[data-theme='dark'] { --grey-100: #27272a; }   /* grey-100 is now dark */
+\`\`\`
+
+The name is a lie in one of the two themes. Every component that grabbed \`--grey-100\` because it wanted a light background is correct only by accident, and the day someone uses it for a border, dark mode breaks. Theme the semantic layer instead:
+
+\`\`\`css
+:root {
+  --grey-100: #f4f4f5;
+  --grey-900: #18181b;
+  --color-surface: var(--grey-100);
+  --color-text: var(--grey-900);
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  --color-surface: var(--grey-900);
+  --color-text: var(--grey-100);
+  color-scheme: dark;
+}
+\`\`\`
+
+\`color-scheme\` is not decoration. It tells the browser to paint scrollbars, form controls, the caret and default focus rings in the matching palette. Leave it out and your dark page keeps a bright white scrollbar down the side.
+
+### The flash everyone ships once
+
+\`\`\`html
+<script>
+  try {
+    var saved = localStorage.getItem('theme') || 'system';
+    var dark = saved === 'dark' || (saved === 'system' &&
+      matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  } catch (e) {}
+</script>
+\`\`\`
+
+That goes in \`<head>\`, synchronous, before any stylesheet, with no \`defer\` and no bundler involvement. Set the theme in a \`useEffect\` instead and it runs after the first paint, so a dark mode user gets a full white frame in the face on every navigation to a fresh document. The \`try\` block matters because \`localStorage\` throws outright in some privacy modes.
+
+### Custom properties resolve at use time
+
+Change \`--color-surface\` on \`<html>\` and every element reading it repaints. No React re-render, no context update, no props change anywhere. That is why a theme toggle that flips one attribute beats a theme stored in state.
+
+Two limits catch people:
+
+- A custom property cannot be used in a media query condition. \`@media (min-width: var(--bp-md))\` never matches. Breakpoints stay literal or come from the build step.
+- Transitioning a variable is a no-op unless you register its type first: \`@property --color-surface { syntax: '<color>'; inherits: true; initial-value: #ffffff; }\`
+
+### One source of truth, many outputs
+
+Keep tokens in a \`tokens.json\` that a tool such as Style Dictionary compiles into \`tokens.css\`, a typed \`tokens.ts\`, and whatever iOS and Android need. Designers edit one file, sometimes exported straight from Figma variables, and one diff moves every platform.
+
+Then gate it. A CI check that walks every semantic text and surface pair and asserts 4.5:1 contrast in both themes catches the regression that a screenshot review will not. And remember that a dark theme is not an inversion: elevation is expressed with lighter surfaces rather than shadows, because a shadow on near black is invisible.
+      `,
+        [
+          q('A team redefines `--grey-100` as `#27272a` under `[data-theme=\'dark\']`. What goes wrong with that over time?', [
+            'Custom properties cannot be redefined on a descendant selector, so it is ignored',
+            'The token name no longer describes its value, so new uses of it break a theme',
+            'Dark mode repaints get slower, because the primitive tier must be invalidated',
+            'The cascade resolves primitives before themes, so the light value always wins',
+          ], 1, 'Theming a primitive makes its name false in one theme, so the next developer who picks it for a border or a shadow silently ships a broken dark mode.'),
+          q('Why must the script that reads a saved theme run synchronously in `<head>` instead of inside a `useEffect`?', [
+            'useEffect cannot reach localStorage, because it runs before hydration finishes',
+            'Custom properties must be declared before the stylesheet consuming them parses',
+            'React strips data attributes from `<html>` on hydration unless they are inline',
+            'An effect runs after the first paint, so the user sees the wrong theme flash',
+          ], 3, 'Effects fire after React commits and the browser paints, so a dark mode user gets one full white frame before the attribute is corrected.'),
+          q('You define `--bp-md: 768px` on `:root` and then write `@media (min-width: var(--bp-md))`. What happens?', [
+            'The query never matches, because custom properties are invalid in query conditions',
+            'It matches at 768px, because properties on `:root` are global to the document',
+            'It matches, but only after the first paint resolves the variable on `<html>`',
+            'It raises a parse error that invalidates the rest of the stylesheet',
+          ], 0, 'Media query conditions are evaluated before custom properties are substituted, so the condition is invalid and the block never applies at any width.'),
+        ]
+      ),
+      lesson('Headless Primitives: Dialogs, Menus, and Comboboxes', 13, `
+Open the WAI-ARIA Authoring Practices page for a combobox and count the keyboard interactions it specifies. Down, Up, Home, End, Enter, Escape, Tab, Alt with Down, Alt with Up, printable characters for typeahead, plus rules for what \`aria-activedescendant\` points at in each of those cases. The dropdown in your codebase handles click, and maybe Escape. That is the gap.
+
+Headless primitives exist because closing that gap is not a styling problem and is not worth solving twice.
+
+### What headless actually means
+
+A headless component ships behaviour, keyboard handling, focus management and ARIA wiring, with no opinion about how any of it looks. Radix, React Aria, Headless UI and Downshift all take this shape. You get the hard part and you keep the design.
+
+State arrives as data attributes, so styling stays in CSS:
+
+\`\`\`jsx
+<Dialog.Content className="modal">
+  <Dialog.Title className="modal-title">Delete project</Dialog.Title>
+  <Dialog.Close asChild>
+    <button className="btn-ghost">Cancel</button>
+  </Dialog.Close>
+</Dialog.Content>
+\`\`\`
+
+\`\`\`css
+.modal[data-state='open'] { animation: fade-in 150ms ease-out; }
+\`\`\`
+
+\`asChild\` merges the primitive's props and ref onto your element instead of wrapping it in another \`div\`. That is also why every primitive forwards refs: the library has to focus, measure and observe the node you supplied.
+
+### A dialog is four jobs, and three are not about the dialog
+
+Focus moves in on open. Focus returns to the trigger on close, not to \`<body>\`. Escape closes it. And the rest of the page has to stop existing, both for Tab and for assistive technology.
+
+That last job is where hand-rolled modals fail. A focus trap that only cycles Tab still leaves the background reachable to a screen reader's virtual cursor, which happily reads straight through your overlay. The fix is \`inert\` on the sibling content, or \`aria-hidden\` applied and removed as a pair.
+
+Then the layout bug nobody predicts. Locking scroll with \`overflow: hidden\` on \`<body>\` removes the scrollbar, the viewport gains about 15 pixels, and the whole page jumps sideways behind the overlay. Set \`scrollbar-gutter: stable\` on \`<html>\` once and it stops forever.
+
+Portals carry their own surprise. A dialog rendered with \`createPortal\` lands at the end of \`<body>\` in the DOM but stays exactly where it was in the React tree. Context still reaches it, and events still bubble to its React parent rather than its DOM parent. So a portalled dialog inside a \`<form>\` will submit that form when a plain button inside it is clicked.
+
+### Menus and comboboxes manage focus differently
+
+| Pattern | Where DOM focus sits | How the active item is marked |
+|---|---|---|
+| Menu, listbox, tabs | On the active item itself | \`tabIndex\` 0 on it, -1 on the rest |
+| Combobox | Stays in the text input | \`aria-activedescendant\` names the option |
+
+Roving tabindex makes the whole widget a single Tab stop, with arrows moving inside it. Skip it and a 200 item menu becomes 200 Tab stops, which is how a keyboard user ends up trapped for a minute in your country picker.
+
+A combobox cannot use roving tabindex, because moving focus out of the input stops typing and dismisses the mobile keyboard. Focus stays put and a pointer does the announcing:
+
+\`\`\`jsx
+<input
+  role="combobox"
+  aria-expanded={open}
+  aria-controls="city-listbox"
+  aria-autocomplete="list"
+  aria-activedescendant={open ? \`city-opt-\${active}\` : undefined}
+/>
+<ul id="city-listbox" role="listbox">
+  <li id="city-opt-0" role="option" aria-selected={active === 0}>Lahore</li>
+</ul>
+\`\`\`
+
+Drop \`aria-activedescendant\` and a screen reader user hears silence while arrowing down the list. On screen everything still looks perfect, which is why this ships.
+
+### When to build it yourself
+
+Native \`<dialog>\` with \`showModal()\` covers a simple modal, and \`<details>\` covers a disclosure. Both are fine to own. Reach for a library the moment a widget has a collection in it: menu, listbox, combobox, tabs, tree. Those are the ones where the specification is long, the failures are invisible, and your users cannot file the bug.
+      `,
+        [
+          q('A dialog is rendered inside a `<form>` and portalled to the end of `<body>`. Clicking a plain `<button>` inside the dialog submits the form. Why?', [
+            'Portals copy the nearest form element\'s submit handler onto their root node',
+            'The overlay element inherits the form\'s implicit submission behaviour',
+            'Events propagate through the React tree, not the DOM tree, so they reach the form',
+            'React moves portalled nodes back inside the form during the commit phase',
+          ], 2, 'React routes synthetic events along its own component tree, so a portalled node still bubbles into the React parent that rendered it, form included.'),
+          q('Why does the combobox pattern use `aria-activedescendant` rather than moving DOM focus onto each option?', [
+            'Listbox options cannot receive DOM focus at all without a tabIndex attribute',
+            'Focus has to stay in the input so typing works and the mobile keyboard stays up',
+            'Screen readers ignore focus changes that occur inside an expanded popup',
+            'Moving focus would turn every option into a separate stop in the tab order',
+          ], 1, 'Taking focus off the text input would stop keystrokes reaching it and dismiss the on-screen keyboard, so the active option is named by id instead.'),
+          q('A hand-rolled modal cycles Tab correctly inside itself, yet a screen reader still reads the page behind it. What is missing?', [
+            'A `tabindex=\'-1\'` on the overlay, which a virtual cursor respects',
+            'A higher z-index, so the background paints underneath the overlay',
+            'A `role=\'dialog\'` on the content, which scopes announcements to it',
+            '`inert` or `aria-hidden` on the background, since a virtual cursor ignores tab order',
+          ], 3, 'A screen reader\'s virtual cursor walks the accessibility tree rather than the tab order, so the background must be removed from that tree as well as from Tab.'),
+        ]
+      ),
+      lesson('Publishing, Versioning, and Driving Adoption', 13, `
+A team shipped \`@acme/ui@1.4.2\`. The only change was the default button padding, 8px to 12px, because a design review asked for it. Semver called it a patch, so fourteen applications picked it up overnight on their next install, and eleven of them had toolbars that now wrapped onto two lines. The release note said "visual polish".
+
+CSS is API. The rest of this rests on that sentence.
+
+### The package.json that decides everything
+
+\`\`\`json
+{
+  "name": "@acme/ui",
+  "version": "1.4.2",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./styles.css": "./dist/styles.css"
+  },
+  "peerDependencies": { "react": "^18 || ^19" }
+}
+\`\`\`
+
+Four things there are load bearing.
+
+React goes in \`peerDependencies\`, never \`dependencies\`. Get it wrong and a consumer can install a second copy, which produces the invalid hook call error that costs somebody an afternoon before they think to run \`npm ls react\`.
+
+\`exports\` is a wall, not a hint. Once it exists, \`import { Button } from '@acme/ui/dist/Button'\` fails, and that is the point: anything unlisted is private and you are free to move it.
+
+\`"types"\` must be the first key inside each condition object. Resolution takes the first match, so a \`types\` key written after \`import\` is silently skipped and consumers get \`any\` with no error anywhere.
+
+\`sideEffects: false\` lets bundlers drop unused modules, and it will cheerfully drop your stylesheet too, because a bare \`import './styles.css'\` looks exactly like a module whose exports nobody uses. Listing \`"*.css"\` is the fix.
+
+### What counts as breaking
+
+| Change | Bump |
+|---|---|
+| Adding an optional prop | minor |
+| Renaming an existing prop | major |
+| Changing a default spacing or colour | major, if visuals are public |
+| Changing the rendered DOM structure | major, consumers select on it |
+| Fixing a focus or keyboard bug | patch |
+| Adding a new semantic token | minor |
+
+Pick a line and publish it. Either "our rendered markup and visual defaults are public API" or "they are not, style us only through documented props and tokens". Both positions are defensible. Silence is not, because consumers assume the first and maintainers assume the second.
+
+### Release mechanics
+
+Every pull request that changes behaviour carries a changeset, a small markdown file naming the bump and the human sentence:
+
+\`\`\`markdown
+---
+'@acme/ui': minor
+---
+
+Button accepts a \`loading\` prop that renders a spinner and sets \`aria-busy\`.
+\`\`\`
+
+CI collects those into a version pull request and publishes on merge, so nobody hand edits a version number or writes a changelog from git log. Publish a prerelease from every pull request as well, something like \`@acme/ui@0.0.0-pr-482-a1b2c3\`, so an application can install the change and look at it before it is real.
+
+### Deprecate, do not delete
+
+Ship the replacement, keep the old path working, warn once in development, and ship the codemod in the same release:
+
+\`\`\`jsx
+if (process.env.NODE_ENV !== 'production' && variant === 'cta') {
+  console.warn(
+    '[acme/ui] Button variant="cta" is deprecated, use variant="primary". ' +
+    'Run: npx @acme/ui-codemod button-cta'
+  );
+}
+\`\`\`
+
+Two minor releases of overlap, then remove in the next major. A deprecation warning without a codemod is homework you assigned to fourteen teams who did not ask for it.
+
+### Adoption is measured, not announced
+
+Announcements do not move numbers. Run a scanner across every repo counting raw \`<button\` against imported \`<Button\`, publish the percentage per application weekly, and watch which teams stall. Then go and ask them why, because the answer is almost always a missing variant or a prop you refused to add. An escape hatch such as an accepted \`className\` beats a fork every time, and a fork is what you get instead.
+      `,
+        [
+          q('A component library sets `sideEffects: false` and consumers report that all of its styling has vanished. What happened?', [
+            'The bundler treated the bare CSS import as unused and removed the module',
+            'The `exports` map stopped resolving the stylesheet path during the build',
+            'CSS was inlined into the ESM output, which consumers no longer parse',
+            'The flag disabled the library\'s own PostCSS step at publish time',
+          ], 0, 'A bare `import \'./styles.css\'` has no used exports, so declaring the whole package side effect free lets tree shaking delete the stylesheet entirely.'),
+          q('Why does listing `react` under `dependencies` instead of `peerDependencies` tend to cause an invalid hook call?', [
+            'React refuses to load unless it is a direct dependency of the application',
+            'Hooks are stripped out of any library that bundles its own copy of React',
+            'The install can produce two copies of React, each with its own dispatcher',
+            'Peer dependencies are the only ones a package manager may deduplicate',
+          ], 2, 'Two React instances means the library\'s hooks call a different internal dispatcher from the one the application rendered with, which React reports as an invalid hook call.'),
+          q('Under a policy that visual defaults are public API, what release should a change of default button padding from 8px to 12px get?', [
+            'Patch, since no prop, type or exported name changed in the package',
+            'Major, since consumer layouts depend on the default and can break',
+            'Minor, since it adds capability without removing anything existing',
+            'No bump, since stylesheets ship outside the versioned package',
+          ], 1, 'If the rendered look is declared part of the contract then changing it can break consumer layouts, which is precisely what a major version exists to signal.'),
+        ]
+      ),
+      ],
+      [
+      q('Which pair of decisions removes the need for `!important` in applications consuming a design system?', [
+        'Hashed class names from CSS Modules plus a deep global reset',
+        'Id based selectors in the system plus utility classes in apps',
+        'Runtime CSS in JS plus alphabetical ordering of component files',
+        'A declared `@layer` order plus flat single class selectors',
+      ], 3, 'Layers decide the winner before specificity is consulted, and flat selectors keep the system from outranking itself, so an application override always lands.'),
+      q('A component reads `--blue-600` directly for its background. What does that cost the design system?', [
+        'Themes can no longer be swapped without editing that component',
+        'The property stops inheriting once a theme attribute is present',
+        'Specificity of the component rule rises by one class selector',
+        'The build step can no longer tree shake unused primitive tokens',
+      ], 0, 'Primitives are not themed, so a component bound to one is pinned to a single palette and must be rewritten rather than reconfigured for a second theme.'),
+      q('What is the strongest reason to take a dialog and a combobox from a headless library rather than writing them?', [
+        'Headless libraries render faster because they bypass the virtual DOM',
+        'Focus management, keyboard patterns and ARIA wiring are the expensive part',
+        'Their default styles already match most design systems with small edits',
+        'They remove any need to forward refs or accept a className prop',
+      ], 1, 'The visual layer is the cheap part of these widgets, while the specified keyboard and focus behaviour is long, subtle, and invisible when it is wrong.'),
+      q('A system removes the deprecated `variant=\'cta\'` in the same release that introduces its replacement. Why is that a problem?', [
+        'Semver forbids adding and removing an option in one major version',
+        'The deprecation warning cannot fire once the old value is gone',
+        'Consumers get no overlap window in which both values work',
+        'Codemods may only be published from a minor release, not a major',
+      ], 2, 'Without a release where old and new both work, every consuming application has to change on the same day, which is what stalls upgrades across a fleet.'),
+      ]
+    ),
+    chapter(
+      'Server Rendering and Streaming',
+      'Moving rendering to the server, surviving hydration, and streaming a page that is useful long before all of its data has arrived.',
+      [
+      lesson('Why Render on the Server, and When Not To', 14, `
+A pricing page ships 240 KB of compressed JavaScript. On a mid-range Android over Slow 4G the browser receives an empty \`<div id="root">\` at 190 ms, finishes downloading and parsing the bundle at 3.4 s, then fires \`/api/plans\` and paints prices at 4.1 s. Render that same page on the server and the first byte arrives at 320 ms with the prices already in the markup. LCP lands at 1.3 s.
+
+You paid 130 ms of TTFB and bought back 2.8 seconds of paint. That trade, and the routes where it runs the other way, is the whole decision.
+
+### Collapse the waterfall, do not just move it
+
+\`\`\`text
+Client rendered
+  HTML 40ms -> bundle 1.9s -> parse+execute 1.2s -> fetch plans 400ms -> paint 4.1s
+
+Server rendered
+  HTML with data 320ms -> paint 1.3s -> bundle -> hydrate -> interactive 3.6s
+\`\`\`
+
+Stare at the second line. First paint moved forward by seconds. **Interactive barely moved at all.** The bundle still downloads, still parses, still hydrates. Server rendering buys first paint and crawlable HTML, not a cheaper client. If your complaint is INP, the fix is still shipping less JavaScript (Chapter 4), not moving the render.
+
+| Strategy | Rendered when | Fits | Cost |
+|---|---|---|---|
+| CSR | In the browser, every visit | Screens behind a login | Blank first paint, no SEO |
+| SSR | On the server, every request | Fresh or personalised pages | CPU and TTFB per request |
+| SSG | Once, at build time | Docs, marketing, blog posts | Rebuild to change a word |
+| ISR | At build, refreshed on a timer | Catalogues that shift hourly | Serving stale data by design |
+
+Real applications mix all four in one deployment. \`/pricing\` static, \`/courses/:slug\` regenerated every 10 minutes, \`/account\` pure client rendering because it is private anyway.
+
+### Work you move to the server lands on your bill
+
+\`renderToString\` is synchronous. It blocks the Node event loop for the entire render:
+
+\`\`\`js
+app.get('/courses/:slug', async (req, res) => {
+  const course = await db.courses.findBySlug(req.params.slug); // 180 ms
+  const html = renderToString(<App course={course} />);        // 12 ms, blocking
+  res.send(shell(html));
+});
+\`\`\`
+
+12 ms sounds free until you do the arithmetic. One Node process manages roughly 83 renders per second before the event loop itself is the ceiling, and that is before the 180 ms query. At 400 requests per second you are paying for six processes to produce markup a CDN could have cached. Route-level caching and streaming are the answers, not a larger instance.
+
+The subtler cost: your components now execute where there is no \`window\`, no \`document\`, no \`localStorage\`.
+
+\`\`\`jsx
+const isWide = window.innerWidth > 900;
+// ReferenceError: window is not defined
+\`\`\`
+
+Every third-party widget you pull in has to survive that too, and plenty do not.
+
+### When not to bother
+
+Skip server rendering when the page sits behind a login and no crawler will ever see it, when the content is so personalised that nothing caches, or when interaction is the product. A spreadsheet editor, a map, a video timeline: these paint a shell and then live entirely in the browser. Routing them through SSR adds latency and a hydration surface for no gain.
+
+Skip it when your data is slow, too. Server rendering converts a spinner into a stall. A 700 ms recommendations call that used to fill in after paint now holds the first byte for 700 ms, and the visitor watches a white tab with no feedback whatsoever. Fetch that on the client, or stream it.
+
+### The mistake to avoid
+
+Switching SSR on across the whole application because it is "faster", then measuring nothing. Compare LCP and TTFB per route against real field data (Chapter 6), on a throttled device. Several routes will improve dramatically. At least one will get worse, and you want to find that one before your users do.
+      `,
+        [
+          q('A team moves a marketing route from client rendering to SSR. LCP improves by 2.8 seconds, but INP does not move at all. Why?', [
+            'SSR defers all event handlers until the browser reports idle',
+            'INP is only recorded on routes that were statically generated',
+            'The same bundle still downloads, parses and hydrates in the browser',
+            'Server markup lets React skip its reconciliation pass entirely',
+          ], 2, 'Server rendering changes when the first paint happens, not how much JavaScript ships, so interaction latency is still governed by the bundle you send.'),
+          q('Your SSR handler calls renderToString and each render costs 12 ms. What is the practical ceiling for one Node process, and why?', [
+            'About 83 renders per second, because the call blocks the event loop',
+            'Unlimited, because renderToString runs on the worker thread pool',
+            'About 12 per second, since each render also awaits the database',
+            'Roughly 1000, because Node parallelises synchronous React renders',
+          ], 0, 'renderToString is synchronous, so 12 ms of blocking work per request leaves a single process roughly 83 renders of headroom every second before the event loop becomes the bottleneck.'),
+          q('Which of these routes is the weakest candidate for server rendering?', [
+            'A public course catalogue that search engines need to index',
+            'A pricing page whose content is identical for every visitor',
+            'A blog article that changes only when an editor publishes it',
+            'A collaborative spreadsheet editor sitting behind a login wall',
+          ], 3, 'An editor is private, invisible to crawlers and almost entirely interactive, so server rendering adds latency and a hydration surface without improving anything a user perceives.'),
+        ]
+      ),
+      lesson('Hydration and the Mismatch Bugs', 14, `
+\`Text content did not match. Server: "14:32" Client: "14:33"\`
+
+One minute of clock drift between the render and the load, and React throws away the entire root, re-renders it in the browser, and hands you exactly the blank-then-paint waterfall you moved to the server to escape. The page still works. It just cost more than plain client rendering would have.
+
+### Hydration is an assertion, not a render
+
+The server already sent HTML. React does not rebuild that DOM. It walks the existing nodes alongside a fresh render of your tree and claims each one: attaching listeners, wiring refs, building the fiber tree that later renders diff against. The DOM is the fact, your render is the expectation, and hydration asserts they agree.
+
+When they disagree, React abandons hydration for that boundary and client renders the subtree from scratch. React 19 prints a readable diff of the offending element; React 18 gives you the terse warning above and leaves you hunting.
+
+| Cause | Looks like | Fix |
+|---|---|---|
+| Time | \`new Date().toLocaleTimeString()\` | Send an ISO string, format in an effect |
+| Randomness | \`Math.random()\` in an id | \`useId\` from Chapter 2 |
+| Browser APIs | \`localStorage\`, \`window.innerWidth\` | Two-pass render or a server snapshot |
+| Locale or zone | Server in UTC, reader in Karachi | Pass locale and offset as props |
+| Invalid nesting | \`<div>\` inside \`<p>\` | Fix the markup |
+
+That last row surprises people, because nothing in the JSX looks wrong:
+
+\`\`\`jsx
+<p>Enrolled: <div className="badge">Active</div></p>
+\`\`\`
+
+The HTML parser is not allowed to put a \`<div>\` inside a \`<p>\`, so it closes the paragraph early and the badge becomes a *sibling*. React expected a child. Every hydration attempt on that subtree fails, and the string never appears in your source.
+
+### Broken, then fixed
+
+\`\`\`jsx
+// BROKEN: the server has no localStorage, so render one disagrees
+function ThemeToggle() {
+  const [theme, setTheme] = useState(localStorage.getItem('theme') ?? 'light');
+  return <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>{theme}</button>;
+}
+
+// FIXED: first client render matches the server, then correct it
+function ThemeToggle() {
+  const [theme, setTheme] = useState('light');
+  useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) setTheme(saved);
+  }, []);
+  return <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>{theme}</button>;
+}
+\`\`\`
+
+The markup now agrees, but a dark-mode reader sees a white flash before the effect runs. The cure is a blocking script in \`<head>\` that stamps an attribute on \`<html>\` before the body paints:
+
+\`\`\`html
+<script>
+  document.documentElement.dataset.theme = localStorage.getItem('theme') || 'light';
+</script>
+\`\`\`
+
+CSS handles appearance, React handles the toggle, and because the attribute is set outside React's tree there is nothing to mismatch.
+
+### Two escape hatches, used precisely
+
+\`suppressHydrationWarning\` silences the difference for one element's text and attributes, one level deep. It does not repair the content, it only stops the complaint.
+
+\`\`\`jsx
+<time dateTime={iso} suppressHydrationWarning>{formatted}</time>
+\`\`\`
+
+Reach for it when the values are genuinely allowed to differ, like a formatted timestamp. Reach for it to quiet a mismatch you have not diagnosed and you have buried a real bug.
+
+\`useSyncExternalStore\` is the principled option for browser-only state, because its third argument is the snapshot the server uses:
+
+\`\`\`jsx
+const width = useSyncExternalStore(subscribeToResize, () => window.innerWidth, () => 1024);
+\`\`\`
+
+Server renders 1024, first client render returns 1024, hydration passes, then the store updates and React re-renders normally.
+
+### The mistake to avoid
+
+Filing a hydration warning as cosmetic because the page looks fine in your browser. A mismatch means React discarded the server HTML and re-rendered on the client, so you are paying for SSR and getting CSR timings. It will never show up as a crash. It shows up as one route with a mysteriously bad LCP in your field data, months later.
+      `,
+        [
+          q('Why does rendering a div inside a p element reliably break hydration, even though the JSX looks fine?', [
+            'React forbids block elements nested inside inline components',
+            'The parser closes the paragraph early, so the div becomes a sibling',
+            'className is serialised differently by the server renderer',
+            'Divs cannot receive event listeners during the hydration pass',
+          ], 1, 'The HTML parser cannot keep a div inside a paragraph, so it ends the paragraph and the div arrives as a sibling where React expected a child.'),
+          q('What does React 18 actually do when it finds a hydration mismatch in a subtree?', [
+            'It patches only the differing text node and keeps hydrating',
+            'It throws, so the page keeps server markup with no listeners',
+            'It retries hydration three times before showing a fallback UI',
+            'It discards that subtree and client renders it, so you pay for SSR and get CSR',
+          ], 3, 'React abandons the mismatched boundary and re-renders it in the browser, which throws away the server work while still charging you the server cost.'),
+          q('A ThemeToggle read localStorage inside useState and produced a mismatch. Moving the read into useEffect fixes the warning, but dark mode users now see a white flash. What removes the flash?', [
+            'A blocking script in head that stamps data-theme onto the html element',
+            'Wrapping the toggle in suppressHydrationWarning at the root level',
+            'Reading the theme in useLayoutEffect rather than inside useEffect',
+            'Rendering the toggle only once the first paint has been committed',
+          ], 0, 'The flash happens before React runs at all, so only markup applied before the body paints can fix it, which is what a small blocking script setting an attribute on the html element does.'),
+        ]
+      ),
+      lesson('Streaming, Suspense, and Selective Hydration', 14, `
+A course detail page needs four queries. Three return in under 60 ms. The reviews aggregation takes 900 ms. With \`renderToString\` the first byte leaves at 980 ms, because a synchronous render cannot emit half a document. With streaming, the header, title, syllabus and enrol button reach the browser at 90 ms and the reviews slot fills itself in when the query finally lands.
+
+Same server, same queries, same total work. Ten times better perceived load.
+
+### The shell is everything outside a Suspense boundary
+
+\`renderToPipeableStream\` splits your render in two. React produces the **shell**, all the markup that does not depend on pending data, and flushes it immediately. Each \`<Suspense>\` boundary emits its fallback into that stream as a placeholder. When a boundary's data resolves, React writes the real HTML into a hidden \`<template>\` at the end of the body plus a tiny inline script that moves it into place.
+
+\`\`\`jsx
+// BAD: one boundary around the page, so TTFB waits for the slowest query
+<Suspense fallback={<PageSkeleton />}>
+  <Header /><CourseDetail /><Reviews /><Recommendations />
+</Suspense>
+
+// GOOD: fast content is the shell, each slow region gets its own boundary
+<Header />
+<CourseDetail />
+<Suspense fallback={<ReviewsSkeleton />}><Reviews /></Suspense>
+<Suspense fallback={<RecsSkeleton />}><Recommendations /></Suspense>
+\`\`\`
+
+The first version streams technically and helps nobody. Boundary placement is the entire optimisation.
+
+### Wiring it to a response
+
+\`\`\`js
+let didError = false;
+const { pipe, abort } = renderToPipeableStream(<App url={req.url} />, {
+  bootstrapScripts: ['/assets/client.js'],
+  onShellReady() {
+    res.statusCode = didError ? 500 : 200;
+    res.setHeader('Content-Type', 'text/html');
+    pipe(res);
+  },
+  onShellError() {
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'text/html');
+    res.send('<h1>Something went wrong</h1>');
+  },
+  onError(err) { didError = true; logger.error(err); },
+});
+setTimeout(abort, 10_000);
+\`\`\`
+
+Note what \`onShellReady\` implies: once you call \`pipe\`, the status line and headers are gone. A database failure inside \`<Reviews />\` at 900 ms **cannot** turn a 200 into a 500. React swaps that boundary's fallback for a client-side retry and your error boundary (Chapter 6) handles it in the browser. Decide your status code before the shell flushes, and never after.
+
+Use \`onAllReady\` instead of \`onShellReady\` when the consumer needs a complete document: a crawler that does not run inline scripts, a PDF renderer, an email preview. You lose streaming and get correctness.
+
+### Selective hydration is what makes it worth doing
+
+Streamed HTML alone would be cruel: content the user can see but not click. React solves it by hydrating boundaries **independently**, in the order their HTML and code arrive, rather than in one blocking pass over the root.
+
+Better still, it reprioritises on input. If someone clicks the enrol button while React is busy hydrating the reviews, React records that event, hydrates the button's boundary first, then replays the click. The interaction is not lost, only delayed by a few milliseconds.
+
+### The three things that silently break it
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Whole page arrives at once | A buffering proxy | \`proxy_buffering off\` or send \`X-Accel-Buffering: no\` |
+| Nothing flushes early | Compression middleware buffering | Flush per chunk, or compress at the edge |
+| Layout jumps as slots fill | Fallbacks sized differently to the content | Give skeletons the final height |
+
+The proxy one costs teams weeks. Your local server streams perfectly, staging behind nginx does not, and the timings look identical to non-streaming SSR because that is exactly what they now are.
+
+### The mistake to avoid
+
+Wrapping a slow component in \`<Suspense>\` and assuming the work got faster. Nothing got faster. You chose what the user waits for. If the reviews query is 900 ms it is still 900 ms, and if it sits above the fold you have simply moved a spinner to a more prominent place. Stream the slow thing when it is genuinely secondary. Fix the query when it is not.
+      `,
+        [
+          q('A page wraps its header, detail, reviews and recommendations in one Suspense boundary and streams the response. What does streaming buy here?', [
+            'Each region hydrates separately as soon as its own markup arrives',
+            'The header flushes first, then the detail, then the two slow lists',
+            'Almost nothing, since the shell waits for the slowest child to resolve',
+            'The status code can still be corrected after the reviews query fails',
+          ], 2, 'Everything inside the single boundary is suspended together, so the shell contains only the fallback and the first useful byte still waits for the slowest query.'),
+          q('Why can a database error inside a streamed Reviews boundary not produce a 500 response?', [
+            'React turns every render error into a 200 with an empty body',
+            'The status line and headers already went out with the shell',
+            'Error boundaries are disabled once selective hydration begins',
+            'onError runs on the client, long after the response has closed',
+          ], 1, 'Calling pipe inside onShellReady commits the status line and headers, so any failure that happens later can only be handled in the browser.'),
+          q('Streaming works on your laptop, but on staging every response arrives as a single chunk with the old timings. What is the most likely cause?', [
+            'The Suspense fallbacks are taller than the content replacing them',
+            'React aborted the stream when the ten second timeout fired',
+            'bootstrapScripts was omitted, so hydration never actually starts',
+            'A reverse proxy is buffering the whole response before forwarding',
+          ], 3, 'A proxy with buffering enabled collects the entire response before sending it, which turns streaming back into ordinary blocking SSR without any error appearing anywhere.'),
+        ]
+      ),
+      lesson('Server Components, Actions, and the Client Boundary', 14, `
+Rendering a lesson body needs a markdown parser and a syntax highlighter: 180 KB gzipped between them, for output that never changes after the request. Ship that component as a **Server Component** and the browser downloads 0 KB of it. Not a smaller chunk. None of it.
+
+That is the pitch, and it only makes sense once you know what a server component actually emits.
+
+### It does not emit HTML
+
+A server component renders to a serialised description of UI, streamed to the client as a payload React knows how to interpret. That payload contains rendered output for server parts and *references* to client components with their props. React merges it into the existing tree, which is why navigating between server-rendered routes does not blow away client state.
+
+The consequences follow from one rule: server components run once, on the server, and never hydrate.
+
+| Capability | Server Component | Client Component |
+|---|---|---|
+| \`useState\`, \`useEffect\` | No | Yes |
+| \`onClick\` and other handlers | No | Yes |
+| Query the database directly | Yes | No |
+| Adds to the JS bundle | No | Yes |
+| Re-renders after interaction | No | Yes |
+
+### 'use client' is a boundary, not a label
+
+The directive marks an entry point into the client graph. Every module a client module imports becomes client code, transitively. That is what catches people:
+
+\`\`\`jsx
+// BROKEN: Sidebar is now bundled and shipped, along with everything it imports
+'use client';
+import Sidebar from './Sidebar';
+
+export function Tabs({ tab, setTab }) {
+  return <div>{tab === 'outline' ? <Sidebar /> : <Notes />}</div>;
+}
+\`\`\`
+
+The fix is composition, exactly as Chapter 1 argued. Pass server-rendered output *through* the client component as a prop:
+
+\`\`\`jsx
+// page.jsx, a server component
+<Tabs outline={<Sidebar />} notes={<Notes />} />
+\`\`\`
+
+\`<Sidebar />\` is rendered on the server, arrives in the payload, and \`Tabs\` merely positions it. A client component can hold server-rendered children forever, as long as it receives them rather than imports them.
+
+Whatever crosses the boundary must serialise. Strings, numbers, plain objects, arrays, Dates, Maps, Sets and promises all travel. Functions and class instances do not, so passing \`onSelect={handleSelect}\` down from a server parent throws at render time. The single exception is a Server Action.
+
+### Actions turn a form into a mutation
+
+\`\`\`js
+'use server';
+export async function enrol(prevState, formData) {
+  const session = await getSession();
+  if (!session) return { error: 'Sign in to enrol' };
+
+  const courseId = String(formData.get('courseId'));
+  if (!/^[a-z0-9-]{3,64}$/.test(courseId)) return { error: 'Unknown course' };
+
+  await db.enrolments.create({ userId: session.userId, courseId });
+  revalidatePath(\`/courses/\${courseId}\`);
+  return { ok: true };
+}
+\`\`\`
+
+\`\`\`jsx
+'use client';
+const [state, action, pending] = useActionState(enrol, {});
+return (
+  <form action={action}>
+    <input type="hidden" name="courseId" value={course.id} />
+    <button disabled={pending}>{pending ? 'Enrolling...' : 'Enrol'}</button>
+    {state.error && <p role="alert">{state.error}</p>}
+  </form>
+);
+\`\`\`
+
+Because the browser submits a real \`<form>\`, this works before hydration finishes and even with JavaScript disabled. \`useFormStatus\` gives nested components the same pending flag without prop drilling.
+
+Now the part that gets shipped wrong. **A server action compiles to a public POST endpoint with a guessable id.** Nothing about the \`'use server'\` directive authenticates anyone. If the only check on who may enrol lives in the button you conditionally rendered, an attacker who never loads your UI can call the action directly with any \`courseId\` they like. Every action authorises and validates its own arguments, every time, exactly like the API routes in Chapter 7.
+
+### The mistake to avoid
+
+Putting \`'use client'\` at the top of the root layout because something deep inside needed a hook. That one line drags the entire tree into the bundle and quietly deletes the benefit you adopted the model for. Push the directive down to the smallest interactive leaf: the toggle, the tab bar, the search input.
+      `,
+        [
+          q('A client component imports Sidebar, which is a server component, and the bundle grows. What happened, and what fixes it?', [
+            'Imports pull modules into the client graph, so pass Sidebar as a prop',
+            'Server components are copied into every chunk, so use a dynamic import',
+            'The bundler cannot tree shake JSX, so export Sidebar as a named function',
+            'The directive applies per file, so declare \'use client\' in Sidebar too',
+          ], 0, '\'use client\' marks a boundary in the module graph, so anything imported beneath it is bundled, and composition through props keeps Sidebar rendering on the server.'),
+          q('Which prop, passed from a server component down into a client component, throws at render time?', [
+            'A Date object holding the enrolment deadline',
+            'A Map of lesson ids to completion percentages',
+            'A callback function the client will run on select',
+            'A promise that resolves to the review summary',
+          ], 2, 'Props crossing the boundary must serialise, and a plain function cannot be sent to the client, which is why server actions exist as the one supported exception.'),
+          q('Your enrol server action performs no authorisation because the button only renders for signed in users. What is the actual risk?', [
+            'The action cannot serialise formData sent by anonymous visitors',
+            'It is a public POST endpoint anyone can call with any arguments',
+            'revalidatePath will purge cached pages for every course at once',
+            'Progressive enhancement stops working when JavaScript is disabled',
+          ], 1, 'The compiler turns the action into a reachable HTTP endpoint, so an attacker who never loads your interface can invoke it directly with whatever payload they choose.'),
+        ]
+      ),
+      ],
+      [
+      q('A route server renders in 40 ms, but its recommendations query takes 700 ms and holds the first byte. What is the cheapest fix that keeps the main content crawlable?', [
+        'Switch the whole route to client rendering and fetch after mount',
+        'Call renderToString twice, once before and once after the fetch',
+        'Mark the recommendations component with \'use client\' instead',
+        'Wrap recommendations in Suspense and stream it after the shell',
+      ], 3, 'A Suspense boundary moves the slow query out of the shell, so the crawlable content flushes at 40 ms and the recommendations arrive in the same response later.'),
+      q('Which symptom tells you that server rendering has effectively been undone at runtime?', [
+        'A hydration mismatch warning on a route that still looks correct',
+        'A Suspense fallback showing briefly before the reviews arrive',
+        'A server component that never appears inside any client chunk',
+        'A form action that runs before the client bundle has hydrated',
+      ], 0, 'A mismatch makes React throw away the server markup and re-render on the client, so you keep paying for SSR while your users get client rendering timings.'),
+      q('Why does putting \'use client\' at the top of the root layout defeat the point of server components?', [
+        'React refuses to stream any response below a client boundary',
+        'Every module the tree imports joins the client bundle',
+        'Server actions can no longer be invoked from a nested form',
+        'Suspense boundaries stop flushing until all data has resolved',
+      ], 1, 'The directive is transitive down the import graph, so declaring it at the root pulls the entire application into the bundle you were trying to shrink.'),
+      q('Which statement about hydration during a streamed response is accurate?', [
+        'React hydrates the whole root in one pass once every chunk lands',
+        'Clicks made before hydration are dropped and have to be repeated',
+        'Boundaries hydrate independently, and a click prioritises its own',
+        'Hydration is skipped for any boundary that streamed out of order',
+      ], 2, 'Selective hydration lets each Suspense boundary hydrate as its markup and code arrive, and an interaction reorders the queue so the clicked boundary is hydrated first and the event replayed.'),
+      ]
+    ),
+    chapter(
+      'Frontend Architecture at Scale',
+      'Structuring a codebase that many teams commit to, migrating the parts you inherited rather than rewriting them, and governing the whole estate over years.',
+      [
+      lesson('Monorepos, Shared Packages, and Build Caching', 14, `
+Fourteen packages, one README change, and CI runs for 41 minutes because it rebuilt every one of them. People stop waiting for the pipeline and start merging on hope. That is the monorepo failure teams actually hit, and the monorepo is not the cause. A build with no task graph and no cache is.
+
+### The trade you are actually making
+
+| Cost | Separate repos | One repo |
+|---|---|---|
+| Changing a shared Button | three PRs, an npm publish, version bumps | one PR, every consumer compiled against it |
+| Finding every usage | grep the repos you remember | one grep |
+| Upgrading React | staggered across teams, forever | one lockfile, one coordinated day |
+| CI time | naturally scoped | needs a task graph to stay sane |
+| Ownership | implied by the repo | needs a CODEOWNERS file |
+
+A monorepo does not delete coordination work. It moves that work from release time to merge time, where it is visible and cheap. The React row is the sharp edge: one lockfile means one React version for everyone, so a package that needs a different major blocks the estate until somebody does the upgrade.
+
+### Workspaces and internal packages
+
+\`\`\`json
+{
+  "name": "acme",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"]
+}
+\`\`\`
+
+That gives you \`apps/checkout\`, \`apps/admin\`, \`packages/ui\`, \`packages/api-client\`, \`packages/eslint-config\`. An app depends on a package by name at version \`*\`, and the package manager symlinks it instead of downloading anything.
+
+Internal packages come in two shapes. A source package exports \`.tsx\` directly and is compiled by whichever app imports it: no build step, instant edits, at the cost of every consumer needing compatible compiler settings. A built package ships \`dist/\` behind an \`exports\` map: slower, but publishable outside the repo and safe for consumers with different tooling. Start with source packages. Convert one to built only when an external consumer appears.
+
+The bug that eats an afternoon: \`packages/ui\` imports \`date-fns\` without listing it in its own \`package.json\`. Hoisting puts a copy in the root \`node_modules\`, so it resolves locally, passes CI, then breaks the day the app that actually declared it upgrades or drops it. Declare every import you make.
+
+### The task graph is the whole trick
+
+\`\`\`json
+{
+  "tasks": {
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "test":  { "dependsOn": ["build"], "inputs": ["src/**", "package.json"] },
+    "lint":  { "dependsOn": [] }
+  }
+}
+\`\`\`
+
+\`^build\` means build my dependencies first. With that declared, the runner builds \`packages/ui\` and \`packages/api-client\` in parallel, then the two apps, and it hashes the inputs of each task on the way. Same hash as a previous run and it replays the stored output in about 200ms rather than running anything.
+
+Two rules keep the cache honest. Declare every input, or a task will hit cache after a change that mattered. Declare every output, or the replay restores nothing and the next task fails on a missing \`dist/\`. A cache that lies once teaches the whole team to pass \`--force\` forever, which is worse than having no cache.
+
+Then scope the run to what changed:
+
+\`\`\`bash
+turbo run test lint --filter=...[origin/main]
+\`\`\`
+
+That expands to the packages the branch touched plus everything that depends on them. The README change now runs nothing. A change to \`packages/ui\` still runs both apps, correctly, because the graph says those apps consume it. Filtering to touched packages only, without the leading dots, is the mistake that ships a broken app with a green pipeline.
+
+### Remote caching
+
+Point the cache at shared storage and CI uploads artifacts your laptop can download. The first person to build a branch pays, everyone else replays, and so does every retried CI job. On a repo this size that turns a 12 minute pull request check into roughly 90 seconds, and the gap widens as the repo grows instead of closing.
+      `,
+        [
+          q('A build task declares its outputs but leaves one of its inputs out of the config. What goes wrong?', [
+            'The task reruns on every commit because its hash never matches',
+            'The remote cache refuses to store any output for that task',
+            'The task replays a cached result after a change that should have rebuilt it',
+            'Dependent packages start building before their dependencies finish',
+          ], 2, 'The cache key is a hash of the declared inputs, so an undeclared file can change without changing the key, and the runner serves a stale build as if it were current.'),
+          q('packages/ui imports date-fns but never lists it in its own package.json, and everything passes locally and in CI. Why is that still a bug?', [
+            'It resolves only because a sibling hoisted it, so it breaks when that changes',
+            'Hoisted dependencies are always dropped from the production bundle',
+            'Workspaces forbid a package from importing any transitive dependency',
+            'date-fns exposes no default export, so the import is undefined at runtime',
+          ], 0, 'The import works by accident through the hoisted root node_modules, and it stops working the day the package that actually declared date-fns upgrades or removes it.'),
+          q('What does running tasks with --filter=...[origin/main] change about a CI run?', [
+            'It caches the output of every package rather than only the changed ones',
+            'It skips the build stage and tests against the previous artifact',
+            'It runs tasks only for the packages whose files the branch edited',
+            'It runs the changed packages plus everything that depends on them',
+          ], 3, 'The leading dots widen the selection to dependents, which is what stops a change inside packages/ui shipping while an app that consumes it was never tested.'),
+        ]
+      ),
+      lesson('Micro-Frontends and Module Federation', 14, `
+Four teams, one bundle, one release train. A flaky test owned by the search team blocks a payments fix for six hours. Somebody says micro-frontends, and the room agrees before anyone asks what they cost.
+
+Ask first. Micro-frontends solve an organisational problem: independent deployment for teams that cannot agree on a release cadence. They make nothing faster, smaller or simpler. If one team owns the app, this is a tax with no benefit.
+
+### Three ways to compose, in increasing order of pain
+
+| Style | Independent deploys | Cost |
+|---|---|---|
+| Build time packages | no, the host rebuilds | nothing beyond versioning |
+| Route level, separate apps | yes | a full page load at the seam, duplicated vendor code |
+| Runtime composition | yes | shared dependency policy, version skew, harder debugging |
+
+Route level is badly underrated. Put \`/admin\` and \`/shop\` behind one reverse proxy, each its own deployment, and two teams ship independently after a week of work. Users pay a full page load crossing the boundary, which in an admin area nobody notices.
+
+### Module Federation
+
+Runtime composition earns its cost only when two teams' code must appear on the same screen. The remote publishes a manifest, the host loads it at runtime.
+
+\`\`\`js
+// apps/search/rspack.config.js   the remote
+new ModuleFederationPlugin({
+  name: 'search',
+  filename: 'remoteEntry.js',
+  exposes: { './ResultsPanel': './src/ResultsPanel' },
+  shared: {
+    react: { singleton: true, requiredVersion: '^18.2.0' },
+    'react-dom': { singleton: true, requiredVersion: '^18.2.0' },
+  },
+});
+\`\`\`
+
+\`\`\`jsx
+// apps/shell   the host
+const ResultsPanel = lazy(() => import('search/ResultsPanel'));
+\`\`\`
+
+\`singleton: true\` is the line that decides whether any of this works. Without it the host and the remote each load their own React, and two copies of React means two independent hook dispatchers. You get \`Invalid hook call\`, or a context that quietly returns its default value because the provider lives in the other copy's tree. Chapter 3 covered why a context read misses its provider; here the reason is that there are two Reacts and the panel is reading from the wrong one.
+
+### Version skew is the operational bug
+
+Never cache \`remoteEntry.js\` hard. The manifest is a mutable pointer, so it must be revalidated on every load, while the chunks it names carry content hashes and can be cached for a year. Get that backwards and a shell keeps loading a manifest naming chunks that were deleted at the last deploy, which is the \`Failed to fetch dynamically imported module\` error from Chapter 6, except another team caused it and your dashboard is the one showing it.
+
+Treat every exposed module as a public API. A remote that renames a prop on \`ResultsPanel\` breaks a host it cannot see and never tested against. In practice: keep the old prop working for one release, and run a contract test in the host pipeline against the remote's currently deployed manifest rather than against a local build of it.
+
+### Isolate the failure
+
+A remote that returns 404 must degrade one panel, not white-screen the shell.
+
+\`\`\`jsx
+<ErrorBoundary fallback={<p>Search is unavailable.</p>}>
+  <Suspense fallback={<Skeleton />}>
+    <ResultsPanel query={query} />
+  </Suspense>
+</ErrorBoundary>
+\`\`\`
+
+Boundaries catch what is thrown during render, and a rejected \`import()\` inside \`lazy\` surfaces there, so this one holds. Give every remote its own boundary and its own skeleton.
+
+### What it actually costs
+
+Two remotes on one page ship two versions of the design system unless you federate that too, and CSS from one bleeds into the other unless the styling architecture from Chapter 10 is enforced in both repos. A stack trace now stops at a team boundary. Someone has to own the shell: routing, auth, the shared dependency list, and the version policy that says which React the estate runs. That team is not optional. Without it the estate drifts inside two quarters, and you have paid for independent deployment while getting coupled releases anyway.
+      `,
+        [
+          q('A federated remote renders correctly on its own, but inside the shell it throws Invalid hook call. What is the likely cause?', [
+            'The remote exposes a component that renders inside Suspense',
+            'React is not shared as a singleton, so two copies are loaded',
+            'The host requested remoteEntry.js before its own entry chunk ran',
+            'The remote was compiled by a different bundler than the host',
+          ], 1, 'Two React instances mean two hook dispatchers, so a component rendered by one while its hooks resolve against the other fails on the first hook it calls.'),
+          q('Which caching setup is correct for a Module Federation deployment?', [
+            'Cache remoteEntry.js for a year and revalidate the hashed chunks',
+            'Cache remoteEntry.js and the hashed chunks for a year each',
+            'Disable caching on both so the shell always fetches current code',
+            'Revalidate remoteEntry.js on every load and cache the hashed chunks',
+          ], 3, 'The manifest is a mutable pointer and has to be re-fetched, while content hashed chunks never change under a given name and can safely be cached for a long time.'),
+          q('When is route level composition behind a proxy the better choice than Module Federation?', [
+            'When teams need independent deploys but never share a screen',
+            'When two teams render widgets inside one shared page layout',
+            'When each team wants to ship a different version of React',
+            'When the shell must pass live client state into each fragment',
+          ], 0, 'Route level splitting buys independent deployment for a fraction of the operational cost, and its one real drawback, a full page load at the seam, does not apply when the sections are separate pages.'),
+        ]
+      ),
+      lesson('Incremental Migration, Codemods, and Legacy Code', 14, `
+The rewrite was scoped at four months. At month eleven the new app renders three of nineteen screens, the old app has shipped forty features the new one has never heard of, and the team maintains two of everything. Nobody chose that. It is the default outcome of a rewrite running beside a product that keeps shipping.
+
+The alternative has a name: strangler fig. Put the new implementation in front of the old one, move traffic across route by route, and delete old code as it empties out. Every week ends with something released.
+
+### Own the URL first
+
+The cheapest boundary is the router, and it lives above your app.
+
+\`\`\`nginx
+location /checkout { proxy_pass http://next-app; }
+location /         { proxy_pass http://legacy-app; }
+\`\`\`
+
+\`/checkout\` is now React and TypeScript. Everything else is the 2016 app, untouched. Users cross the seam with one full page load, a real cost and a far smaller one than a feature freeze. Move \`/account\` next month, \`/search\` after that.
+
+Inside a page you cannot split by route, mount React into nodes the old app renders:
+
+\`\`\`jsx
+import { createRoot } from 'react-dom/client';
+import { PriceWidget } from '@acme/ui';
+
+document.querySelectorAll('[data-react-price]').forEach((el) => {
+  createRoot(el).render(<PriceWidget sku={el.dataset.sku} />);
+});
+\`\`\`
+
+One rule stops this becoming a third system: data crosses the seam in one direction. The old page passes props in through data attributes, React never writes back into a legacy global. When both sides mutate the same object you get bugs that reproduce only in the exact order a real user clicked.
+
+### Codemods do the boring 90 percent
+
+Renaming a prop across 1,400 call sites by hand is not a quarter well spent, and \`sed\` cannot read JSX. Transform the syntax tree instead.
+
+\`\`\`js
+// codemods/button-variant.js
+export default function transform(file, api) {
+  const j = api.jscodeshift;
+  return j(file.source)
+    .findJSXElements('Button')
+    .forEach((path) => {
+      path.node.openingElement.attributes.forEach((attr) => {
+        if (attr.type === 'JSXAttribute' && attr.name.name === 'type') {
+          attr.name.name = 'variant';
+        }
+      });
+    })
+    .toSource({ quote: 'single' });
+}
+\`\`\`
+
+\`\`\`bash
+npx jscodeshift -t codemods/button-variant.js "packages/**/*.tsx"
+\`\`\`
+
+Commit the output as its own commit, with nothing hand written in it. A reviewer then reads the transform once, skims the diff for shape, and approves 1,400 files honestly. Mix three manual fixes into that commit and the whole thing becomes unreviewable, so it gets approved without being read.
+
+A codemod cannot see \`<Button {...cellProps} />\`, a component re-exported under a different name, or a prop assembled from a variable. Expect it to cover most call sites, never all of them. Catch the tail with a lint rule that errors on the old name, so nobody reintroduces it while the migration is still running.
+
+### Ratchet, do not hope
+
+Migrations stall when progress is invisible. Count it, and let the count only fall.
+
+\`\`\`bash
+#!/usr/bin/env bash
+count=$(grep -rl "from '@acme/legacy-ui'" apps packages | wc -l | tr -d ' ')
+echo "legacy-ui imports: $count (ceiling 128)"
+[ "$count" -le 128 ] || { echo "A new legacy-ui import was added"; exit 1; }
+\`\`\`
+
+Run it in the pipeline from Chapter 6, lower the ceiling in the same pull request that removes files, and post the number in the team channel every Friday. Two hundred and eleven down to zero across five months is a migration. "We are gradually moving off legacy-ui" is a sentence people say for years.
+
+Then delete. Code with no callers is not free: it turns up in searches, gets copied by whoever joined last month, and generates dependency alerts somebody has to triage.
+      `,
+        [
+          q('Why commit codemod output as its own commit, with no hand written changes mixed in?', [
+            'Git cannot produce a usable diff for more than 500 changed files',
+            'It allows the codemod to be re-run against that commit later',
+            'A reviewer can check the transform once instead of reading 1,400 files',
+            'Formatters only run on commits that contain a single kind of change',
+          ], 2, 'The review moves from the diff to the transform, which is the only way a change that size gets genuinely read rather than rubber stamped.'),
+          q('A jscodeshift transform renames the type prop on Button. Which call site will it miss?', [
+            'Button imported from the design system and rendered directly',
+            'Button rendered as <Button {...cellProps} /> with its props spread',
+            'Button rendered inside a ternary in the middle of a file',
+            'Button with the prop written on its own second line',
+          ], 1, 'A spread hides the prop name from the syntax tree, so the transform has nothing to rename and the old key keeps flowing through at runtime.'),
+          q('What does a CI ratchet on legacy imports give you that a migration plan does not?', [
+            'It rewrites the remaining call sites automatically on a nightly job',
+            'It removes the need for a lint rule on the deprecated package',
+            'It proves the replacement package is smaller than the old one',
+            'It blocks any pull request that adds a new usage of the old code',
+          ], 3, 'A ceiling that can only fall stops the migration losing ground while it runs, which is how most gradual migrations quietly fail.'),
+        ]
+      ),
+      lesson('Budgets, Standards, and Deprecation Paths', 13, `
+Nobody ships a 400 kB regression. Twelve people ship 34 kB each over a quarter, every one defensible on its own, and the checkout bundle crosses a megabyte. Code review cannot catch that. Only a number that fails a build can.
+
+### A budget is a build step, not a dashboard
+
+\`\`\`json
+[
+  { "path": "apps/checkout/dist/assets/index-*.js",  "limit": "165 kB", "gzip": true },
+  { "path": "apps/checkout/dist/assets/vendor-*.js", "limit": "120 kB", "gzip": true },
+  { "path": "apps/admin/dist/assets/index-*.js",     "limit": "240 kB", "gzip": true }
+]
+\`\`\`
+
+\`size-limit\` runs in the pipeline from Chapter 6 and exits non zero when a limit is passed. The admin app gets a looser budget deliberately: 40 staff on office wifi are not 200,000 customers on 4G, and a budget that ignores that difference is a budget engineers learn to ignore.
+
+Set the first limit at roughly today's size plus 5 percent, not at the number you wish you had. A gate that is already red on the day it lands teaches everyone to bypass it in week one.
+
+| Gate | Signal | Enforcement |
+|---|---|---|
+| Bundle size | gzipped bytes per entry | fail the build |
+| INP and LCP | field data at the 75th percentile | alert, reviewed weekly |
+| Accessibility | axe violations on key routes | fail the build |
+| Types at the boundary | files still casting responses | ratchet, cannot increase |
+
+Field data cannot gate a build, because it only exists after the deploy and moves with traffic. Lab numbers can, and should.
+
+### Raising a budget is fine, quietly routing around it is not
+
+Make the exception path real: raise the limit in a pull request, in the same commit as the code that needed it, with the owner and the reason in the message. Two lines of git history beat a policy everyone escapes with \`--no-verify\`.
+
+### Standards enforced by tooling, not by review comments
+
+\`\`\`js
+// eslint.config.js
+'no-restricted-imports': ['error', {
+  paths: [
+    { name: 'moment', message: 'Use date-fns. moment adds 68 kB gzipped.' },
+    { name: 'lodash', message: 'Import the function directly: lodash/debounce.' },
+  ],
+  patterns: [
+    { group: ['@acme/legacy-ui/*'], message: 'Deprecated, removed in v6. Codemod: codemods/legacy-ui.js' },
+  ],
+}],
+\`\`\`
+
+The message field is where the standard actually lives. An error that names the replacement and the reason gets followed. An error that says "restricted import" gets an eslint-disable comment written directly above it.
+
+### A deprecation with no removal date is a second API forever
+
+| Stage | Timing | What ships |
+|---|---|---|
+| Announce | week 0 | changelog entry, replacement available, migration note |
+| Warn | weeks 1 to 8 | JSDoc \`@deprecated\`, one dev only console warning, lint rule at warn |
+| Migrate | weeks 2 to 10 | codemod run by the owning team, ratchet on remaining usages |
+| Remove | next major | deleted, with the codemod left in the repo |
+
+Ship the replacement and the codemod before the warning, never after. A deprecation warning with no migration path is a message telling four teams to stop their own work and solve your problem, and they will not.
+
+Measure adoption by counting imports, not by asking. \`grep -rl "@acme/legacy-ui" apps | wc -l\` returns a number you can chart every Friday, and it is the same ratchet the migration already runs.
+
+### Governance that survives a reorganisation
+
+Every shared package gets one owning team in CODEOWNERS and a named maintainer in its README. Cross cutting changes, a router upgrade, a new state library, a styling change, go through a short written proposal with a decision and a date, committed to the repo beside the code. The point is not ceremony. The point is that in eighteen months someone will ask why the estate does it this way, and the answer should be a file rather than a person who has since left.
+      `,
+        [
+          q('Why set the first bundle budget at roughly current size plus 5 percent?', [
+            'A limit already failing on day one trains people to bypass the gate',
+            'Bundlers cannot measure gzipped size below the current total',
+            'A limit under current size makes the build cache miss every run',
+            'The margin covers the difference between gzip and brotli output',
+          ], 0, 'A gate has to be green when it lands, otherwise its first signal is noise and the team learns to skip it rather than respond to it.'),
+          q('Why can field INP data not gate a build the way bundle size does?', [
+            'Field data is sampled, so it can never be attributed to a route',
+            'INP is a lab only metric, so a CI runner has no access to it',
+            'It only exists after the deploy and moves with real traffic',
+            'Browsers report it too rarely to ever reach significance',
+          ], 2, 'You cannot fail a build on a number that does not exist until real users have run the released code, so field metrics belong in alerting and weekly review instead.'),
+          q('What makes a no-restricted-imports rule actually change what people write?', [
+            'Setting it to error rather than warn in the shared config',
+            'A message naming the replacement and the reason for the rule',
+            'Applying it to every workspace package, test files included',
+            'Pairing it with a pre-commit hook so it runs before CI does',
+          ], 1, 'An engineer blocked mid task follows a rule that tells them what to use instead, and disables one that only says the import is restricted.'),
+        ]
+      ),
+      ],
+      [
+      q('A pull request that only edits packages/api-client runs both apps full test suites and takes 40 minutes. What fixes it?', [
+        'Split api-client back out into a repository of its own',
+        'Cache node_modules between CI runs on the same branch',
+        'Run the apps test suites nightly instead of per pull request',
+        'Declare the task graph and run only affected packages with caching on',
+      ], 3, 'A dependency graph plus content hashed caching lets CI run the packages a change can affect and replay the rest, which is what keeps a monorepo pipeline short as it grows.'),
+      q('Two federated remotes on one page each ship their own design system copy and their styles collide. What is the shared cause?', [
+        'The remotes were compiled by two different bundler versions',
+        'The design system is not shared as a singleton, and its CSS is global',
+        'The host loads both remotes before its own entry chunk runs',
+        'Suspense boundaries around each remote fail to isolate their styles',
+      ], 1, 'Anything not declared as shared is duplicated per remote, and unscoped CSS from one remote applies to the whole document, so both symptoms come from the same missing policy.'),
+      q('A team is eleven months into a rewrite that renders three of nineteen screens while the old app keeps shipping. What should change?', [
+        'Route traffic per URL so each migrated screen ships as it is finished',
+        'Freeze features on the old app until the rewrite has caught up',
+        'Copy the remaining old screens into the new app unchanged',
+        'Restart the rewrite in a fresh repo with a smaller framework',
+      ], 0, 'A strangler boundary in front of both apps means value ships every week and the old code shrinks, instead of two systems diverging while nothing reaches users.'),
+      q('Which deprecation actually gets adopted by the teams it affects?', [
+        'A console warning shipped in the release that deletes the old API',
+        'A changelog note asking teams to migrate before the next quarter',
+        'A replacement and a codemod shipped before the warning, with a removal date',
+        'A lint rule set to error on the day the deprecation is announced',
+      ], 2, 'Teams move when the migration path is shorter than the workaround, so the replacement, the automated rewrite and a known removal date all have to exist before anyone is asked to move.'),
       ]
     ),
   ],
@@ -2089,5 +5205,41 @@ Then do the last step, which is Chapter 5's: write the failing test first, watch
       'the application is running in production mode',
       'the element is hidden with CSS until the user opts in',
     ], 1, 'The prop hands the string straight to the HTML parser, so only sanitisation before that point prevents stored XSS.'),
+      q('A screen stores its request state with const [state, setState] = useState({ status: \'idle\' }), and a later setState({ status: \'ready\', invoices }) refuses to compile. What is the real problem?', [
+      'Objects in state must be replaced whole, so the previous value has to be spread in',
+      'Writing \'idle\' as const fixes it by making the literal available to every setter',
+      'Inference widened the state to { status: string }, so annotate useState<InvoiceState>',
+      'useState cannot infer object types at all, so object state belongs in a reducer',
+    ], 2, 'The initial value describes one shape and widens status to string, which both rejects the extra fields and narrows nothing in a switch, so annotating the hook with the discriminated union is what makes each member legal and each branch narrow.'),
+    q('Forty Playwright specs each sign in through the login form, and the suite only stays green when it runs on a single worker. Which change fixes the runtime and the flake together?', [
+      'Give each spec a fixture that creates and deletes its own account through the API',
+      'Truncate the database before every spec so no test inherits another test\'s rows',
+      'Raise retries to two in CI and treat the runs marked flaky as passes for release',
+      'Sign in once in global setup and reuse that single account across all workers',
+    ], 0, 'Per test data created through the API removes both the repeated UI login and the shared row that forces serial execution, so the suite can spread across workers without any two tests touching the same record.'),
+    q('A design system declares @layer reset, base, components, utilities, overrides and ships into components. An application writes .btn { padding: 4px } inside @layer overrides and nothing changes. What explains it?', [
+      'The overrides layer is declared last, and the last layer in the list has lowest priority',
+      'The system selector uses an id, and specificity still decides between two separate layers',
+      'clsx places the system class after the application class, and the later name wins here',
+      'The system stylesheet is imported outside any layer, and unlayered styles beat every layer',
+    ], 3, 'Layer order only ranks rules that are actually in layers, and unlayered styles sit above the entire stack, so a design system loaded outside the layer declaration outranks every override an application writes.'),
+    q('A route was moved to SSR, its HTML clearly contains the content, and one hydration mismatch warning was filed as cosmetic. Field data shows LCP no better than before the move. What connects those two facts?', [
+      'The mismatch sits on a boundary React never hydrates, so LCP cannot be affected by it',
+      'React discarded the server markup for that subtree and rendered it in the browser instead',
+      'Hydration blocks the first paint, so the markup arrives early but cannot be painted yet',
+      'The warning means the bundle was evaluated twice, doubling parse time before the paint',
+    ], 1, 'A mismatch makes React abandon the server HTML for that subtree and client render it from scratch, so the route pays the TTFB cost of SSR and still gets client rendering timings in the field.'),
+    q('A streamed page keeps reviews inside a Suspense boundary. A crawler that does not execute inline scripts indexes the skeleton rather than the reviews. What is the right response?', [
+      'Serve those requests from onAllReady, trading streaming away for a complete document',
+      'Raise the abort timeout so the crawler stays connected until the reviews resolve',
+      'Drop bootstrapScripts for crawler requests, so the placeholder resolves on the server',
+      'Wrap the reviews in an error boundary, which renders content ahead of the fallback',
+    ], 0, 'Resolved boundaries are streamed as hidden templates that a small inline script moves into place, so a consumer that runs no scripts only sees real content when onAllReady waits for every boundary and emits one finished document.'),
+    q('A codemod renamed Button\'s type prop to variant across 1,400 call sites and the migration was closed. Three months later new type usages are back in the codebase. What was missing?', [
+      'A second codemod run against main once the release branch had been merged',
+      'A production console warning, since the development one is stripped from builds',
+      'Deleting the old prop in the same release, which is what stops people using it',
+      'A lint rule that errors on the old prop name for as long as the migration runs',
+    ], 3, 'A codemod only fixes the call sites that exist on the day it runs, so without a rule that fails the build on the old name people keep writing it and the spread or renamed call sites the transform could never see are never cleaned up.'),
   ],
 });

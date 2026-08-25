@@ -265,8 +265,19 @@ const Courses = () => {
               <article
                 key={course.id}
                 data-card
-                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition flex flex-col"
+                className="group relative bg-white rounded-2xl overflow-hidden shadow-md transition duration-300 flex flex-col cursor-pointer hover:shadow-2xl hover:-translate-y-1 focus-within:shadow-2xl focus-within:-translate-y-1 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2"
               >
+                {/* One transparent link laid over the whole card makes every
+                    part of it clickable. It sits behind the visible CTA in the
+                    stack, is hidden from assistive tech, and is skipped by the
+                    keyboard, so the card still exposes exactly one real link. */}
+                <Link
+                  to={`/learn/${course.slug}`}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  className="absolute inset-0 z-10"
+                />
+
                 <div className="relative overflow-hidden">
                   <Cover course={course} />
                   <div className="absolute top-4 left-4 bg-emerald-400 text-emerald-950 text-xs font-bold px-3 py-1 rounded-full">
@@ -303,7 +314,7 @@ const Courses = () => {
 
                   <Link
                     to={`/learn/${course.slug}`}
-                    className="mt-5 w-full text-center bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition hover:scale-[1.02] active:scale-[0.98]"
+                    className="relative z-20 mt-5 w-full text-center bg-indigo-600 text-white py-2.5 rounded-lg font-medium transition group-hover:bg-indigo-700 active:scale-[0.98]"
                   >
                     Start learning for free
                   </Link>

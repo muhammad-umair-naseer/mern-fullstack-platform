@@ -2,9 +2,9 @@ import { getDB } from '../setup/db.js';
 import {
   courseBySlug,
   enrollmentFor,
-  completedLessonIds,
   lessonCountFor,
   computeGates,
+  finishedLessonIds,
   PASS_MARK,
 } from '../services/progress.service.js';
 
@@ -47,10 +47,26 @@ export const getLesson = (req, res) => {
     .prepare('SELECT completedAt FROM lesson_progress WHERE userId = ? AND lessonId = ?')
     .get(req.user.id, lesson.id);
 
+  // The viewer needs to know whether the topic's own quiz is still outstanding,
+  // since that is what gates moving on.
+  const quizQuestionCount = db
+    .prepare('SELECT COUNT(*) AS n FROM quiz_questions WHERE lessonId = ?')
+    .get(lesson.id).n;
+  const quizPassed = Boolean(
+    db
+      .prepare(
+        'SELECT 1 AS ok FROM quiz_attempts WHERE userId = ? AND lessonId = ? AND passed = 1 LIMIT 1'
+      )
+      .get(req.user.id, lesson.id)
+  );
+
   res.json({
     data: {
       ...lesson,
       completed: Boolean(done),
+      quizQuestionCount,
+      // A topic with no quiz counts as passed, so older content still advances.
+      quizPassed: quizQuestionCount === 0 ? true : quizPassed,
       index: index + 1,
       totalLessons: ordered.length,
       prev: index > 0 ? ordered[index - 1] : null,
@@ -86,6 +102,7 @@ export const completeLesson = (req, res) => {
   ).run(req.user.id, lesson.id, new Date().toISOString());
 
   const total = lessonCountFor(lesson.courseId);
-  const completed = completedLessonIds(req.user.id, lesson.courseId).length;
+  // Recomputed after the write so the bar reflects the topic quiz still owed.
+  const completed = finishedLessonIds(computeGates(req.user.id, course)).length;
   res.json({ data: { completed, total, percent: total ? Math.round((completed / total) * 100) : 0 } });
 };

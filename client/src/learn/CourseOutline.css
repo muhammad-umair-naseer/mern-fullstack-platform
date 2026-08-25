@@ -1,0 +1,110 @@
+/* The course outline: the map a learner comes back to between sittings.
+ *
+ * Twelve chapters of four topics plus a quiz row makes this a long page, so the
+ * motion here has one job, which is to help someone scan it. Nothing decorative
+ * and nothing that repeats, with one exception: the row you left off at keeps a
+ * slow pulse, because finding that row after a week away is the whole reason
+ * this page exists.
+ */
+
+@import './motion.css';
+
+/* --- chapter cards -------------------------------------------------------- */
+
+/* Revealed by useRevealOnScroll, which sets opacity itself. The card only
+   declares what it contains, so a reveal never repaints the page around it. */
+.cx-co-chapter {
+  contain: layout paint;
+}
+
+/* Rows cascade inside a card once it has arrived, so a chapter reads as a short
+   sequence rather than a block of twelve lines landing at once. */
+.cx-co-chapter.is-revealed .cx-co-row {
+  animation: cxRise var(--cx-dur-fast) var(--cx-ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+/* --- the markers ---------------------------------------------------------- */
+
+/* A finished topic's tick pops in. Once, on arrival, never again. */
+.cx-co-chapter.is-revealed .cx-co-mark.is-done {
+  animation: cxPop var(--cx-dur-fast) var(--cx-ease-pop) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 90ms);
+}
+
+/* --- where you left off --------------------------------------------------- */
+
+/* Exactly one row on the page carries this. It is the first unlocked topic that
+   is not finished, which is where the Continue button goes too. */
+.cx-co-resume {
+  position: relative;
+  background: linear-gradient(90deg, rgba(234, 88, 12, 0.07), transparent 62%);
+}
+
+.cx-co-resume .cx-co-mark {
+  animation: cxPulseRing 2.8s var(--cx-ease-out) infinite;
+}
+
+.cx-co-resume::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #ea580c;
+}
+
+.cx-co-resume-tag {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #c2410c;
+  white-space: nowrap;
+}
+
+/* --- the topic that is holding you up ------------------------------------- */
+
+/* Read, but the check is still owed. This is the single most useful thing on
+   the page for someone wondering why the next topic will not open. */
+.cx-co-pending {
+  animation: cxCoPending 2.4s var(--cx-ease-in-out) infinite;
+}
+
+@keyframes cxCoPending {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+/* --- a locked row refusing ------------------------------------------------ */
+
+/* One small movement and nothing else, so the padlock reads as a rule rather
+   than a bug. Annoyance, not punishment. */
+.cx-co-locked {
+  cursor: not-allowed;
+}
+
+.cx-co-locked.is-nudging {
+  animation: cxNudge 420ms var(--cx-ease-in-out) 1;
+}
+
+/* --- the header count ----------------------------------------------------- */
+
+.cx-co-percent {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- the switch ----------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-co-chapter.is-revealed .cx-co-row,
+  .cx-co-chapter.is-revealed .cx-co-mark.is-done,
+  .cx-co-resume .cx-co-mark,
+  .cx-co-pending,
+  .cx-co-locked.is-nudging {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,96 @@
+/* The progress bar. It appears in the lesson header, on the course outline and
+   several times over on the dashboard, so it is the single most-repeated piece
+   of motion in the product and the one that has to be cheapest.
+ *
+ * The fill therefore scales instead of resizing. `width` is a layout property:
+ * every frame of every visible bar re-ran layout for the subtree around it.
+ * `transform: scaleX` from a left origin produces the identical picture on the
+ * compositor. Same height, same radius, same gradient, same aria.
+ */
+
+@import './motion.css';
+
+.cx-pb {
+  position: relative;
+  /* The track used to be bg-white/10, which was invisible once the product
+     moved to light surfaces: the bar read as a stray coloured pill floating on
+     nothing. It owns its own track colour now, so it works on any ground. */
+  background: rgba(15, 36, 68, 0.1);
+}
+
+/* The fill is always full width; how full the bar *looks* is --cx-pb-value,
+   a 0–1 scale factor set by the component. */
+.cx-pb-fill {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* clips the sheen to the filled portion */
+  transform-origin: left center;
+  transform: scaleX(var(--cx-pb-value, 0));
+
+  /* Later changes to the value (a lesson completes) glide. */
+  transition: transform var(--cx-dur) var(--cx-ease-out);
+
+  /* On mount the bar fills from nothing, so arriving on the dashboard reads as
+     "here is where you got to" rather than a wall of pre-filled bars.
+     `backwards` — not `both` — so once the animation ends the base transform
+     above takes over unchanged and the transition keeps working. */
+  animation: cxProgressBarFill var(--cx-dur-slow) var(--cx-ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * var(--cx-stagger));
+}
+
+/* --i is inherited from the card the bar sits in, so each bar fills in step
+   with its own card rather than all of them at once. */
+@keyframes cxProgressBarFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(var(--cx-pb-value, 0)); }
+}
+
+/* --- the sheen ----------------------------------------------------------- */
+
+/* A soft light band living inside the fill, so it can only ever travel across
+   the part that is actually complete. Parked off to the left by default. */
+.cx-pb-sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%);
+}
+
+/* Started but not finished: a slow repeating sweep. This is the whole point of
+   the effect — an unfinished course looks like it is still running. */
+.cx-pb-fill.is-active .cx-pb-sheen {
+  animation: cxSheen 2800ms var(--cx-ease-in-out) infinite;
+  animation-delay: calc(var(--i, 0) * var(--cx-stagger) + var(--cx-dur-slow));
+}
+
+/* Finished: one last gleam after the bar lands, then the sheen leaves and the
+   bar is simply full and still. Done is the absence of motion. */
+.cx-pb-fill.is-done .cx-pb-sheen {
+  animation: cxSheen var(--cx-dur-slow) var(--cx-ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--cx-stagger) + var(--cx-dur));
+}
+
+/* Nothing started yet: no sheen is rendered at all. */
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-pb-fill {
+    animation: none;
+    transition: none;
+  }
+
+  .cx-pb-sheen,
+  .cx-pb-fill.is-active .cx-pb-sheen,
+  .cx-pb-fill.is-done .cx-pb-sheen {
+    animation: none;
+    opacity: 0;
+  }
+}

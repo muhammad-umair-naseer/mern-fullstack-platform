@@ -11,17 +11,20 @@ import { quizSubmissionSchema } from '../validation/schemas.js';
 
 export const strip = ({ answerIndex, explanation, ...rest }) => rest;
 
-export const loadQuestions = (courseId, chapterId) =>
-  getDB()
-    .prepare(
-      chapterId
-        ? 'SELECT * FROM quiz_questions WHERE chapterId = ? ORDER BY position'
-        : 'SELECT * FROM quiz_questions WHERE courseId = ? AND chapterId IS NULL ORDER BY position'
-    )
-    .all(chapterId ?? courseId)
+export const loadQuestions = (courseId, chapterId, lessonId = null) => {
+  const sql = lessonId
+    ? 'SELECT * FROM quiz_questions WHERE lessonId = ? ORDER BY position'
+    : chapterId
+    ? 'SELECT * FROM quiz_questions WHERE chapterId = ? ORDER BY position'
+    : 'SELECT * FROM quiz_questions WHERE courseId = ? AND chapterId IS NULL AND lessonId IS NULL ORDER BY position';
+  const arg = lessonId ?? chapterId ?? courseId;
+  return getDB()
+    .prepare(sql)
+    .all(arg)
     .map((r) => ({ ...r, options: JSON.parse(r.options) }));
+};
 
-export const gradeAndRespond = (req, res, { course, chapterId, questions }) => {
+export const gradeAndRespond = (req, res, { course, chapterId, lessonId = null, questions }) => {
   const { error, value } = quizSubmissionSchema.validate(req.body, { stripUnknown: true });
   if (error) return res.status(400).json({ message: 'Answers are required' });
   if (value.answers.length !== questions.length) {
@@ -44,9 +47,9 @@ export const gradeAndRespond = (req, res, { course, chapterId, questions }) => {
 
   const db = getDB();
   db.prepare(
-    `INSERT INTO quiz_attempts (userId, courseId, chapterId, score, total, passed, createdAt)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  ).run(req.user.id, course.id, chapterId, score, total, passed ? 1 : 0, new Date().toISOString());
+    `INSERT INTO quiz_attempts (userId, courseId, chapterId, lessonId, score, total, passed, createdAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(req.user.id, course.id, chapterId, lessonId, score, total, passed ? 1 : 0, new Date().toISOString());
 
   return { review, score, total, passed, percent: Math.round((score / total) * 100) };
 };

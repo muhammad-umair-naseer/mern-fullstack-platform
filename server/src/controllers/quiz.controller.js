@@ -2,15 +2,68 @@ import { getDB } from '../setup/db.js';
 import {
   courseBySlug,
   enrollmentFor,
-  completedLessonIds,
   lessonCountFor,
   computeGates,
+  finishedLessonIds,
   PASS_MARK,
 } from '../services/progress.service.js';
 import { loadQuestions, gradeAndRespond, strip } from '../services/quiz.service.js';
 import { issueCertificate, findCertificateByCode } from '../services/certificate.service.js';
 
 /** Chapter quizzes and the final exam, including certificate issuance. */
+
+/** A topic's own quiz. Must be passed before the next topic unlocks. */
+export const getTopicQuiz = (req, res) => {
+  const db = getDB();
+  const lesson = db
+    .prepare(
+      `SELECT l.id, l.title, l.position, ch.id AS chapterId, ch.position AS chapterPosition, ch.courseId
+       FROM lessons l JOIN chapters ch ON ch.id = l.chapterId WHERE l.id = ?`
+    )
+    .get(req.params.lessonId);
+  if (!lesson) return res.status(404).json({ message: 'Topic not found' });
+  if (!enrollmentFor(req.user.id, lesson.courseId)) {
+    return res.status(403).json({ message: 'Not enrolled in this course' });
+  }
+
+  const course = db.prepare('SELECT * FROM courses WHERE id = ?').get(lesson.courseId);
+  const gate = computeGates(req.user.id, course).lessons[lesson.id];
+  if (!gate?.quizUnlocked) {
+    return res.status(403).json({
+      message: gate?.unlocked ? 'Read the topic before taking its quiz' : gate?.reason || 'Locked',
+    });
+  }
+
+  const questions = loadQuestions(course.id, null, lesson.id);
+  if (!questions.length) return res.status(404).json({ message: 'This topic has no quiz' });
+
+  res.json({
+    data: { lesson, questions: questions.map(strip), passMark: Math.round(PASS_MARK * 100) },
+  });
+};
+
+export const submitTopicQuiz = (req, res) => {
+  const db = getDB();
+  const lesson = db
+    .prepare('SELECT l.id, ch.courseId FROM lessons l JOIN chapters ch ON ch.id = l.chapterId WHERE l.id = ?')
+    .get(req.params.lessonId);
+  if (!lesson) return res.status(404).json({ message: 'Topic not found' });
+
+  const course = db.prepare('SELECT * FROM courses WHERE id = ?').get(lesson.courseId);
+  if (!enrollmentFor(req.user.id, course.id)) {
+    return res.status(403).json({ message: 'Not enrolled in this course' });
+  }
+
+  const gate = computeGates(req.user.id, course).lessons[lesson.id];
+  if (!gate?.quizUnlocked) {
+    return res.status(403).json({ message: gate?.reason || 'This quiz is locked' });
+  }
+
+  const questions = loadQuestions(course.id, null, lesson.id);
+  const result = gradeAndRespond(req, res, { course, chapterId: null, lessonId: lesson.id, questions });
+  if (!result) return;
+  res.json({ data: result });
+};
 
 export const getChapterQuiz = (req, res) => {
   const db = getDB();
@@ -64,7 +117,7 @@ export const getFinalExam = (req, res) => {
   const gates = computeGates(req.user.id, course);
   if (!gates.final.unlocked) {
     const total = lessonCountFor(course.id);
-    const completed = completedLessonIds(req.user.id, course.id).length;
+    const completed = finishedLessonIds(gates).length;
     const quizzesLeft = gates.chapters.filter((c) => !c.quizPassed).length;
     return res.status(403).json({
       message: gates.final.reason,

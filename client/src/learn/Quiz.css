@@ -1,0 +1,235 @@
+@import './motion.css';
+
+/* Chapter quiz and final exam.
+ *
+ * Same surface, two stakes: a practice check and the exam that issues the
+ * certificate. The motion is deliberately quieter than TopicQuiz's — this
+ * component is rendered on its own page with its own heading, so it does not
+ * need to announce itself. It only needs to bring the learner in, show them how
+ * far through they are, and land the result.
+ *
+ * Everything here animates transform and opacity. The single exception is the
+ * one-shot ring on the result badge, which is motion.css's cxPulseRingGreen on
+ * one 44px element. Every effect is switched off at the bottom of this file
+ * under prefers-reduced-motion.
+ */
+
+/* --- answering ------------------------------------------------------------ */
+
+/* Rows lift toward the reader on hover and hold the pick with a tick that pops
+   in. The tick keeps its slot in the flex row at all times, so appearing costs
+   no reflow. */
+.cx-qz-option {
+  transition:
+    transform var(--cx-dur-fast) var(--cx-ease-out),
+    border-color var(--cx-dur-fast) var(--cx-ease-out),
+    background-color var(--cx-dur-fast) var(--cx-ease-out);
+}
+
+.cx-qz-option:hover {
+  transform: translateX(3px);
+}
+
+.cx-qz-option:focus-within {
+  outline: 2px solid rgba(234, 88, 12, 0.55);
+  outline-offset: 2px;
+}
+
+.cx-qz-tick {
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: center;
+  color: #ea580c;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    transform var(--cx-dur-fast) var(--cx-ease-pop),
+    opacity var(--cx-dur-fast) var(--cx-ease-out);
+}
+
+.cx-qz-option.is-picked .cx-qz-tick {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- progress ------------------------------------------------------------- */
+
+/* Answered / total, as a bar rather than only a number in the button label.
+   The fill is scaled, never widthed, so the whole thing stays on the
+   compositor. The white ring is static — it is there so the bar stays legible
+   while it sits over scrolling content. */
+.cx-qz-progress {
+  position: relative;
+  height: 6px;
+  margin: 0 0 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(15, 36, 68, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.92);
+}
+
+.cx-qz-progress-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ea580c, #fb923c);
+  transform: scaleX(var(--cx-qz-p, 0));
+  transform-origin: left center;
+  transition: transform var(--cx-dur) var(--cx-ease-out);
+}
+
+/* One sweep at the moment the last question is answered: the bar is full and
+   the submit is live. It runs once and parks off the right edge. */
+.cx-qz-progress.is-complete::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 34%;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%);
+  animation: cxSheen var(--cx-dur-slow) var(--cx-ease-out) both;
+}
+
+/* --- buttons -------------------------------------------------------------- */
+
+.cx-qz-btn {
+  transition:
+    transform var(--cx-dur-fast) var(--cx-ease-out),
+    background-color var(--cx-dur-fast) var(--cx-ease-out),
+    opacity var(--cx-dur-fast) var(--cx-ease-out);
+}
+
+.cx-qz-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.cx-qz-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* --- the result ----------------------------------------------------------- */
+
+.cx-qz-result {
+  position: relative;
+  overflow: hidden;
+}
+
+/* The number is the moment. Overshoot it, and colour it: green or amber tells
+   the learner the verdict before a word is read. */
+.cx-qz-score {
+  animation: cxPop var(--cx-dur-slow) var(--cx-ease-pop) both;
+  animation-delay: 90ms;
+}
+
+.cx-qz-result.is-pass .cx-qz-score { color: #0f7a4d; }
+.cx-qz-result.is-fail .cx-qz-score { color: #b0632a; }
+
+.cx-qz-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  animation: cxPop var(--cx-dur) var(--cx-ease-pop) both;
+}
+
+/* A tick that pops then rings out once, against an amber retry mark that
+   shakes once. Different colour, different glyph, different movement — the
+   verdict is legible from across the room. */
+.cx-qz-result.is-pass .cx-qz-badge {
+  background: linear-gradient(135deg, #10b981, #047857);
+  animation:
+    cxPop var(--cx-dur) var(--cx-ease-pop) both,
+    cxPulseRingGreen 1.5s var(--cx-ease-out) 300ms 1;
+}
+
+.cx-qz-result.is-fail .cx-qz-badge {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  animation:
+    cxPop var(--cx-dur) var(--cx-ease-pop) both,
+    cxNudge 420ms var(--cx-ease-in-out) 320ms 1;
+}
+
+/* Review rows arrive after the score has landed, in order, so the eye is led
+   down the list instead of meeting all of it at once. */
+.cx-qz-rev {
+  animation: cxRise var(--cx-dur) var(--cx-ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--cx-stagger) + 240ms);
+}
+
+/* --- the celebration ------------------------------------------------------ */
+
+/* A pass on the final exam issues a certificate, so it earns something. Seven
+   small marks drift up from the badge and fade. No canvas, no library, no
+   confetti storm: transform and opacity on seven spans, done in under two
+   seconds, gone. */
+.cx-qz-cheer {
+  position: absolute;
+  left: 50%;
+  top: 46px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.cx-qz-spark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 1px;
+  background: #059669;
+  opacity: 0;
+  animation: cxQuizSpark 1250ms var(--cx-ease-out) calc(var(--i, 0) * 55ms + 200ms) both;
+}
+
+@keyframes cxQuizSpark {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.4) rotate(45deg); }
+  20%  { opacity: 0.95; }
+  100% { opacity: 0; transform: translate(var(--x, 0), var(--y, -44px)) scale(1) rotate(var(--r, 160deg)); }
+}
+
+.cx-qz-spark:nth-child(1) { --i: 0; --x: -62px; --y: -34px; --r: 140deg; background: #d97706; }
+.cx-qz-spark:nth-child(2) { --i: 1; --x: -38px; --y: -50px; --r: -120deg; }
+.cx-qz-spark:nth-child(3) { --i: 2; --x: -14px; --y: -58px; --r: 200deg; background: #d97706; }
+.cx-qz-spark:nth-child(4) { --i: 3; --x:   4px; --y: -62px; --r: -160deg; }
+.cx-qz-spark:nth-child(5) { --i: 4; --x:  26px; --y: -54px; --r: 130deg; background: #d97706; }
+.cx-qz-spark:nth-child(6) { --i: 5; --x:  48px; --y: -44px; --r: -180deg; }
+.cx-qz-spark:nth-child(7) { --i: 6; --x:  68px; --y: -30px; --r: 150deg; background: #d97706; }
+
+/* --- the one place this file's motion is switched off --------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-qz-score,
+  .cx-qz-badge,
+  .cx-qz-result.is-pass .cx-qz-badge,
+  .cx-qz-result.is-fail .cx-qz-badge,
+  .cx-qz-rev,
+  .cx-qz-progress.is-complete::after {
+    animation: none;
+  }
+
+  /* The celebration does not run at all. */
+  .cx-qz-cheer { display: none; }
+
+  .cx-qz-option:hover,
+  .cx-qz-btn:hover:not(:disabled) { transform: none; }
+}

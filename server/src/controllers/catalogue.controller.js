@@ -5,6 +5,7 @@ import {
   completedLessonIds,
   lessonCountFor,
   computeGates,
+  finishedLessonIds,
   PASS_MARK,
 } from '../services/progress.service.js';
 
@@ -62,23 +63,27 @@ export const getCourseOutline = (req, res) => {
   }));
 
   const finalCount = db
-    .prepare('SELECT COUNT(*) AS n FROM quiz_questions WHERE courseId = ? AND chapterId IS NULL')
+    .prepare(
+      'SELECT COUNT(*) AS n FROM quiz_questions WHERE courseId = ? AND chapterId IS NULL AND lessonId IS NULL'
+    )
     .get(course.id).n;
 
   let progress = null;
   if (req.user) {
     const enrollment = enrollmentFor(req.user.id, course.id);
-    const completed = completedLessonIds(req.user.id, course.id);
+    const gates = computeGates(req.user.id, course);
+    const completed = finishedLessonIds(gates);
     const total = lessonCountFor(course.id);
     progress = {
       enrolled: Boolean(enrollment),
       enrolledAt: enrollment?.enrolledAt ?? null,
       completedLessonIds: completed,
+      readLessonIds: completedLessonIds(req.user.id, course.id),
       completed: completed.length,
       total,
       percent: total ? Math.round((completed.length / total) * 100) : 0,
       allLessonsDone: total > 0 && completed.length >= total,
-      gates: computeGates(req.user.id, course),
+      gates,
       certificate: db
         .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
         .get(req.user.id, course.id) ?? null,
@@ -86,7 +91,7 @@ export const getCourseOutline = (req, res) => {
         db
           .prepare(
             `SELECT MAX(score) AS best FROM quiz_attempts
-             WHERE userId = ? AND courseId = ? AND chapterId IS NULL`
+             WHERE userId = ? AND courseId = ? AND chapterId IS NULL AND lessonId IS NULL`
           )
           .get(req.user.id, course.id).best ?? null,
     };
@@ -124,7 +129,7 @@ export const myCourses = (req, res) => {
 
   const data = rows.map((course) => {
     const total = lessonCountFor(course.id);
-    const completed = completedLessonIds(req.user.id, course.id).length;
+    const completed = finishedLessonIds(computeGates(req.user.id, course)).length;
     return {
       ...course,
       total,

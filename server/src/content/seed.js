@@ -15,7 +15,7 @@ const seedFrom = (text) => {
   return h >>> 0;
 };
 
-const shuffleOptions = (prompt, options, answerIndex) => {
+const shuffleOptions = (prompt, options, answerIndex, slot) => {
   let state = seedFrom(prompt) || 1;
   const next = () => {
     // xorshift32 — deterministic, and good enough to break the clustering.
@@ -31,10 +31,37 @@ const shuffleOptions = (prompt, options, answerIndex) => {
     [paired[i], paired[j]] = [paired[j], paired[i]];
   }
 
+  // Optionally force the correct answer into a chosen slot. Shuffling each
+  // question independently leaves the answers within one quiz clustered at the
+  // chance rate, which meant a learner answering "always B" cleared 62 of the
+  // 1,104 topic quizzes outright. Assigning slots across the quiz removes that.
+  if (Number.isInteger(slot)) {
+    const at = paired.findIndex((p) => p.correct);
+    const target = ((slot % paired.length) + paired.length) % paired.length;
+    [paired[at], paired[target]] = [paired[target], paired[at]];
+  }
+
   return {
     options: paired.map((p) => p.text),
     answerIndex: paired.findIndex((p) => p.correct),
   };
+};
+
+/**
+ * Shuffles a whole quiz, spreading the correct answers across the four slots.
+ *
+ * Questions are handed slots round robin from a per-quiz offset, so a three
+ * question quiz always uses three different letters and a twenty question exam
+ * uses each letter five times. Guessing one letter therefore scores at most
+ * 1/4, nowhere near the 70% pass mark, and the result is still deterministic:
+ * the same content always seeds the same arrangement.
+ */
+const shuffleQuiz = (questions) => {
+  const offset = seedFrom(questions.map((q) => q.prompt).join('')) % 4;
+  return questions.map((question, i) => ({
+    ...question,
+    ...shuffleOptions(question.prompt, question.options, question.answerIndex, offset + i),
+  }));
 };
 
 // Chapters and lessons are upserted on their (parent, position) unique keys
@@ -79,8 +106,8 @@ export const seedCourses = async () => {
   // so replacing them wholesale is safe and keeps the seeder simple.
   const clearQuestions = db.prepare('DELETE FROM quiz_questions WHERE courseId = ?');
   const insertQuestion = db.prepare(`
-    INSERT INTO quiz_questions (courseId, chapterId, position, prompt, options, answerIndex, explanation)
-    VALUES (@courseId, @chapterId, @position, @prompt, @options, @answerIndex, @explanation)
+    INSERT INTO quiz_questions (courseId, chapterId, lessonId, position, prompt, options, answerIndex, explanation)
+    VALUES (@courseId, @chapterId, @lessonId, @position, @prompt, @options, @answerIndex, @explanation)
   `);
 
   const run = db.transaction(() => {
@@ -107,6 +134,8 @@ export const seedCourses = async () => {
         upsertChapter.run({ courseId, position, title: ch.title, summary: ch.summary ?? null });
         const chapterId = chapterIdAt.get(courseId, position).id;
 
+        const lessonIdAt = db.prepare('SELECT id FROM lessons WHERE chapterId = ? AND position = ?');
+
         ch.lessons.forEach((l, li) => {
           upsertLesson.run({
             chapterId,
@@ -116,35 +145,51 @@ export const seedCourses = async () => {
             body: l.body,
           });
           lessonTotal++;
+
+          // The topic's own quiz. Questions are replaced wholesale per course
+          // above, so these only ever need inserting.
+          const lessonId = lessonIdAt.get(chapterId, li + 1).id;
+          shuffleQuiz((l.quiz ?? [])).forEach((shuffled, qi) => {
+            insertQuestion.run({
+              courseId,
+              chapterId: null,
+              lessonId,
+              position: qi + 1,
+              prompt: shuffled.prompt,
+              options: JSON.stringify(shuffled.options),
+              answerIndex: shuffled.answerIndex,
+              explanation: shuffled.explanation ?? null,
+            });
+          });
         });
         pruneLessons.run(chapterId, ch.lessons.length);
 
-        (ch.quiz ?? []).forEach((question, qi) => {
-          const shuffled = shuffleOptions(question.prompt, question.options, question.answerIndex);
+        shuffleQuiz((ch.quiz ?? [])).forEach((shuffled, qi) => {
           insertQuestion.run({
             courseId,
             chapterId,
+            lessonId: null,
             position: qi + 1,
-            prompt: question.prompt,
+            prompt: shuffled.prompt,
             options: JSON.stringify(shuffled.options),
             answerIndex: shuffled.answerIndex,
-            explanation: question.explanation ?? null,
+            explanation: shuffled.explanation ?? null,
           });
         });
       });
       pruneChapters.run(courseId, c.chapters.length);
 
       // chapterId NULL marks a final-exam question.
-      (c.final ?? []).forEach((question, qi) => {
-        const shuffled = shuffleOptions(question.prompt, question.options, question.answerIndex);
+      shuffleQuiz((c.final ?? [])).forEach((shuffled, qi) => {
         insertQuestion.run({
           courseId,
           chapterId: null,
+          lessonId: null,
           position: qi + 1,
-          prompt: question.prompt,
+          prompt: shuffled.prompt,
           options: JSON.stringify(shuffled.options),
           answerIndex: shuffled.answerIndex,
-          explanation: question.explanation ?? null,
+          explanation: shuffled.explanation ?? null,
         });
       });
     });
