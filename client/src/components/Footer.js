@@ -42,13 +42,13 @@ const Footer = () => {
             </ul>
           </nav>
 
-          <nav className="footer-section" aria-label="WhatsApp Bot" data-reveal>
-            <h4>WhatsApp Bot</h4>
+          <nav className="footer-section" aria-label="Your Bot" data-reveal>
+            <h4>Your Bot</h4>
             <ul role="list">
-              <li><Link to="/whatsapp-bot">Overview</Link></li>
-              <li><Link to="/whatsapp-bot/privacy">Privacy Policy</Link></li>
-              <li><Link to="/whatsapp-bot/terms">Terms of Service</Link></li>
-              <li><Link to="/whatsapp-bot/data-deletion">Data Deletion</Link></li>
+              <li><Link to="/your-bot">Overview</Link></li>
+              <li><Link to="/your-bot/privacy">Privacy Policy</Link></li>
+              <li><Link to="/your-bot/terms">Terms of Service</Link></li>
+              <li><Link to="/your-bot/data-deletion">Data Deletion</Link></li>
             </ul>
           </nav>
 

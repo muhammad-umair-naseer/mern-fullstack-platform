@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquareText, Clock, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
-import './WhatsAppBot.css';
+import './YourBot.css';
 
 const chips = [
   { icon: MessageSquareText, label: 'AI replies' },
@@ -10,7 +10,7 @@ const chips = [
   { icon: Sparkles, label: 'Your brand voice' },
 ];
 
-export default function WhatsAppBot() {
+export default function YourBot() {
   const ref = useIntroTimeline('[data-intro]', { y: 26, stagger: 0.1 });
 
   return (
@@ -42,7 +42,7 @@ export default function WhatsAppBot() {
           >
             Cortexis{' '}
             <span className="bg-gradient-to-r from-brand-accent via-brand-magenta to-brand-orange-500 bg-clip-text text-transparent">
-              WhatsApp Bot
+              Your Bot
             </span>
           </h1>
           <p data-intro className="mt-3 font-mono text-xs uppercase tracking-[0.22em] text-slate-400">
@@ -50,8 +50,9 @@ export default function WhatsAppBot() {
           </p>
 
           <p data-intro className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
-            An AI assistant that replies for your business on WhatsApp — instantly, around the clock,
-            in your brand’s voice. <span className="text-white">Something big is coming.</span>
+            One AI assistant that replies for your business on WhatsApp and Instagram — instantly,
+            around the clock, in your brand’s voice.
+            <span className="text-white"> Something big is coming.</span>
           </p>
 
           <div data-intro className="mt-7 flex flex-wrap gap-2.5">
@@ -74,7 +75,7 @@ export default function WhatsAppBot() {
               Get early access <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              to="/whatsapp-bot/privacy"
+              to="/your-bot/privacy"
               className="inline-flex items-center gap-2 rounded-full bg-transparent px-6 py-3 font-semibold text-white ring-2 ring-white/25 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-accent/40"
             >
               <ShieldCheck className="h-4 w-4" /> How your data is handled
@@ -86,14 +87,17 @@ export default function WhatsAppBot() {
 
         {/* ── Chat mockup ──────────────────────────────────────────────── */}
         <div data-intro className="wa-stage">
-          <div className="wa-mock" role="img" aria-label="Preview of a WhatsApp conversation answered automatically by the Cortexis assistant">
+          <div className="wa-mock" role="img" aria-label="Preview of a customer conversation answered automatically by the Cortexis assistant across WhatsApp and Instagram">
             <div className="wa-mock-header">
               <span className="wa-avatar" aria-hidden="true">🤖</span>
               <div className="wa-meta">
                 <p className="wa-name">Your Business Assistant</p>
                 <p className="wa-status"><span className="wa-online-dot" /> online</p>
               </div>
-              <span className="wa-badge">WhatsApp</span>
+              <span className="wa-badges">
+                <span className="wa-badge wa-badge-whatsapp">WhatsApp</span>
+                <span className="wa-badge wa-badge-instagram">Instagram</span>
+              </span>
             </div>
             <div className="wa-body">
               <div className="wa-bubble wa-in">Hi! Do you deliver on weekends? 📦</div>

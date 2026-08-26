@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════
-   Cortexis WhatsApp Bot — teaser page. Self-contained styles for the
+   Cortexis Your Bot — teaser page. Self-contained styles for the
    animated chat mockup (does not use .bg-white, so the cosmic theme's
    glassification rules don't touch it).
    ════════════════════════════════════════════════════════════════════ */
@@ -51,7 +51,7 @@
 .wa-mock-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 6px 8px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -79,16 +79,32 @@
   width: 7px; height: 7px; border-radius: 50%;
   background: #34d399; box-shadow: 0 0 8px 1px rgba(52, 211, 153, 0.7);
 }
+.wa-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
 .wa-badge {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  border-radius: 999px;
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+/* Channel accents: WhatsApp green, Instagram magenta. */
+.wa-badge-whatsapp {
   color: #25d366;
   background: rgba(37, 211, 102, 0.12);
   border: 1px solid rgba(37, 211, 102, 0.3);
-  border-radius: 999px;
-  padding: 4px 9px;
+}
+.wa-badge-instagram {
+  color: #f4739f;
+  background: rgba(228, 64, 149, 0.12);
+  border: 1px solid rgba(228, 64, 149, 0.32);
 }
 
 /* Message list */

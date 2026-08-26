@@ -17,10 +17,10 @@ const Internships = lazy(() => import('./pages/Internships'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
-const WhatsAppBot = lazy(() => import('./pages/WhatsAppBot'));
-const WhatsAppPrivacy = lazy(() => import('./pages/WhatsAppPrivacy'));
-const WhatsAppTerms = lazy(() => import('./pages/WhatsAppTerms'));
-const WhatsAppDataDeletion = lazy(() => import('./pages/WhatsAppDataDeletion'));
+const YourBot = lazy(() => import('./pages/YourBot'));
+const YourBotPrivacy = lazy(() => import('./pages/YourBotPrivacy'));
+const YourBotTerms = lazy(() => import('./pages/YourBotTerms'));
+const YourBotDataDeletion = lazy(() => import('./pages/YourBotDataDeletion'));
 
 export default function App() {
   return (
@@ -39,10 +39,18 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/whatsapp-bot" element={<WhatsAppBot />} />
-            <Route path="/whatsapp-bot/privacy" element={<WhatsAppPrivacy />} />
-            <Route path="/whatsapp-bot/terms" element={<WhatsAppTerms />} />
-            <Route path="/whatsapp-bot/data-deletion" element={<WhatsAppDataDeletion />} />
+            {/* Canonical product routes. */}
+            <Route path="/your-bot" element={<YourBot />} />
+            <Route path="/your-bot/privacy" element={<YourBotPrivacy />} />
+            <Route path="/your-bot/terms" element={<YourBotTerms />} />
+            <Route path="/your-bot/data-deletion" element={<YourBotDataDeletion />} />
+
+            {/* Legacy paths kept live: these exact URLs are registered with Meta for
+                WhatsApp Business Platform app review. They must keep resolving. */}
+            <Route path="/whatsapp-bot" element={<YourBot />} />
+            <Route path="/whatsapp-bot/privacy" element={<YourBotPrivacy />} />
+            <Route path="/whatsapp-bot/terms" element={<YourBotTerms />} />
+            <Route path="/whatsapp-bot/data-deletion" element={<YourBotDataDeletion />} />
           </Routes>
         </Suspense>
         <Footer />
