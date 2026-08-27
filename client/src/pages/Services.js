@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
 import { useGridReveal } from '../hooks/useGridReveal';
@@ -333,6 +334,51 @@ export default function Services() {
             </div>
           )}
       </section>
+
+      {/* Routes out of this page.
+          Services linked nowhere except contact, which wastes the page: a
+          visitor deciding whether to hire us is also the person who might take
+          a course or send an intern, and a crawler needs paths between these
+          sections to see them as one site. */}
+      <section className="max-w-7xl mx-auto px-6 pb-16">
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-card p-6 md:p-8">
+          <h2 className="text-2xl font-extrabold text-black">Not ready to start a project?</h2>
+          <p className="mt-2 text-black font-medium max-w-2xl">
+            There is more than one way to work with us. Learn the skills yourself, send us
+            someone to train, or use the free tools we have already built.
+          </p>
+          <div className="mt-5 grid sm:grid-cols-3 gap-4">
+            <Link
+              to="/courses"
+              className="group block rounded-xl border border-slate-200 p-5 transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <h3 className="font-bold text-black group-hover:text-orange-700">Free courses</h3>
+              <p className="mt-1 text-sm text-black font-medium">
+                Twenty three courses, twelve chapters each, with a verifiable certificate.
+              </p>
+            </Link>
+            <Link
+              to="/internships"
+              className="group block rounded-xl border border-slate-200 p-5 transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <h3 className="font-bold text-black group-hover:text-orange-700">Paid internships</h3>
+              <p className="mt-1 text-sm text-black font-medium">
+                Real projects in Islamabad, mentored by the engineers who ship them.
+              </p>
+            </Link>
+            <Link
+              to="/tools"
+              className="group block rounded-xl border border-slate-200 p-5 transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <h3 className="font-bold text-black group-hover:text-orange-700">Free tools</h3>
+              <p className="mt-1 text-sm text-black font-medium">
+                Converters, formatters and generators, free and with no sign up.
+              </p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
 
       {/* Modal */}
       {show && (

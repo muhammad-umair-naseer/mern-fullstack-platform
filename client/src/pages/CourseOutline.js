@@ -464,6 +464,55 @@ const CourseOutline = () => {
           </div>
         </div>
       </section>
+
+      {/* Where a reader goes next.
+          Also the link graph: without this every course page is a dead end
+          that only points back to the catalogue, so a crawler reaches each one
+          by a single route and reads 23 shallow pages rather than a connected
+          library. */}
+      {course.related?.length > 0 && (
+        <section className="max-w-5xl mx-auto px-6 pb-16">
+          <h2 className="text-2xl font-extrabold text-black">Continue with</h2>
+          <p className="mt-2 text-black font-medium">
+            Free courses that pair well with {course.title}, each with a certificate.
+          </p>
+
+          <div className="mt-6 grid sm:grid-cols-2 gap-4">
+            {course.related.map((r) => (
+              <Link
+                key={r.slug}
+                to={`/learn/${r.slug}`}
+                className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <p className="text-xs font-bold uppercase tracking-wide text-orange-600">
+                  {r.category}
+                </p>
+                <h3 className="mt-1 text-lg font-bold text-black group-hover:text-orange-700">
+                  {r.title}
+                </h3>
+                <p className="mt-2 text-sm text-black font-medium leading-relaxed">{r.summary}</p>
+                <p className="mt-3 text-xs font-bold text-slate-500">
+                  {r.level} · {r.duration}
+                </p>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-bold">
+            <Link to="/courses" className="text-orange-700 hover:underline">
+              Browse all free courses
+            </Link>
+            <span className="text-slate-300" aria-hidden="true">·</span>
+            <Link to="/internships" className="text-orange-700 hover:underline">
+              Apply for a paid internship
+            </Link>
+            <span className="text-slate-300" aria-hidden="true">·</span>
+            <Link to="/services" className="text-orange-700 hover:underline">
+              Hire us to build something
+            </Link>
+          </div>
+        </section>
+      )}
     </main>
   );
 };

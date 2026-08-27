@@ -97,7 +97,25 @@ export const getCourseOutline = (req, res) => {
     };
   }
 
-  res.json({ data: { ...course, chapters, finalCount, progress } });
+  // Courses to link on to from the bottom of this one.
+  //
+  // Every course page linking only back to the catalogue leaves 23 pages with
+  // no route between them, which is both a dead end for a reader and a shallow
+  // link graph for a crawler. Category is the best signal, but several
+  // categories hold a single course, so it falls back to the same level and
+  // then to anything rather than rendering an empty section.
+  const pool = db
+    .prepare(
+      `SELECT slug, title, summary, level, category, duration
+       FROM courses WHERE id != ? ORDER BY title`
+    )
+    .all(course.id);
+
+  const rank = (other) =>
+    (other.category === course.category ? 0 : 2) + (other.level === course.level ? 0 : 1);
+  const related = pool.sort((a, b) => rank(a) - rank(b)).slice(0, 4);
+
+  res.json({ data: { ...course, chapters, finalCount, progress, related } });
 };
 
 // POST /api/learn/courses/:slug/enroll
