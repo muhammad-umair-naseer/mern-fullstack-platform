@@ -1,8 +1,46 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import ProgressBar from '../learn/ProgressBar';
+import '../learn/CourseOutline.css';
+
+/**
+ * Counts from zero up to `target` once, then stays there.
+ *
+ * The outline is where a learner lands after a week away, and watching the
+ * number climb to where they got to reads as progress in a way a pre-filled
+ * figure does not. It always lands exactly on the real value, and under reduced
+ * motion it simply is the real value from the first frame.
+ */
+const useCountUp = (target, ms = 700) => {
+  const [n, setN] = useState(target);
+
+  useEffect(() => {
+    if (typeof target !== 'number' || Number.isNaN(target)) return undefined;
+    const still =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (still || target <= 0) {
+      setN(target);
+      return undefined;
+    }
+
+    let raf;
+    const started = performance.now();
+    const tick = (now) => {
+      const t = Math.min(1, (now - started) / ms);
+      // Same deceleration as --cx-ease-out, so it stops the way everything else does.
+      setN(Math.round(target * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else setN(target);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, ms]);
+
+  return n;
+};
 
 const CourseOutline = () => {
   const { slug } = useParams();
@@ -12,6 +50,7 @@ const CourseOutline = () => {
   const [course, setCourse] = useState(null);
   const [status, setStatus] = useState('loading');
   const [enrolling, setEnrolling] = useState(false);
+  const listRef = useRef(null);
 
   const load = useCallback(async () => {
     try {
@@ -26,6 +65,48 @@ const CourseOutline = () => {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Chapter cards cascade their rows in as each card is scrolled to.
+  //
+  // Read the direction of this: a row is fully visible by default and the
+  // animation only applies once `is-revealed` is on its card. So if this effect
+  // never runs, the outline is simply all there. Nothing a learner needs is
+  // gated on an animation firing.
+  useEffect(() => {
+    const host = listRef.current;
+    if (status !== 'ready' || !host) return undefined;
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+
+    const cards = Array.from(host.querySelectorAll('.cx-co-chapter'));
+    if (!cards.length) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0 }
+    );
+
+    cards.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [status, course]);
+
+  // A locked row refusing, once. Handled here rather than per row so the
+  // outline does not carry twelve chapters' worth of handlers.
+  const shownPercent = useCountUp(course?.progress?.percent ?? 0);
+
+  const refuse = useCallback((event) => {
+    const row = event.currentTarget;
+    row.classList.remove('is-nudging');
+    // Force a reflow, otherwise re-adding the class in the same frame is a no-op.
+    void row.offsetWidth;
+    row.classList.add('is-nudging');
+    window.setTimeout(() => row.classList.remove('is-nudging'), 500);
+  }, []);
 
   const enroll = async () => {
     if (!user) return navigate('/signup', { state: { from: `/learn/${slug}` } });
@@ -59,6 +140,8 @@ const CourseOutline = () => {
 
   const progress = course.progress;
   const enrolled = progress?.enrolled;
+  // `completedLessonIds` now means finished, not merely opened: a topic only
+  // lands here once its own quiz is passed.
   const done = new Set(progress?.completedLessonIds || []);
 
   const gates = progress?.gates;
@@ -104,8 +187,8 @@ const CourseOutline = () => {
             <div className="mt-7 max-w-md">
               <div className="flex justify-between text-sm mb-2">
                 <span>Your progress</span>
-                <span className="font-semibold">
-                  {progress.completed}/{progress.total} · {progress.percent}%
+                <span className="font-semibold cx-co-percent">
+                  {progress.completed}/{progress.total} · {shownPercent}%
                 </span>
               </div>
               <ProgressBar percent={progress.percent} />
@@ -149,12 +232,15 @@ const CourseOutline = () => {
       <section className="max-w-5xl mx-auto px-6 py-12">
         <h2 className="text-2xl font-extrabold text-black mb-6">Course outline</h2>
 
-        <div className="space-y-4">
+        <div ref={listRef} className="space-y-4">
           {course.chapters.map((ch) => {
             const chDone = ch.lessons.filter((l) => done.has(l.id)).length;
             const chState = gates?.chapters?.find((c) => c.id === ch.id);
             return (
-              <article key={ch.id} className="bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden">
+              <article
+                key={ch.id}
+                className="cx-co-chapter bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden"
+              >
                 <div className="p-6 border-b border-slate-200 bg-slate-50/50">
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -173,22 +259,31 @@ const CourseOutline = () => {
                 </div>
 
                 <ul className="divide-y divide-slate-200 bg-white">
-                  {ch.lessons.map((l) => {
+                  {ch.lessons.map((l, li) => {
                     const gate = lessonGate(l.id);
                     const locked = enrolled && gate && !gate.unlocked;
                     const isDone = done.has(l.id);
+                    // Read but the topic check is still owed. Worth calling out,
+                    // because this is what holds the next topic shut.
+                    const quizOwed = enrolled && !isDone && gate?.read && gate?.quizQuestionCount > 0;
+
+                    // Exactly one row on the page is where the learner resumes, and it
+                    // is the same lesson the Continue button points at.
+                    const isResume = enrolled && !locked && l.id === resumeLesson?.id && !isDone;
 
                     const marker = (
                       <span
-                        className={`grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs font-bold ${
+                        className={`cx-co-mark ${isDone ? 'is-done' : ''} grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs font-bold ${
                           isDone
                             ? 'bg-emerald-500 text-white'
+                            : quizOwed
+                            ? 'bg-amber-100 text-amber-700 border border-amber-400'
                             : locked
                             ? 'bg-slate-200 text-slate-600'
                             : 'border-2 border-orange-500 text-orange-600 font-bold'
                         }`}
                       >
-                        {isDone ? '✓' : locked ? '🔒' : l.position}
+                        {isDone ? '✓' : quizOwed ? '?' : locked ? '🔒' : l.position}
                       </span>
                     );
 
@@ -197,17 +292,31 @@ const CourseOutline = () => {
                         {marker}
                         <span className={`flex-1 font-semibold ${locked ? 'text-slate-500' : 'text-black'}`}>
                           {l.title}
+                          {quizOwed && (
+                            <span className="cx-co-pending ml-2 align-middle text-[11px] font-bold uppercase tracking-wide text-amber-700">
+                              quiz pending
+                            </span>
+                          )}
                         </span>
+                        {enrolled && gate?.quizQuestionCount > 0 && (
+                          <span className="text-[11px] font-bold shrink-0 text-slate-500">
+                            {gate.quizQuestionCount}Q
+                          </span>
+                        )}
+                        {isResume && <span className="cx-co-resume-tag">resume here</span>}
                         <span className="text-xs text-black font-bold shrink-0">{l.minutes} min</span>
                       </>
                     );
 
                     if (!enrolled || locked) {
                       return (
-                        <li key={l.id}>
+                        <li key={l.id} className="cx-co-row" style={{ '--i': li }}>
                           <div
-                            className="flex items-center gap-3 px-6 py-3.5 opacity-70 bg-slate-50/30"
+                            className={`flex items-center gap-3 px-6 py-3.5 opacity-70 bg-slate-50/30 ${
+                              locked ? 'cx-co-locked' : ''
+                            }`}
                             title={locked ? gate.reason : undefined}
+                            onClick={locked ? refuse : undefined}
                           >
                             {body}
                           </div>
@@ -219,7 +328,11 @@ const CourseOutline = () => {
                     }
 
                     return (
-                      <li key={l.id}>
+                      <li
+                        key={l.id}
+                        className={`cx-co-row ${isResume ? 'cx-co-resume' : ''}`}
+                        style={{ '--i': li }}
+                      >
                         <Link
                           to={`/learn/${slug}/lesson/${l.id}`}
                           className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/50 transition"
@@ -263,7 +376,7 @@ const CourseOutline = () => {
                     );
 
                     return (
-                      <li key={`quiz-${ch.id}`}>
+                      <li key={`quiz-${ch.id}`} className="cx-co-row" style={{ '--i': ch.lessons.length }}>
                         {!enrolled || locked ? (
                           <>
                             <div className="flex items-center gap-3 px-6 py-3.5 opacity-70 bg-slate-50/30">{inner}</div>
@@ -306,9 +419,11 @@ const CourseOutline = () => {
                 Final exam &amp; certificate
               </h3>
               <p className="mt-2 text-slate-600">
-                Work through the chapters in order. Each one unlocks when you pass the previous
-                chapter&rsquo;s quiz. Clear all {course.chapters.length} chapters to unlock the{' '}
-                {course.finalCount}-question final exam. Score 70% or higher and your free
+                Work through the chapters in order. Each topic ends with a short check on that
+                topic, and passing it opens the next one. Clear every topic in a chapter to reach
+                the chapter quiz, and pass that to open the next chapter. Clear all{' '}
+                {course.chapters.length} chapters to unlock the {course.finalCount}-question
+                final exam. Score 70% or higher and your free
                 certificate is issued instantly, with a code anyone can verify. Retakes are
                 unlimited.
               </p>

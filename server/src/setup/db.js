@@ -130,6 +130,7 @@ export const TABLES = {
       id          INTEGER PRIMARY KEY AUTOINCREMENT,
       courseId    INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
       chapterId   INTEGER REFERENCES chapters(id) ON DELETE CASCADE,
+      lessonId    INTEGER REFERENCES lessons(id) ON DELETE CASCADE,
       position    INTEGER NOT NULL,
       prompt      TEXT NOT NULL,
       options     TEXT NOT NULL,
@@ -164,6 +165,7 @@ export const TABLES = {
       userId    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       courseId  INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
       chapterId INTEGER REFERENCES chapters(id) ON DELETE CASCADE,
+      lessonId  INTEGER REFERENCES lessons(id) ON DELETE CASCADE,
       score     INTEGER NOT NULL,
       total     INTEGER NOT NULL,
       passed    INTEGER NOT NULL,
@@ -201,6 +203,21 @@ export const connectDB = async () => {
 // Additive migrations for databases created before a column existed. SQLite
 // has no "ADD COLUMN IF NOT EXISTS", so check the table info first.
 const migrate = (db) => {
+  // Topic-level quizzes: questions and attempts both gained a lessonId.
+  const qCols = db.prepare('PRAGMA table_info(quiz_questions)').all().map((c) => c.name);
+  if (!qCols.includes('lessonId')) {
+    db.exec('ALTER TABLE quiz_questions ADD COLUMN lessonId INTEGER REFERENCES lessons(id) ON DELETE CASCADE');
+    console.log('🔁 quiz_questions.lessonId added');
+  }
+  // Created here rather than in the DDL block, which runs before migrations and
+  // therefore cannot reference a column the migration is about to add.
+  db.exec('CREATE INDEX IF NOT EXISTS idx_q_lesson ON quiz_questions (lessonId, position)');
+  const aCols = db.prepare('PRAGMA table_info(quiz_attempts)').all().map((c) => c.name);
+  if (!aCols.includes('lessonId')) {
+    db.exec('ALTER TABLE quiz_attempts ADD COLUMN lessonId INTEGER REFERENCES lessons(id) ON DELETE CASCADE');
+    console.log('🔁 quiz_attempts.lessonId added');
+  }
+
   const columns = db.prepare('PRAGMA table_info(users)').all().map((c) => c.name);
   const additions = [
     ['emailVerified', 'INTEGER NOT NULL DEFAULT 0'],

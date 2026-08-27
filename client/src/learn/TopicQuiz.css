@@ -1,0 +1,182 @@
+/* The end-of-topic check. This one gates progress, so it is styled as an event
+   rather than a footnote: the card arrives, questions stagger in, and the
+   result animates its verdict. All motion is transform/opacity so it stays on
+   the compositor, and all of it is disabled under reduced motion. */
+
+.cx-tq {
+  position: relative;
+  border-radius: 18px;
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(16, 43, 78, 0.1);
+  box-shadow: 0 1px 2px rgba(13, 36, 64, 0.05), 0 18px 44px -18px rgba(13, 36, 64, 0.22);
+  animation: cxTqIn 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cxTqIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- header ------------------------------------------------------------- */
+.cx-tq-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+
+.cx-tq-badge {
+  display: grid;
+  place-items: center;
+  width: 42px; height: 42px;
+  flex: 0 0 42px;
+  border-radius: 50%;
+  font-size: 18px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, #1d5488, #2b6ba8);
+  box-shadow: 0 0 0 0 rgba(43, 107, 168, 0.5);
+  animation: cxTqPulse 2.6s ease-out infinite;
+}
+
+@keyframes cxTqPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(43, 107, 168, 0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(43, 107, 168, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(43, 107, 168, 0); }
+}
+
+.cx-tq-title { margin: 0; font-size: 1.15rem; font-weight: 700; color: #0f2444; }
+.cx-tq-sub   { margin: 2px 0 0; font-size: 0.85rem; color: #566a89; }
+
+/* --- questions ---------------------------------------------------------- */
+.cx-tq-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+
+/* Staggered arrival, so the set reads as a sequence rather than a wall. */
+.cx-tq-q {
+  animation: cxTqQ 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i) * 70ms + 120ms);
+}
+
+@keyframes cxTqQ {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.cx-tq-q fieldset { border: 0; margin: 0; padding: 0; }
+
+.cx-tq-prompt {
+  display: flex; gap: 10px; align-items: baseline;
+  font-weight: 600; color: #0f2444; margin-bottom: 10px;
+}
+
+.cx-tq-num {
+  flex: 0 0 24px;
+  display: grid; place-items: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(43, 107, 168, 0.12);
+  color: #1d5488;
+  font-size: 0.78rem; font-weight: 700;
+}
+
+.cx-tq-options { display: grid; gap: 8px; }
+
+.cx-tq-option {
+  display: flex; align-items: flex-start; gap: 11px;
+  padding: 11px 14px;
+  border: 1px solid rgba(16, 43, 78, 0.12);
+  border-radius: 11px;
+  color: #26364f;
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cx-tq-option:hover { border-color: rgba(43, 107, 168, 0.4); transform: translateX(3px); }
+.cx-tq-option input { position: absolute; opacity: 0; pointer-events: none; }
+
+.cx-tq-dot {
+  flex: 0 0 16px;
+  width: 16px; height: 16px; margin-top: 3px;
+  border-radius: 50%;
+  border: 2px solid rgba(16, 43, 78, 0.28);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.cx-tq-option.is-picked { border-color: #2b6ba8; background: rgba(43, 107, 168, 0.07); }
+.cx-tq-option.is-picked .cx-tq-dot {
+  border-color: #2b6ba8;
+  box-shadow: inset 0 0 0 4px #2b6ba8;
+}
+
+.cx-tq-option:focus-within { outline: 2px solid rgba(43, 107, 168, 0.5); outline-offset: 2px; }
+
+/* --- submit -------------------------------------------------------------- */
+.cx-tq-submit {
+  margin-top: 22px;
+  width: 100%;
+  padding: 14px;
+  border: 0; border-radius: 11px;
+  font-weight: 600; color: #fff;
+  background: linear-gradient(120deg, #17426c, #2b6ba8 60%, #4a86c4);
+  background-size: 180% 100%;
+  cursor: pointer;
+  transition: background-position 420ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease;
+}
+
+.cx-tq-submit:hover:not(:disabled) { background-position: 100% 0; transform: translateY(-2px); }
+.cx-tq-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* --- result -------------------------------------------------------------- */
+.cx-tq-result { animation: cxTqIn 460ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.cx-tq-score { display: flex; align-items: baseline; gap: 12px; }
+
+.cx-tq-scorenum {
+  font-size: 2.6rem; font-weight: 800; line-height: 1;
+  animation: cxTqPop 560ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* A little overshoot on the number: this is the moment the learner cares about. */
+@keyframes cxTqPop {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: none; }
+}
+
+.is-pass .cx-tq-scorenum { color: #0f7a4d; }
+.is-fail .cx-tq-scorenum { color: #b0632a; }
+.cx-tq-scorelabel { color: #566a89; font-size: 0.9rem; }
+.cx-tq-verdict { margin: 10px 0 18px; color: #26364f; }
+
+.cx-tq-review { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+.cx-tq-review li {
+  padding: 13px 15px;
+  border-radius: 11px;
+  border-left: 3px solid transparent;
+  animation: cxTqQ 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i) * 80ms + 160ms);
+}
+
+.cx-tq-review .is-right { background: rgba(15, 122, 77, 0.07); border-left-color: #0f7a4d; }
+.cx-tq-review .is-wrong { background: rgba(176, 99, 42, 0.08); border-left-color: #b0632a; }
+
+.cx-tq-reviewq { margin: 0; font-weight: 600; color: #0f2444; font-size: 0.95rem; }
+.cx-tq-correct { margin: 6px 0 0; font-size: 0.88rem; color: #26364f; }
+.cx-tq-why     { margin: 6px 0 0; font-size: 0.85rem; color: #566a89; }
+.cx-tq-error   { margin: 0 0 16px; color: #b02a2a; font-size: 0.9rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-tq, .cx-tq-q, .cx-tq-result, .cx-tq-scorenum, .cx-tq-review li { animation: none; }
+  .cx-tq-badge { animation: none; }
+  .cx-tq-option:hover, .cx-tq-submit:hover:not(:disabled) { transform: none; }
+}
+
+/* The pass-state continue button: green rather than the neutral submit blue, so
+   the outcome is readable at a glance before the text is. */
+.cx-tq-continue {
+  background: linear-gradient(180deg, #059669, #047857);
+}
+.cx-tq-continue:hover:not(:disabled) {
+  background: linear-gradient(180deg, #047857, #065f46);
+}
+
+/* The tick and cross render at different widths, so the gap is set here rather
+   than left to a literal space in the markup. */
+.cx-tq-mark {
+  display: inline-block;
+  margin-right: 0.45rem;
+}

@@ -1,0 +1,127 @@
+/* Lesson body chrome: the bar above a code sample, and the scroll box around a
+   wide table. Everything here is presentation only; the markdown itself is
+   still styled by the prose classes on the wrapper. */
+
+@import './motion.css';
+
+/* --- code blocks --------------------------------------------------------- */
+
+.cx-md .cx-code {
+  position: relative;
+  margin: 1.6em 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  background: #0f172a;
+}
+
+.cx-md .cx-code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 10px 7px 14px;
+  background: #111d33;
+  border-bottom: 1px solid #1e293b;
+}
+
+.cx-md .cx-code-lang {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7f9dc4;
+}
+
+.cx-md .cx-code-copy {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 4px 11px;
+  border-radius: 999px;
+  color: #b9cbe4;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  /* Colour only: this sits inside a scrolling article, so it must not move
+     anything around it. */
+  transition: background var(--cx-dur-fast) var(--cx-ease-out),
+              color var(--cx-dur-fast) var(--cx-ease-out);
+}
+
+.cx-md .cx-code-copy:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: #fff;
+}
+
+.cx-md .cx-code-copy:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+}
+
+/* The bar already carries the border and the radius, so the pre inside drops
+   both rather than drawing a second frame. */
+.cx-md .cx-code pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* --- tables -------------------------------------------------------------- */
+
+.cx-md .cx-md-table {
+  margin: 1.6em 0;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.cx-md .cx-md-table table {
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cx-md .cx-md-table th,
+.cx-md .cx-md-table td {
+  padding: 10px 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.cx-md .cx-md-table thead th {
+  background: #f8fafc;
+}
+
+.cx-md .cx-md-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Copy feedback. Colour only, so the bar never reflows mid article. */
+.cx-md .cx-code-copy.is-copied {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #6ee7b7;
+}
+
+.cx-md .cx-code-copy.is-failed {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.45);
+  color: #fcd34d;
+}
+
+/* Inline code is a bordered orange chip, and that styling was reaching into
+   fenced blocks too: because `code` inside `pre` is an inline box, its border
+   fragmented across every line and drew a box around each one. The block owns
+   its own frame, so the inner code element carries no decoration at all. */
+.cx-md .cx-code pre code,
+.cx-md .cx-code pre code * {
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-weight: 500;
+  color: inherit;
+}

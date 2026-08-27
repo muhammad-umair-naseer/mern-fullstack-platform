@@ -1,0 +1,125 @@
+/* The motion vocabulary for the learning experience.
+ *
+ * Every animated surface in /learn pulls its easings, durations and keyframes
+ * from here, so the course reads as one piece of software rather than five
+ * screens that each move differently. The values are the ones TopicQuiz already
+ * established, promoted to tokens.
+ *
+ * Two rules hold everywhere:
+ *   1. Animate transform and opacity only. Anything else lands on the main
+ *      thread and shows up as the lag we spent a session removing.
+ *   2. Every effect degrades to nothing under prefers-reduced-motion. The block
+ *      at the bottom of this file is the single place that switch is thrown.
+ */
+
+:root {
+  /* Easings. `out` decelerates into place and suits arrivals; `pop` overshoots
+     slightly and suits a result landing. */
+  --cx-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --cx-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --cx-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --cx-dur-fast: 220ms;
+  --cx-dur: 460ms;
+  --cx-dur-slow: 720ms;
+
+  /* One step of a stagger. Multiply by an element's --i. */
+  --cx-stagger: 70ms;
+}
+
+/* --- arrivals ------------------------------------------------------------ */
+
+@keyframes cxRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes cxRiseCard {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes cxFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cxSlideInLeft {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- emphasis ------------------------------------------------------------ */
+
+@keyframes cxPop {
+  0%   { opacity: 0; transform: scale(0.72); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* A ring that expands and fades. Used to say "this is where you are". */
+@keyframes cxPulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(43, 107, 168, 0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(43, 107, 168, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(43, 107, 168, 0); }
+}
+
+@keyframes cxPulseRingGreen {
+  0%   { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(5, 150, 105, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+
+/* A light sweep across a filled bar, so progress reads as live. */
+@keyframes cxSheen {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(220%); }
+}
+
+/* A locked row refusing, once. Short and small: annoyance, not punishment. */
+@keyframes cxNudge {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-3px); }
+  75%      { transform: translateX(3px); }
+}
+
+/* --- helpers -------------------------------------------------------------- */
+
+/* Put --i on the element to place it in a stagger. */
+.cx-anim-rise {
+  animation: cxRise var(--cx-dur) var(--cx-ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--cx-stagger));
+}
+
+.cx-anim-card {
+  animation: cxRiseCard var(--cx-dur-slow) var(--cx-ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--cx-stagger));
+}
+
+.cx-anim-pop {
+  animation: cxPop var(--cx-dur-fast) var(--cx-ease-pop) both;
+}
+
+/* Contain the paint of a card that animates, so a reveal never repaints the
+   page around it. */
+.cx-contain {
+  contain: layout paint;
+}
+
+/* --- the one place motion is switched off -------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --cx-dur-fast: 1ms;
+    --cx-dur: 1ms;
+    --cx-dur-slow: 1ms;
+    --cx-stagger: 0ms;
+  }
+
+  .cx-anim-rise,
+  .cx-anim-card,
+  .cx-anim-pop {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

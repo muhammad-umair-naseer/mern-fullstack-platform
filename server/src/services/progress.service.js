@@ -53,6 +53,26 @@ export const computeGates = (userId, course) => {
     .all(course.id);
 
   const done = new Set(completedLessonIds(userId, course.id));
+  const passedTopics = new Set(
+    getDB()
+      .prepare(
+        `SELECT DISTINCT lessonId FROM quiz_attempts
+         WHERE userId = ? AND courseId = ? AND lessonId IS NOT NULL AND passed = 1`
+      )
+      .all(userId, course.id)
+      .map((r) => r.lessonId)
+  );
+
+  const topicQuestionCount = new Map(
+    getDB()
+      .prepare(
+        `SELECT lessonId, COUNT(*) AS n FROM quiz_questions
+         WHERE courseId = ? AND lessonId IS NOT NULL GROUP BY lessonId`
+      )
+      .all(course.id)
+      .map((r) => [r.lessonId, r.n])
+  );
+
   const passedChapters = new Set(
     db
       .prepare(
@@ -101,21 +121,33 @@ export const computeGates = (userId, course) => {
     let previousDone = true;       // within this chapter
     for (const l of chLessons) {
       const unlocked = chapterOpen && previousDone;
+      const questionCount = topicQuestionCount.get(l.id) ?? 0;
+      const quizPassed = passedTopics.has(l.id);
+      const read = done.has(l.id);
+
       lessons[l.id] = {
         unlocked,
+        read,
+        quizQuestionCount: questionCount,
+        quizPassed,
+        // Reading is not enough once a topic has its own check: the quiz is
+        // what stops a learner clicking straight through without engaging.
+        complete: read && (questionCount === 0 || quizPassed),
+        quizUnlocked: unlocked && read,
         reason: unlocked
           ? null
           : chapterOpen
-          ? 'Finish the previous lesson first'
+          ? 'Finish the previous topic first'
           : chapterBlockReason,
       };
-      if (!done.has(l.id)) {
-        previousDone = false;      // everything after this lesson stays locked
+
+      if (!lessons[l.id].complete) {
+        previousDone = false;      // everything after this topic stays locked
         allLessonsDone = false;
       }
     }
 
-    const chapterLessonsDone = chLessons.every((l) => done.has(l.id));
+    const chapterLessonsDone = chLessons.every((l) => lessons[l.id].complete);
     const quizPassed = passedChapters.has(ch.id);
     const quizUnlocked = chapterOpen && chapterLessonsDone && questionCount > 0;
 
@@ -129,14 +161,14 @@ export const computeGates = (userId, course) => {
         ? chapterBlockReason
         : questionCount === 0
         ? 'No quiz for this chapter'
-        : `Complete all ${chLessons.length} lessons in this chapter first`,
+        : `Finish all ${chLessons.length} topics and their quizzes first`,
     };
 
     chapterState.push({
       id: ch.id,
       position: ch.position,
       unlocked: chapterOpen,
-      lessonsDone: chLessons.filter((l) => done.has(l.id)).length,
+      lessonsDone: chLessons.filter((l) => lessons[l.id].complete).length,
       lessonTotal: chLessons.length,
       quizPassed,
       reason: chapterOpen ? null : chapterBlockReason,
@@ -172,3 +204,11 @@ export const computeGates = (userId, course) => {
     },
   };
 };
+
+// Topics that count as finished: read AND (no topic quiz OR its quiz passed).
+// The progress bar reads from here so the percentage and the final-exam gate can
+// never disagree — 100% now genuinely means the exam is open.
+export const finishedLessonIds = (gates) =>
+  Object.entries(gates.lessons)
+    .filter(([, g]) => g.complete)
+    .map(([id]) => Number(id));

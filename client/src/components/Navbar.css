@@ -234,3 +234,11 @@
   .nav-link, .nav-logo-badge { transition: none; }
   .nav-menu { transition: none; }
 }
+
+/* The underline sweep loops forever, which is exactly the kind of motion
+   someone with a vestibular disorder asks the browser to stop. */
+@media (prefers-reduced-motion: reduce) {
+  .navbar::after {
+    animation: none;
+  }
+}

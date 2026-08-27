@@ -8,6 +8,8 @@ import {
 } from '../controllers/catalogue.controller.js';
 import { getLesson, completeLesson } from '../controllers/lesson.controller.js';
 import {
+  getTopicQuiz,
+  submitTopicQuiz,
   getChapterQuiz,
   submitChapterQuiz,
   getFinalExam,
@@ -34,6 +36,8 @@ router.get('/lessons/:id', requireAuth, getLesson);
 router.post('/lessons/:id/complete', requireAuth, completeLesson);
 
 // --- quizzes ---------------------------------------------------------------
+router.get('/quiz/lesson/:lessonId', requireAuth, getTopicQuiz);
+router.post('/quiz/lesson/:lessonId', requireAuth, submitTopicQuiz);
 router.get('/quiz/chapter/:chapterId', requireAuth, getChapterQuiz);
 router.post('/quiz/chapter/:chapterId', requireAuth, submitChapterQuiz);
 

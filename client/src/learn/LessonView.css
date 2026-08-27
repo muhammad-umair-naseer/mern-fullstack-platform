@@ -1,0 +1,329 @@
+/* The reading view.
+ *
+ * A learner spends almost all of their time on this screen, so the motion here
+ * is deliberately quieter than the quiz that sits under it: an arrival short
+ * enough to be over before the eye reaches the first line, prose that settles
+ * in as it is scrolled to, and one hairline reporting how much of the topic has
+ * actually been read.
+ *
+ * Two rules, inherited from motion.css and not negotiable here:
+ *   1. transform and opacity only. The one box-shadow effect is the one-shot
+ *      ring motion.css already provides, on a single small element.
+ *   2. Everything is off under prefers-reduced-motion.
+ */
+
+@import './motion.css';
+
+/* --- the read line -------------------------------------------------------- */
+
+/* Pinned to the very top edge of the sticky header. It answers a different
+   question from the course ProgressBar below it ("how far through this page am
+   I" rather than "how far through the course"), so it is a hairline rather than
+   a second bar competing for the same attention.
+
+   The element is full width at all times and is scaled on X from a custom
+   property the scroll listener writes, so a scroll frame costs a composite and
+   never a layout. */
+.cx-lv-read {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(15, 36, 68, 0.07);
+  pointer-events: none;
+}
+
+.cx-lv-read-fill {
+  display: block;
+  height: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--cx-lv-read, 0));
+  background: linear-gradient(90deg, #f97316, #4f46e5);
+  /* A hair of smoothing so one wheel notch reads as travel rather than a jump.
+     Transform only, so it stays on the compositor. */
+  transition: transform 110ms linear;
+  will-change: transform;
+}
+
+/* --- the article arriving -------------------------------------------------- */
+
+/* Eyebrow, title, meta and body, in that order. Deliberately built on the fast
+   token: the last item is on screen at ~430ms, because this sits in front of
+   reading and anything slower turns into a wait. */
+.cx-lv-in {
+  animation: cxRise var(--cx-dur-fast) var(--cx-ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--cx-stagger));
+}
+
+/* --- prose settling in ----------------------------------------------------- */
+
+/* Note the direction of this: a block is visible by default and the class is
+   added by script, only to blocks that start below the fold. If the script
+   never runs — no IntersectionObserver, reduced motion, an exception — the
+   article is simply all there at full opacity. Nothing is gated on a reveal.
+
+   Opacity resolves on the fast token while the 12px of travel takes the normal
+   one, so a learner scrolling quickly reads text that is already legible while
+   it is still settling. */
+.cx-lv-block {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--cx-dur-fast) var(--cx-ease-out),
+              transform var(--cx-dur) var(--cx-ease-out);
+}
+
+.cx-lv-block.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- the footer ------------------------------------------------------------ */
+
+/* "I've read this" acknowledging the press. The button already carries a
+   `transition` utility that covers transform, so only the states are declared
+   here. */
+.cx-lv-press:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* The click itself resolves against the network, so the press is also played
+   as a one-shot: the button gives way and comes back whether or not the save
+   has answered yet. */
+.cx-lv-press.is-pressing {
+  animation: cxLessonPress 260ms var(--cx-ease-pop) both;
+}
+
+@keyframes cxLessonPress {
+  0%   { transform: none; }
+  40%  { transform: scale(0.955); }
+  100% { transform: none; }
+}
+
+/* The footer swapping to its next state — read, then gated on the check, then
+   able to continue. Keyed remount replays this, so the new control rises in
+   instead of appearing mid-sentence. */
+.cx-lv-swap {
+  animation: cxRise var(--cx-dur-fast) var(--cx-ease-out) both;
+}
+
+/* A single ring on the continue button, and only when the learner just earned
+   it in this session. Landing on a topic that was already finished gets no
+   class at all, so a completed topic reads as settled rather than replaying a
+   celebration the learner has seen before. */
+.cx-lv-celebrate {
+  animation: cxPulseRingGreen 1.5s var(--cx-ease-out) 1 both;
+}
+
+/* --- off ------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-lv-in,
+  .cx-lv-swap,
+  .cx-lv-celebrate,
+  .cx-lv-press.is-pressing {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .cx-lv-press:active:not(:disabled) {
+    transform: none;
+  }
+
+  /* The read line still reports position — it is information, not decoration —
+     it just stops easing towards it. */
+  .cx-lv-read-fill {
+    transition: none;
+  }
+
+  .cx-lv-block,
+  .cx-lv-block.is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ===========================================================================
+   The reading surface.
+   ===========================================================================
+   The theme applies a hairline border and a shadow to every .bg-white element,
+   which is right for a card in a grid and wrong for a page of prose: it drew a
+   box around main, around the article, and around the body wrapper, each one a
+   few pixels from the text. The reading view therefore names its own surfaces
+   instead of borrowing that utility.
+
+   The proportions here come from long-form reading rather than from the rest of
+   the app: a measure near 68 characters, 18px type on a 1.75 line, and vertical
+   rhythm set in ems so it scales with the type rather than drifting from it. */
+
+.cx-lv {
+  /* A faint warm ground so the sheet reads as a sheet. Pure white on pure white
+     leaves the column edge doing the work, which is what looked cheap. */
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(249, 115, 22, 0.045), transparent 60%),
+    #f6f7f9;
+  padding-bottom: 96px;
+}
+
+/* --- the sticky bar ------------------------------------------------------- */
+
+.cx-lv-bar {
+  position: sticky;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid rgba(15, 36, 68, 0.08);
+}
+
+/* --- the sheet ------------------------------------------------------------ */
+
+.cx-lv-sheet {
+  max-width: 46rem;
+  margin: 40px auto 0;
+  background: #fff;
+  border-radius: 20px;
+  /* One soft shadow rather than a hairline. A border this close to text reads
+     as a table cell; a shadow reads as paper. */
+  box-shadow:
+    0 1px 2px rgba(13, 36, 64, 0.04),
+    0 24px 60px -30px rgba(13, 36, 64, 0.28);
+  padding: 60px 64px 48px;
+}
+
+@media (max-width: 720px) {
+  .cx-lv-sheet {
+    margin-top: 0;
+    border-radius: 0;
+    padding: 36px 22px 40px;
+    box-shadow: none;
+  }
+  .cx-lv { padding-bottom: 48px; }
+}
+
+/* --- the header block ----------------------------------------------------- */
+
+.cx-lv-head {
+  padding-bottom: 30px;
+  margin-bottom: 38px;
+  border-bottom: 1px solid rgba(15, 36, 68, 0.08);
+}
+
+.cx-lv-eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #ea580c;
+}
+
+.cx-lv-title {
+  margin: 14px 0 0;
+  font-size: clamp(2rem, 4.4vw, 2.7rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+  color: #0b1a30;
+  text-wrap: balance;
+}
+
+.cx-lv-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 16px 0 0;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #5a6e8c;
+}
+
+.cx-lv-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ea580c;
+  flex: 0 0 7px;
+}
+
+.cx-lv-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #b6c2d2;
+  flex: 0 0 3px;
+}
+
+/* --- the prose ------------------------------------------------------------ */
+
+/* Reading size, not UI size. 16px is right for a control and too small for ten
+   minutes of continuous text. */
+.cx-lv-body .cx-md {
+  font-size: 1.075rem;
+}
+
+.cx-lv-body .cx-md p,
+.cx-lv-body .cx-md li {
+  line-height: 1.78;
+  color: #17263c;
+}
+
+.cx-lv-body .cx-md p { margin: 0 0 1.35em; }
+
+/* The opening paragraph carries the promise of the topic, so it is set a step
+   up and given room. */
+.cx-lv-body .cx-md > p:first-child {
+  font-size: 1.2rem;
+  line-height: 1.66;
+  color: #24354f;
+  margin-bottom: 1.6em;
+}
+
+/* Space above a heading, not below it: a heading belongs to what follows. */
+.cx-lv-body .cx-md h2,
+.cx-lv-body .cx-md h3 {
+  letter-spacing: -0.015em;
+  color: #0b1a30;
+  margin-top: 2.4em;
+  margin-bottom: 0.7em;
+  scroll-margin-top: 96px;
+}
+
+.cx-lv-body .cx-md h2 { font-size: 1.6rem; }
+.cx-lv-body .cx-md h3 { font-size: 1.28rem; }
+
+.cx-lv-body .cx-md > *:first-child { margin-top: 0; }
+
+.cx-lv-body .cx-md ul,
+.cx-lv-body .cx-md ol { margin: 0 0 1.35em; padding-left: 1.3em; }
+.cx-lv-body .cx-md li { margin: 0.4em 0; padding-left: 0.2em; }
+
+.cx-lv-body .cx-md strong { color: #0b1a30; }
+
+/* A quoted aside is the "watch out for this" of a lesson, so it is set apart
+   rather than merely indented. */
+.cx-lv-body .cx-md blockquote {
+  margin: 1.7em 0;
+  padding: 2px 0 2px 20px;
+  border-left: 3px solid #f97316;
+  background: none;
+  border-radius: 0;
+  font-style: normal;
+  color: #24354f;
+}
+
+.cx-lv-body .cx-md hr {
+  margin: 2.6em 0;
+  border: 0;
+  border-top: 1px solid rgba(15, 36, 68, 0.1);
+}
+
+/* --- the footer ----------------------------------------------------------- */
+
+.cx-lv-foot {
+  margin-top: 52px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(15, 36, 68, 0.08);
+}
