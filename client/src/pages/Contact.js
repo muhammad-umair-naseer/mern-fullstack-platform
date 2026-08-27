@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Sparkles, Clock, ShieldCheck, Zap } from 'lucide-react';
 import API_BASE_URL from '../config';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import Seo from '../seo/Seo';
+import { organization, breadcrumbs } from '../seo/schema';
 
 const Contact = () => {
   const introRef = useIntroTimeline();
@@ -59,6 +61,12 @@ const Contact = () => {
 
   return (
     <main className="relative min-h-screen overflow-hidden text-slate-900">
+      <Seo
+        title="Contact Us"
+        description="Start a project, ask about training, or apply for an internship. Tell us what you are building and the Cortexis engineering team in Islamabad will reply."
+        path="/contact"
+        schema={[organization(), breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }])]}
+      />
       {/* Floating glows */}
       <div aria-hidden="true" className="pointer-events-none absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-brand-accent/20 blur-3xl" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-0 right-10 h-80 w-80 rounded-full bg-brand-magenta/15 blur-3xl" />

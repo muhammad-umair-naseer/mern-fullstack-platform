@@ -18,6 +18,8 @@ import pythonImg from "../assets/services/python-development.webp";
 import aimlImg from "../assets/services/ai-ml-solutions.webp";
 import wordpressImg from "../assets/services/wordpress-development.webp";
 import cppImg from "../assets/services/cpp-development.webp";
+import Seo from '../seo/Seo';
+import { organization, breadcrumbs } from '../seo/schema';
 
 
 
@@ -204,6 +206,12 @@ export default function Services() {
 
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800 pt-0 mt-0 [padding-block-start:0!important] [margin-block-start:0!important]">
+      <Seo
+        title="Software Development and Consulting Services"
+        description="Web and mobile development, AI and automation, cloud and DevOps, UI/UX design and technical training, delivered by an Islamabad based engineering team."
+        path="/services"
+        schema={[organization(), breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Services', path: '/services' }])]}
+      />
       {/* Hero with absolute gradient to cover any header gap */}
       <section ref={introRef} id="services-hero" className="relative isolate -translate-y-px pt-[env(safe-area-inset-top)]"> <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700" /> <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(255,255,255,0.08),transparent)]" aria-hidden="true" /> <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center text-white min-h-[clamp(24rem,40vh,34rem)] md:min-h-[clamp(30rem,48vh,40rem)] py-12"> {/* content */}
           <div>

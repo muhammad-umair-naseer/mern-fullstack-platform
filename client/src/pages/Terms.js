@@ -135,6 +135,7 @@ export default function Terms() {
   return (
     <LegalPage
       kind="terms"
+      seo={{ title: "Terms and Conditions", description: "The agreement governing your use of the Cortexis Solution Hub website, free courses, internships and services.", path: "/terms" }}
       title={[{ text: 'Terms & ' }, { text: 'Conditions', grad: true }]}
       subtitle="The agreement that governs your use of Cortexis Solution Hub’s website, courses, internships, and services. Please read it carefully."
       lastUpdated="July 3, 2026"

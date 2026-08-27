@@ -1,3 +1,12 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Private, per user, or thin pages. Crawling them wastes crawl budget and can
+# surface a half rendered dashboard in results.
+Disallow: /dashboard
+Disallow: /login
+Disallow: /signup
+Disallow: /certificate/
+
+Sitemap: https://cortexissolutionhub.com/sitemap.xml

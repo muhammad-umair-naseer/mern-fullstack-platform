@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowUp, ShieldCheck, FileText, Mail, ArrowRight } from 'lucide-react';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
+import Seo from '../seo/Seo';
+import { breadcrumbs } from '../seo/schema';
 
 const NAV_OFFSET = 96; // clears the 72px sticky navbar + breathing room
 
@@ -102,7 +104,7 @@ function Block({ block }) {
   return <p className="my-3 text-slate-600 leading-relaxed">{block.p}</p>;
 }
 
-export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated, sections, contactHref = '/contact', crossLink }) {
+export default function LegalPage({ seo, kind = 'terms', title, subtitle, lastUpdated, sections, contactHref = '/contact', crossLink }) {
   const cross = crossLink || {
     to: kind === 'privacy' ? '/terms' : '/privacy',
     label: kind === 'privacy' ? 'Terms & Conditions' : 'Privacy Policy',
@@ -165,6 +167,17 @@ export default function LegalPage({ kind = 'terms', title, subtitle, lastUpdated
 
   return (
     <main className="relative text-slate-900">
+      {seo && (
+        <Seo
+          title={seo.title}
+          description={seo.description}
+          path={seo.path}
+          schema={breadcrumbs([
+            { name: 'Home', path: '/' },
+            { name: seo.title, path: seo.path },
+          ])}
+        />
+      )}
       {/* Reading-progress bar, sits above the navbar */}
       <div className="fixed inset-x-0 top-0 z-[1000] h-[3px] bg-transparent" aria-hidden="true">
         <div

@@ -5,6 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import { useIntroTimeline } from "../hooks/useIntroTimeline";
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
 import { useGridReveal } from "../hooks/useGridReveal";
+import Seo from "../seo/Seo";
+import { breadcrumbs, itemList } from "../seo/schema";
 
 import fullstackImg from "../assets/courses/full-stack-web.webp";
 import frontendImg from "../assets/courses/frontend-engineering.webp";
@@ -156,6 +158,20 @@ const Courses = () => {
 
   return (
     <main className="bg-gray-50 text-gray-800">
+      <Seo
+        title="Free Online Courses with Certificates"
+        description="Learn web development, Python, AI, cloud, cybersecurity and design free. Twelve chapters, quizzes on every topic, and a verifiable certificate. No fees, start any time."
+        path="/courses"
+        schema={[
+          breadcrumbs([
+            { name: "Home", path: "/" },
+            { name: "Courses", path: "/courses" },
+          ]),
+          // Only describe the courses actually rendered: markup that claims
+          // more than the page shows is what gets structured data penalised.
+          ...(courses.length ? [itemList(courses, (c) => `/learn/${c.slug}`)] : []),
+        ]}
+      />
       <header className="relative isolate">
         <div className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 text-white">
           <div

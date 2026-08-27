@@ -8,6 +8,8 @@ import aboutMission from "../assets/our mission About.webp";
 import aboutVision from "../assets/our vision About.webp";
 import aboutPromise from "../assets/our promise About.webp";
 import aboutStory from "../assets/our story About.webp";
+import Seo from '../seo/Seo';
+import { organization, breadcrumbs } from '../seo/schema';
 
 const stats = [
   { icon: Award, number: "4+", label: "Years of Excellence" },
@@ -30,6 +32,12 @@ const About = () => {
 
   return (
     <main className="relative text-slate-900">
+      <Seo
+        title="About Us"
+        description="Who Cortexis Solution Hub is: a software, training and consulting company in Islamabad building products, teaching engineers, and running paid internships."
+        path="/about"
+        schema={[organization(), breadcrumbs([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])]}
+      />
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section
         ref={introRef}

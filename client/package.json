@@ -25,9 +25,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run sitemap && react-scripts build && npm run prerender",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "sitemap": "node scripts/sitemap.mjs",
+    "prerender": "node scripts/prerender.mjs"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +54,7 @@
     "@tailwindcss/typography": "^0.5.17",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
+    "puppeteer-core": "^25.9.0",
     "tailwindcss": "^3.4.17"
   }
 }

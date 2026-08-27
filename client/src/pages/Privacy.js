@@ -143,6 +143,7 @@ export default function Privacy() {
   return (
     <LegalPage
       kind="privacy"
+      seo={{ title: "Privacy Policy", description: "How Cortexis Solution Hub collects, uses and protects your personal data across our website, courses and internship applications.", path: "/privacy" }}
       title={[{ text: 'Privacy ' }, { text: 'Policy', grad: true }]}
       subtitle="How Cortexis Solution Hub collects, uses, and protects your personal information across our website, courses, and programs."
       lastUpdated="July 3, 2026"

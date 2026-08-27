@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import API_BASE_URL from "../config";
 import "./Internships.css";
+import Seo from '../seo/Seo';
+import { breadcrumbs } from '../seo/schema';
 
 const INTERNSHIP_TRACKS = [
   { id: "mern", title: "Full-Stack Web Development (MERN Stack)", category: "Web & Full-Stack" },
@@ -197,6 +199,12 @@ export default function Internships() {
 
   return (
     <main className="cx-intern-page">
+      <Seo
+        title="Paid Software Internships in Islamabad"
+        description="Apply for a Cortexis internship in web development, mobile, AI, design or QA. Real projects, mentorship from working engineers, and a certificate on completion."
+        path="/internships"
+        schema={breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Internships', path: '/internships' }])}
+      />
       {/* Ambient background glows for glassmorphism */}
       <div className="cx-intern-glow-1" aria-hidden="true" />
       <div className="cx-intern-glow-2" aria-hidden="true" />

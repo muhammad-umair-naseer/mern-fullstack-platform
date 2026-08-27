@@ -4,6 +4,8 @@ import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import ProgressBar from '../learn/ProgressBar';
 import '../learn/CourseOutline.css';
+import Seo from '../seo/Seo';
+import { course as courseSchema, breadcrumbs } from '../seo/schema';
 
 /**
  * Counts from zero up to `target` once, then stays there.
@@ -157,6 +159,24 @@ const CourseOutline = () => {
 
   return (
     <main className="text-slate-800">
+      <Seo
+        title={course.title}
+        description={
+          // The course's own summary is written for a human and is the right
+          // length for a result snippet, so it beats anything generic.
+          course.summary ||
+          `${course.title}: ${course.chapters.length} chapters, free, with a certificate.`
+        }
+        path={`/learn/${slug}`}
+        schema={[
+          courseSchema(course),
+          breadcrumbs([
+            { name: 'Home', path: '/' },
+            { name: 'Courses', path: '/courses' },
+            { name: course.title, path: `/learn/${slug}` },
+          ]),
+        ]}
+      />
       <header className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 text-white">
         <div className="max-w-5xl mx-auto px-6 py-14">
           <Link to="/courses" className="text-indigo-100/80 text-sm hover:text-white">

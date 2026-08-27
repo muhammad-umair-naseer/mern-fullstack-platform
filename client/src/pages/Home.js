@@ -6,10 +6,18 @@ import ServicesPreview from '../components/ServicesPreview';
 import ProcessSection from '../components/ProcessSection';
 import CtaBanner from '../components/CtaBanner';
 import Testimonials from '../components/Testimonials';
+import Seo from '../seo/Seo';
+import { organization, website } from '../seo/schema';
 
 const Home = () => {
   return (
     <div className="home-page-container">
+      <Seo
+        title="Cortexis Solution Hub | Software, Training and Consulting in Islamabad" bare
+        description="Custom web, mobile and AI software built in Islamabad, plus free online courses with certificates and paid internships. Talk to the team that writes the code."
+        path="/"
+        schema={[organization(), website()]}
+      />
       <Hero />
       <TechMarquee />
       <ValueProposition />
