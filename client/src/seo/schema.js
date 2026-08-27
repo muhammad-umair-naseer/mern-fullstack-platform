@@ -99,3 +99,31 @@ export const faq = (pairs) => ({
     acceptedAnswer: { '@type': 'Answer', text: a },
   })),
 });
+
+/**
+ * A working web tool.
+ *
+ * SoftwareApplication is the right type for a browser based utility, and the
+ * zero price offer is what marks it as genuinely free rather than freemium.
+ * Only use this once the tool actually runs: describing a page as an
+ * application when it is a "coming soon" notice is exactly the mismatch that
+ * gets structured data ignored or penalised.
+ */
+export const softwareApplication = (tool, categoryLabel) => ({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  '@id': absolute(`/tools/${tool.slug}#app`),
+  name: tool.name,
+  description: tool.description,
+  url: absolute(`/tools/${tool.slug}`),
+  applicationCategory: categoryLabel ? `${categoryLabel} tool` : 'Utility',
+  operatingSystem: 'Any, runs in a web browser',
+  browserRequirements: 'Requires JavaScript',
+  isAccessibleForFree: true,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'PKR',
+  },
+  provider: { '@id': `${SITE_URL}/#organization` },
+});

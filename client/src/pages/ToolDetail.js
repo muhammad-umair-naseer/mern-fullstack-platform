@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY } from '../data/tools';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import Seo from '../seo/Seo';
-import { breadcrumbs } from '../seo/schema';
+import { breadcrumbs, softwareApplication } from '../seo/schema';
 
 const TONE = {
   emerald: 'bg-emerald-500/12 text-emerald-700 ring-emerald-600/25',
@@ -56,11 +56,15 @@ const ToolDetail = () => {
         }
         path={`/tools/${tool.slug}`}
         noindex={!live}
-        schema={breadcrumbs([
-          { name: 'Home', path: '/' },
-          { name: 'Free Tools', path: '/tools' },
-          { name: tool.name, path: `/tools/${tool.slug}` },
-        ])}
+        schema={[
+          breadcrumbs([
+            { name: 'Home', path: '/' },
+            { name: 'Free Tools', path: '/tools' },
+            { name: tool.name, path: `/tools/${tool.slug}` },
+          ]),
+          // Only claim to be an application once the tool actually runs.
+          ...(live ? [softwareApplication(tool, category.label)] : []),
+        ]}
       />
       <header className="relative isolate">
         <div className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700">

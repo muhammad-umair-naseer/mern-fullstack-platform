@@ -25,13 +25,20 @@ export const COMPLEXITY = {
   5: { label: 'Advanced', tone: 'crimson' },
 };
 
-const t = (id, name, category, complexity, description) => ({
+/**
+ * @param status  Omit while the tool is still in design. Set to 'live' once it
+ *   actually works: that one word flips the page from noindex to indexed, adds
+ *   its SoftwareApplication markup, and puts it in the sitemap on the next
+ *   build. Nothing else has to be remembered.
+ */
+const t = (id, name, category, complexity, description, status) => ({
   id,
   slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   name,
   category,
   complexity,
   description,
+  ...(status ? { status } : {}),
 });
 
 export const TOOLS = [
