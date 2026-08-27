@@ -2,16 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquareText, Clock, Sparkles, ArrowRight, ShieldCheck, Zap, Bot } from 'lucide-react';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
-import './WhatsAppBot.css';
+import './YourBot.css';
 
 const chips = [
   { icon: Bot, label: 'AI Workflow Automation' },
-  { icon: MessageSquareText, label: 'Smart WhatsApp Replies' },
+  { icon: MessageSquareText, label: 'Smart WhatsApp & Instagram Replies' },
   { icon: Clock, label: '24/7 Uninterrupted Operations' },
   { icon: Sparkles, label: 'Custom Brand Voice' },
 ];
 
-export default function WhatsAppBot() {
+export default function YourBot() {
   const ref = useIntroTimeline('[data-intro]', { y: 26, stagger: 0.1 });
 
   return (
@@ -43,7 +43,7 @@ export default function WhatsAppBot() {
           >
             Cortexis{' '}
             <span className="bg-gradient-to-r from-[#ff6b00] via-[#f97316] to-[#ea580c] bg-clip-text text-transparent font-black">
-              Automation Tools
+              Your Bot
             </span>
           </h1>
           <p data-intro className="mt-3 font-mono text-xs uppercase tracking-[0.22em] text-orange-700 font-bold">
@@ -51,7 +51,7 @@ export default function WhatsAppBot() {
           </p>
 
           <p data-intro className="mt-6 max-w-xl text-lg leading-relaxed text-black font-medium">
-            Supercharge your business with intelligent AI automation, smart WhatsApp customer agents, and automated workflows that run 24/7. <span className="font-bold text-orange-600">Save hundreds of hours every month.</span>
+            Supercharge your business with intelligent AI automation, smart WhatsApp &amp; Instagram customer agents, and automated workflows that run 24/7. <span className="font-bold text-orange-600">Save hundreds of hours every month.</span>
           </p>
 
           <div data-intro className="mt-7 flex flex-wrap gap-2.5">
@@ -74,7 +74,7 @@ export default function WhatsAppBot() {
               Get early access <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              to="/whatsapp-bot/privacy"
+              to="/your-bot/privacy"
               className="btn-secondary inline-flex items-center gap-2 rounded-full px-6 py-3 font-bold"
             >
               <ShieldCheck className="h-4 w-4" /> Data privacy &amp; security
@@ -84,14 +84,17 @@ export default function WhatsAppBot() {
 
         {/* ── Chat mockup ──────────────────────────────────────────────── */}
         <div data-intro className="wa-stage">
-          <div className="wa-mock shadow-2xl border border-slate-200" role="img" aria-label="Preview of a WhatsApp conversation answered automatically by the Cortexis assistant">
+          <div className="wa-mock shadow-2xl border border-slate-200" role="img" aria-label="Preview of a customer conversation answered automatically by the Cortexis assistant across WhatsApp and Instagram">
             <div className="wa-mock-header">
               <span className="wa-avatar" aria-hidden="true">🤖</span>
               <div className="wa-meta">
                 <p className="wa-name">Cortexis AI Assistant</p>
                 <p className="wa-status"><span className="wa-online-dot" /> online</p>
               </div>
-              <span className="wa-badge">Automation</span>
+              <span className="wa-badges">
+                <span className="wa-badge wa-badge-whatsapp">WhatsApp</span>
+                <span className="wa-badge wa-badge-instagram">Instagram</span>
+              </span>
             </div>
             <div className="wa-body">
               <div className="wa-bubble wa-in">Hi! Can you automate our lead qualification and client onboarding? 🚀</div>
