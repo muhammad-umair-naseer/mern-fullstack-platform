@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY } from '../data/tools';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import Seo from '../seo/Seo';
+import { breadcrumbs } from '../seo/schema';
 
 const TONE = {
   emerald: 'bg-emerald-500/12 text-emerald-700 ring-emerald-600/25',
@@ -36,8 +38,30 @@ const ToolDetail = () => {
   const meta = COMPLEXITY[tool.complexity];
   const related = toolsIn(tool.category).filter((x) => x.id !== tool.id).slice(0, 6);
 
+  // A tool still in design is one line of description plus a notice saying so.
+  // Sixty two pages of that is thin content: asking Google to index them would
+  // compete for queries the page cannot satisfy and drag on the quality signal
+  // for the whole site. They stay out of the index until the tool works, and
+  // `follow` keeps the internal links counting.
+  const live = Boolean(tool.status === 'live' || tool.url);
+
   return (
     <main className="text-slate-800">
+      <Seo
+        title={`${tool.name} — Free ${category.label} Tool`}
+        description={
+          live
+            ? `${tool.description} Free, no account needed and no watermark.`
+            : `${tool.description} Planned as a free Cortexis tool, currently in design.`
+        }
+        path={`/tools/${tool.slug}`}
+        noindex={!live}
+        schema={breadcrumbs([
+          { name: 'Home', path: '/' },
+          { name: 'Free Tools', path: '/tools' },
+          { name: tool.name, path: `/tools/${tool.slug}` },
+        ])}
+      />
       <header className="relative isolate">
         <div className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700">
           <div ref={introRef} className="max-w-5xl mx-auto px-6 py-16 md:py-20">

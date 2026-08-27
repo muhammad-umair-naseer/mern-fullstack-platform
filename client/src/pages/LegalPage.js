@@ -172,6 +172,7 @@ export default function LegalPage({ seo, kind = 'terms', title, subtitle, lastUp
           title={seo.title}
           description={seo.description}
           path={seo.path}
+          noindex={Boolean(seo.noindex)}
           schema={breadcrumbs([
             { name: 'Home', path: '/' },
             { name: seo.title, path: seo.path },

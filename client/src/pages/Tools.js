@@ -8,7 +8,7 @@ import '../learn/ToolCard.css';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import { useGridReveal } from '../hooks/useGridReveal';
 import Seo from '../seo/Seo';
-import { breadcrumbs } from '../seo/schema';
+import { breadcrumbs, itemList } from '../seo/schema';
 
 const Tools = () => {
   const introRef = useIntroTimeline();
@@ -22,7 +22,16 @@ const Tools = () => {
         title="Free Online Tools for Developers and Designers"
         description="A catalogue of free tools for developers, designers and marketers. Converters, formatters, generators and calculators, all free and with no sign up."
         path="/tools"
-        schema={breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Free Tools', path: '/tools' }])}
+        schema={[
+          breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Free Tools', path: '/tools' }]),
+          // The catalogue itself is real content: 62 named utilities across 7
+          // categories. The individual tool pages are not indexed until they
+          // work, so this page is what carries them.
+          itemList(
+            TOOLS.map((t) => ({ title: t.name, slug: t.slug })),
+            (t) => `/tools/${t.slug}`
+          ),
+        ]}
       />
       <header className="relative isolate">
         <div className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700">

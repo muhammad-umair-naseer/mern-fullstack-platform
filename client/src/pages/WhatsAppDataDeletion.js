@@ -82,6 +82,7 @@ const sections = [
 export default function WhatsAppDataDeletion() {
   return (
     <LegalPage
+      seo={{ title: "WhatsApp Bot Data Deletion", description: "How to request deletion of your data from the Cortexis WhatsApp automation service.", path: "/whatsapp-bot/data-deletion", noindex: true }}
       kind="privacy"
       title={[{ text: 'Data ' }, { text: 'Deletion', grad: true }]}
       subtitle="How to delete your Cortexis WhatsApp Bot account and the data associated with it, including WhatsApp Business Platform data."

@@ -152,6 +152,7 @@ const sections = [
 export default function WhatsAppTerms() {
   return (
     <LegalPage
+      seo={{ title: "WhatsApp Bot Terms of Service", description: "The terms governing use of the Cortexis WhatsApp automation service.", path: "/whatsapp-bot/terms", noindex: true }}
       kind="terms"
       title={[{ text: 'Terms of ' }, { text: 'Service', grad: true }]}
       subtitle="The terms that govern your use of Cortexis WhatsApp Bot and its integration with the WhatsApp Business Platform."

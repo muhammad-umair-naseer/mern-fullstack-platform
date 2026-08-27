@@ -195,6 +195,7 @@ const sections = [
 export default function WhatsAppPrivacy() {
   return (
     <LegalPage
+      seo={{ title: "WhatsApp Bot Privacy Policy", description: "How the Cortexis WhatsApp automation service collects, uses and deletes message data.", path: "/whatsapp-bot/privacy", noindex: true }}
       kind="privacy"
       title={[{ text: 'Privacy ' }, { text: 'Policy', grad: true }]}
       subtitle="How Cortexis WhatsApp Bot collects, uses, and protects your data, including WhatsApp Business Platform data."

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { MessageSquareText, Clock, Sparkles, ArrowRight, ShieldCheck, Zap, Bot } from 'lucide-react';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import './WhatsAppBot.css';
+import Seo from '../seo/Seo';
+import { organization, breadcrumbs } from '../seo/schema';
 
 const chips = [
   { icon: Bot, label: 'AI Workflow Automation' },
@@ -16,6 +18,28 @@ export default function WhatsAppBot() {
 
   return (
     <main className="relative overflow-hidden bg-white text-slate-900 min-h-[calc(100vh-76px)]">
+      <Seo
+        title="WhatsApp Automation and AI Chatbots for Business"
+        description="Automate lead qualification, client onboarding and support on WhatsApp. A custom AI assistant that answers instantly, books meetings, and hands real buyers to your team."
+        path="/whatsapp-bot"
+        schema={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: 'WhatsApp Automation and AI Chatbots',
+            serviceType: 'Business process automation',
+            provider: { '@id': 'https://cortexissolutionhub.com/#organization' },
+            areaServed: 'PK',
+            description:
+              'Custom WhatsApp AI assistants that qualify leads, onboard clients and answer support questions automatically.',
+          },
+          organization(),
+          breadcrumbs([
+            { name: 'Home', path: '/' },
+            { name: 'Automation Tools', path: '/whatsapp-bot' },
+          ]),
+        ]}
+      />
       {/* Floating glows */}
       <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-20 h-80 w-80 rounded-full bg-orange-500/10 blur-3xl animate-blob-slow" />
       <div aria-hidden="true" className="pointer-events-none absolute top-1/3 -right-16 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl animate-blob" />

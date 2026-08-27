@@ -28,6 +28,7 @@ const STATIC = [
   { path: '/courses', priority: '0.9', changefreq: 'weekly' },
   { path: '/internships', priority: '0.8', changefreq: 'weekly' },
   { path: '/tools', priority: '0.8', changefreq: 'monthly' },
+  { path: '/whatsapp-bot', priority: '0.8', changefreq: 'monthly' },
   { path: '/about', priority: '0.6', changefreq: 'yearly' },
   { path: '/contact', priority: '0.6', changefreq: 'yearly' },
   { path: '/terms', priority: '0.2', changefreq: 'yearly' },
@@ -38,6 +39,15 @@ const STATIC = [
 // everything under a lesson or quiz. They are either private, per user, or
 // thin duplicates, and listing them wastes crawl budget on pages that will
 // never rank.
+//
+// Also excluded: the 62 /tools/:slug pages while they are still in design.
+// Each is a name, a one line description and a notice saying the tool is not
+// built. Sixty two pages of that is thin content, and submitting them asks
+// Google to rank pages that cannot answer the query. They are added below
+// automatically as each tool is marked live.
+//
+// The WhatsApp legal pages are excluded too: Meta requires them to exist, but
+// three pages of boilerplate dilute what the site is about.
 
 const iso = (d) => new Date(d).toISOString().slice(0, 10);
 
@@ -52,7 +62,15 @@ for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
   });
 }
 
-const urls = [...STATIC, ...courses];
+// A tool joins the sitemap the moment it actually works.
+const { TOOLS } = await import(resolve(HERE, '../src/data/tools.js'));
+const liveTools = TOOLS.filter((t) => t.status === 'live' || t.url).map((t) => ({
+  path: `/tools/${t.slug}`,
+  priority: '0.7',
+  changefreq: 'monthly',
+}));
+
+const urls = [...STATIC, ...courses, ...liveTools];
 const today = iso(Date.now());
 
 const xml = [
@@ -73,4 +91,7 @@ const xml = [
 ].join('\n');
 
 writeFileSync(OUT, xml);
-console.log(`sitemap.xml written: ${urls.length} urls (${courses.length} courses) at ${SITE_URL}`);
+console.log(
+  `sitemap.xml written: ${urls.length} urls — ${courses.length} courses, ${liveTools.length} live tools ` +
+  `(${TOOLS.length - liveTools.length} tools still in design and correctly excluded) at ${SITE_URL}`
+);
