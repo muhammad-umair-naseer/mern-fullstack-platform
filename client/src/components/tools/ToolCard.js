@@ -11,20 +11,41 @@ import ToolIcon from '../../learn/ToolIcon';
  * enough — no custom comparator needed.
  */
 const ToolCard = ({ tool }) => (
-  <Link to={`/tools/${tool.slug}`} data-card className="cx-tool bg-white p-5 shadow-card flex flex-col">
+  <Link
+    to={`/tools/${tool.slug}`}
+    data-card
+    className={`cx-tool bg-white p-5 shadow-card flex flex-col relative transition-all duration-300 ${
+      tool.isLive ? 'border-orange-500/40 ring-1 ring-orange-500/20 hover:border-orange-500 hover:shadow-orange-500/10' : ''
+    }`}
+  >
     <span className="cx-tool-wash" aria-hidden="true" />
 
+    {tool.isLive && (
+      <span className="absolute top-4 right-4 text-[10px] font-extrabold tracking-wider px-2 py-0.5 rounded-full bg-orange-500 text-white shadow-sm flex items-center gap-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+        LIVE TOOL
+      </span>
+    )}
+
     <div className="relative flex items-start gap-3">
-      <span className="cx-tool-icon grid place-items-center h-10 w-10 shrink-0 rounded-xl bg-indigo-500/10 text-indigo-600">
+      <span
+        className={`cx-tool-icon grid place-items-center h-10 w-10 shrink-0 rounded-xl ${
+          tool.isLive ? 'bg-orange-500/10 text-orange-600' : 'bg-indigo-500/10 text-indigo-600'
+        }`}
+      >
         <ToolIcon category={tool.category} className="h-5 w-5" />
       </span>
-      <h3 className="text-base font-semibold text-slate-900 leading-snug pt-1.5">{tool.name}</h3>
+      <h3 className="text-base font-semibold text-slate-900 leading-snug pt-1.5 pr-14">{tool.name}</h3>
     </div>
 
     <p className="relative mt-3 text-sm text-slate-600 flex-1">{tool.description}</p>
 
-    <span className="relative mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600">
-      Open tool
+    <span
+      className={`relative mt-4 inline-flex items-center gap-1.5 text-sm font-bold ${
+        tool.isLive ? 'text-orange-600' : 'text-indigo-600'
+      }`}
+    >
+      {tool.isLive ? 'Launch Tool' : 'Open tool'}
       <span className="cx-tool-arrow" aria-hidden="true">→</span>
     </span>
   </Link>

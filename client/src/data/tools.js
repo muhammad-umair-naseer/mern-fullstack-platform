@@ -25,20 +25,21 @@ export const COMPLEXITY = {
   5: { label: 'Advanced', tone: 'crimson' },
 };
 
-const t = (id, name, category, complexity, description) => ({
+const t = (id, name, category, complexity, description, isLive = false) => ({
   id,
   slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   name,
   category,
   complexity,
   description,
+  isLive,
 });
 
 export const TOOLS = [
   // ---------------------------------------------------------------- PDF
   t(1, 'PDF ↔ Word', 'pdf', 5, 'Convert a PDF into an editable DOC or DOCX, and turn Word files back into PDF.'),
-  t(3, 'PDF Compressor', 'pdf', 3, 'Reduce PDF file size while preserving as much quality as possible.'),
-  t(5, 'PDF Merger', 'pdf', 2, 'Combine several PDF files into one document, in the order you choose.'),
+  t(3, 'PDF Compressor', 'pdf', 3, 'Reduce PDF file size while preserving as much quality as possible.', true),
+  t(5, 'PDF Merger', 'pdf', 2, 'Combine several PDF files into one document, in the order you choose.', true),
   t(7, 'PDF Splitter', 'pdf', 2, 'Divide a single PDF into multiple smaller documents.'),
   t(9, 'PDF OCR', 'pdf', 5, 'Extract selectable, searchable text from a scanned or image-based PDF.'),
   t(11, 'PDF → Excel', 'pdf', 5, 'Pull tables and structured data out of a PDF into a spreadsheet.'),

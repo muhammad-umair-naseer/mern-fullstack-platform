@@ -63,3 +63,7 @@ yarn.lock
 # SQLite write-ahead log sidecars
 *.db-wal
 *.db-shm
+
+# Large test/dummy files
+dummy-500MB.pdf
+*.dummy.pdf
