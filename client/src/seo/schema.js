@@ -33,7 +33,6 @@ export const organization = () => ({
     name: `${SITE.registration.authorityShort} Corporate Unique Identification Number`,
     value: SITE.registration.cuin,
   },
-  sameAs: [SITE.registration.verifyUrl],
 });
 
 export const website = () => ({

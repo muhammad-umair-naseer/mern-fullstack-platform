@@ -7,155 +7,14 @@ import { useModalIntro } from '../hooks/useModalIntro';
 
 
 import heroImg from "../assets/services/services-hero.webp";
-import customSoftwareImg from "../assets/services/custom-software-development.webp";
-import aiAutomationImg from "../assets/services/ai-automation.webp";
-import saasImg from "../assets/services/saas-platform-development.webp";
-import webImg from "../assets/services/web-development.webp";
-import mobileImg from "../assets/services/mobile-app-development.webp";
-import uiuxImg from "../assets/services/ui-ux-design.webp";
-import marketingImg from "../assets/services/digital-marketing.webp";
-import ecommerceImg from "../assets/services/ecommerce-solutions.webp";
-import pythonImg from "../assets/services/python-development.webp";
-import aimlImg from "../assets/services/ai-ml-solutions.webp";
-import wordpressImg from "../assets/services/wordpress-development.webp";
-import cppImg from "../assets/services/cpp-development.webp";
+import { SERVICES } from '../data/services';
+import { serviceImage } from '../data/serviceImages';
 import Seo from '../seo/Seo';
 import { organization, breadcrumbs } from '../seo/schema';
 
 
 
-const rawServices = [
-  {
-    title: "Custom Software Development",
-    description: "Tailored, enterprise-grade software solutions engineered to scale and streamline your mission-critical operations.",
-    image: customSoftwareImg,
-    category: "Development",
-    features: [
-      "Bespoke enterprise architecture & microservices",
-      "High-performance, secure backend systems",
-      "Scalable cloud infrastructure & automated CI/CD",
-    ],
-    deliverables: ["Full source code & documentation", "Architecture blueprint & API specs", "DevOps & cloud deployment guide"],
-  },
-  {
-    title: "AI Automation",
-    description: "End-to-end intelligent automation, autonomous AI agents, and custom LLM workflows to supercharge efficiency.",
-    image: aiAutomationImg,
-    category: "AI/ML",
-    features: [
-      "Custom autonomous AI agents & RAG pipelines",
-      "Intelligent workflow automation & RPA",
-      "LLM fine-tuning, integration & vector search",
-    ],
-    deliverables: ["AI agent workflows & blueprints", "Custom model/API integrations", "Monitoring & orchestration dashboard"],
-  },
-  {
-    title: "SaaS Platform Development",
-    description: "Multi-tenant, high-growth Software-as-a-Service platforms built for global scale, security, and monetization.",
-    image: saasImg,
-    category: "Development",
-    features: [
-      "Multi-tenant architecture & RBAC permissions",
-      "Subscription billing (Stripe/Paddle) & tiers",
-      "Comprehensive admin dashboard & real-time analytics",
-    ],
-    deliverables: ["Complete SaaS production build", "Billing & auth infrastructure", "Admin & analytics portal"],
-  },
-  {
-    title: "Web Development",
-    description: "Custom web applications and responsive websites built with cutting-edge technologies.",
-    image: webImg,
-    category: "Development",
-    features: [
-      "Responsive SPA/SSR with React/Next.js",
-      "Secure APIs with Node.js/Express",
-      "Testing, CI/CD and performance budgets",
-    ],
-    deliverables: ["Technical spec", "Staging environment", "Documentation & handover"],
-  },
-  {
-    title: "Mobile App Development",
-    description: "Native and cross-platform mobile apps for iOS and Android that delight users.",
-    image: mobileImg,
-    category: "Development",
-    features: [
-      "Flutter or React Native cross‑platform",
-      "Native modules and offline support",
-      "App Store and Play Store publishing",
-    ],
-    deliverables: ["Design assets", "Signed builds", "Release notes & analytics setup"],
-  },
-  {
-  title: "WordPress Development",
-  description: "Custom themes, plugins, and optimized sites powered by WordPress and WooCommerce.",
-  image: wordpressImg, // import from: ../assets/services/wordpress-development.png
-  category: "Development",
-  features: [
-    "Custom themes and Gutenberg blocks",
-    "WooCommerce setup and checkout optimization",
-    "Speed, SEO, security & backups",
-  ],
-  deliverables: [
-    "Theme/plugin source",
-    "Performance & SEO baseline report",
-    "Admin guide & handover",
-  ],
-},
 
-  {
-    title: "UI/UX Design",
-    description: "User-centered design to create engaging, intuitive, and accessible digital experiences.",
-    image: uiuxImg,
-    category: "Design",
-    features: [
-      "User research and personas",
-      "Wireframes and interactive prototypes",
-      "Design systems and accessibility",
-    ],
-    deliverables: ["Figma files", "Design tokens", "Usability report"],
-  },
-
-  {
-    title: "Digital Marketing",
-    description: "Data-driven marketing strategies to expand your online presence and reach.",
-    image: marketingImg,
-    category: "Marketing",
-    features: ["SEO & content strategy", "Paid ads optimization", "Email and social campaigns"],
-    deliverables: ["Content calendar", "KPI dashboard", "Quarterly growth report"],
-  },
-  {
-    title: "E-Commerce Solutions",
-    description: "Complete online store development with secure payment integration and inventory management.",
-    image: ecommerceImg,
-    category: "Development",
-    features: ["Headless commerce", "Checkout optimization", "ERP/WMS integrations"],
-    deliverables: ["Storefront", "CMS setup", "Payment & tax configuration"],
-  },
-  {
-    title: "C++ Development",
-    description: "High-performance applications, system software, and game development using C++.",
-    image: cppImg,
-    category: "Development",
-    features: ["Low-latency systems", "Engine integrations", "Tooling & CI for C++"],
-    deliverables: ["Profiling report", "Benchmarks", "Deployment artifacts"],
-  },
-  {
-    title: "Python Development",
-    description: "Versatile Python solutions for web development, automation, data processing, and more.",
-    image: pythonImg,
-    category: "Development",
-    features: ["FastAPI/Django services", "Task automation", "ETL jobs"],
-    deliverables: ["Service repo", "CI pipelines", "Monitoring hooks"],
-  },
-  {
-    title: "AI/ML Solutions",
-    description: "Artificial Intelligence and Machine Learning solutions to automate processes and gain insights.",
-    image: aimlImg,
-    category: "AI/ML",
-    features: ["Model training & evaluation", "MLOps pipelines", "Responsible AI guidelines"],
-    deliverables: ["Model cards", "Serving infra", "Retraining schedule"],
-  }
-];
 
 const categories = ["All", "Development", "Design", "Marketing", "AI/ML"];
 
@@ -164,7 +23,7 @@ export default function Services() {
   const [show, setShow] = useState(false);
   const closeBtnRef = useRef(null);
 
-  const services = rawServices;
+  const services = SERVICES.map((s) => ({ ...s, image: serviceImage(s.slug) }));
 
   const introRef = useIntroTimeline();
   const panelRef = useModalIntro(show);
@@ -322,11 +181,20 @@ export default function Services() {
                   <div className="p-6 flex flex-col flex-1">
                     <h3 className="text-lg font-semibold text-slate-900">{service.title}</h3>
                     <p className="text-slate-600 mt-2 flex-1">{service.description}</p>
-                    <button
-                      onClick={() => handleOpen(service)}
-                      className="mt-5 w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                    {/* A real link, not only a modal trigger. The modal stays for quick
+                        browsing, but each service has a URL now, so a crawler can reach it
+                        and a person can send it to someone. */}
+                    <Link
+                      to={`/services/${service.slug}`}
+                      className="mt-5 block w-full rounded-lg bg-indigo-600 py-2.5 text-center font-medium text-white transition hover:bg-indigo-700"
                     >
                       Learn More
+                    </Link>
+                    <button
+                      onClick={() => handleOpen(service)}
+                      className="mt-2 w-full rounded-lg border border-slate-300 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                    >
+                      Quick look
                     </button>
                   </div>
                 </article>
@@ -441,9 +309,15 @@ export default function Services() {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <a href="/contact" className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
+                <Link
+                  to={active ? `/services/${active.slug}` : "/services"}
+                  className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  Full details
+                </Link>
+                <Link to="/contact" className="px-5 py-2.5 rounded-lg border border-indigo-600 text-indigo-700 hover:bg-indigo-50">
                   Discuss This Service
-                </a>
+                </Link>
                 <button
                   type="button"
                   onClick={backToServices}

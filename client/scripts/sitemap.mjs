@@ -86,7 +86,15 @@ const posts = POSTS.map((p) => ({
   lastmod: p.updated || p.date,
 }));
 
-const urls = [...STATIC, ...courses, ...liveTools, ...posts];
+// Each service is its own page now, so each is submitted on its own.
+const { SERVICES } = await import(resolve(HERE, '../src/data/services.js'));
+const services = SERVICES.map((s) => ({
+  path: `/services/${s.slug}`,
+  priority: '0.8',
+  changefreq: 'monthly',
+}));
+
+const urls = [...STATIC, ...courses, ...liveTools, ...posts, ...services];
 const today = iso(Date.now());
 
 const xml = [
@@ -109,5 +117,5 @@ const xml = [
 writeFileSync(OUT, xml);
 console.log(
   `sitemap.xml written: ${urls.length} urls — ${courses.length} courses, ${liveTools.length} live tools ` +
-  `${posts.length} posts, (${TOOLS.length - liveTools.length} tools still in design and correctly excluded) at ${SITE_URL}`
+  `${posts.length} posts, ${services.length} services, (${TOOLS.length - liveTools.length} tools still in design and correctly excluded) at ${SITE_URL}`
 );

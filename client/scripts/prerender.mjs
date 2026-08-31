@@ -142,6 +142,10 @@ for (const f of (await readdir(COURSES)).filter((x) => x.endsWith('.js'))) {
 const { POSTS } = await import(resolve(HERE, '../src/data/blog.generated.js'));
 for (const post of POSTS) routes.push(`/blog/${post.slug}`);
 
+// Every service is its own page now, so every service gets prerendered.
+const { SERVICES } = await import(resolve(HERE, '../src/data/services.js'));
+for (const service of SERVICES) routes.push(`/services/${service.slug}`);
+
 const browser = await puppeteer.launch({
   executablePath: CHROME,
   headless: 'new',

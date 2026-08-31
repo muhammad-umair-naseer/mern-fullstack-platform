@@ -31,8 +31,10 @@ export const SITE = {
     cuin: '0306803',
     incorporated: '2025-09-02',
     act: 'Companies Act, 2017',
-    // Anyone can check the company on the SECP's own register with this.
-    verifyUrl: 'https://leap.secp.gov.pk/#/verify-company-info/0306803',
+    // The SECP's public company name search. It is a search page rather than a
+    // direct record link, so the About page tells the visitor to look us up by
+    // the registered name rather than promising a one click result.
+    verifyUrl: 'https://eservices.secp.gov.pk/eServices/NameSearch.jsp',
   },
   // The image used when a link is shared. Replace with a purpose made 1200x630
   // card when you have one; the logo is a placeholder that at least renders.

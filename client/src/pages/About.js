@@ -207,7 +207,7 @@ const About = () => {
             rel="noopener noreferrer"
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
           >
-            Verify us on the {SITE.registration.authorityShort} register
+            Look us up on the {SITE.registration.authorityShort} register
             <ArrowRight className="h-4 w-4" />
           </a>
         </div>

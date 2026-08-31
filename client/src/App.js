@@ -38,6 +38,7 @@ const CertificateView = lazy(() => import('./pages/CertificateView'));
 // Free tools catalogue
 const Tools = lazy(() => import('./pages/Tools'));
 const ToolDetail = lazy(() => import('./pages/ToolDetail'));
+const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 
@@ -55,6 +56,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/services/:slug" element={<ServiceDetail />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/internships" element={<Internships />} />
 
