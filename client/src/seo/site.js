@@ -13,7 +13,7 @@ export const SITE = {
   // Appended to every page title except the homepage, which sets its own.
   titleSuffix: 'Cortexis Solution Hub',
   description:
-    'Software development, training and consulting from Islamabad. Free online courses with certificates, paid internships, and custom web, mobile and AI builds.',
+    'Software development, training and consulting from Islamabad. Free online courses with certificates, free internships, and custom web, mobile and AI builds.',
   locale: 'en_PK',
   email: 'cortexis.solution.hub@gmail.com',
   city: 'Islamabad',

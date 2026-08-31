@@ -504,7 +504,7 @@ const CourseOutline = () => {
             </Link>
             <span className="text-slate-300" aria-hidden="true">·</span>
             <Link to="/internships" className="text-orange-700 hover:underline">
-              Apply for a paid internship
+              Apply for an internship
             </Link>
             <span className="text-slate-300" aria-hidden="true">·</span>
             <Link to="/services" className="text-orange-700 hover:underline">

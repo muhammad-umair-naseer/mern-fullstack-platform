@@ -361,9 +361,9 @@ export default function Services() {
               to="/internships"
               className="group block rounded-xl border border-slate-200 p-5 transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <h3 className="font-bold text-black group-hover:text-orange-700">Paid internships</h3>
+              <h3 className="font-bold text-black group-hover:text-orange-700">Free internships</h3>
               <p className="mt-1 text-sm text-black font-medium">
-                Real projects in Islamabad, mentored by the engineers who ship them.
+                Real projects in Islamabad, mentored by the engineers who ship them. Unpaid, and we never charge a fee.
               </p>
             </Link>
             <Link

@@ -35,7 +35,7 @@ const About = () => {
     <main className="relative text-slate-900">
       <Seo
         title="About Us"
-        description="Who Cortexis Solution Hub is: a software, training and consulting company in Islamabad building products, teaching engineers, and running paid internships."
+        description="Who Cortexis Solution Hub is: a software, training and consulting company in Islamabad building products, teaching engineers, and running free internships."
         path="/about"
         schema={[organization(), breadcrumbs([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])]}
       />

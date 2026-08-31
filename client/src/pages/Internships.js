@@ -200,8 +200,8 @@ export default function Internships() {
   return (
     <main className="cx-intern-page">
       <Seo
-        title="Paid Software Internships in Islamabad"
-        description="Apply for a Cortexis internship in web development, mobile, AI, design or QA. Real projects, mentorship from working engineers, and a certificate on completion."
+        title="Software Internships in Islamabad, Free to Join"
+        description="Unpaid internships in web, mobile, AI, design and QA. We never charge a fee. Real projects, mentorship from working engineers, and a free certificate."
         path="/internships"
         schema={breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Internships', path: '/internships' }])}
       />
@@ -229,8 +229,44 @@ export default function Internships() {
         </h1>
 
         <p className="mt-4 text-base sm:text-lg text-black font-semibold max-w-2xl mx-auto leading-relaxed">
-          Level up your engineering &amp; design skills with real-world industry experience, code reviews, and expert mentorship. Fill out the application form below to apply.
+          Real projects, code reviews and mentorship from the engineers who ship the work.
         </p>
+
+        {/* Said plainly and up front.
+            Pakistan has a real problem with internships that quietly charge a
+            fee, so the two facts an applicant most wants are what we lead with:
+            we never take money from you, and we do not pay you either. Someone
+            who needs a paid role can stop reading here rather than finding out
+            after they have rearranged their summer. */}
+        <div className="mx-auto mt-7 max-w-2xl rounded-2xl border border-slate-200 bg-white/80 p-5 text-left shadow-card backdrop-blur">
+          <p className="text-sm font-bold uppercase tracking-wide text-orange-700">
+            Before you apply, the honest version
+          </p>
+          <ul className="mt-3 space-y-2.5 text-sm sm:text-base font-medium text-black">
+            <li className="flex gap-2.5">
+              <span aria-hidden="true" className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+              <span>
+                <b>We never charge you a rupee.</b> No application fee, no training fee, no fee
+                for your certificate. If any company asks you to pay to intern, walk away.
+              </span>
+            </li>
+            <li className="flex gap-2.5">
+              <span aria-hidden="true" className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+              <span>
+                <b>These internships are unpaid.</b> There is no stipend and no salary. We would
+                rather you knew that now than after you had rearranged your summer.
+              </span>
+            </li>
+            <li className="flex gap-2.5">
+              <span aria-hidden="true" className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+              <span>
+                <b>The training and the certificate are free.</b> Real project work, code review
+                from working engineers, and a certificate on completion carrying a code your
+                university can verify.
+              </span>
+            </li>
+          </ul>
+        </div>
       </section>
 
       {/* Main Portal Container */}
@@ -385,6 +421,8 @@ export default function Internships() {
                         onChange={handleChange}
                         className="cx-glass-input cx-glass-input-noicon cx-glass-select text-sm font-bold"
                       >
+                        <option value="6 Weeks">6 Weeks (Standard University Requirement)</option>
+                        <option value="8 Weeks">8 Weeks (Extended University Requirement)</option>
                         <option value="1 Month">1 Month (Fast-Track Certificate)</option>
                         <option value="2 Months">2 Months (Standard Project Cohort)</option>
                         <option value="3 Months">3 Months (Comprehensive Program)</option>
@@ -493,7 +531,7 @@ export default function Internships() {
                           type="text"
                           id="city"
                           name="city"
-                          placeholder="e.g. New York, NY (or Remote)"
+                          placeholder="e.g. Islamabad (or Remote)"
                           value={formData.city}
                           onChange={handleChange}
                           className="cx-glass-input"

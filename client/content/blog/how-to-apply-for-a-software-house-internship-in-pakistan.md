@@ -116,10 +116,10 @@ Follow up once, about ten days later, in the same thread, three lines long. Then
 
 ## How this works with us, and where we will disappoint you
 
-We run paid internships in Islamabad, in tracks including MERN, frontend, backend, AI and machine learning, Python automation, mobile, UI and UX, digital marketing, WordPress and database engineering. Applications go through the form on the [internships page](/internships), which is faster than email because it reaches the person who reviews them. Pick one track, not four: four says you have not chosen.
+We run free internships in Islamabad, unpaid but with no fee of any kind, in tracks including MERN, frontend, backend, AI and machine learning, Python automation, mobile, UI and UX, digital marketing, WordPress and database engineering. Applications go through the form on the [internships page](/internships), which is faster than email because it reaches the person who reviews them. Pick one track, not four: four says you have not chosen.
 
 Now the parts that do not flatter us. We do not have open places every month. We will not certify work that did not happen or dates you did not serve. Finishing our free courses entitles nobody to a place; it helps only because it leaves you something to show, which is true of any project. And if you apply for a technical track with nothing built in that area, we will usually pass, because one short block is too little time to start from zero.
 
-You will not find a stipend figure here, because a number written on a blog gets quoted back years after it stopped being true. Ask during the process, and get the amount and the dates in writing before you accept, from us or from anyone else. It is also worth checking that a company is really registered with SECP, ours included.
+Ours are unpaid, and we would rather say so here than let you find out later. There is no stipend and no salary. What there is: real project work, code review from working engineers, a free certificate, and no fee of any kind at any point. If you need paid work this summer, apply somewhere that pays, and do it early. Wherever you apply, ask about money during the process and get the answer in writing, because a company that will not put it in writing is telling you something.
 
 *Current tracks and the application form are on the [internships page](/internships).*

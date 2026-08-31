@@ -14,7 +14,7 @@ const Home = () => {
     <div className="home-page-container">
       <Seo
         title="Cortexis Solution Hub | Software, Training and Consulting in Islamabad" bare
-        description="Custom web, mobile and AI software built in Islamabad, plus free online courses with certificates and paid internships. Talk to the team that writes the code."
+        description="Custom web, mobile and AI software built in Islamabad, plus free online courses with certificates and free internships. Talk to the team that writes the code."
         path="/"
         schema={[organization(), website()]}
       />
