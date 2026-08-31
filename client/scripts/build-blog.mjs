@@ -55,6 +55,9 @@ if (existsSync(DIR)) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(meta.date)) {
       throw new Error(`${file}: date must be YYYY-MM-DD, got "${meta.date}"`);
     }
+    if (meta.image && !meta.image.startsWith('/')) {
+      throw new Error(`${file}: image must be a site path like /blog/name.webp, got "${meta.image}"`);
+    }
     if (meta.description.length > 155) {
       throw new Error(`${file}: description is ${meta.description.length} chars, Google truncates past 155`);
     }
@@ -81,6 +84,13 @@ if (existsSync(DIR)) {
       // Named so a post can say which search it was written for. Not used for
       // anything automatic; it is a note to whoever edits it next.
       targetQuery: meta.targetQuery || '',
+      // A cover lives in public/blog/ and is referenced by URL, not imported.
+      // That keeps this script runnable in plain Node, which cannot load a
+      // .webp, and means adding artwork is one line of frontmatter and one
+      // file. Without it the card draws a designed cover from the category.
+      image: meta.image || '',
+      author: meta.author || 'Cortexis Solution Hub',
+      category: (Array.isArray(meta.tags) ? meta.tags[0] : meta.tags) || 'notes',
       minutes: readingMinutes(body),
       body: body.trim(),
     });

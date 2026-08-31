@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { POSTS, postBySlug } from '../data/blog.generated';
 import Markdown from '../learn/Markdown';
+import PostCard, { CATEGORY } from '../components/PostCard';
 import Seo from '../seo/Seo';
 import { breadcrumbs } from '../seo/schema';
 import { SITE, absolute } from '../seo/site';
@@ -66,10 +67,14 @@ const BlogPost = () => {
         <header className="cx-lv-head">
           <p className="cx-lv-in cx-lv-eyebrow" style={{ '--i': 0 }}>
             <Link to="/blog" className="hover:underline">Writing</Link>
+            {' · '}
+            {(CATEGORY[post.category] || { label: 'Notes' }).label}
           </p>
           <h1 className="cx-lv-in cx-lv-title" style={{ '--i': 1 }}>{post.title}</h1>
           <p className="cx-lv-in cx-lv-meta" style={{ '--i': 2 }}>
             <span className="cx-lv-dot" aria-hidden="true" />
+            {post.author}
+            <span className="cx-lv-sep" aria-hidden="true" />
             {formatDate(post.date)}
             <span className="cx-lv-sep" aria-hidden="true" />
             {post.minutes} min read
@@ -83,16 +88,11 @@ const BlogPost = () => {
         {more.length > 0 && (
           <div className="cx-lv-foot">
             <h2 className="text-lg font-bold text-black">Read next</h2>
-            <ul className="mt-4 space-y-3">
+            <div className="mt-5 grid gap-6 sm:grid-cols-2">
               {more.map((p) => (
-                <li key={p.slug}>
-                  <Link to={`/blog/${p.slug}`} className="text-orange-700 font-bold hover:underline">
-                    {p.title}
-                  </Link>
-                  <p className="text-sm text-slate-600 mt-0.5">{p.description}</p>
-                </li>
+                <PostCard key={p.slug} post={p} />
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </article>
