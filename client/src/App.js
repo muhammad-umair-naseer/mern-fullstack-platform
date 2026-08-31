@@ -9,6 +9,7 @@ import './App.css';
 import './Pages.css';
 import './theme-cosmic.css';
 import './premium.css';
+import ScrollToTop from './components/ScrollToTop';
 
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
@@ -37,10 +38,14 @@ const CertificateView = lazy(() => import('./pages/CertificateView'));
 // Free tools catalogue
 const Tools = lazy(() => import('./pages/Tools'));
 const ToolDetail = lazy(() => import('./pages/ToolDetail'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
 
 export default function App() {
   return (
     <Router>
+      {/* Must sit inside Router: it reads the current location. */}
+      <ScrollToTop />
       <AuthProvider>
       <AnimatedBackground />
       <div className="App">
@@ -70,6 +75,8 @@ export default function App() {
             <Route path="/whatsapp-bot/data-deletion" element={<YourBotDataDeletion />} />
 
             {/* Free tools */}
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/:slug" element={<ToolDetail />} />
 

@@ -28,6 +28,7 @@ const STATIC = [
   { path: '/courses', priority: '0.9', changefreq: 'weekly' },
   { path: '/internships', priority: '0.8', changefreq: 'weekly' },
   { path: '/tools', priority: '0.8', changefreq: 'monthly' },
+  { path: '/blog', priority: '0.7', changefreq: 'weekly' },
   { path: '/your-bot', priority: '0.8', changefreq: 'monthly' },
   { path: '/about', priority: '0.6', changefreq: 'yearly' },
   { path: '/contact', priority: '0.6', changefreq: 'yearly' },
@@ -75,7 +76,17 @@ const liveTools = TOOLS.filter((t) => t.isLive).map((t) => ({
   changefreq: 'monthly',
 }));
 
-const urls = [...STATIC, ...courses, ...liveTools];
+// Posts carry their own lastmod from the markdown, which is the one date
+// Google actually pays attention to here.
+const { POSTS } = await import(resolve(HERE, '../src/data/blog.generated.js'));
+const posts = POSTS.map((p) => ({
+  path: `/blog/${p.slug}`,
+  priority: '0.6',
+  changefreq: 'yearly',
+  lastmod: p.updated || p.date,
+}));
+
+const urls = [...STATIC, ...courses, ...liveTools, ...posts];
 const today = iso(Date.now());
 
 const xml = [
@@ -98,5 +109,5 @@ const xml = [
 writeFileSync(OUT, xml);
 console.log(
   `sitemap.xml written: ${urls.length} urls — ${courses.length} courses, ${liveTools.length} live tools ` +
-  `(${TOOLS.length - liveTools.length} tools still in design and correctly excluded) at ${SITE_URL}`
+  `${posts.length} posts, (${TOOLS.length - liveTools.length} tools still in design and correctly excluded) at ${SITE_URL}`
 );

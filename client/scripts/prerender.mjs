@@ -128,13 +128,19 @@ try {
 
 const routes = [
   '/', '/about', '/services', '/courses', '/internships', '/tools',
-  '/contact', '/terms', '/privacy', '/your-bot',
+  '/contact', '/terms', '/privacy', '/your-bot', '/blog',
 ];
 
 for (const f of (await readdir(COURSES)).filter((x) => x.endsWith('.js'))) {
   const mod = (await import(`${COURSES}/${f}`)).default;
   routes.push(`/learn/${mod.slug}`);
 }
+
+// Every post gets its own static page. This is the whole reason posts live as
+// markdown in the repo rather than in a database: the full text ends up in the
+// HTML by construction, so a crawler never has to run JavaScript to read one.
+const { POSTS } = await import(resolve(HERE, '../src/data/blog.generated.js'));
+for (const post of POSTS) routes.push(`/blog/${post.slug}`);
 
 const browser = await puppeteer.launch({
   executablePath: CHROME,
