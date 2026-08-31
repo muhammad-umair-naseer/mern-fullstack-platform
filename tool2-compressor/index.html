@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Compressor</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .level-options {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .level-btn {
+    flex: 1;
+    padding: 10px 6px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    text-align: center;
+    font-size: 13px;
+    color: #475569;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .level-btn.active {
+    border-color: #4f46e5;
+    background: #f5f5ff;
+    color: #4f46e5;
+    font-weight: 600;
+  }
+  .level-btn .level-name { display: block; font-weight: 600; margin-bottom: 2px; }
+  .level-btn .level-desc { display: block; font-size: 11px; color: #94a3b8; }
+  #size-summary {
+    margin-top: 16px;
+    padding: 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    font-size: 14px;
+    display: none;
+  }
+  #size-summary.show { display: block; }
+  #size-summary .row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  #size-summary .reduction { color: #16a34a; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>PDF Compressor</h1>
+    <p class="subtitle">Reduces your PDF's file size by recompressing embedded images — text and vector graphics stay untouched and crisp. Everything happens in your browser; your file is never uploaded anywhere.</p>
+
+    <form id="convert-form">
+      <label id="drop-zone" for="file-input">
+        <span id="drop-text">Click to choose a PDF, or drag &amp; drop here</span>
+        <span id="file-name"></span>
+      </label>
+      <input type="file" id="file-input" name="file" accept=".pdf" hidden required>
+
+      <div class="level-options" id="level-options">
+        <div class="level-btn" data-level="low">
+          <span class="level-name">Low</span>
+          <span class="level-desc">Best quality</span>
+        </div>
+        <div class="level-btn active" data-level="medium">
+          <span class="level-name">Medium</span>
+          <span class="level-desc">Balanced</span>
+        </div>
+        <div class="level-btn" data-level="high">
+          <span class="level-name">High</span>
+          <span class="level-desc">Smallest size</span>
+        </div>
+      </div>
+
+      <button type="submit" id="convert-btn" disabled>Compress</button>
+    </form>
+
+    <div id="status"></div>
+    <div id="size-summary">
+      <div class="row"><span>Original size</span><span id="orig-size">—</span></div>
+      <div class="row"><span>Compressed size</span><span id="new-size">—</span></div>
+      <div class="row"><span>Reduction</span><span id="reduction" class="reduction">—</span></div>
+    </div>
+  </div>
+
+  <script src="vendor/pdf-lib.min.js"></script>
+  <script src="vendor/pako.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

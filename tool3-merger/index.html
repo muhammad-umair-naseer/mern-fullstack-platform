@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Merger</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .card { max-width: 560px; }
+  #file-list {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  #file-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    cursor: grab;
+    font-size: 14px;
+  }
+  #file-list li.dragging { opacity: 0.4; }
+  #file-list li.drag-over { border-color: #4f46e5; }
+  .drag-handle { color: #cbd5e1; font-size: 16px; user-select: none; }
+  .file-info { flex: 1; min-width: 0; }
+  .file-info .name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1e293b; }
+  .file-info .meta { display: block; font-size: 12px; color: #94a3b8; }
+  .file-info .meta.error { color: #dc2626; }
+  .remove-btn {
+    border: none;
+    background: none;
+    color: #94a3b8;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+  .remove-btn:hover { color: #dc2626; }
+  #add-more {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    color: #64748b;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  #add-more:hover { border-color: #6366f1; color: #4f46e5; }
+  .hint { font-size: 12px; color: #94a3b8; margin-top: 10px; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>PDF Merger</h1>
+    <p class="subtitle">Combine multiple PDFs into one, in whatever order you like. Everything happens in your browser — your files are never uploaded anywhere.</p>
+
+    <form id="merge-form">
+      <label id="drop-zone" for="file-input">
+        <span id="drop-text">Click to choose PDFs, or drag &amp; drop here</span>
+        <span id="file-name">(you can select multiple at once)</span>
+      </label>
+      <input type="file" id="file-input" accept=".pdf" multiple hidden>
+
+      <ul id="file-list"></ul>
+      <button type="button" id="add-more" style="display:none;">+ Add more files</button>
+      <p class="hint" id="reorder-hint" style="display:none;">Drag items to reorder — the merged PDF will follow this order.</p>
+
+      <button type="submit" id="merge-btn" disabled>Merge PDFs</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="vendor/pdf-lib.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

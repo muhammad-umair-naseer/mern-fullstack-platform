@@ -8,7 +8,7 @@ import "./Footer.css";
  *
  * Three columns rather than five: the previous version carried twelve links
  * across four navigation blocks, which buried the ones people actually use.
- * Legal and the WhatsApp Bot pages moved to the bottom bar, where they are
+ * Legal and the Your Bot pages moved to the bottom bar, where they are
  * still reachable without competing with the main navigation.
  */
 const Footer = () => {
@@ -54,7 +54,11 @@ const Footer = () => {
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Cortexis Solution Hub Pvt Ltd. All rights reserved.</p>
           <nav className="footer-legal" aria-label="Legal and secondary">
-            <Link to="/whatsapp-bot">Automation Tools</Link>
+            <Link to="/your-bot">Your Bot</Link>
+            <span aria-hidden="true">·</span>
+            <Link to="/your-bot/privacy">Bot Privacy</Link>
+            <span aria-hidden="true">·</span>
+            <Link to="/your-bot/terms">Bot Terms</Link>
             <span aria-hidden="true">·</span>
             <Link to="/terms">Terms</Link>
             <span aria-hidden="true">·</span>

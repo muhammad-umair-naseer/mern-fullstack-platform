@@ -128,7 +128,7 @@ try {
 
 const routes = [
   '/', '/about', '/services', '/courses', '/internships', '/tools',
-  '/contact', '/terms', '/privacy', '/whatsapp-bot',
+  '/contact', '/terms', '/privacy', '/your-bot',
 ];
 
 for (const f of (await readdir(COURSES)).filter((x) => x.endsWith('.js'))) {

@@ -2,61 +2,61 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://cortexissolutionhub.com/</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/services</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/courses</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/internships</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/tools</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cortexissolutionhub.com/whatsapp-bot</loc>
-    <lastmod>2026-08-27</lastmod>
+    <loc>https://cortexissolutionhub.com/your-bot</loc>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/about</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/contact</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/terms</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
     <loc>https://cortexissolutionhub.com/privacy</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-08-31</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -197,5 +197,17 @@
     <lastmod>2026-08-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cortexissolutionhub.com/tools/pdf-compressor</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://cortexissolutionhub.com/tools/pdf-merger</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

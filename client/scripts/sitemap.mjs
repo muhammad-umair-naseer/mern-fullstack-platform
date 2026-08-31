@@ -28,7 +28,7 @@ const STATIC = [
   { path: '/courses', priority: '0.9', changefreq: 'weekly' },
   { path: '/internships', priority: '0.8', changefreq: 'weekly' },
   { path: '/tools', priority: '0.8', changefreq: 'monthly' },
-  { path: '/whatsapp-bot', priority: '0.8', changefreq: 'monthly' },
+  { path: '/your-bot', priority: '0.8', changefreq: 'monthly' },
   { path: '/about', priority: '0.6', changefreq: 'yearly' },
   { path: '/contact', priority: '0.6', changefreq: 'yearly' },
   { path: '/terms', priority: '0.2', changefreq: 'yearly' },
@@ -46,8 +46,13 @@ const STATIC = [
 // Google to rank pages that cannot answer the query. They are added below
 // automatically as each tool is marked live.
 //
-// The WhatsApp legal pages are excluded too: Meta requires them to exist, but
+// The bot's legal pages are excluded too: Meta requires them to exist, but
 // three pages of boilerplate dilute what the site is about.
+//
+// /whatsapp-bot and its children are excluded as well. They still resolve,
+// because those exact URLs are registered with Meta for app review, but they
+// render the same component as /your-bot. Listing both would be duplicate
+// content, so only the canonical path is submitted.
 
 const iso = (d) => new Date(d).toISOString().slice(0, 10);
 
@@ -64,7 +69,7 @@ for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
 
 // A tool joins the sitemap the moment it actually works.
 const { TOOLS } = await import(resolve(HERE, '../src/data/tools.js'));
-const liveTools = TOOLS.filter((t) => t.status === 'live' || t.url).map((t) => ({
+const liveTools = TOOLS.filter((t) => t.isLive).map((t) => ({
   path: `/tools/${t.slug}`,
   priority: '0.7',
   changefreq: 'monthly',

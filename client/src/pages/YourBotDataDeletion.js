@@ -1,7 +1,7 @@
 import React from 'react';
 import LegalPage from './LegalPage';
 
-const PRODUCT = 'Cortexis WhatsApp Bot';
+const PRODUCT = 'Cortexis Your Bot';
 const EMAIL = 'cortexis.solution.hub@gmail.com';
 
 const sections = [
@@ -9,7 +9,7 @@ const sections = [
     id: 'overview',
     title: 'Overview',
     blocks: [
-      { p: `This page explains how to request deletion of the data associated with your ${PRODUCT} account, including any data obtained through the WhatsApp Business Platform. We honor deletion requests and process them within 30 days.` },
+      { p: `This page explains how to request deletion of the data associated with your ${PRODUCT} account, including any data obtained through the WhatsApp Business Platform or through Instagram Messaging. We honor deletion requests and process them within 30 days.` },
     ],
   },
   {
@@ -19,10 +19,10 @@ const sections = [
       { p: 'If you have an active account, you can remove your data directly:' },
       { list: [
         'Open your dashboard settings.',
-        'Disconnect your WhatsApp Business Account to revoke our access immediately.',
+        'Disconnect your WhatsApp Business Account and/or Instagram professional account to revoke our access immediately.',
         'Delete your account to remove your configuration and conversation history.',
       ] },
-      { callout: { title: 'Immediate effect', text: 'Disconnecting a WhatsApp Business Account revokes our access token right away, so we stop sending or receiving messages on that number.' } },
+      { callout: { title: 'Immediate effect', text: 'Disconnecting a WhatsApp Business Account or an Instagram professional account revokes the matching access token right away, so we stop sending or receiving messages on that channel.' } },
     ],
   },
   {
@@ -32,7 +32,7 @@ const sections = [
       { p: 'If you can’t access your dashboard, send us a request and we’ll handle it:' },
       { list: [
         { b: 'Email:', t: `send a message to ${EMAIL} with the subject “Data deletion request”.` },
-        { b: 'Identify the account:', t: 'include the mobile phone number and/or the WhatsApp Business number associated with your account so we can locate it.' },
+        { b: 'Identify the account:', t: 'include the mobile phone number, the WhatsApp Business number, and/or the Instagram username associated with your account so we can locate it.' },
         { b: 'Verification:', t: 'we verify ownership of the account before deleting anything, to protect your data from unauthorized requests.' },
       ] },
     ],
@@ -43,7 +43,7 @@ const sections = [
     blocks: [
       { p: 'Upon a verified request, we delete or irreversibly anonymize:' },
       { list: [
-        'WhatsApp access tokens and connection credentials.',
+        'WhatsApp and Instagram access tokens and connection credentials.',
         'Two-step verification PINs and API keys associated with your account.',
         'Assistant configuration and any documents you uploaded.',
         'Conversation history stored for your account.',
@@ -79,17 +79,17 @@ const sections = [
   },
 ];
 
-export default function WhatsAppDataDeletion() {
+export default function YourBotDataDeletion() {
   return (
     <LegalPage
-      seo={{ title: "WhatsApp Bot Data Deletion", description: "How to request deletion of your data from the Cortexis WhatsApp automation service.", path: "/whatsapp-bot/data-deletion", noindex: true }}
+      seo={{ title: "WhatsApp Bot Data Deletion", description: "How to request deletion of your data from the Cortexis WhatsApp automation service.", path: "/your-bot/data-deletion", noindex: true }}
       kind="privacy"
       title={[{ text: 'Data ' }, { text: 'Deletion', grad: true }]}
-      subtitle="How to delete your Cortexis WhatsApp Bot account and the data associated with it, including WhatsApp Business Platform data."
+      subtitle="How to delete your Cortexis Your Bot account and the data associated with it, including WhatsApp Business Platform and Instagram Messaging data."
       lastUpdated="July 7, 2026"
       sections={sections}
       contactHref="/contact"
-      crossLink={{ to: '/whatsapp-bot/privacy', label: 'Privacy Policy' }}
+      crossLink={{ to: '/your-bot/privacy', label: 'Privacy Policy' }}
     />
   );
 }

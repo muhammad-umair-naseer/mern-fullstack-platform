@@ -1,7 +1,7 @@
 import React from 'react';
 import LegalPage from './LegalPage';
 
-const PRODUCT = 'Cortexis WhatsApp Bot';
+const PRODUCT = 'Cortexis Your Bot';
 const COMPANY = 'Cortexis Solution Hub Pvt Ltd';
 const EMAIL = 'cortexis.solution.hub@gmail.com';
 
@@ -10,27 +10,28 @@ const sections = [
     id: 'acceptance',
     title: 'Agreement to these Terms',
     blocks: [
-      { p: `These Terms of Service (“Terms”) are a binding agreement between you and ${COMPANY} (“Cortexis”, “we”, “us”, “our”) governing your access to and use of ${PRODUCT}, our platform, website, dashboard, and API that let a business connect a WhatsApp Business Account and deploy an AI assistant to reply to customer messages (the “Service”).` },
-      { p: 'By creating an account, connecting a WhatsApp Business Account, or otherwise using the Service, you agree to these Terms and to our Privacy Policy. If you are using the Service on behalf of a business, you represent that you are authorized to bind that business to these Terms.' },
+      { p: `These Terms of Service (“Terms”) are a binding agreement between you and ${COMPANY} (“Cortexis”, “we”, “us”, “our”) governing your access to and use of ${PRODUCT} — our platform, website, dashboard, and API that let a business connect a WhatsApp Business Account and/or an Instagram professional account and deploy an AI assistant to reply to customer messages on those channels (the “Service”).` },
+      { p: 'By creating an account, connecting a WhatsApp Business Account or an Instagram professional account, or otherwise using the Service, you agree to these Terms and to our Privacy Policy. If you are using the Service on behalf of a business, you represent that you are authorized to bind that business to these Terms.' },
     ],
   },
   {
     id: 'service',
     title: 'The Service',
     blocks: [
-      { p: `${PRODUCT} lets a Business User connect their WhatsApp Business Account, configure an AI assistant with instructions and reference materials, and have that assistant automatically respond to messages from their customers (“End Users”).` },
+      { p: `${PRODUCT} lets a Business User connect their WhatsApp Business Account and/or their Instagram professional account, configure an AI assistant with instructions and reference materials, and have that assistant automatically respond to messages from their customers (“End Users”) on every connected channel.` },
       { note: 'The Service is provided as software that operates on your behalf. You are the business communicating with your own customers; we provide the tooling and infrastructure that make those automated replies possible.' },
     ],
   },
   {
-    id: 'whatsapp-meta',
-    title: 'WhatsApp and Meta platform terms',
+    id: 'meta-platform-terms',
+    title: 'Meta platform terms',
     blocks: [
-      { p: 'The Service integrates with the WhatsApp Business Platform operated by Meta Platforms, Inc. (“Meta”). Your use of the Service is additionally subject to Meta’s and WhatsApp’s applicable terms and policies, including the WhatsApp Business Terms of Service, the WhatsApp Business Messaging Policy, and Meta’s Platform Terms.' },
+      { p: 'The Service integrates with the WhatsApp Business Platform and with Instagram Messaging, both operated by Meta Platforms, Inc. (“Meta”). Your use of the Service is additionally subject to Meta’s applicable terms and policies, including the WhatsApp Business Terms of Service, the WhatsApp Business Messaging Policy, the Instagram Platform Policy, the Meta Platform Terms, and the Meta Developer Policies.' },
       { list: [
-        'You must comply with all applicable WhatsApp and Meta policies when using the Service.',
-        'You authorize us to send and receive messages, and manage message templates and webhooks, on behalf of the WhatsApp Business Account you connect, solely to provide the Service.',
-        'Meta may change, limit, or discontinue access to the WhatsApp Business Platform at any time; where that affects the Service, we are not responsible for the resulting impact.',
+        'You must comply with all applicable Meta, WhatsApp, and Instagram policies when using the Service.',
+        'You represent that you own or are authorized to manage every WhatsApp Business Account and Instagram professional account you connect.',
+        'You authorize us to send and receive messages, and manage message templates and webhooks, on behalf of the accounts you connect, solely to provide the Service.',
+        'Meta may change, limit, or discontinue access to the WhatsApp Business Platform or Instagram Messaging at any time; where that affects the Service, we are not responsible for the resulting impact.',
       ] },
     ],
   },
@@ -61,13 +62,13 @@ const sections = [
     blocks: [
       { p: 'You agree not to use the Service to:' },
       { list: [
-        'Send spam, bulk unsolicited messages, or content that violates WhatsApp or Meta policies.',
+        'Send spam, bulk unsolicited messages, or content that violates WhatsApp, Instagram, or Meta policies.',
         'Distribute unlawful, deceptive, harassing, hateful, or infringing content.',
         'Transmit malware, or attempt to gain unauthorized access to our systems or other users’ data.',
         'Violate any applicable law or the rights of any third party.',
         'Reverse engineer, resell, or misuse the Service outside the scope of these Terms.',
       ] },
-      { p: 'We may suspend or terminate access for any use we reasonably believe violates these Terms or the WhatsApp/Meta policies, or that harms other users, us, or third parties.' },
+      { p: 'We may suspend or terminate access for any use we reasonably believe violates these Terms or the Meta, WhatsApp, or Instagram policies, or that harms other users, us, or third parties.' },
     ],
   },
   {
@@ -102,7 +103,7 @@ const sections = [
     id: 'third-party',
     title: 'Third-party services',
     blocks: [
-      { p: 'The Service depends on third parties: including Meta/WhatsApp, AI language-model providers, cloud hosting, and OTP delivery providers. Their availability and terms are outside our control, and we are not responsible for interruptions, changes, or actions of those providers.' },
+      { p: 'The Service depends on third parties — including Meta (WhatsApp Business Platform and Instagram Messaging), AI language-model providers, cloud hosting, and OTP delivery providers. Their availability and terms are outside our control, and we are not responsible for interruptions, changes, or actions of those providers.' },
     ],
   },
   {
@@ -124,7 +125,7 @@ const sections = [
     id: 'termination',
     title: 'Suspension and termination',
     blocks: [
-      { p: 'You may stop using the Service and disconnect your WhatsApp Business Account at any time from your dashboard. We may suspend or terminate your access, with or without notice, if you breach these Terms or the WhatsApp/Meta policies, or if we discontinue the Service. On termination, your data is handled as described in our Privacy Policy and Data Deletion page.' },
+      { p: 'You may stop using the Service and disconnect any connected WhatsApp Business Account or Instagram professional account at any time from your dashboard. We may suspend or terminate your access, with or without notice, if you breach these Terms or the Meta, WhatsApp, or Instagram policies, or if we discontinue the Service. On termination, your data is handled as described in our Privacy Policy and Data Deletion page.' },
     ],
   },
   {
@@ -149,17 +150,17 @@ const sections = [
   },
 ];
 
-export default function WhatsAppTerms() {
+export default function YourBotTerms() {
   return (
     <LegalPage
-      seo={{ title: "WhatsApp Bot Terms of Service", description: "The terms governing use of the Cortexis WhatsApp automation service.", path: "/whatsapp-bot/terms", noindex: true }}
+      seo={{ title: "WhatsApp Bot Terms of Service", description: "The terms governing use of the Cortexis WhatsApp automation service.", path: "/your-bot/terms", noindex: true }}
       kind="terms"
       title={[{ text: 'Terms of ' }, { text: 'Service', grad: true }]}
-      subtitle="The terms that govern your use of Cortexis WhatsApp Bot and its integration with the WhatsApp Business Platform."
+      subtitle="The terms that govern your use of Cortexis Your Bot and its integrations with the WhatsApp Business Platform and Instagram Messaging."
       lastUpdated="July 7, 2026"
       sections={sections}
       contactHref="/contact"
-      crossLink={{ to: '/whatsapp-bot/privacy', label: 'Privacy Policy' }}
+      crossLink={{ to: '/your-bot/privacy', label: 'Privacy Policy' }}
     />
   );
 }
