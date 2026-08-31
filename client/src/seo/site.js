@@ -17,7 +17,23 @@ export const SITE = {
   locale: 'en_PK',
   email: 'cortexis.solution.hub@gmail.com',
   city: 'Islamabad',
+  region: 'Islamabad Capital Territory',
   country: 'PK',
+
+  // Public register facts only, taken from the SECP certificate of
+  // incorporation. Deliberately excluded: director names and CNICs, personal
+  // addresses, contact details and share capital. None of that belongs on a
+  // website, and the registered office on the filing is a home address.
+  registration: {
+    authority: 'Securities and Exchange Commission of Pakistan',
+    authorityShort: 'SECP',
+    // Corporate Unique Identification Number
+    cuin: '0306803',
+    incorporated: '2025-09-02',
+    act: 'Companies Act, 2017',
+    // Anyone can check the company on the SECP's own register with this.
+    verifyUrl: 'https://leap.secp.gov.pk/#/verify-company-info/0306803',
+  },
   // The image used when a link is shared. Replace with a purpose made 1200x630
   // card when you have one; the logo is a placeholder that at least renders.
   ogImage: '/cortexis-logo.png',

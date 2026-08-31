@@ -9,6 +9,7 @@ import aboutVision from "../assets/our vision About.webp";
 import aboutPromise from "../assets/our promise About.webp";
 import aboutStory from "../assets/our story About.webp";
 import Seo from '../seo/Seo';
+import { SITE } from '../seo/site';
 import { organization, breadcrumbs } from '../seo/schema';
 
 const stats = [
@@ -162,6 +163,55 @@ const About = () => {
         </div>
       </section>
 
+
+      {/* A real, checkable company record.
+          Several of our own articles tell readers to verify a company on the
+          SECP register before trusting it, which was hollow while this page
+          offered nothing to verify. Public register facts only: no director
+          names, no CNICs, no personal contact details, and not the street
+          address on the filing, which is a home. */}
+      <section className="px-6 pb-16" aria-labelledby="registration-heading">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-7 shadow-card">
+          <h2 id="registration-heading" className="text-xl font-bold text-black">
+            A registered company you can check
+          </h2>
+          <p className="mt-2 text-black font-medium">
+            Anyone can confirm we exist on the {SITE.registration.authority}&rsquo;s own register.
+            You do not have to take our word for it, and you should not.
+          </p>
+
+          <dl className="mt-5 grid sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Registered name</dt>
+              <dd className="mt-1 font-semibold text-black">Cortexis Solution Hub (Private) Limited</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                {SITE.registration.authorityShort} identification number
+              </dt>
+              <dd className="mt-1 font-mono font-semibold text-black">{SITE.registration.cuin}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Incorporated</dt>
+              <dd className="mt-1 font-semibold text-black">2 September 2025, under the {SITE.registration.act}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-wide text-slate-500">Registered office</dt>
+              <dd className="mt-1 font-semibold text-black">Islamabad, Pakistan</dd>
+            </div>
+          </dl>
+
+          <a
+            href={SITE.registration.verifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+          >
+            Verify us on the {SITE.registration.authorityShort} register
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+      </section>
 
       {/* ── CTA ──────────────────────────────────────────────────────── */}
       <section className="px-6 pb-20">

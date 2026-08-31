@@ -21,9 +21,19 @@ export const organization = () => ({
   address: {
     '@type': 'PostalAddress',
     addressLocality: SITE.city,
+    addressRegion: SITE.region,
     addressCountry: SITE.country,
   },
   description: SITE.description,
+  foundingDate: SITE.registration.incorporated,
+  // The company register entry, so a search engine can tie this site to a real
+  // legal entity rather than taking the name on trust.
+  identifier: {
+    '@type': 'PropertyValue',
+    name: `${SITE.registration.authorityShort} Corporate Unique Identification Number`,
+    value: SITE.registration.cuin,
+  },
+  sameAs: [SITE.registration.verifyUrl],
 });
 
 export const website = () => ({
