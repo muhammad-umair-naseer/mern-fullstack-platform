@@ -1,0 +1,95 @@
+/* Questions, answered in place. Deliberately quiet: this sits at the bottom of
+   pages that already have a lot going on, and its job is to be readable rather
+   than to compete. */
+
+@import '../learn/motion.css';
+
+.cx-faq { max-width: 48rem; margin: 0 auto; padding: 56px 24px 72px; }
+
+.cx-faq-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0b1a30;
+  letter-spacing: -0.015em;
+  margin: 0 0 22px;
+}
+
+.cx-faq-list {
+  border-top: 1px solid rgba(15, 36, 68, 0.1);
+}
+
+.cx-faq-item { border-bottom: 1px solid rgba(15, 36, 68, 0.1); }
+
+.cx-faq-q { margin: 0; font-size: 1rem; }
+
+.cx-faq-q button {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 2px;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  font-weight: 700;
+  color: #0b1a30;
+  cursor: pointer;
+  /* Colour only: this list sits in a scrolling page and must not shift it. */
+  transition: color var(--cx-dur-fast) var(--cx-ease-out);
+}
+
+.cx-faq-q button:hover { color: #c2410c; }
+
+.cx-faq-q button:focus-visible {
+  outline: 2px solid #ea580c;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* A plus that becomes a minus. Two spans would be one more element than this
+   needs, so it is drawn with a pseudo element and rotated. */
+.cx-faq-mark {
+  position: relative;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+}
+
+.cx-faq-mark::before,
+.cx-faq-mark::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #ea580c;
+}
+
+.cx-faq-mark::after {
+  transform: rotate(90deg);
+  transition: transform var(--cx-dur) var(--cx-ease-out);
+}
+
+.is-open .cx-faq-mark::after { transform: rotate(0deg); }
+
+.cx-faq-a { padding: 0 2px 20px; }
+
+.cx-faq-a p {
+  margin: 0;
+  max-width: 62ch;
+  color: #24354f;
+  line-height: 1.7;
+}
+
+.is-open .cx-faq-a { animation: cxRise var(--cx-dur-fast) var(--cx-ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-faq-mark::after,
+  .is-open .cx-faq-a {
+    transition: none;
+    animation: none;
+  }
+}

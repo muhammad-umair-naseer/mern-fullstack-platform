@@ -39,6 +39,7 @@ const CertificateView = lazy(() => import('./pages/CertificateView'));
 const Tools = lazy(() => import('./pages/Tools'));
 const ToolDetail = lazy(() => import('./pages/ToolDetail'));
 const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
+const Faq = lazy(() => import('./pages/Faq'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 
@@ -77,6 +78,7 @@ export default function App() {
             <Route path="/whatsapp-bot/data-deletion" element={<YourBotDataDeletion />} />
 
             {/* Free tools */}
+            <Route path="/faq" element={<Faq />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/tools" element={<Tools />} />

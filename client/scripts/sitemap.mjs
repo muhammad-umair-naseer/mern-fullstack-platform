@@ -29,6 +29,7 @@ const STATIC = [
   { path: '/internships', priority: '0.8', changefreq: 'weekly' },
   { path: '/tools', priority: '0.8', changefreq: 'monthly' },
   { path: '/blog', priority: '0.7', changefreq: 'weekly' },
+  { path: '/faq', priority: '0.6', changefreq: 'monthly' },
   { path: '/your-bot', priority: '0.8', changefreq: 'monthly' },
   { path: '/about', priority: '0.6', changefreq: 'yearly' },
   { path: '/contact', priority: '0.6', changefreq: 'yearly' },

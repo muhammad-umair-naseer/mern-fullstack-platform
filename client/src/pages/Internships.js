@@ -23,7 +23,9 @@ import {
 import API_BASE_URL from "../config";
 import "./Internships.css";
 import Seo from '../seo/Seo';
-import { breadcrumbs } from '../seo/schema';
+import { breadcrumbs, faq as faqSchema } from '../seo/schema';
+import FaqSection from '../components/FaqSection';
+import { faqsFor } from '../data/faqs';
 
 const INTERNSHIP_TRACKS = [
   { id: "mern", title: "Full-Stack Web Development (MERN Stack)", category: "Web & Full-Stack" },
@@ -203,7 +205,7 @@ export default function Internships() {
         title="Software Internships in Islamabad, Free to Join"
         description="Unpaid internships in web, mobile, AI, design and QA. We never charge a fee. Real projects, mentorship from working engineers, and a free certificate."
         path="/internships"
-        schema={breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Internships', path: '/internships' }])}
+        schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Internships', path: '/internships' }]), faqSchema(faqsFor('/internships').map((f) => ({ q: f.q, a: f.a })))]}
       />
       {/* Ambient background glows for glassmorphism */}
       <div className="cx-intern-glow-1" aria-hidden="true" />
@@ -705,6 +707,7 @@ export default function Internships() {
           </div>
         )}
       </div>
+    <FaqSection page="/internships" title="Questions about the internships" />
     </main>
   );
 }

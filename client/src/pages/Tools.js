@@ -8,7 +8,9 @@ import '../learn/ToolCard.css';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import { useGridReveal } from '../hooks/useGridReveal';
 import Seo from '../seo/Seo';
-import { breadcrumbs, itemList } from '../seo/schema';
+import { breadcrumbs, itemList, faq as faqSchema } from '../seo/schema';
+import FaqSection from '../components/FaqSection';
+import { faqsFor } from '../data/faqs';
 
 const Tools = () => {
   const introRef = useIntroTimeline();
@@ -30,7 +32,8 @@ const Tools = () => {
           itemList(
             TOOLS.map((t) => ({ title: t.name, slug: t.slug })),
             (t) => `/tools/${t.slug}`
-          ),
+          ),,
+          faqSchema(faqsFor('/tools').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />
       <header className="relative isolate">
@@ -144,6 +147,7 @@ const Tools = () => {
           </Link>
         </div>
       </section>
+    <FaqSection page="/tools" title="Questions about the tools" />
     </main>
   );
 };

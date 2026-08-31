@@ -4,7 +4,9 @@ import { MessageSquareText, Clock, Sparkles, ArrowRight, ShieldCheck, Zap, Bot }
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import './YourBot.css';
 import Seo from '../seo/Seo';
-import { organization, breadcrumbs } from '../seo/schema';
+import { organization, breadcrumbs, faq as faqSchema } from '../seo/schema';
+import FaqSection from '../components/FaqSection';
+import { faqsFor } from '../data/faqs';
 
 const chips = [
   { icon: Bot, label: 'AI Workflow Automation' },
@@ -37,7 +39,8 @@ export default function YourBot() {
           breadcrumbs([
             { name: 'Home', path: '/' },
             { name: 'Automation Tools', path: '/your-bot' },
-          ]),
+          ]),,
+          faqSchema(faqsFor('/your-bot').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />
       {/* Floating glows */}
@@ -131,6 +134,7 @@ export default function YourBot() {
           </div>
         </div>
       </section>
+    <FaqSection page="/your-bot" title="Questions people ask before starting" />
     </main>
   );
 }

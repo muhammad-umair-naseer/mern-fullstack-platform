@@ -6,7 +6,7 @@ import { useIntroTimeline } from "../hooks/useIntroTimeline";
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
 import { useGridReveal } from "../hooks/useGridReveal";
 import Seo from "../seo/Seo";
-import { breadcrumbs, itemList } from "../seo/schema";
+import { breadcrumbs, itemList, faq as faqSchema } from "../seo/schema";
 
 import fullstackImg from "../assets/courses/full-stack-web.webp";
 import frontendImg from "../assets/courses/frontend-engineering.webp";
@@ -32,6 +32,8 @@ import softwareTestingImg from "../assets/courses/software-testing-qa.webp";
 import sqlDataImg from "../assets/courses/sql-data-analysis.webp";
 import typescriptImg from "../assets/courses/typescript.webp";
 import coursesHero from "../assets/courses/courses-hero.webp";
+import FaqSection from '../components/FaqSection';
+import { faqsFor } from '../data/faqs';
 
 // coverKey comes from the course content file, mapping each course to its HD WebP image
 const COVERS = {
@@ -169,7 +171,8 @@ const Courses = () => {
           ]),
           // Only describe the courses actually rendered: markup that claims
           // more than the page shows is what gets structured data penalised.
-          ...(courses.length ? [itemList(courses, (c) => `/learn/${c.slug}`)] : []),
+          ...(courses.length ? [itemList(courses, (c) => `/learn/${c.slug}`)] : []),,
+          faqSchema(faqsFor('/courses').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />
       <header className="relative isolate">
@@ -340,6 +343,7 @@ const Courses = () => {
           </div>
         )}
       </section>
+    <FaqSection page="/courses" title="Questions about the courses" />
     </main>
   );
 };
