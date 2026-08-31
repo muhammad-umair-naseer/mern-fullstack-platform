@@ -43,6 +43,7 @@ const readingMinutes = (body) =>
   Math.max(1, Math.round(body.trim().split(/\s+/).filter(Boolean).length / 200));
 
 const posts = [];
+const drafts = [];
 if (existsSync(DIR)) {
   for (const file of readdirSync(DIR).filter((f) => f.endsWith('.md')).sort()) {
     const raw = readFileSync(`${DIR}/${file}`, 'utf8');
@@ -58,6 +59,14 @@ if (existsSync(DIR)) {
       throw new Error(`${file}: description is ${meta.description.length} chars, Google truncates past 155`);
     }
     if (!body.trim()) throw new Error(`${file}: post has no body`);
+
+    // A post can be written and committed without going live. Used where a post
+    // is finished except for a number only the business can supply: better held
+    // back than published with an invented figure a customer will quote at you.
+    if (String(meta.draft).toLowerCase() === 'true') {
+      drafts.push(file);
+      continue;
+    }
 
     const slug = meta.slug || file.replace(/\.md$/, '');
     if (posts.some((p) => p.slug === slug)) throw new Error(`${file}: duplicate slug "${slug}"`);
@@ -90,8 +99,10 @@ writeFileSync(
   `export const postBySlug = (slug) => POSTS.find((p) => p.slug === slug);\n`
 );
 
+const draftNote = drafts.length ? `, ${drafts.length} draft(s) held back` : '';
 console.log(
   posts.length
-    ? `blog: ${posts.length} post(s) generated — ${posts.map((p) => p.slug).join(', ')}`
-    : 'blog: no posts yet (content/blog/ is empty)'
+    ? `blog: ${posts.length} post(s) generated${draftNote}`
+    : `blog: no published posts${draftNote}`
 );
+if (drafts.length) drafts.forEach((d) => console.log(`  draft (not published): ${d}`));
