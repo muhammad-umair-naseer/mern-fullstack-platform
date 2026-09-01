@@ -43,9 +43,11 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  * link to a dead page costs more trust than an absent icon. Restore it once
  * there is a real page id to point at.
  *
- * The SECP registration is stated but not linked: the eServices name-search
- * page is a form, not a permalink to our record, so a link would drop the
- * reader into a blank search box. Text is the honest treatment.
+ * The SECP registration line is deliberately not here. It still appears on
+ * /about, which is where someone checking whether the company is real will go
+ * looking; repeating the CUIN and the incorporation date on all 61 pages made
+ * the sign-off read like a filing rather than a close. "Building since
+ * September 2025." carries the same reassurance in the company's own voice.
  */
 const Footer = () => {
   const scope = useRef(null);
@@ -163,13 +165,15 @@ const Footer = () => {
           viewport we would rather the line wrap ugly than get clipped by the
           footer's overflow guard.
 
-          The second line is 29 characters against the first's 20, so the clamp
-          in the stylesheet is tuned to the LONGER line. That is what caps the
-          display size here: a headline is only as big as its worst line.
+          The break falls after "have to" because that splits the sentence into
+          28 and 25 characters. Near-equal lines are what make a display block
+          read as composed rather than merely large, and the clamp in the
+          stylesheet is tuned to the longer of the two — a headline is only ever
+          as big as its worst line.
         */}
         <p className="cx-ft-shout">
-          <span>Hire us to build it.</span>
-          <span>Or learn to build it yourself.</span>
+          <span>The last team you&rsquo;ll have to</span>
+          <span>explain your business to.</span>
         </p>
 
         <div className="cx-ft-cta-row">
@@ -270,10 +274,6 @@ const Footer = () => {
             <p className="cx-ft-fine">Building since September 2025.</p>
             <p className="cx-ft-fine">
               &copy; {year} Cortexis Solution Hub (Pvt.) Ltd. All rights reserved.
-            </p>
-            <p className="cx-ft-fine">
-              Registered with the SECP under the Companies Act 2017. CUIN 0306803.
-              Incorporated 2 September 2025.
             </p>
           </div>
 

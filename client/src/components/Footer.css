@@ -72,26 +72,25 @@
    The display line
    --------------------------------------------------------------------------
    The clamp is calibrated against the real string in Space Grotesk 700, not
-   against a round number. Measured: at 100px, with this weight and tracking,
-   "OR LEARN TO BUILD IT YOURSELF." is 1442px wide and "HIRE US TO BUILD IT."
-   is 877px. A headline is only as large as its worst line, so the second one
-   sets the ceiling: 1442/100 = 14.42px of width per 1px of font size, and the
-   rail's content box is 1160px, giving 80px as the largest size that holds on
-   one line. Hence 5rem.
+   against a round number. Measured at 100px in this weight: the longer line,
+   "THE LAST TEAM YOU'LL HAVE TO", is 1394px wide at -0.035em tracking. A
+   headline is only ever as large as its worst line, so that one sets the
+   ceiling: 13.94px of width per 1px of font size against a 1160px rail gives
+   83px. Hence 5.15rem.
 
-   The vw term is the same division, but it has to be taken against the LOOSEST
-   tracking, not the tightest. The media queries below open the tracking up as
-   the type shrinks (-0.035em down to -0.012em), and thirty characters of that
-   difference is 0.69em of extra width — enough to wrap the second line on
-   every viewport under 1024px if the coefficient is derived from -0.035em.
-   Backing the letter-spacing out of the measured width gives 1547px per 100px
-   of font at zero tracking, so at -0.012em it is 15.11px of width per 1px of
-   size: (100vw - 40px) / 15.11 = 6.62vw - 2.65px. Rounded down to 6.55vw - 3px
-   so a font that loads a shade wider than its metrics cannot push it over.
+   The vw term is the same division but has to be taken against the LOOSEST
+   tracking, not the tightest. The media queries below open letter-spacing up
+   as the type shrinks (-0.035em to -0.012em), and across twenty-eight
+   characters that is 0.64em of extra width — measured, 1458px instead of
+   1394px, which is enough to wrap the line on every viewport under about
+   1024px if the coefficient is taken from the tight value. (100vw - 40px of
+   rail padding) / 14.58 = 6.86vw - 2.74px, rounded down to 6.75vw - 3px so a
+   face that loads a shade wider than its metrics cannot push it over.
 
-   Change the copy and this has to be re-measured. Shortening the second line
-   to around 20 characters would buy back the full 116px this was set at
-   before, at the cost of the footer no longer fitting one screen.
+   Change the copy and this has to be re-measured — there is a script for it at
+   cortexis-tools/measure2.mjs. Shorter lines buy a larger size: an
+   eighteen-character worst line would allow about 116px, at the cost of the
+   footer no longer fitting one screen.
 
    Weight is 700 and cannot go higher: index.html loads Space Grotesk at
    300-700 only, so 800 or 900 would make the browser synthesise a smeared
@@ -100,7 +99,7 @@
 .footer .cx-ft-shout {
   margin: 0;
   color: var(--cx-ft-ink);
-  font-size: clamp(1.15rem, calc(6.55vw - 3px), 5rem);
+  font-size: clamp(1.15rem, calc(6.75vw - 3px), 5.15rem);
   font-weight: 700;
   /* Unitless so it survives the clamp at every step. */
   line-height: 0.86;
