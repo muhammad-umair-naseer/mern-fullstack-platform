@@ -144,9 +144,11 @@
 
 /* CTA group */
 .hero-buttons {
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
+  transform: translateX(-45px);
 }
 
 .btn {

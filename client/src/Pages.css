@@ -322,11 +322,7 @@ textarea.form-control {
   color: #334155;
 }
 
-.hero-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
+
 
 /* Section Styles */
 section {
