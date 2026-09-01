@@ -34,7 +34,7 @@ import { organization, breadcrumbs } from '../seo/schema';
  * still visible as twelve pages under /services.
  */
 const stats = [
-  { icon: Award, number: "Since 2025", label: "SECP-registered company" },
+  { icon: Award, number: "Since 2025", label: "Engineering Excellence" },
   { icon: FolderCheck, number: "50+", label: "Projects delivered" },
   { icon: Globe2, number: "23", label: "Free courses, open to anyone" },
   { icon: Smile, number: String(liveTools().length), label: "Free tools that never upload your file" },

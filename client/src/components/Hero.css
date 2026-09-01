@@ -18,6 +18,10 @@
   max-width: 1180px;
   margin: 0 auto;
   padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 /* ── Decorative floating glows ─────────────────────────────────────── */
@@ -67,7 +71,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem;
   margin-bottom: 1.5rem;
   border-radius: 999px;
   font-size: 0.82rem;
@@ -116,9 +120,10 @@
   font-weight: 800;
   line-height: 1.08;
   letter-spacing: -0.025em;
-  max-width: 760px;
-  margin-bottom: 1.2rem;
+  max-width: 820px;
+  margin: 0 auto 1.2rem auto;
   color: #090e17;
+  text-align: center;
 }
 .hero-gradient-text {
   font-style: normal;
@@ -137,16 +142,21 @@
 .hero-subtitle {
   color: #334155;
   font-size: clamp(1.05rem, 1.1vw + 0.85rem, 1.2rem);
-  max-width: 560px;
+  max-width: 680px;
   line-height: 1.75;
-  margin-bottom: 2rem;
+  margin: 0 auto 2.25rem auto;
+  text-align: center;
 }
 
 /* CTA group */
 .hero-buttons {
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .btn {
@@ -199,9 +209,12 @@
 /* Coordinate stats — luxury white cards with orange accents */
 .hero-coords {
   display: flex;
+  justify-content: center;
+  align-items: stretch;
   gap: 1rem;
   margin-top: 3.5rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 .coord {
   display: flex;

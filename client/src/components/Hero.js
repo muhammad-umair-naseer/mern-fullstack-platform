@@ -21,7 +21,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 // swap the third entry back to { count: N, suffix: '', label: 'Products of our
 // own in use' } — the evidence needed is a live page per product.
 const stats = [
-  { display: 'Since 2025', label: 'SECP-registered company' },
+  { display: 'Since 2025', label: 'Engineering Excellence' },
   { count: 23, suffix: '', label: 'Free courses, open to anyone' },
   { count: liveTools().length, suffix: '', label: 'Free tools that never upload your file' },
 ];
@@ -108,7 +108,7 @@ const Hero = () => {
       <div className="hero-content">
         <span className="hero-badge" data-hero>
           <span className="hero-badge-dot" />
-          Software house in Islamabad
+          Enterprise Software &amp; AI Solutions
         </span>
 
         {/* The page's only h1 — the document outline and the aria-labelledby
