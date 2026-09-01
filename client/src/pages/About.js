@@ -22,18 +22,19 @@ import { organization, breadcrumbs } from '../seo/schema';
  * other three were unverifiable, and unverifiable numbers on an About page are
  * the first thing a serious buyer tests.
  *
- * Every figure below is countable on this site: 12 service pages, 23 course
- * files, 2 tools that actually run. If one changes, change it here.
+ * Three of the four are countable on this site: 23 course files, 2 tools that
+ * actually run, and the SECP registration shown further down this page. If one
+ * changes, change it here.
  *
- * A real project count belongs in this row and would be the strongest of the
- * four — it is left out only because nobody has supplied one. To add it:
- *   { icon: FolderCheck, number: "<the real number>", label: "Projects delivered" },
- * and move the services figure to whichever slot it displaces. Put the true
- * number in, not a comfortable one.
+ * The project count is the exception — it is the company's own figure and
+ * cannot be checked from the outside, which is exactly why it is the one a
+ * buyer will ask about. It is the strongest number in the row when it is true
+ * and the most expensive when it is not. It displaced "12 services", which is
+ * still visible as twelve pages under /services.
  */
 const stats = [
   { icon: Award, number: "Since 2025", label: "SECP-registered company" },
-  { icon: FolderCheck, number: "12", label: "Services, each with a page you can read" },
+  { icon: FolderCheck, number: "50+", label: "Projects delivered" },
   { icon: Globe2, number: "23", label: "Free courses, open to anyone" },
   { icon: Smile, number: "2", label: "Free tools that never upload your file" },
 ];
