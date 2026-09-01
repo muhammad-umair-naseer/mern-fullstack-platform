@@ -16,11 +16,11 @@ const work = [
     to: "/your-bot",
   },
   {
-    name: "Free Privacy Tools",
+    name: "Free Power Tools",
     icon: Wrench,
     description:
-      "A suite of fast, client-side tools with zero restrictions on file size or usage. Process documents entirely inside your browser — 100% private, no signup, and zero files uploaded to servers.",
-    note: "100% Free • Unlimited file freedom • No account required",
+      "A fast, high-performance utility suite with zero restrictions on file size or daily limits. Compress, convert, and manage documents with lightning speed — completely free, strictly private, and no signup required.",
+    note: "100% Free • Unlimited file sizes • Instant processing",
     linkLabel: "Explore Free Tools",
     to: "/tools",
   },
