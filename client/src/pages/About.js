@@ -12,11 +12,30 @@ import Seo from '../seo/Seo';
 import { SITE } from '../seo/site';
 import { organization, breadcrumbs } from '../seo/schema';
 
+/**
+ * Four figures a visitor can check for themselves.
+ *
+ * These replaced "4+ Years of Excellence", "100+ Successful Projects",
+ * "10+ Global Markets" and "99% Client Satisfaction". The first was flatly
+ * contradicted three sections further down this same page, which states the
+ * company was incorporated on 2 September 2025 — a year old, not four. The
+ * other three were unverifiable, and unverifiable numbers on an About page are
+ * the first thing a serious buyer tests.
+ *
+ * Every figure below is countable on this site: 12 service pages, 23 course
+ * files, 2 tools that actually run. If one changes, change it here.
+ *
+ * A real project count belongs in this row and would be the strongest of the
+ * four — it is left out only because nobody has supplied one. To add it:
+ *   { icon: FolderCheck, number: "<the real number>", label: "Projects delivered" },
+ * and move the services figure to whichever slot it displaces. Put the true
+ * number in, not a comfortable one.
+ */
 const stats = [
-  { icon: Award, number: "4+", label: "Years of Excellence" },
-  { icon: FolderCheck, number: "100+", label: "Successful Projects" },
-  { icon: Globe2, number: "10+", label: "Global Markets" },
-  { icon: Smile, number: "99%", label: "Client Satisfaction" },
+  { icon: Award, number: "Since 2025", label: "SECP-registered company" },
+  { icon: FolderCheck, number: "12", label: "Services, each with a page you can read" },
+  { icon: Globe2, number: "23", label: "Free courses, open to anyone" },
+  { icon: Smile, number: "2", label: "Free tools that never upload your file" },
 ];
 
 const drivers = [
