@@ -14,7 +14,8 @@ export const POSTS = [
       "certificates"
     ],
     "targetQuery": "are free online certificates worth anything",
-    "image": "",
+    "image": "/blog/are-free-online-certificates-worth-anything.webp",
+    "imageAlt": "Glowing verified digital certification badge and credential in modern tech environment",
     "author": "Cortexis Solution Hub",
     "category": "careers",
     "minutes": 7,
@@ -32,7 +33,8 @@ export const POSTS = [
       "students"
     ],
     "targetQuery": "how to apply for internship in a software house in pakistan",
-    "image": "",
+    "image": "/blog/how-to-apply-for-a-software-house-internship-in-pakistan.webp",
+    "imageAlt": "Modern developer workspace with glowing laptop and software engineering portfolio",
     "author": "Cortexis Solution Hub",
     "category": "internships",
     "minutes": 8,
@@ -50,7 +52,8 @@ export const POSTS = [
       "automation"
     ],
     "targetQuery": "how to automate whatsapp order confirmation",
-    "image": "",
+    "image": "/blog/how-to-automate-whatsapp-order-confirmation-for-cod.webp",
+    "imageAlt": "3D visualization of automated WhatsApp e-commerce order confirmation and parcel delivery",
     "author": "Cortexis Solution Hub",
     "category": "whatsapp",
     "minutes": 9,
@@ -68,7 +71,8 @@ export const POSTS = [
       "api"
     ],
     "targetQuery": "instagram comment to dm automation without manychat",
-    "image": "",
+    "image": "/blog/instagram-comment-to-dm-without-manychat.webp",
+    "imageAlt": "3D Instagram automation concept with glowing comment bubbles and direct messages",
     "author": "Cortexis Solution Hub",
     "category": "instagram",
     "minutes": 8,
@@ -86,7 +90,8 @@ export const POSTS = [
       "careers"
     ],
     "targetQuery": "internship certificate for university submission",
-    "image": "",
+    "image": "/blog/internship-certificate-your-university-will-accept.webp",
+    "imageAlt": "Official accredited software internship certificate on illuminated glass pedestal",
     "author": "Cortexis Solution Hub",
     "category": "internships",
     "minutes": 8,
@@ -104,7 +109,8 @@ export const POSTS = [
       "tools"
     ],
     "targetQuery": "is it safe to upload pdf to online compressor",
-    "image": "",
+    "image": "/blog/is-it-safe-to-upload-pdf-to-online-compressor.webp",
+    "imageAlt": "Holographic security shield protecting a digital PDF document",
     "author": "Cortexis Solution Hub",
     "category": "pdf",
     "minutes": 5,
@@ -122,7 +128,8 @@ export const POSTS = [
       "flutter"
     ],
     "targetQuery": "mobile app development cost in pakistan",
-    "image": "",
+    "image": "/blog/what-a-mobile-app-really-costs-in-pakistan.webp",
+    "imageAlt": "3D smartphone surrounded by modular mobile app development features and cost indicators",
     "author": "Cortexis Solution Hub",
     "category": "pricing",
     "minutes": 9,
@@ -140,7 +147,8 @@ export const POSTS = [
       "pakistan"
     ],
     "targetQuery": "how much does it cost to build a website in pakistan",
-    "image": "",
+    "image": "/blog/what-a-website-actually-costs-in-pakistan.webp",
+    "imageAlt": "Layered 3D glass web browser interface with website architecture and pricing indicators",
     "author": "Cortexis Solution Hub",
     "category": "pricing",
     "minutes": 9,
@@ -158,7 +166,8 @@ export const POSTS = [
       "real-estate"
     ],
     "targetQuery": "whatsapp chatbot for real estate agents islamabad",
-    "image": "",
+    "image": "/blog/whatsapp-chatbot-for-islamabad-real-estate-agents.webp",
+    "imageAlt": "Modern luxury villa architecture with integrated WhatsApp real estate chatbot interface",
     "author": "Cortexis Solution Hub",
     "category": "whatsapp",
     "minutes": 8,
@@ -176,7 +185,8 @@ export const POSTS = [
       "business"
     ],
     "targetQuery": "whatsapp green tick verification pakistan",
-    "image": "",
+    "image": "/blog/whatsapp-green-tick-pakistan-what-actually-qualifies.webp",
+    "imageAlt": "Gleaming WhatsApp green verified checkmark badge on luxury obsidian pedestal",
     "author": "Cortexis Solution Hub",
     "category": "whatsapp",
     "minutes": 7,
@@ -194,7 +204,8 @@ export const POSTS = [
       "jobs"
     ],
     "targetQuery": "which programming language should i learn first in pakistan",
-    "image": "",
+    "image": "/blog/which-programming-language-should-you-learn-first-in-pakistan.webp",
+    "imageAlt": "Futuristic 3D glowing programming language symbols along a developer learning roadmap",
     "author": "Cortexis Solution Hub",
     "category": "careers",
     "minutes": 8,
@@ -212,7 +223,8 @@ export const POSTS = [
       "policy"
     ],
     "targetQuery": "will whatsapp ban my number for using a bot",
-    "image": "",
+    "image": "/blog/will-whatsapp-ban-my-number-for-using-a-bot.webp",
+    "imageAlt": "3D smartphone protected by WhatsApp official compliance and security shield",
     "author": "Cortexis Solution Hub",
     "category": "whatsapp",
     "minutes": 8,

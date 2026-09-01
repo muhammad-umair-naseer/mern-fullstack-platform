@@ -4,6 +4,8 @@ description: Yes if the bot drives the normal app, no if it runs on Meta's offic
 date: 2026-08-28
 tags: [whatsapp, automation, policy]
 targetQuery: will whatsapp ban my number for using a bot
+image: /blog/will-whatsapp-ban-my-number-for-using-a-bot.webp
+imageAlt: "3D smartphone protected by WhatsApp official compliance and security shield"
 ---
 
 Yes, if your bot works by driving the ordinary WhatsApp app. No, if it runs on Meta's official platform, which exists precisely so that software can send and receive messages without breaking the rules.

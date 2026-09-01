@@ -89,6 +89,7 @@ if (existsSync(DIR)) {
       // .webp, and means adding artwork is one line of frontmatter and one
       // file. Without it the card draws a designed cover from the category.
       image: meta.image || '',
+      imageAlt: meta.imageAlt || meta.alt || meta.title || '',
       author: meta.author || 'Cortexis Solution Hub',
       category: (Array.isArray(meta.tags) ? meta.tags[0] : meta.tags) || 'notes',
       minutes: readingMinutes(body),

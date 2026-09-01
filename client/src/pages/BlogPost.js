@@ -41,6 +41,7 @@ const BlogPost = () => {
       <Seo
         title={post.title}
         description={post.description}
+        image={post.image ? absolute(post.image) : undefined}
         path={`/blog/${post.slug}`}
         schema={[
           {
@@ -48,6 +49,7 @@ const BlogPost = () => {
             '@type': 'Article',
             headline: post.title,
             description: post.description,
+            image: post.image ? [absolute(post.image)] : undefined,
             datePublished: post.date,
             dateModified: post.updated,
             url: absolute(`/blog/${post.slug}`),
@@ -80,6 +82,17 @@ const BlogPost = () => {
             {post.minutes} min read
           </p>
         </header>
+
+        {post.image && (
+          <div className="cx-lv-in my-8 rounded-2xl overflow-hidden shadow-xl border border-slate-200/80" style={{ '--i': 2.5 }}>
+            <img
+              src={post.image}
+              alt={post.imageAlt || post.title}
+              className="w-full h-auto max-h-[480px] object-cover rounded-2xl"
+              loading="eager"
+            />
+          </div>
+        )}
 
         <div className="cx-lv-in cx-lv-body" style={{ '--i': 3 }}>
           <Markdown>{post.body}</Markdown>

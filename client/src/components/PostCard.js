@@ -45,7 +45,7 @@ const PostCard = ({ post, featured = false }) => {
       <Link to={`/blog/${post.slug}`} className="cx-pc-link">
         <div className={`cx-pc-cover tone-${tone}`}>
           {post.image ? (
-            <img src={post.image} alt="" loading="lazy" />
+            <img src={post.image} alt={post.imageAlt || post.title} loading="lazy" />
           ) : (
             <span className="cx-pc-mono" aria-hidden="true">{monogram(post.title)}</span>
           )}

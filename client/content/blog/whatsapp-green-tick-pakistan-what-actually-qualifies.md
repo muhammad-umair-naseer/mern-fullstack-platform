@@ -4,6 +4,8 @@ description: No agency can sell you the Official Business Account tick. Here is 
 date: 2026-08-28
 tags: [whatsapp, automation, business]
 targetQuery: whatsapp green tick verification pakistan
+image: /blog/whatsapp-green-tick-pakistan-what-actually-qualifies.webp
+imageAlt: "Gleaming WhatsApp green verified checkmark badge on luxury obsidian pedestal"
 ---
 
 The Official Business Account tick on WhatsApp is granted for how well known your brand is, not for how much you spend. If independent press has not written about your company, no agency, no consultant and no self described "Meta partner" can get you one, and anyone quoting you a price for a guaranteed green tick is selling something they cannot deliver.

@@ -4,6 +4,8 @@ description: Real cost bands for building an app in Pakistan, what moves a quote
 date: 2026-08-28
 tags: [pricing, mobile, flutter]
 targetQuery: mobile app development cost in pakistan
+image: /blog/what-a-mobile-app-really-costs-in-pakistan.webp
+imageAlt: "3D smartphone surrounded by modular mobile app development features and cost indicators"
 ---
 
 Most app quotes in Pakistan are wrong in the same two ways. They price the screens and forget the server, and they price an app for someone who actually needed a website.
