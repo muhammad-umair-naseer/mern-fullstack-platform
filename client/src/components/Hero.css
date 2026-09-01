@@ -148,7 +148,8 @@
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  transform: translateX(-45px);
+  position: relative;
+  left: -85px;
 }
 
 .btn {
@@ -287,4 +288,5 @@
   .hero { min-height: auto; padding: 2.5rem 0; }
   .hero-coords { margin-top: 2rem; }
   .hero-scroll { display: none; }
+  .hero-buttons { left: 0; }
 }
