@@ -39,7 +39,7 @@ export default function YourBot() {
           breadcrumbs([
             { name: 'Home', path: '/' },
             { name: 'Automation Tools', path: '/your-bot' },
-          ]),,
+          ]),
           faqSchema(faqsFor('/your-bot').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />

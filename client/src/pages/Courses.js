@@ -171,7 +171,7 @@ const Courses = () => {
           ]),
           // Only describe the courses actually rendered: markup that claims
           // more than the page shows is what gets structured data penalised.
-          ...(courses.length ? [itemList(courses, (c) => `/learn/${c.slug}`)] : []),,
+          ...(courses.length ? [itemList(courses, (c) => `/learn/${c.slug}`)] : []),
           faqSchema(faqsFor('/courses').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />

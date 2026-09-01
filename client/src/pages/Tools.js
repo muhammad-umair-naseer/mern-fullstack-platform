@@ -32,7 +32,7 @@ const Tools = () => {
           itemList(
             TOOLS.map((t) => ({ title: t.name, slug: t.slug })),
             (t) => `/tools/${t.slug}`
-          ),,
+          ),
           faqSchema(faqsFor('/tools').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />
