@@ -1,160 +1,525 @@
+/* ==========================================================================
+   Footer
+   --------------------------------------------------------------------------
+   Everything here is namespaced `cx-ft-*`, following the `cx-pc-*` precedent
+   in PostCard.css. That is not tidiness — theme-cosmic.css forces .card-text,
+   .section-title, .section-subtitle and every text-slate-* / text-gray-*
+   utility to black with !important, and Pages.css paints h1..h6 #090e17 and
+   p #334155 unscoped. A dark footer that reuses any of those class names, or
+   that forgets to set an explicit colour, renders near-black on navy.
+
+   The root class stays `.footer`: theme-cosmic.css's @media print rule hides
+   `.footer` by name, and that is what keeps printed certificates clean.
+   ========================================================================== */
+
 .footer {
+  /* Tokens are scoped to the footer so they cannot leak into the app shell. */
+
+  /* Flat ground, no gradient. All of the authority in this layout comes from
+     flatness — the moment there is a ramp, an inset highlight and a drop
+     shadow, it reads as a UI panel instead of the end of the document. */
+  --cx-ft-bg: #070e1e;
+
+  /* Near-white rather than #fff: pure white on navy vibrates at display size. */
+  --cx-ft-ink: #f2f5fa;
+  --cx-ft-link: rgba(242, 245, 250, 0.88);
+
+  /* Micro-labels are #8b9bb4, not the 45%-alpha step the reference uses.
+     45% of the ink over this ground computes to ~4.5:1, and house rule is
+     >=5.5:1 for anything under 14px — uppercase plus 0.14em tracking degrades
+     legibility in a way the contrast ratio does not capture. #8b9bb4 is
+     6.8:1 here and still reads as a quiet label. */
+  --cx-ft-label: #8b9bb4;
+  --cx-ft-fine: #94a3b8;
+
+  /* Two hairlines in the whole footer, both at 0.10 alpha. Anything at 0.2 or
+     above — or any orange rule — turns this into a spreadsheet. */
+  --cx-ft-rule-color: rgba(242, 245, 250, 0.1);
+
+  --cx-ft-accent: #f97316;
+
   position: relative;
+  /* Hero and the old footer both sit at 5; AnimatedBackground is fixed at -1
+     and the navbar at 999. Nothing here may climb above the navbar. */
   z-index: 5;
-  background: linear-gradient(180deg, #091428 0%, #050b15 100%);
-  color: #e2e8f0;
-  padding: 56px 0 28px;
-  border-top: 1px solid rgba(249, 115, 22, 0.25);
-  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: var(--cx-ft-bg);
+  color: var(--cx-ft-link);
+  /* Nothing should ever exceed the rail, but there is no overflow-x guard
+     anywhere in the app shell, so a display line that overshoots on some odd
+     viewport would scroll the whole page sideways. Clip it here instead. */
+  overflow: hidden;
+  padding: clamp(72px, 9vw, 128px) 0 40px;
+  /* iOS home indicator sits over the last row otherwise. */
+  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
 }
 
-.footer-container {
+.cx-ft-rail {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  /* The scrub translates this on every scroll tick. Without the hint the
+     compositor re-rasterises the whole 900px block each frame. */
+  will-change: transform;
 }
 
-/* Flex grid */
-.footer-content {
+/* Same reasoning for the two display lines, which are clip-path animated.
+   The spans are already display:block below; this only adds the hint. */
+.footer .cx-ft-shout span {
+  will-change: clip-path;
+}
+
+/* --------------------------------------------------------------------------
+   The display line
+   --------------------------------------------------------------------------
+   The clamp is calibrated against the real string in Space Grotesk 700, not
+   against a round number: at the 1200px rail the longer line ("WE BUILD
+   SOFTWARE." = ~10.0em of advance width once tracking is applied) lands within
+   a few percent of the content column, which is the only measurement that
+   matters. Change the copy and the clamp has to be re-tuned.
+
+   Weight is 700 and cannot go higher: index.html loads Space Grotesk at
+   300-700 only, so 800 or 900 would make the browser synthesise a smeared
+   fake at ~116px, which is worse than no bold at all.
+   -------------------------------------------------------------------------- */
+.footer .cx-ft-shout {
+  margin: 0;
+  color: var(--cx-ft-ink);
+  font-size: clamp(1.85rem, 8.4vw, 7.25rem);
+  font-weight: 700;
+  /* Unitless so it survives the clamp at every step. */
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  hyphens: none;
+  /* Optical alignment: pull the block left by roughly the side bearing of the
+     first cap so its stem sits flush with the hairlines, the column headings
+     and the wordmark below. This is the detail copies of this layout miss,
+     and its absence is why they look almost-right. */
+  margin-left: -0.055em;
+}
+
+.footer .cx-ft-shout span {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   CTA row
+   -------------------------------------------------------------------------- */
+.cx-ft-cta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 32px;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 36px;
+  gap: 32px 48px;
+  margin-top: clamp(32px, 4vw, 56px);
 }
 
-.footer-section {
-  flex: 1 1 240px;
-  min-width: 220px;
-  padding: 0 8px;
-}
-
-/* Headings */
-.footer-section h3,
-.footer-section h4 {
-  margin: 0 0 16px;
-  color: #fb923c;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  font-size: 1.15rem;
-}
-
-.footer-brand {
-  font-size: 1.45rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  background: linear-gradient(135deg, #ffffff 20%, #fed7aa 60%, #f97316 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 12px;
-}
-
-/* Text */
-.footer-section p {
-  line-height: 1.7;
-  margin: 0 0 12px;
-  color: #cbd5e1;
-  font-size: 0.95rem;
-}
-
-/* Lists */
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.footer-section ul li {
-  margin-bottom: 10px;
-}
-
-/* Links */
-.footer-section a {
-  color: #e2e8f0;
-  text-decoration: none;
+/* Orange appears in exactly two places in this footer and this is the first:
+   the rule under the CTA and its arrow. The words stay near-white. Colouring
+   both the words and the rule doubles the spend for no extra emphasis. */
+.footer .cx-ft-cta {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  transition: color 160ms ease, transform 160ms ease, text-underline-offset 160ms ease;
-}
-.footer-section a:hover,
-.footer-section a:focus-visible {
-  color: #fb923c;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  transform: translateX(2px);
-  outline: none;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--cx-ft-accent);
+  color: var(--cx-ft-ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color 140ms ease, color 140ms ease;
 }
 
-/* Socials */
-.footer-social {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
+.footer .cx-ft-cta:hover {
+  border-color: #fb923c;
 }
-.social-link {
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  background: #0d1e38;
-  border: 1px solid rgba(249, 115, 22, 0.35);
+
+.cx-ft-arrow {
+  color: var(--cx-ft-accent);
+  font-size: 0.72em;
+  line-height: 1;
+  transition: transform 140ms ease;
+}
+
+.footer a:hover .cx-ft-arrow {
+  transform: translate(2px, -2px);
+}
+
+.cx-ft-reach {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 48px;
+  font-style: normal;
+}
+
+.cx-ft-reach-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer .cx-ft-reach-link {
+  color: var(--cx-ft-ink);
+  font-size: 0.9375rem;
+  text-decoration: none;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 140ms ease;
+}
+
+.footer .cx-ft-reach-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Hairlines. Exactly two, and they are the only structural device in here.
+   -------------------------------------------------------------------------- */
+.cx-ft-rule {
+  border: 0;
+  border-top: 1px solid var(--cx-ft-rule-color);
+  margin: 40px 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   Link columns
+   --------------------------------------------------------------------------
+   Four columns because Cortexis has four real destinations. Padding this out
+   to the seven the reference carries would mean inventing pages, which is the
+   fastest possible tell that a layout was copied rather than translated.
+   -------------------------------------------------------------------------- */
+.cx-ft-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 48px 32px;
+  margin-top: clamp(40px, 5vw, 56px);
+}
+
+/* Every small uppercase label in the footer — column headings and the two
+   contact labels — is this one class, so the tier can never drift apart.
+   Column headings deliberately are NOT orange: twenty-odd accent-coloured
+   words across a link block is what makes a footer twinkle like a link farm.
+   IBM Plex Mono is loaded at 400/500 only, hence 500. */
+.footer .cx-ft-label {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cx-ft-label);
+}
+
+.cx-ft-col ul {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.cx-ft-col li {
+  margin: 0;
+}
+
+/* display:flex rather than inline-flex: on an inline box the padding does not
+   reliably grow the hit area, and at 15px/1.5 the target lands around 26px.
+   With min-height 44px and no list margin, adjacent target centres are 44px
+   apart, which clears the 2.5.8 spacing exception without needing a gap. */
+.footer .cx-ft-col a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 4px;
+  /* Negative inline margin keeps the text optically flush with the heading
+     above it despite the padding that makes the target tappable. */
+  margin-inline: -4px;
+  color: var(--cx-ft-link);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+
+/* Hover brightens and underlines; it does not change hue. The underline is
+   what carries the state for anyone who cannot separate the two greys. */
+.footer .cx-ft-col a:hover {
+  color: var(--cx-ft-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Bottom bar
+   -------------------------------------------------------------------------- */
+/* Sits under the column's links, at fine-print weight, so it reads as a note
+   rather than as a sixth link. */
+.footer .cx-ft-note {
+  margin: 14px 0 0;
+  padding: 0 4px;
+  color: var(--cx-ft-fine);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.cx-ft-base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px 40px;
+  margin-top: 32px;
+}
+
+.cx-ft-id {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer .cx-ft-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--cx-ft-ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+/* The mark is decorative — the company name sits right beside it, so an alt
+   string here would just make screen readers say it twice. */
+.cx-ft-mark img {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  object-fit: contain;
+}
+
+.footer .cx-ft-place,
+.footer .cx-ft-fine {
+  margin: 0;
+  color: var(--cx-ft-fine);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+.cx-ft-base-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+}
+
+.cx-ft-social {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 44x44 targets with an 18px glyph inside, rather than the 38px bordered
+   orange pills this footer used to have. No border, no gradient, no glow:
+   three lit chrome buttons in the corner undo the restraint everything else
+   in the layout is spending its budget on. */
+.footer .cx-ft-social a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  color: #fed7aa;
-  font-size: 0.88rem;
-  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, color 160ms ease;
-}
-.social-link:hover,
-.social-link:focus-visible {
-  background: linear-gradient(135deg, #ff6b00, #f97316);
-  color: #ffffff;
-  transform: translateY(-2px);
-  border-color: #f97316;
-  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45);
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  color: rgba(242, 245, 250, 0.6);
+  transition: color 140ms ease;
 }
 
-/* Contact */
-.contact-block { font-style: normal; }
-.contact-link {
-  text-decoration: none;
-  color: #e2e8f0;
+.footer .cx-ft-social a:hover {
+  color: var(--cx-ft-ink);
 }
 
-/* Bottom */
-.footer-bottom {
+.cx-ft-legal {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px 18px;
-  text-align: center;
-  padding-top: 22px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
-  font-size: 0.92rem;
-}
-.footer-bottom p { margin: 0; color: #94a3b8; }
-.footer-legal {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-.footer-legal a {
-  color: #cbd5e1;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.footer-legal a:hover {
-  color: #fb923c;
-}
-@media (max-width: 640px) {
-  .footer-bottom { justify-content: center; }
+  /* gap is 0 and the separator pads itself symmetrically: a flex gap plus a
+     margin on the ::before puts 16px one side of the middot and 32px the
+     other, which reads as a typo at 13px. */
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-/* Visually hidden utility */
+/* Generated content is not in the accessibility tree, so the separator needs
+   no aria-hidden juggling — which is exactly why it is a ::before and not the
+   <span aria-hidden> siblings this footer used to carry. */
+.cx-ft-legal li + li::before {
+  content: "\00b7";
+  padding: 0 14px;
+  color: var(--cx-ft-fine);
+}
+
+.footer .cx-ft-legal a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--cx-ft-fine);
+  font-size: 0.8125rem;
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+
+.footer .cx-ft-legal a:hover {
+  color: var(--cx-ft-ink);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Focus
+   --------------------------------------------------------------------------
+   The previous stylesheet set `outline: none` inside its :focus-visible rule,
+   which is a live 2.4.7 failure — a colour swap plus an underline is not a
+   sufficient indicator. #fdba74 is 11.4:1 on this ground and clears 3:1
+   against every link colour it sits beside. It is deliberately not #f97316:
+   the ring must not be the same hue as the accent it may sit next to.
+   -------------------------------------------------------------------------- */
+.footer a:focus-visible {
+  outline: 3px solid #fdba74;
+  outline-offset: 3px;
+  border-radius: 4px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  /* Keeps the focused link off the very bottom edge when focus is scrolled
+     into view — 2.4.11. */
+  scroll-margin-bottom: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   --------------------------------------------------------------------------
+   Tracking has to loosen as the display line shrinks or it closes up and the
+   caps collide; the fixed -0.035em that looks right at 116px is wrong at 30px.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .footer .cx-ft-shout {
+    letter-spacing: -0.03em;
+  }
+}
+
+@media (max-width: 900px) {
+  .cx-ft-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* >=32px between the last link of one column and the next heading, so the
+       heading is not misread as another tappable list item. */
+    gap: 40px 32px;
+  }
+
+  .footer .cx-ft-shout {
+    letter-spacing: -0.02em;
+  }
+}
+
+@media (max-width: 700px) {
+  .cx-ft-cta-row {
+    align-items: flex-start;
+  }
+
+  .cx-ft-reach {
+    gap: 20px 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  .cx-ft-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+
+  /* Stacked, never centred. One left edge from the display line all the way
+     down to the legal links is what holds the layout together. */
+  .cx-ft-base {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cx-ft-base-right {
+    gap: 12px 20px;
+  }
+
+  .footer .cx-ft-shout {
+    letter-spacing: -0.012em;
+    /* The optical pull is measured in caps; below ~30px it stops helping and
+       starts nudging the line into the rail's padding. */
+    margin-left: -0.02em;
+  }
+}
+
+/* 360px is the narrowest real device this has to hold. The social row and the
+   legal row wrap onto their own lines rather than shrinking targets — if it
+   does not fit, cut links, never the 44px. */
+@media (max-width: 380px) {
+  .cx-ft-social {
+    margin-left: -10px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Forced colours. There is no background-clip: text left in this footer, but
+   the hairlines are alpha-based and would vanish entirely in a high-contrast
+   theme, taking the structure with them.
+   -------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  .cx-ft-rule {
+    border-top-color: CanvasText;
+  }
+
+  .footer .cx-ft-cta {
+    border-bottom-color: CanvasText;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------
+   The scrub reveal is registered inside a gsap.matchMedia branch keyed to
+   (prefers-reduced-motion: no-preference), so under reduce it is never created
+   and no start state is ever written — the footer simply renders finished.
+   Nothing here needs to undo it.
+
+   What is left is the hover work: the arrow nudge and the colour transitions.
+   Reduce means none of it, not a gentler version of it.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .footer *,
+  .footer *::before,
+  .footer *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .footer a:hover .cx-ft-arrow {
+    transform: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Local utility. This is defined here, not globally, and the footer's hidden
+   <h2> and the social links depend on it — drop it from this file and that
+   heading becomes visible.
+   -------------------------------------------------------------------------- */
 .visually-hidden {
   position: absolute !important;
   height: 1px !important;
@@ -163,10 +528,6 @@
   clip: rect(1px, 1px, 1px, 1px) !important;
   white-space: nowrap !important;
   border: 0 !important;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .footer-content { flex-direction: column; }
-  .footer-section { margin-bottom: 20px; }
+  padding: 0 !important;
+  margin: -1px !important;
 }

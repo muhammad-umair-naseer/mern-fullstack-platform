@@ -167,6 +167,33 @@ for (const route of routes) {
     await page.waitForFunction('document.title && document.title.length > 0', { timeout: 10000 })
       .catch(() => {});
 
+    // Drive the page to the bottom before snapshotting.
+    //
+    // Every scroll-driven animation on this site writes its start state from
+    // JavaScript — opacity 0 for the reveal hook, a clip-path and a translate
+    // for the footer's scrub. Serialising at scroll position 0 freezes those
+    // start states into the static HTML, which then ships a page whose content
+    // is invisible or half-clipped to anyone whose JS never runs. Scrolling to
+    // the end first leaves every one of them at its finished state, so the
+    // snapshot is the page as it is meant to look.
+    //
+    // Stepping rather than jumping: a single scrollTo skips the intermediate
+    // triggers, and ScrollTrigger only advances the ones it actually passes.
+    await page.evaluate(async () => {
+      const step = Math.round(window.innerHeight * 0.8);
+      const frame = () => new Promise((r) => requestAnimationFrame(() => r()));
+      for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        await frame();
+        await frame();
+      }
+      window.scrollTo(0, document.documentElement.scrollHeight);
+      // Two frames for the last trigger to settle, then let any scrub with
+      // smoothing catch up to its end value.
+      await frame();
+      await new Promise((r) => setTimeout(r, 700));
+    });
+
     const html = await page.evaluate(() => {
       // Scripts still load and run for real visitors; nothing is stripped.
       return '<!doctype html>\n' + document.documentElement.outerHTML;
