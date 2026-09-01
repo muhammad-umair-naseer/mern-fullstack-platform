@@ -162,15 +162,19 @@ const Footer = () => {
           make. No white-space: nowrap, though — if the clamp ever overshoots a
           viewport we would rather the line wrap ugly than get clipped by the
           footer's overflow guard.
+
+          The second line is 29 characters against the first's 20, so the clamp
+          in the stylesheet is tuned to the LONGER line. That is what caps the
+          display size here: a headline is only as big as its worst line.
         */}
         <p className="cx-ft-shout">
-          <span>We build software.</span>
-          <span>We teach it free.</span>
+          <span>Hire us to build it.</span>
+          <span>Or learn to build it yourself.</span>
         </p>
 
         <div className="cx-ft-cta-row">
           <Link className="cx-ft-cta" to="/contact">
-            Let&rsquo;s build something
+            Start a project
             <span className="cx-ft-arrow" aria-hidden="true">&#8599;</span>
           </Link>
 
@@ -178,13 +182,13 @@ const Footer = () => {
               The copyright and registration lines stay out of it. */}
           <address className="cx-ft-reach">
             <span className="cx-ft-reach-block">
-              <span className="cx-ft-label">For new work</span>
+              <span className="cx-ft-label">New projects</span>
               <a className="cx-ft-reach-link" href="mailto:cortexis.solution.hub@gmail.com">
                 cortexis.solution.hub@gmail.com
               </a>
             </span>
             <span className="cx-ft-reach-block">
-              <span className="cx-ft-label">Or call</span>
+              <span className="cx-ft-label">WhatsApp or call</span>
               <a className="cx-ft-reach-link" href="tel:+923475769500">
                 +92 347 5769500
               </a>
@@ -225,7 +229,7 @@ const Footer = () => {
           </div>
 
           <div className="cx-ft-col">
-            <h3 className="cx-ft-label">Read &amp; use</h3>
+            <h3 className="cx-ft-label">Read and use</h3>
             <ul>
               <li><Link to="/blog">Blog</Link></li>
               <li><Link to="/tools">Free tools</Link></li>
@@ -238,7 +242,7 @@ const Footer = () => {
             </ul>
             {/* Two of sixty-two tools are built. Saying so here costs one line
                 and saves the visitor a click into sixty placeholders. */}
-            <p className="cx-ft-note">2 tools live, more in build.</p>
+            <p className="cx-ft-note">Two tools live, free to use.</p>
           </div>
 
           <div className="cx-ft-col">
@@ -263,19 +267,20 @@ const Footer = () => {
             {/* City and country only. The street line on the SECP filing is a
                 private address and must never appear here. */}
             <p className="cx-ft-place">Islamabad, Pakistan</p>
+            <p className="cx-ft-fine">Building since September 2025.</p>
             <p className="cx-ft-fine">
               &copy; {year} Cortexis Solution Hub (Pvt.) Ltd. All rights reserved.
             </p>
             <p className="cx-ft-fine">
-              Registered with the SECP under the Companies Act 2017 &middot; CUIN 0306803 &middot;
-              incorporated 2 September 2025.
+              Registered with the SECP under the Companies Act 2017. CUIN 0306803.
+              Incorporated 2 September 2025.
             </p>
           </div>
 
           <div className="cx-ft-base-right">
             {/* A heading rather than aria-label on the list, so the group is
                 reachable by heading navigation like every other column. */}
-            <h3 className="visually-hidden" id="cx-ft-social-h">Follow Cortexis</h3>
+            <h3 className="visually-hidden" id="cx-ft-social-h">Elsewhere</h3>
             <ul className="cx-ft-social" aria-labelledby="cx-ft-social-h">
               <li>
                 {/* rel is "me noopener" without noreferrer on purpose: these are

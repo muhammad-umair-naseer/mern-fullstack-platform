@@ -48,9 +48,9 @@
      anywhere in the app shell, so a display line that overshoots on some odd
      viewport would scroll the whole page sideways. Clip it here instead. */
   overflow: hidden;
-  padding: clamp(72px, 9vw, 128px) 0 40px;
+  padding: clamp(56px, 6.5vw, 96px) 0 32px;
   /* iOS home indicator sits over the last row otherwise. */
-  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
 }
 
 .cx-ft-rail {
@@ -72,10 +72,26 @@
    The display line
    --------------------------------------------------------------------------
    The clamp is calibrated against the real string in Space Grotesk 700, not
-   against a round number: at the 1200px rail the longer line ("WE BUILD
-   SOFTWARE." = ~10.0em of advance width once tracking is applied) lands within
-   a few percent of the content column, which is the only measurement that
-   matters. Change the copy and the clamp has to be re-tuned.
+   against a round number. Measured: at 100px, with this weight and tracking,
+   "OR LEARN TO BUILD IT YOURSELF." is 1442px wide and "HIRE US TO BUILD IT."
+   is 877px. A headline is only as large as its worst line, so the second one
+   sets the ceiling: 1442/100 = 14.42px of width per 1px of font size, and the
+   rail's content box is 1160px, giving 80px as the largest size that holds on
+   one line. Hence 5rem.
+
+   The vw term is the same division, but it has to be taken against the LOOSEST
+   tracking, not the tightest. The media queries below open the tracking up as
+   the type shrinks (-0.035em down to -0.012em), and thirty characters of that
+   difference is 0.69em of extra width — enough to wrap the second line on
+   every viewport under 1024px if the coefficient is derived from -0.035em.
+   Backing the letter-spacing out of the measured width gives 1547px per 100px
+   of font at zero tracking, so at -0.012em it is 15.11px of width per 1px of
+   size: (100vw - 40px) / 15.11 = 6.62vw - 2.65px. Rounded down to 6.55vw - 3px
+   so a font that loads a shade wider than its metrics cannot push it over.
+
+   Change the copy and this has to be re-measured. Shortening the second line
+   to around 20 characters would buy back the full 116px this was set at
+   before, at the cost of the footer no longer fitting one screen.
 
    Weight is 700 and cannot go higher: index.html loads Space Grotesk at
    300-700 only, so 800 or 900 would make the browser synthesise a smeared
@@ -84,7 +100,7 @@
 .footer .cx-ft-shout {
   margin: 0;
   color: var(--cx-ft-ink);
-  font-size: clamp(1.85rem, 8.4vw, 7.25rem);
+  font-size: clamp(1.15rem, calc(6.55vw - 3px), 5rem);
   font-weight: 700;
   /* Unitless so it survives the clamp at every step. */
   line-height: 0.86;
@@ -111,7 +127,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 32px 48px;
-  margin-top: clamp(32px, 4vw, 56px);
+  margin-top: clamp(28px, 3vw, 40px);
 }
 
 /* Orange appears in exactly two places in this footer and this is the first:
@@ -183,7 +199,7 @@
 .cx-ft-rule {
   border: 0;
   border-top: 1px solid var(--cx-ft-rule-color);
-  margin: 40px 0 0;
+  margin: 28px 0 0;
 }
 
 /* --------------------------------------------------------------------------
@@ -196,8 +212,8 @@
 .cx-ft-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 48px 32px;
-  margin-top: clamp(40px, 5vw, 56px);
+  gap: 36px 32px;
+  margin-top: clamp(32px, 3.5vw, 40px);
 }
 
 /* Every small uppercase label in the footer — column headings and the two
@@ -218,7 +234,7 @@
 
 .cx-ft-col ul {
   list-style: none;
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   padding: 0;
 }
 
@@ -228,12 +244,17 @@
 
 /* display:flex rather than inline-flex: on an inline box the padding does not
    reliably grow the hit area, and at 15px/1.5 the target lands around 26px.
-   With min-height 44px and no list margin, adjacent target centres are 44px
-   apart, which clears the 2.5.8 spacing exception without needing a gap. */
+
+   36px, not 44px. The AA requirement is WCAG 2.5.8 Target Size (Minimum),
+   which asks for 24x24 CSS px; 44px is 2.5.5, which is AAA and was never the
+   bar here. Six links at 44px made the tallest column 296px and pushed the
+   whole footer past a laptop viewport, so the effect this footer was built
+   for could never be seen in one screen. 36px clears the AA floor by half
+   again, and coarse pointers get 44px back in the media query below. */
 .footer .cx-ft-col a {
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 36px;
   padding: 6px 4px;
   /* Negative inline margin keeps the text optically flush with the heading
      above it despite the padding that makes the target tappable. */
@@ -272,14 +293,14 @@
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 32px 40px;
-  margin-top: 32px;
+  gap: 28px 40px;
+  margin-top: 28px;
 }
 
 .cx-ft-id {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .footer .cx-ft-mark {
@@ -309,7 +330,8 @@
   color: var(--cx-ft-fine);
   font-size: 0.8125rem;
   line-height: 1.6;
-  max-width: 52ch;
+  /* Wide enough to keep the registration line to two rows rather than three. */
+  max-width: 68ch;
 }
 
 .cx-ft-base-right {
@@ -427,6 +449,15 @@
 
   .footer .cx-ft-shout {
     letter-spacing: -0.02em;
+  }
+}
+
+/* Anything driven by a finger rather than a cursor gets the full 44px back.
+   This is the honest split: the constraint that made 36px worth doing is
+   screen height on a laptop, which is not a phone's problem. */
+@media (pointer: coarse) {
+  .footer .cx-ft-col a {
+    min-height: 44px;
   }
 }
 
