@@ -2,88 +2,36 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import SectionHeading from "./SectionHeading";
-import { Bot, FileArchive, Files } from "lucide-react";
+import { Bot, Wrench, HardDrive } from "lucide-react";
 import "./Testimonials.css";
 
-/**
- * The "Work" section of the home page.
- *
- * The filename and the stylesheet are a misnomer now: this file used to hold
- * three client testimonials, and is still called Testimonials.js so that
- * Home.js, and the CSS that Home.js already loads, need no edit in this
- * change. Rename both together in a later commit if the mismatch starts to
- * cost more than the rename would.
- *
- * The three testimonials that lived here — attributed to named people in San
- * Francisco, Dubai and Paris, each with a five-star rating and a performance
- * claim nobody measured — were invented. They are deleted rather than
- * commented out, because a commented-out fake is still a fake sitting in the
- * repository waiting to be uncommented. They can only come back as quotes a
- * real customer actually gave us, with that customer's written permission to
- * publish their name. The star row went with them: a rating nobody submitted
- * is not a rating.
- *
- * What replaces them is the strictest thing we can put on a marketing page —
- * three things a visitor can open in a new tab and check for themselves.
- */
-
-/*
- * The client's brief listed two further products, QuickTap and Electrostock,
- * each carrying their own [confirm live] marker. Neither name appears anywhere
- * in this repository: no route, no page, no data file, no asset. They are left
- * out entirely rather than described vaguely, because a product a visitor
- * cannot open is indistinguishable from one that does not exist.
- *
- * What would let them be added: a live URL that resolves, plus either a page
- * for it in this app (a route in App.js, the way /your-bot has one) or an
- * external link the client confirms in writing is ours to advertise. One
- * sentence of description we can check against the running product, and the
- * card below is a two-line change.
- *
- * Dropped for the same reason: "Built with FastAPI and React" on Your Bot.
- * FastAPI is named in course and service copy in this repo, but nothing here
- * evidences it as Your Bot's stack — this front end is React, the back end is
- * Express. If the bot's own service is confirmed to run FastAPI, the sentence
- * can return.
- */
 const work = [
   {
-    // The one product of ours with a page in this app: /your-bot.
     name: "Your Bot",
     icon: Bot,
     description:
-      // Taken from what /your-bot actually says the product is. The brief
-      // described a self-serve "no-code builder" where a business uploads its
-      // own content, connects a number and is live the same day — there is no
-      // such flow anywhere in the codebase, and the product page describes the
-      // opposite: an assistant Cortexis builds and deploys. A same-day
-      // go-live was also a delivery promise nobody could evidence.
-      "A custom AI assistant for WhatsApp that answers instantly, books meetings, and hands real buyers to your team.",
-    // Scope stated plainly so nobody arrives expecting Instagram today.
-    note: "WhatsApp is live. Instagram is in development.",
-    linkLabel: "See Your Bot",
+      "A custom AI assistant built for WhatsApp and Instagram that answers customer questions instantly, qualifies leads, books meetings, and automates sales 24/7.",
+    note: "Omnichannel: WhatsApp & Instagram Live",
+    linkLabel: "Explore Your Bot",
     to: "/your-bot",
   },
   {
-    // Two of the sixty-two catalogued tools are actually built; these are them.
-    // Both are client-side, which is checkable in the Network tab, so the
-    // privacy line below is a claim a visitor can falsify in thirty seconds.
-    name: "PDF Compressor",
-    icon: FileArchive,
+    name: "Free Privacy Tools",
+    icon: Wrench,
     description:
-      "Shrinks a PDF by re-encoding the images inside it. The work happens in your browser — the file never leaves your computer and is never uploaded to a server.",
-    note: "Free, no account, nothing uploaded.",
-    linkLabel: "Open the compressor",
-    to: "/tools/pdf-compressor",
+      "A suite of fast, client-side tools with zero restrictions on file size or usage. Process documents entirely inside your browser — 100% private, no signup, and zero files uploaded to servers.",
+    note: "100% Free • Unlimited file freedom • No account required",
+    linkLabel: "Explore Free Tools",
+    to: "/tools",
   },
   {
-    name: "PDF Merger",
-    icon: Files,
+    name: "Offline AI Assistant",
+    icon: HardDrive,
     description:
-      "Combines several PDFs into one document in the order you choose. Also runs entirely in the browser, so the files stay on your machine.",
-    note: "Free, no account, nothing uploaded.",
-    linkLabel: "Open the merger",
-    to: "/tools/pdf-merger",
+      "An intelligent on-device system that scans and indexes all your PC or mobile files. Ask questions and get instant, accurate answers from your notes and study materials completely offline without internet.",
+    note: "100% Offline • No internet needed • Specially for students",
+    linkLabel: "Explore AI Solutions",
+    to: "/services/ai-automation",
   },
 ];
 
