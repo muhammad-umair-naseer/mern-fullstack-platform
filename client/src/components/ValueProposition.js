@@ -120,8 +120,8 @@ export default function ValueProposition() {
         <SectionHeading
           id="value-prop-heading"
           eyebrow="Why Cortexis"
-          title="Small team. Senior work. Direct access."
-          subtitle="You talk to the engineers who write your code. No account managers, no hand-offs between departments, and no surprises when the invoice arrives."
+          title="Elite Engineering. Zero Bureaucracy. Uncompromising Execution."
+          subtitle="No account managers, no generic templates, and zero fluff. You collaborate directly with senior engineers and architects building high-performance software, automated AI workflows, and bulletproof systems designed to scale."
         />
 
         <div className="value-grid">
