@@ -184,23 +184,6 @@ const Footer = () => {
             Start a project
             <span className="cx-ft-arrow" aria-hidden="true">&#8599;</span>
           </Link>
-
-          {/* <address> is correct here — these are our own contact details.
-              The copyright and registration lines stay out of it. */}
-          <address className="cx-ft-reach">
-            <span className="cx-ft-reach-block">
-              <span className="cx-ft-label">New projects</span>
-              <a className="cx-ft-reach-link" href="mailto:cortexis.solution.hub@gmail.com">
-                cortexis.solution.hub@gmail.com
-              </a>
-            </span>
-            <span className="cx-ft-reach-block">
-              <span className="cx-ft-label">WhatsApp or call</span>
-              <a className="cx-ft-reach-link" href="tel:+923475769500">
-                +92 347 5769500
-              </a>
-            </span>
-          </address>
         </div>
 
         <hr className="cx-ft-rule" />
