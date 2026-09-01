@@ -37,7 +37,7 @@ const Navbar = () => {
           <Link to="/tools" className="nav-link" onClick={closeMenu} data-intro>Free Tools</Link>
           <Link to="/blog" className="nav-link" onClick={closeMenu} data-intro>Blog</Link>
           <Link to="/your-bot" className="nav-link" onClick={closeMenu} data-intro>Your Bot</Link>
-          <Link to="/about" className="nav-link" onClick={closeMenu} data-intro>About Us</Link>
+          <Link to="/about" className="nav-link" onClick={closeMenu} data-intro>About</Link>
         </nav>
 
         {/* Right: Actions / CTA */}
@@ -57,7 +57,7 @@ const Navbar = () => {
           ) : (
             <Link to="/login" className="nav-link nav-auth-link" onClick={closeMenu}>Sign in</Link>
           )}
-          <Link to="/contact" className="nav-cta" onClick={closeMenu}>Contact Us</Link>
+          <Link to="/contact" className="nav-cta" onClick={closeMenu}>Contact</Link>
         </div>
 
         {/* Mobile Hamburger Icon */}

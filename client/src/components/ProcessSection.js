@@ -4,33 +4,60 @@ import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import SectionHeading from './SectionHeading';
 import { Compass, Cpu, CloudLightning, LineChart } from 'lucide-react';
 
+/**
+ * The four stages of a client engagement.
+ *
+ * Every `desc` here is a promise someone will hold us to, so each one is
+ * limited to what we can actually point at: a document, a link, a hand-over.
+ * Anything that needed a number we could not evidence was cut rather than
+ * softened — see the per-step notes below.
+ *
+ * `color` feeds the `--step-color` custom property the card CSS reads for its
+ * hover border, numeral and icon tint, so the four values must stay distinct.
+ * The icons are unchanged from the previous revision: they belong to the
+ * visual design, not to the copy.
+ */
 const steps = [
   {
     num: '01',
     icon: Compass,
-    title: 'Discover & Architect',
-    desc: 'We analyze your business requirements, define the technical blueprint, design database schemas, and create high-fidelity system specifications.',
+    title: 'Scope',
+    // "Fixed price for a fixed scope" was dropped: no pricing model is
+    // documented anywhere in this repo. What survives is narrower and true —
+    // the written scope states a cost, which says nothing about how we price.
+    desc: "A call, then a written scope: what we're building, what it costs, and when you'll see the first version. You sign off before we write a line of code.",
     color: '#3b82f6',
   },
   {
     num: '02',
     icon: Cpu,
-    title: 'Agile Engineering',
-    desc: 'Our engineers build clean, modular, test-driven software and custom AI pipelines with regular sprint demos and live staging environments.',
+    // "Weekly demos" lost its cadence. The staging link and the demos are real
+    // and observable; nothing in the repo or in any client agreement fixes them
+    // to a seven-day rhythm. Restore "Weekly" only once a signed engagement
+    // document commits to that interval.
+    title: 'Build',
+    desc: "Demos on a staging link. You test real screens, not slides, and change direction while it's still cheap to.",
     color: '#f97316',
   },
   {
     num: '03',
     icon: CloudLightning,
-    title: 'Deploy & Automate',
-    desc: 'Automated CI/CD pipelines, containerized cloud infrastructure, and intelligent agentic workflows are deployed with zero downtime.',
+    title: 'Launch',
+    // Kept in full: every item is a thing that changes hands at hand-over, so
+    // it is checkable on the day rather than a claim about the future.
+    desc: 'Deployment, domain, monitoring, and a hand-over walkthrough. You receive the repository, the credentials, and the documentation.',
     color: '#8b5cf6',
   },
   {
     num: '04',
     icon: LineChart,
-    title: 'Scale & Optimize',
-    desc: 'Real-time telemetry, 24/7 SLA monitoring, load testing, and continuous feature evolution keep your platform ahead of competition.',
+    title: 'Support',
+    // Dropped: "a named engineer", "a response time in writing" and "a set
+    // number of hours". No staffing plan, SLA or hours allowance exists to back
+    // them, and each would be an individual promise to a paying customer. What
+    // remains is the shape of the arrangement, which is accurate. These come
+    // back the day a support contract template lands in the repo.
+    desc: 'An optional ongoing arrangement after launch, covering changes and improvements to what we built.',
     color: '#10b981',
   },
 ];
@@ -43,9 +70,9 @@ export default function ProcessSection() {
       <div className="container">
         <SectionHeading
           id="process-heading"
-          eyebrow="How We Deliver"
-          title="Our Proven Engineering Framework"
-          subtitle="From initial concept to enterprise-scale deployment, our transparent four-stage methodology ensures on-time, high-impact delivery."
+          eyebrow="Process"
+          title="How a project runs"
+          subtitle="Four stages. Each one ends with something you can see."
         />
 
         <div className="process-grid">

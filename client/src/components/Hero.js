@@ -7,10 +7,22 @@ import './Hero.css';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
+// Each stat has to survive a visitor clicking through to check it, so every one
+// of these points at something already on this site: the SECP incorporation on
+// /about, the course catalogue on /courses, the two working tools on /tools.
+// A stat with `display` opts out of the count-up below, for values that read as
+// a fact rather than a quantity.
+//
+// The brief's third stat was "3 — Products of our own in use [confirm count]".
+// Only Your Bot (/your-bot) exists in this repository, so 3 is a number a
+// visitor cannot confirm; it is replaced by the two shipped tools, which anyone
+// can open and use. To restore the product stat once the real count is known,
+// swap the third entry back to { count: N, suffix: '', label: 'Products of our
+// own in use' } — the evidence needed is a live page per product.
 const stats = [
-  { count: 50, suffix: '+', label: 'Projects Shipped' },
-  { count: 12, suffix: '+', label: 'Tech Stacks' },
-  { display: '24/7', label: 'Support' },
+  { display: 'Since 2025', label: 'SECP-registered company' },
+  { count: 23, suffix: '', label: 'Free courses, open to anyone' },
+  { count: 2, suffix: '', label: 'Free tools that never upload your file' },
 ];
 
 const Hero = () => {
@@ -33,7 +45,12 @@ const Hero = () => {
           delay: 0.05,
         });
 
-        // Count-up the numeric stats, tied to the same timeline
+        // Count-up the numeric stats, tied to the same timeline. The markup
+        // renders the finished number so the prerendered HTML is truthful, so
+        // the animation has to wind it back to zero before it can count up.
+        counters.forEach((el) => {
+          el.textContent = '0' + (el.dataset.suffix || '');
+        });
         counters.forEach((el) => {
           const target = +el.dataset.count;
           const suffix = el.dataset.suffix || '';
@@ -90,31 +107,46 @@ const Hero = () => {
       <div className="hero-content">
         <span className="hero-badge" data-hero>
           <span className="hero-badge-dot" />
-          Software&nbsp;·&nbsp;Training&nbsp;·&nbsp;Consulting
+          Software house in Islamabad
         </span>
 
+        {/* The page's only h1 — the document outline and the aria-labelledby
+            above both hang off it, so it stays an h1 whatever the copy says. */}
         <h1 id="hero-heading" data-hero>
-          Engineering <em className="hero-gradient-text">Intelligent</em> Digital Solutions
+          Software built for your business, by{' '}
+          <em className="hero-gradient-text">engineers you can reach</em>.
         </h1>
 
         <p className="hero-subtitle" data-hero>
-          We build software, train talent, and deliver consulting that helps teams
-          ship faster and grow with confidence.
+          Cortexis designs and builds web apps, mobile apps, and AI automation for
+          companies in Pakistan and the Gulf. You work directly with the people
+          writing your code, from the first call to the hand-over.
         </p>
 
         <div className="hero-buttons" role="group" aria-label="Primary actions" data-hero>
-          <Link to="/services" className="btn btn-primary cta">Explore Services</Link>
-          <Link to="/contact" className="btn btn-secondary cta-alt">Talk to an Expert</Link>
+          <Link to="/contact" className="btn btn-primary cta">Start a project</Link>
+          {/* The brief asked for "See our work" pointing at /work. There is no
+              /work route and no case studies to put behind one, so this goes to
+              /services — the nearest page that actually answers the question —
+              and the label was changed to match what the visitor will find. */}
+          <Link to="/services" className="btn btn-secondary cta-alt">See what we build</Link>
         </div>
 
         <div className="hero-coords" data-hero>
           {stats.map((s, i) => (
             <div className="coord" key={i}>
+              {/* The true value is what is rendered, not the count-up's
+                    starting 0. scripts/prerender.mjs snapshots the real DOM into
+                    all 61 static pages, so whatever sits here is what a crawler
+                    and any visitor without JS will read — and shipping "0 free
+                    courses" would be a false statement of exactly the fact this
+                    stat exists to make checkable. The animation resets it to 0
+                    itself, below. */}
               {s.display ? (
                 <span className="num">{s.display}</span>
               ) : (
                 <span className="num" data-count={s.count} data-suffix={s.suffix}>
-                  0{s.suffix}
+                  {s.count}{s.suffix}
                 </span>
               )}
               <span className="lbl">{s.label}</span>
