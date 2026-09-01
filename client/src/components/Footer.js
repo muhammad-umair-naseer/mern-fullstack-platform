@@ -165,15 +165,17 @@ const Footer = () => {
           viewport we would rather the line wrap ugly than get clipped by the
           footer's overflow guard.
 
-          The break falls after "have to" because that splits the sentence into
-          28 and 25 characters. Near-equal lines are what make a display block
-          read as composed rather than merely large, and the clamp in the
-          stylesheet is tuned to the longer of the two — a headline is only ever
-          as big as its worst line.
+          Short line then long line, so the second one fills the measure and
+          anchors the block. The reverse — "Build the future" over "with us." —
+          measures fractionally larger but leaves a stubby eight-character
+          second line under a full-width first, which reads top-heavy.
+
+          The clamp in the stylesheet is tuned to the longer of the two lines,
+          because a headline is only ever as big as its worst line.
         */}
         <p className="cx-ft-shout">
-          <span>The last team you&rsquo;ll have to</span>
-          <span>explain your business to.</span>
+          <span>Build the</span>
+          <span>future with us.</span>
         </p>
 
         <div className="cx-ft-cta-row">
