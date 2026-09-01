@@ -10,7 +10,7 @@
  * Set SITE_URL in the environment to override the domain.
  */
 import { readdirSync, writeFileSync, statSync } from 'fs';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname, resolve } from 'path';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -37,30 +37,11 @@ const STATIC = [
   { path: '/privacy', priority: '0.2', changefreq: 'yearly' },
 ];
 
-// Deliberately excluded: /login, /signup, /dashboard, /certificate/:code and
-// everything under a lesson or quiz. They are either private, per user, or
-// thin duplicates, and listing them wastes crawl budget on pages that will
-// never rank.
-//
-// Also excluded: the 62 /tools/:slug pages while they are still in design.
-// Each is a name, a one line description and a notice saying the tool is not
-// built. Sixty two pages of that is thin content, and submitting them asks
-// Google to rank pages that cannot answer the query. They are added below
-// automatically as each tool is marked live.
-//
-// The bot's legal pages are excluded too: Meta requires them to exist, but
-// three pages of boilerplate dilute what the site is about.
-//
-// /whatsapp-bot and its children are excluded as well. They still resolve,
-// because those exact URLs are registered with Meta for app review, but they
-// render the same component as /your-bot. Listing both would be duplicate
-// content, so only the canonical path is submitted.
-
 const iso = (d) => new Date(d).toISOString().slice(0, 10);
 
 const courses = [];
 for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
-  const mod = (await import(`${COURSES}/${file}`)).default;
+  const mod = (await import(pathToFileURL(`${COURSES}/${file}`).href)).default;
   courses.push({
     path: `/learn/${mod.slug}`,
     priority: '0.8',
@@ -70,11 +51,11 @@ for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
 }
 
 // A tool joins the sitemap the moment it actually works.
-const { TOOLS } = await import(resolve(HERE, '../src/data/tools.js'));
+const { TOOLS } = await import(pathToFileURL(resolve(HERE, '../src/data/tools.js')).href);
 // IMPLEMENTED, not isLive. isLive is editorial and true for all 62; this is
 // the set that has a component behind it. Submitting a page that renders no
 // tool is how a site earns a thin-content problem, and it is slow to undo.
-const { IMPLEMENTED } = await import(resolve(HERE, '../src/data/tools.js'));
+const { IMPLEMENTED } = await import(pathToFileURL(resolve(HERE, '../src/data/tools.js')).href);
 const liveTools = TOOLS.filter((t) => IMPLEMENTED.has(t.slug)).map((t) => ({
   path: `/tools/${t.slug}`,
   priority: '0.7',
@@ -83,7 +64,7 @@ const liveTools = TOOLS.filter((t) => IMPLEMENTED.has(t.slug)).map((t) => ({
 
 // Posts carry their own lastmod from the markdown, which is the one date
 // Google actually pays attention to here.
-const { POSTS } = await import(resolve(HERE, '../src/data/blog.generated.js'));
+const { POSTS } = await import(pathToFileURL(resolve(HERE, '../src/data/blog.generated.js')).href);
 const posts = POSTS.map((p) => ({
   path: `/blog/${p.slug}`,
   priority: '0.6',
@@ -92,7 +73,7 @@ const posts = POSTS.map((p) => ({
 }));
 
 // Each service is its own page now, so each is submitted on its own.
-const { SERVICES } = await import(resolve(HERE, '../src/data/services.js'));
+const { SERVICES } = await import(pathToFileURL(resolve(HERE, '../src/data/services.js')).href);
 const services = SERVICES.map((s) => ({
   path: `/services/${s.slug}`,
   priority: '0.8',

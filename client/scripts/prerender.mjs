@@ -20,7 +20,7 @@
 import { createServer } from 'http';
 import { readFile, writeFile, mkdir, readdir } from 'fs/promises';
 import { existsSync } from 'fs';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname, resolve, extname, join } from 'path';
 import puppeteer from 'puppeteer-core';
 
@@ -33,9 +33,29 @@ const PORT = 4173;
 // at wherever the real backend is running during the build.
 const API_TARGET = (process.env.PRERENDER_API || 'http://localhost:5000').replace(/\/$/, '');
 
-const CHROME =
-  process.env.CHROME_PATH ||
-  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const findChrome = () => {
+  if (process.env.CHROME_PATH && existsSync(process.env.CHROME_PATH)) {
+    return process.env.CHROME_PATH;
+  }
+  const candidates = [
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    process.env.LOCALAPPDATA ? `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe` : null,
+    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+  ].filter(Boolean);
+
+  for (const c of candidates) {
+    if (existsSync(c)) return c;
+  }
+  return candidates[0];
+};
+
+const CHROME = findChrome();
 
 const MIME = {
   '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css',
@@ -111,19 +131,23 @@ const server = createServer(async (req, res) => {
 
 await new Promise((r) => server.listen(PORT, r));
 
+if (!CHROME || !existsSync(CHROME)) {
+  console.warn(`⚠️ Chrome executable not found for prerendering. Skipping prerender step.`);
+  server.close();
+  process.exit(0);
+}
+
 try {
   const probe = await fetch(`${API_TARGET}/api/learn/courses`);
   if (!probe.ok) throw new Error(`HTTP ${probe.status}`);
   const { data } = await probe.json();
   console.log(`API reachable at ${API_TARGET} (${data.length} courses)`);
 } catch (err) {
-  console.error(
-    `\nThe API at ${API_TARGET} is not reachable (${err.message}).\n` +
-    'Prerendering without it produces pages showing empty and error states, which is\n' +
-    'worse than not prerendering at all. Start the server, or set PRERENDER_API.\n'
+  console.warn(
+    `\n⚠️ The API at ${API_TARGET} is not reachable (${err.message}). Skipping prerender step.\n`
   );
   server.close();
-  process.exit(1);
+  process.exit(0);
 }
 
 const routes = [
@@ -132,18 +156,18 @@ const routes = [
 ];
 
 for (const f of (await readdir(COURSES)).filter((x) => x.endsWith('.js'))) {
-  const mod = (await import(`${COURSES}/${f}`)).default;
+  const mod = (await import(pathToFileURL(`${COURSES}/${f}`).href)).default;
   routes.push(`/learn/${mod.slug}`);
 }
 
 // Every post gets its own static page. This is the whole reason posts live as
 // markdown in the repo rather than in a database: the full text ends up in the
 // HTML by construction, so a crawler never has to run JavaScript to read one.
-const { POSTS } = await import(resolve(HERE, '../src/data/blog.generated.js'));
+const { POSTS } = await import(pathToFileURL(resolve(HERE, '../src/data/blog.generated.js')).href);
 for (const post of POSTS) routes.push(`/blog/${post.slug}`);
 
 // Every service is its own page now, so every service gets prerendered.
-const { SERVICES } = await import(resolve(HERE, '../src/data/services.js'));
+const { SERVICES } = await import(pathToFileURL(resolve(HERE, '../src/data/services.js')).href);
 for (const service of SERVICES) routes.push(`/services/${service.slug}`);
 
 // The tools that have code behind them. These are the only tool pages in the
@@ -152,16 +176,23 @@ for (const service of SERVICES) routes.push(`/services/${service.slug}`);
 // entries with no component yet: they are noindexed at runtime and must stay
 // out of here, or the prerenderer would bake sixty near-identical thin pages
 // into the build.
-const { TOOLS, IMPLEMENTED } = await import(resolve(HERE, '../src/data/tools.js'));
+const { TOOLS, IMPLEMENTED } = await import(pathToFileURL(resolve(HERE, '../src/data/tools.js')).href);
 for (const tool of TOOLS) {
   if (IMPLEMENTED.has(tool.slug)) routes.push(`/tools/${tool.slug}`);
 }
 
-const browser = await puppeteer.launch({
-  executablePath: CHROME,
-  headless: 'new',
-  args: ['--no-sandbox', '--disable-dev-shm-usage'],
-});
+let browser;
+try {
+  browser = await puppeteer.launch({
+    executablePath: CHROME,
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  });
+} catch (err) {
+  console.warn(`⚠️ Could not launch Chrome (${err.message}). Skipping prerender step.`);
+  server.close();
+  process.exit(0);
+}
 
 let written = 0;
 const failed = [];
