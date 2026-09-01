@@ -1,4 +1,5 @@
 import React from 'react';
+import { isImplemented } from '../../data/tools';
 import { Link } from 'react-router-dom';
 import ToolIcon from '../../learn/ToolIcon';
 
@@ -15,12 +16,12 @@ const ToolCard = ({ tool }) => (
     to={`/tools/${tool.slug}`}
     data-card
     className={`cx-tool bg-white p-5 shadow-card flex flex-col relative transition-all duration-300 ${
-      tool.isLive ? 'border-orange-500/40 ring-1 ring-orange-500/20 hover:border-orange-500 hover:shadow-orange-500/10' : ''
+      isImplemented(tool.slug) ? 'border-orange-500/40 ring-1 ring-orange-500/20 hover:border-orange-500 hover:shadow-orange-500/10' : ''
     }`}
   >
     <span className="cx-tool-wash" aria-hidden="true" />
 
-    {tool.isLive && (
+    {isImplemented(tool.slug) && (
       <span className="absolute top-4 right-4 text-[10px] font-extrabold tracking-wider px-2 py-0.5 rounded-full bg-orange-500 text-white shadow-sm flex items-center gap-1">
         <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
         LIVE TOOL
@@ -30,7 +31,7 @@ const ToolCard = ({ tool }) => (
     <div className="relative flex items-start gap-3">
       <span
         className={`cx-tool-icon grid place-items-center h-10 w-10 shrink-0 rounded-xl ${
-          tool.isLive ? 'bg-orange-500/10 text-orange-600' : 'bg-indigo-500/10 text-indigo-600'
+          isImplemented(tool.slug) ? 'bg-orange-500/10 text-orange-600' : 'bg-indigo-500/10 text-indigo-600'
         }`}
       >
         <ToolIcon category={tool.category} className="h-5 w-5" />
@@ -42,10 +43,10 @@ const ToolCard = ({ tool }) => (
 
     <span
       className={`relative mt-4 inline-flex items-center gap-1.5 text-sm font-bold ${
-        tool.isLive ? 'text-orange-600' : 'text-indigo-600'
+        isImplemented(tool.slug) ? 'text-orange-600' : 'text-indigo-600'
       }`}
     >
-      {tool.isLive ? 'Launch Tool' : 'Open tool'}
+      {isImplemented(tool.slug) ? 'Launch Tool' : 'Open tool'}
       <span className="cx-tool-arrow" aria-hidden="true">→</span>
     </span>
   </Link>

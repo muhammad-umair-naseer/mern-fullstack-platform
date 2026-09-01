@@ -25,7 +25,7 @@ export const COMPLEXITY = {
   5: { label: 'Advanced', tone: 'crimson' },
 };
 
-const t = (id, name, category, complexity, description, isLive = false) => ({
+const t = (id, name, category, complexity, description, isLive = true) => ({
   id,
   slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   name,
@@ -114,15 +114,34 @@ export const TOOLS = [
 ];
 
 /**
- * The tools that actually run.
+ * Two different questions, deliberately kept apart.
  *
- * Every number and every sentence about the tools on this site is derived from
- * this, never typed out. The site is not deploying until all 62 are built, so
- * any hardcoded count would be wrong on one side of that date or the other —
- * "2 tools live" is wrong at launch, and "all tools are live" is wrong today.
- * Flipping an isLive flag above updates the hero stat, the About figure and the
- * footer line together, and none of them can drift from the catalogue.
+ * `isLive` is editorial: does the site talk about this tool as part of what it
+ * offers. It is true for all 62, because the site ships once they are all built
+ * and the copy is written for that day.
+ *
+ * IMPLEMENTED is a fact about the code: is there a component behind this slug
+ * that a visitor can actually use. Only two slugs qualify, and ToolDetail.js
+ * proves it — it hardcodes one branch per implemented tool.
+ *
+ * Everything a search engine acts on keys off IMPLEMENTED, never off isLive.
+ * Marking sixty pages indexable while they render nothing would put sixty thin
+ * pages into the index, and that is slow and unpleasant to undo once crawled.
+ * Site-wide copy keys off isLive. So the footer can say every tool is free
+ * while /tools still shows sixty as unbuilt; the gap closes as each one ships.
+ *
+ * TO SHIP A TOOL: add its component, add a branch in ToolDetail.js, and add its
+ * slug here. Nothing else needs touching — the sitemap and the noindex follow.
  */
+export const IMPLEMENTED = new Set(['pdf-compressor', 'pdf-merger']);
+
+/** Is there real code behind this slug, or only a catalogue entry? */
+export const isImplemented = (slug) => IMPLEMENTED.has(slug);
+
+/** The tools a visitor can actually open and use right now. */
+export const implementedTools = () => TOOLS.filter((x) => IMPLEMENTED.has(x.slug));
+
+/** The editorial view: what the site says it offers. */
 export const liveTools = () => TOOLS.filter((x) => x.isLive);
 export const allToolsLive = () => TOOLS.every((x) => x.isLive);
 

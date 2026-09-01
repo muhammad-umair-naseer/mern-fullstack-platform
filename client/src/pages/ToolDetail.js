@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY } from '../data/tools';
+import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY, isImplemented } from '../data/tools';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import Seo from '../seo/Seo';
 import { breadcrumbs, softwareApplication } from '../seo/schema';
@@ -36,7 +36,10 @@ export default function ToolDetail() {
   const meta = COMPLEXITY[tool.complexity];
   const related = toolsIn(tool.category).filter((x) => x.id !== tool.id).slice(0, 6);
 
-  const live = Boolean(tool.isLive);
+  // Whether this page may be indexed, and whether it offers a working tool,
+  // both depend on there being code behind the slug — not on the editorial
+  // isLive flag, which is true for every tool in the catalogue.
+  const live = isImplemented(tool.slug);
 
   const renderToolComponent = () => {
     if (tool.slug === 'pdf-compressor') {
@@ -105,7 +108,7 @@ export default function ToolDetail() {
               <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-400 text-emerald-950 shadow-sm">
                 FREE FOR EVERYONE
               </span>
-              {tool.isLive && (
+              {live && (
                 <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-orange-500 text-white shadow-sm flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                   INSTANT BROWSER TOOL
@@ -114,7 +117,7 @@ export default function ToolDetail() {
               <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/10 text-white">
                 {category?.label || 'Utility'}
               </span>
-              {!tool.isLive && (
+              {!live && (
                 <span
                   className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${TONE[meta?.tone] || ''}`}
                 >
@@ -153,7 +156,7 @@ export default function ToolDetail() {
                     <h3 className="font-bold text-slate-900 text-sm group-hover:text-orange-600 transition">
                       {r.name}
                     </h3>
-                    {r.isLive && (
+                    {isImplemented(r.slug) && (
                       <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">
                         LIVE
                       </span>

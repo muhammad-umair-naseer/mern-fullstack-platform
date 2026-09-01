@@ -71,7 +71,11 @@ for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
 
 // A tool joins the sitemap the moment it actually works.
 const { TOOLS } = await import(resolve(HERE, '../src/data/tools.js'));
-const liveTools = TOOLS.filter((t) => t.isLive).map((t) => ({
+// IMPLEMENTED, not isLive. isLive is editorial and true for all 62; this is
+// the set that has a component behind it. Submitting a page that renders no
+// tool is how a site earns a thin-content problem, and it is slow to undo.
+const { IMPLEMENTED } = await import(resolve(HERE, '../src/data/tools.js'));
+const liveTools = TOOLS.filter((t) => IMPLEMENTED.has(t.slug)).map((t) => ({
   path: `/tools/${t.slug}`,
   priority: '0.7',
   changefreq: 'monthly',
@@ -118,5 +122,5 @@ const xml = [
 writeFileSync(OUT, xml);
 console.log(
   `sitemap.xml written: ${urls.length} urls — ${courses.length} courses, ${liveTools.length} live tools ` +
-  `${posts.length} posts, ${services.length} services, (${TOOLS.length - liveTools.length} tools still in design and correctly excluded) at ${SITE_URL}`
+  `${posts.length} posts, ${services.length} services, (${TOOLS.length - liveTools.length} tools not yet implemented and correctly excluded) at ${SITE_URL}`
 );

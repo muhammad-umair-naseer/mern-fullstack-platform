@@ -146,6 +146,17 @@ for (const post of POSTS) routes.push(`/blog/${post.slug}`);
 const { SERVICES } = await import(resolve(HERE, '../src/data/services.js'));
 for (const service of SERVICES) routes.push(`/services/${service.slug}`);
 
+// The tools that have code behind them. These are the only tool pages in the
+// sitemap, and until now they were the only sitemap entries shipping an empty
+// shell to a crawler that does not run JS. The other sixty are catalogue
+// entries with no component yet: they are noindexed at runtime and must stay
+// out of here, or the prerenderer would bake sixty near-identical thin pages
+// into the build.
+const { TOOLS, IMPLEMENTED } = await import(resolve(HERE, '../src/data/tools.js'));
+for (const tool of TOOLS) {
+  if (IMPLEMENTED.has(tool.slug)) routes.push(`/tools/${tool.slug}`);
+}
+
 const browser = await puppeteer.launch({
   executablePath: CHROME,
   headless: 'new',
