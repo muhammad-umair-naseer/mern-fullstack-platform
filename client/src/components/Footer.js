@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Linkedin } from "lucide-react";
+import { toolsBlurb } from "../data/tools";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -246,9 +247,10 @@ const Footer = () => {
                   the signal for nothing. */}
               <li><Link to="/your-bot">Your Bot</Link></li>
             </ul>
-            {/* Two of sixty-two tools are built. Saying so here costs one line
-                and saves the visitor a click into sixty placeholders. */}
-            <p className="cx-ft-note">Two tools live, free to use.</p>
+            {/* Derived from the isLive flags, not typed. The site ships once
+                every tool is built, so a hardcoded sentence would be wrong on
+                one side of that date or the other. */}
+            <p className="cx-ft-note">{toolsBlurb()}</p>
           </div>
 
           <div className="cx-ft-col">

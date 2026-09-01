@@ -10,6 +10,7 @@ import aboutPromise from "../assets/our promise About.webp";
 import aboutStory from "../assets/our story About.webp";
 import Seo from '../seo/Seo';
 import { SITE } from '../seo/site';
+import { liveTools } from '../data/tools';
 import { organization, breadcrumbs } from '../seo/schema';
 
 /**
@@ -22,9 +23,9 @@ import { organization, breadcrumbs } from '../seo/schema';
  * other three were unverifiable, and unverifiable numbers on an About page are
  * the first thing a serious buyer tests.
  *
- * Three of the four are countable on this site: 23 course files, 2 tools that
- * actually run, and the SECP registration shown further down this page. If one
- * changes, change it here.
+ * Three of the four are countable on this site: 23 course files, the tools
+ * that actually run (derived from the catalogue, so it rises as they ship),
+ * and the SECP registration shown further down this page.
  *
  * The project count is the exception — it is the company's own figure and
  * cannot be checked from the outside, which is exactly why it is the one a
@@ -36,7 +37,7 @@ const stats = [
   { icon: Award, number: "Since 2025", label: "SECP-registered company" },
   { icon: FolderCheck, number: "50+", label: "Projects delivered" },
   { icon: Globe2, number: "23", label: "Free courses, open to anyone" },
-  { icon: Smile, number: "2", label: "Free tools that never upload your file" },
+  { icon: Smile, number: String(liveTools().length), label: "Free tools that never upload your file" },
 ];
 
 const drivers = [

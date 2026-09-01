@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { liveTools } from '../data/tools';
 import './Hero.css';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -22,7 +23,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const stats = [
   { display: 'Since 2025', label: 'SECP-registered company' },
   { count: 23, suffix: '', label: 'Free courses, open to anyone' },
-  { count: 2, suffix: '', label: 'Free tools that never upload your file' },
+  { count: liveTools().length, suffix: '', label: 'Free tools that never upload your file' },
 ];
 
 const Hero = () => {

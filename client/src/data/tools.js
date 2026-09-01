@@ -113,5 +113,25 @@ export const TOOLS = [
   t(59, 'QR Generator', 'dev', 1, 'Generate QR codes for a URL, text, Wi-Fi network or contact card.'),
 ];
 
+/**
+ * The tools that actually run.
+ *
+ * Every number and every sentence about the tools on this site is derived from
+ * this, never typed out. The site is not deploying until all 62 are built, so
+ * any hardcoded count would be wrong on one side of that date or the other —
+ * "2 tools live" is wrong at launch, and "all tools are live" is wrong today.
+ * Flipping an isLive flag above updates the hero stat, the About figure and the
+ * footer line together, and none of them can drift from the catalogue.
+ */
+export const liveTools = () => TOOLS.filter((x) => x.isLive);
+export const allToolsLive = () => TOOLS.every((x) => x.isLive);
+
+/** The one sentence used wherever the tools are summarised. */
+export const toolsBlurb = () => {
+  const live = liveTools().length;
+  if (live === TOOLS.length) return 'Every tool is free, and nothing you open leaves your device.';
+  return `${live} of ${TOOLS.length} live, free to use.`;
+};
+
 export const toolBySlug = (slug) => TOOLS.find((x) => x.slug === slug);
 export const toolsIn = (categoryId) => TOOLS.filter((x) => x.category === categoryId);
