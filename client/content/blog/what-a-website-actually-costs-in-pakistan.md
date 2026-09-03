@@ -23,7 +23,17 @@ These are the ranges we see quoted around Islamabad, Lahore and Karachi, not a p
 
 Complexity is what moves you inside a band, and it moves you a long way. The most involved work we take on lands around four to five lakh, and the difference between that and the bottom of the same band is almost never "more pages". It is roles, money, integrations and edge cases.
 
-One thing we would rather say at the top than bury at the bottom: there are no rupee figures in this post. Any band honest enough to cover the real spread is too wide to budget against, and it dates faster than we could keep it corrected. What holds still is the structure, which is what this post is: what you are paying for in each case, what pushes a quote to the top of its band, and what the cheap ones quietly leave out. Anyone who gives you a firm figure off a one line WhatsApp message is guessing anyway, and a guess is always priced to protect the person making it.
+## Table of Contents
+- [A Brochure Site (Small Business Landing Page)](#a-brochure-site)
+- [WordPress with WooCommerce (E-commerce Store)](#wordpress-with-woocommerce)
+- [Custom Web Applications (Portals & CRMs)](#a-custom-web-application)
+- [SaaS MVPs (Subscription Products)](#a-saas-mvp)
+- [What Moves a Project to the Top of Its Band](#what-moves-a-project-inside-its-band)
+- [What Is Always Extra in a Quote](#what-is-always-extra)
+- [What a Suspiciously Cheap Quote Leaves Out](#what-a-suspiciously-cheap-quote-usually-leaves-out)
+- [Essential Questions to Ask Any Development Agency](#questions-to-ask-any-agency-us-included)
+- [When You Should Not Hire an Agency](#where-we-would-tell-you-not-to-hire-us)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
 ## A brochure site
 
@@ -107,5 +117,21 @@ If any answer is vague, make it the ownership one you push on. Almost everything
 For a straightforward brochure site with no logic in it, a good freelancer will usually beat any agency on price, ours included, because we carry overheads a freelancer does not: a registered company, contracts, and a team where people cover for each other. That is worth paying for when the thing has to keep running for years and someone has to answer the phone when it breaks. It is not obviously worth paying for on a five page site you expect to replace anyway.
 
 And when WordPress is the right answer, we will say WordPress, even though a custom build is a larger invoice for us. Rebuilding a shop from scratch to avoid WooCommerce is a way to spend money, not a way to save it.
+
+## Frequently Asked Questions (FAQ)
+
+### What is the average cost of building a basic company website in Pakistan?
+A professional 5 to 10-page business website typically costs between PKR 40,000 and PKR 120,000 depending on whether it utilizes a customized template or bespoke custom UI/UX design, custom copy, and brand assets.
+
+### How much does an e-commerce website with payment gateway integration cost?
+A complete WooCommerce or Shopify online store with local payment gateway integration (such as PayFast, Safepay, JazzCash, or EasyPaisa), product upload, and courier tracking generally ranges from PKR 100,000 to PKR 250,000.
+
+### What are the ongoing recurring costs of maintaining a website in Pakistan?
+Recurring costs include domain registration (~PKR 3,500 – 6,000/year), cloud hosting (~PKR 12,000 – 35,000/year depending on traffic), corporate emails, and periodic security and plugin maintenance retainers.
+
+### Why do website quotes vary so drastically between freelancers and agencies?
+Freelancers have minimal operational overheads, making them ideal for small, simple landing pages. Agencies provide multi-disciplinary teams (dedicated UI/UX designers, frontend/backend engineers, QA testers), written legal contracts, milestone-based delivery, and ongoing SLA maintenance support.
+
+---
 
 *If you want a number, [tell us what the site has to do](/contact) and we will scope it properly.*

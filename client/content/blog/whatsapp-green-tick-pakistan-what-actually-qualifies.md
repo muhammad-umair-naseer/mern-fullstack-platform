@@ -12,6 +12,17 @@ The Official Business Account tick on WhatsApp is granted for how well known you
 
 That is the short version. The longer version is more useful, because the thing most businesses actually want from the tick, which is a name and a logo in the chat window instead of an unknown number, comes from a completely different process that is achievable and is mostly paperwork.
 
+## Table of Contents
+- [Three Different Types of "Verified" on WhatsApp](#three-different-things-people-call-verified)
+- [What Meta Actually Means by "Notable"](#what-meta-means-by-notable)
+- [Evidence That Actually Helps Your Application](#evidence-that-has-a-chance)
+- [Evidence That Will Not Help (Common Pitfalls)](#evidence-that-will-not-help)
+- [Top Reasons Why Green Tick Applications Get Rejected](#why-applications-get-rejected)
+- [The Pakistan Verification Roadmap (SECP & FBR)](#the-pakistan-specific-part)
+- [What Your Business Gets Even Without the Green Tick](#what-you-get-without-the-tick)
+- [Our Transparent Policy on WhatsApp Verification](#what-we-will-not-do)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## Three different things people call "verified"
 
 Most of the confusion in this market comes from one word covering three separate systems. They have different requirements and different outcomes.
@@ -84,6 +95,20 @@ We build and run WhatsApp and Instagram automation under [Your Bot](/your-bot), 
 If someone has quoted you a fixed price with a guaranteed outcome, ask them what happens to your money when Meta says no. The answer to that question tells you everything.
 
 Notability is earned outside Meta's systems. It comes from doing something a journalist wants to write about without being paid, which is a slower and less comfortable project than filling in a form. If that is the road you want to take, our free [digital marketing course](/learn/digital-marketing) covers the earned side of it, and our [custom software](/services) work is often what makes a company worth writing about in the first place.
+
+## Frequently Asked Questions (FAQ)
+
+### Can any agency or third party guarantee a WhatsApp Green Tick in Pakistan?
+No. Meta’s editorial team directly decides whether to grant the Official Business Account (OBA) badge based on independent brand notability. Any agency claiming 100% guaranteed green ticks is misleading clients.
+
+### What legal documents are required for Meta Business Verification in Pakistan?
+You need an official SECP Certificate of Incorporation (or registered Partnership Deed / NTN Form 181), an active FBR tax certificate, a corporate utility bill or official bank maintenance letter matching the legal name and address, and an active business email on your domain.
+
+### What is the difference between Meta Business Verification and the Green Tick?
+Meta Business Verification proves your business is a legitimate legal entity and displays your verified business name to customers. The Green Tick (OBA) is a special prestige checkmark reserved for prominent, heavily covered national and global brands.
+
+### How long does the WhatsApp verification process take?
+Meta Business Manager document verification typically takes between 2 and 7 business days. Once verified, applying for an Official Business Account takes an additional 2 to 4 business days for Meta’s editorial review.
 
 ---
 

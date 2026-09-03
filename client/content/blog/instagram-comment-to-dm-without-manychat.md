@@ -14,6 +14,16 @@ The reason people still pay for ManyChat is everything wrapped around those few 
 
 Here is the full shape, so you can make that call yourself.
 
+## Table of Contents
+- [What Actually Happens When a Comment Becomes a DM](#what-actually-happens-when-a-comment-becomes-a-dm)
+- [Prerequisites Before Any of It Works](#what-you-need-before-any-of-it-works)
+- [The Platform Rules You Cannot Code Around](#the-rules-you-cannot-code-around)
+- [What a ManyChat Subscription Is Actually Selling](#what-the-subscription-is-actually-selling)
+- [When Building a Custom Engine Is Genuinely Cheaper](#when-building-it-directly-is-genuinely-cheaper)
+- [The Hidden Maintenance Cost Nobody Puts in Estimates](#the-cost-nobody-puts-in-the-estimate)
+- [The Recommended Migration Path for Businesses](#the-middle-path-most-businesses-should-take)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## What actually happens when a comment becomes a DM
 
 Four steps, none of them magic.
@@ -100,6 +110,20 @@ This is the strongest argument for subscribing and the one custom development sh
 Start on a tool. Get the flows right where iterating costs an afternoon rather than a sprint, and watch for the moment the pain becomes concrete: a reply you cannot personalise, an integration you cannot afford, a bill growing faster than the revenue behind it. Then migrate. Comment to DM flows are simple enough to re express in code in days, and you can start the Meta app review while the tool keeps running.
 
 If the real problem is that orders, stock and conversations live in three systems that do not speak, then messaging is not the fix and [custom software](/services) probably is. We would rather say that than sell you a bot that DMs people about an inventory it cannot see. If you are unsure which case you are in, [tell us the volume](/contact) and we will tell you which way we would go.
+
+## Frequently Asked Questions (FAQ)
+
+### Does Instagram allow automated direct messages for comments?
+Yes. Meta officially supports Private Replies via the Instagram Graph API. When a user posts a comment on your post or reel, your authorized server can send an automated direct message using the specific comment ID as the recipient.
+
+### Will my Instagram account get banned for using a custom comment-to-DM script?
+No, provided you use Meta’s official Graph API with standard app verification and respect rate limits. Account bans occur when creators use unauthorized headless browser tools or unofficial scrapers that simulate human logins.
+
+### When should a brand choose a custom-built solution over ManyChat?
+A custom build makes financial and operational sense when your subscriber contact list exceeds 10,000+ (where ManyChat's monthly contact tiers become expensive), or when your DM replies need live integration with custom databases, ERPs, or real-time warehouse inventory.
+
+### Can automated comment-to-DM flows send links to users?
+Yes. Automated direct messages can deliver downloadable PDF links, discount promo codes, course enrollment pages, or calendar booking invites directly to the user’s inbox within seconds of their comment.
 
 ---
 

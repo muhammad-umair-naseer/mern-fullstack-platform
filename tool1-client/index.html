@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF ↔ Word Converter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="card">
+    <h1>PDF ↔ Word Converter</h1>
+    <p class="subtitle">Upload a PDF to convert it to an editable Word document, or upload a Word file to convert it to PDF. Everything happens in your browser — your file is never uploaded anywhere.</p>
+
+    <form id="convert-form">
+      <label id="drop-zone" for="file-input">
+        <span id="drop-text">Click to choose a file, or drag &amp; drop here</span>
+        <span id="file-name"></span>
+      </label>
+      <input type="file" id="file-input" name="file" accept=".pdf,.docx" hidden required>
+
+      <button type="submit" id="convert-btn" disabled>Convert</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <!-- Vendored libraries (all run locally in the browser, no CDN dependency) -->
+  <script src="vendor/mammoth.browser.min.js"></script>
+  <script src="vendor/html2canvas.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/docx.umd.js"></script>
+
+  <!-- App logic (ES module, imports pdf.js internally) -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

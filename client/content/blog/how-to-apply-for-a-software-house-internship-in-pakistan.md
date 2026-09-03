@@ -10,6 +10,17 @@ imageAlt: "Modern developer workspace with glowing laptop and software engineeri
 
 Apply between March and May for a summer place, send a one page CV with a link somebody can click, and use the company's own application form if it has one. Most of the outcome is decided before anyone reads your email: whether a slot is open, whether you applied early enough to be in the pile, and whether there is any evidence on the page that you have built something.
 
+## Table of Contents
+- [The Summer Window Closes Earlier Than You Think](#the-summer-window-closes-earlier-than-you-think)
+- [Where to Send It, in Order of What Works](#where-to-send-it-in-order-of-what-works)
+- [A One-Page CV When You Have No Work History](#a-one-page-cv-when-you-have-no-work-history)
+- [A GitHub Link Beats Every Adjective on the Page](#a-github-link-beats-every-adjective-on-the-page)
+- [The Exact Email Template to Use](#the-email)
+- [What Happens After You Send It](#what-happens-after-you-send-it)
+- [Why Most Applications Are Ignored](#why-most-applications-are-ignored)
+- [How Internships Work at Cortexis](#how-this-works-with-us-and-where-we-will-disappoint-you)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## The summer window closes earlier than you think
 
 Students apply when their exams finish. Companies decide who they are taking weeks before that. Those two facts are the whole problem.
@@ -123,5 +134,21 @@ We run free internships in Islamabad, unpaid but with no fee of any kind, in tra
 Now the parts that do not flatter us. We do not have open places every month. We will not certify work that did not happen or dates you did not serve. Finishing our free courses entitles nobody to a place; it helps only because it leaves you something to show, which is true of any project. And if you apply for a technical track with nothing built in that area, we will usually pass, because one short block is too little time to start from zero.
 
 Ours are unpaid, and we would rather say so here than let you find out later. There is no stipend and no salary. What there is: real project work, code review from working engineers, a free certificate, and no fee of any kind at any point. If you need paid work this summer, apply somewhere that pays, and do it early. Wherever you apply, ask about money during the process and get the answer in writing, because a company that will not put it in writing is telling you something.
+
+## Frequently Asked Questions (FAQ)
+
+### When is the best time to apply for summer software internships in Pakistan?
+The ideal application window is between March and May. Most software houses in Islamabad, Lahore, and Karachi finalize their summer intern shortlists before university final semester exams conclude in June.
+
+### What should a Computer Science student put on a CV with no work experience?
+Lead with practical coding projects (each accompanied by a public GitHub link and tech stack summary), followed by verifiable technical skills, online course certificates with credential IDs, and university education. Keep the resume strictly to one page.
+
+### Do software houses in Pakistan prefer paid or unpaid internships?
+Both exist. Established multinational IT companies offer paid summer internships with stipends through formal recruitment drives, while many growing software houses offer unpaid training-focused internships with real project experience and recommendation letters.
+
+### How many companies should I apply to for an internship?
+Focus on tailoring 8 to 15 thoughtful applications with company-specific project mentions rather than mass-emailing generic resumes to 80 software houses. Tailored emails with working GitHub repos have a significantly higher response rate.
+
+---
 
 *Current tracks and the application form are on the [internships page](/internships).*

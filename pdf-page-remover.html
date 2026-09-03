@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Page Remover — pull pages out, on your machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+  :root{
+    --void:#12151a;
+    --panel:#1b1f27;
+    --panel-2:#20252e;
+    --line:#2b303a;
+    --paper:#f6f3ea;
+    --paper-line:#e2ddcc;
+    --ink:#eae7de;
+    --ink-dim:#8d939d;
+    --amber:#ffb454;
+    --amber-dim:rgba(255,180,84,0.16);
+    --danger:#e0716a;
+    --danger-dim:rgba(224,113,106,0.16);
+    --success:#6fcf97;
+    --font-display:'Space Grotesk',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+    --font-body:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--void);color:var(--ink);font-family:var(--font-body);}
+  body{min-height:100vh;}
+  .app{display:flex;flex-direction:column;min-height:100vh;}
+
+  /* header */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--panel),var(--void));
+    flex-wrap:wrap;gap:10px;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;}
+  .brand .mark{
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--amber);
+    border:1px solid var(--amber-dim);background:var(--amber-dim);
+    padding:3px 7px;border-radius:4px;text-transform:uppercase;
+  }
+  .brand h1{font-family:var(--font-display);font-weight:600;font-size:19px;margin:0;letter-spacing:-.01em;}
+  .device-note{
+    font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);
+    display:flex;align-items:center;gap:7px;
+  }
+  .dot-live{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px rgba(111,207,151,0.18);}
+
+  /* action bar */
+  .actionbar{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    padding:14px 28px;border-bottom:1px solid var(--line);background:var(--panel);
+  }
+  .actionbar .status{
+    font-family:var(--font-mono);font-size:12.5px;color:var(--ink-dim);display:flex;align-items:center;gap:10px;
+  }
+  .actionbar .status strong{color:var(--ink);font-weight:600;}
+  .actionbar .status .danger-count{color:var(--danger);font-weight:600;}
+  .btnrow{display:flex;gap:9px;flex-wrap:wrap;}
+
+  button{
+    font-family:var(--font-display);font-weight:600;font-size:13.5px;
+    padding:10px 15px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel-2);color:var(--ink);cursor:pointer;
+    transition:transform .1s ease, border-color .15s ease, filter .15s ease;
+  }
+  button:hover:not(:disabled){border-color:var(--amber);}
+  button:active:not(:disabled){transform:scale(0.98);}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  button.primary{background:var(--danger);color:#2a0e0c;border-color:var(--danger);}
+  button.primary:hover:not(:disabled){filter:brightness(1.08);}
+  button.ghost{background:transparent;}
+
+  /* main stage */
+  .stage{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .stage-empty{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:var(--ink-dim);gap:14px;padding:40px;text-align:center;
+  }
+  .dropzone{
+    border:1.5px dashed var(--line);border-radius:12px;
+    padding:40px 60px;text-align:center;cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .dropzone:hover, .dropzone.drag{border-color:var(--amber);background:var(--amber-dim);}
+  .dropzone .dz-title{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--ink);}
+  .dropzone .dz-sub{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);margin-top:6px;}
+  input[type=file]{display:none;}
+
+  .stage-empty h2{font-family:var(--font-display);color:var(--ink);font-weight:600;font-size:20px;margin:0;}
+  .stage-empty p{font-size:13.5px;max-width:420px;line-height:1.55;margin:0;}
+
+  .grid-wrap{flex:1;overflow-y:auto;padding:26px 28px;}
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill, minmax(150px,1fr));gap:22px;
+  }
+
+  .pagecard{
+    position:relative;cursor:pointer;user-select:none;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .pagecard .frame{
+    position:relative;width:100%;aspect-ratio:0.72;border-radius:3px;overflow:visible;
+    background:var(--paper);box-shadow:0 8px 22px rgba(0,0,0,0.35);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .pagecard canvas{width:100%;height:100%;display:block;object-fit:cover;border-radius:3px;}
+  .pagecard .num{
+    font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);letter-spacing:.04em;
+  }
+  .pagecard:hover .frame{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,0.45);}
+
+  /* marked-for-removal state: perforation / lift-and-tear */
+  .pagecard.marked .frame{
+    transform:rotate(-3deg) translateY(-6px);
+    box-shadow:0 16px 32px rgba(224,113,106,0.28);
+  }
+  .pagecard.marked canvas{filter:grayscale(0.55) brightness(.8);}
+  .pagecard.marked .num{color:var(--danger);}
+  .tear-line{
+    position:absolute;left:-4%;right:-4%;top:38%;height:0;
+    border-top:2px dashed var(--danger);opacity:0;
+    transform:rotate(-3deg) scaleX(0.9);
+    transition:opacity .15s ease, transform .15s ease;
+    pointer-events:none;
+  }
+  .pagecard.marked .tear-line{opacity:.9;transform:rotate(-3deg) scaleX(1);}
+  .stamp{
+    position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;
+    background:var(--danger);color:#2a0e0c;display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:700;font-size:14px;
+    opacity:0;transform:scale(0.5) rotate(-15deg);
+    transition:opacity .15s ease, transform .15s ease;
+    box-shadow:0 4px 10px rgba(224,113,106,0.4);
+  }
+  .pagecard.marked .stamp{opacity:1;transform:scale(1) rotate(-8deg);}
+
+  .toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    background:var(--panel-2);border:1px solid var(--line);color:var(--ink);
+    font-family:var(--font-mono);font-size:12.5px;padding:10px 16px;border-radius:8px;
+    opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    max-width:80vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+  .spinner-overlay{
+    position:fixed;inset:0;background:rgba(18,21,26,0.75);backdrop-filter:blur(2px);
+    display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:50;
+  }
+  .spinner-overlay.show{display:flex;}
+  .spinner{
+    width:34px;height:34px;border-radius:50%;
+    border:3px solid var(--line);border-top-color:var(--amber);
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .spinner-overlay .label{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-dim);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">Tool 13</span>
+      <h1>PDF Page Remover</h1>
+    </div>
+    <div class="device-note"><span class="dot-live"></span> runs entirely on this device — nothing is uploaded</div>
+  </div>
+
+  <div class="actionbar" id="actionbar" style="display:none;">
+    <div class="status">
+      <span><strong id="totalCount">0</strong> pages</span>
+      <span>·</span>
+      <span><span class="danger-count" id="markedCount">0</span> marked for removal</span>
+    </div>
+    <div class="btnrow">
+      <button class="ghost" id="selectAllBtn">Select all</button>
+      <button class="ghost" id="clearBtn">Clear selection</button>
+      <button class="ghost" id="newFileBtn">Load a different PDF</button>
+      <button class="primary" id="removeBtn" disabled>Remove pages &amp; download</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-empty" id="stageEmpty">
+      <div class="dropzone" id="dropzone">
+        <div class="dz-title">Drop a PDF here</div>
+        <div class="dz-sub">or click to browse · .pdf only</div>
+        <input type="file" id="fileInput" accept="application/pdf">
+      </div>
+      <p>Every page renders as a thumbnail. Click the ones you want gone, then export — the file is read, edited, and rebuilt entirely in your browser.</p>
+    </div>
+
+    <div class="grid-wrap" id="gridWrap" style="display:none;">
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="spinner-overlay" id="spinnerOverlay">
+  <div class="spinner"></div>
+  <div class="label" id="spinnerLabel">Working…</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const { PDFDocument } = PDFLib;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const stageEmpty = document.getElementById('stageEmpty');
+const gridWrap = document.getElementById('gridWrap');
+const grid = document.getElementById('grid');
+const actionbar = document.getElementById('actionbar');
+const totalCount = document.getElementById('totalCount');
+const markedCount = document.getElementById('markedCount');
+const selectAllBtn = document.getElementById('selectAllBtn');
+const clearBtn = document.getElementById('clearBtn');
+const newFileBtn = document.getElementById('newFileBtn');
+const removeBtn = document.getElementById('removeBtn');
+const toast = document.getElementById('toast');
+const spinnerOverlay = document.getElementById('spinnerOverlay');
+const spinnerLabel = document.getElementById('spinnerLabel');
+
+let originalBytes = null;   // ArrayBuffer of the source PDF, kept for the final export
+let originalFileName = 'document.pdf';
+let numPages = 0;
+let marked = new Set();     // zero-based page indices marked for removal
+
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 2400);
+}
+
+function showSpinner(label){
+  spinnerLabel.textContent = label;
+  spinnerOverlay.classList.add('show');
+}
+function hideSpinner(){ spinnerOverlay.classList.remove('show'); }
+
+// ---- file intake ----
+dropzone.addEventListener('click', ()=>fileInput.click());
+dropzone.addEventListener('dragover', e=>{e.preventDefault();dropzone.classList.add('drag');});
+dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e=>{
+  e.preventDefault();dropzone.classList.remove('drag');
+  if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e=>{
+  if(e.target.files[0]) handleFile(e.target.files[0]);
+  fileInput.value = ''; // allow re-selecting the same file later
+});
+
+async function handleFile(file){
+  const looksLikePdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  if(!looksLikePdf){ showToast("That's not a PDF file"); return; }
+
+  showSpinner('Reading pages…');
+  try{
+    originalBytes = await file.arrayBuffer();
+    originalFileName = file.name.replace(/\.pdf$/i, '') || 'document';
+    marked = new Set();
+
+    // Use a copy for pdf.js — pdf.js can detach/transfer the buffer, and we
+    // need the original bytes intact later for pdf-lib's export.
+    const pdfDoc = await pdfjsLib.getDocument({data: originalBytes.slice(0)}).promise;
+    numPages = pdfDoc.numPages;
+
+    grid.innerHTML = '';
+    for(let i=1;i<=numPages;i++){
+      const page = await pdfDoc.getPage(i);
+      const viewport = page.getViewport({scale: 0.6});
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({canvasContext: canvas.getContext('2d'), viewport}).promise;
+      grid.appendChild(buildPageCard(i, canvas));
+    }
+
+    stageEmpty.style.display = 'none';
+    gridWrap.style.display = 'block';
+    actionbar.style.display = 'flex';
+    updateStatusBar();
+    showToast(`Loaded ${numPages} page${numPages>1?'s':''}`);
+  }catch(err){
+    console.error(err);
+    showToast('Could not read that PDF — it may be corrupted or password-protected');
+    resetToEmpty();
+  }finally{
+    hideSpinner();
+  }
+}
+
+function buildPageCard(pageNum, canvas){
+  const card = document.createElement('div');
+  card.className = 'pagecard';
+  card.dataset.index = pageNum - 1;
+
+  const frame = document.createElement('div');
+  frame.className = 'frame';
+  frame.appendChild(canvas);
+
+  const tear = document.createElement('div');
+  tear.className = 'tear-line';
+  frame.appendChild(tear);
+
+  const stamp = document.createElement('div');
+  stamp.className = 'stamp';
+  stamp.textContent = '×';
+  frame.appendChild(stamp);
+
+  const num = document.createElement('div');
+  num.className = 'num';
+  num.textContent = `Page ${pageNum}`;
+
+  card.appendChild(frame);
+  card.appendChild(num);
+
+  card.addEventListener('click', ()=>toggleMark(pageNum - 1, card));
+  return card;
+}
+
+function toggleMark(index, card){
+  if(marked.has(index)){
+    marked.delete(index);
+    card.classList.remove('marked');
+  } else {
+    if(marked.size >= numPages - 1){
+      showToast("Can't remove every page — at least one has to stay");
+      return;
+    }
+    marked.add(index);
+    card.classList.add('marked');
+  }
+  updateStatusBar();
+}
+
+function updateStatusBar(){
+  totalCount.textContent = numPages;
+  markedCount.textContent = marked.size;
+  removeBtn.disabled = marked.size === 0;
+}
+
+selectAllBtn.addEventListener('click', ()=>{
+  // Leave the last page unmarked so the export can never end up empty.
+  const cards = [...grid.children];
+  cards.forEach((card, i)=>{
+    const shouldMark = i !== cards.length - 1;
+    if(shouldMark) marked.add(i); else marked.delete(i);
+    card.classList.toggle('marked', shouldMark);
+  });
+  updateStatusBar();
+  showToast('All but the last page marked — a PDF needs at least one page');
+});
+
+clearBtn.addEventListener('click', ()=>{
+  marked.clear();
+  [...grid.children].forEach(card=>card.classList.remove('marked'));
+  updateStatusBar();
+});
+
+newFileBtn.addEventListener('click', resetToEmpty);
+
+function resetToEmpty(){
+  originalBytes = null;
+  numPages = 0;
+  marked = new Set();
+  grid.innerHTML = '';
+  gridWrap.style.display = 'none';
+  actionbar.style.display = 'none';
+  stageEmpty.style.display = 'flex';
+}
+
+removeBtn.addEventListener('click', async ()=>{
+  if(marked.size === 0 || !originalBytes) return;
+  removeBtn.disabled = true;
+  showSpinner('Rebuilding your PDF…');
+  try{
+    const pdfDoc = await PDFDocument.load(originalBytes);
+    // Remove highest indices first — removing a lower index shifts every
+    // index after it, which would delete the wrong pages otherwise.
+    const indices = [...marked].sort((a,b)=>b-a);
+    for(const idx of indices){
+      pdfDoc.removePage(idx);
+    }
+    const outBytes = await pdfDoc.save();
+    const blob = new Blob([outBytes], {type:'application/pdf'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${originalFileName}-edited.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`Removed ${indices.length} page${indices.length>1?'s':''} — download started`);
+  }catch(err){
+    console.error(err);
+    showToast('Something went wrong rebuilding the PDF — please try again');
+  }finally{
+    hideSpinner();
+    removeBtn.disabled = marked.size === 0;
+  }
+});
+</script>
+</body>
+</html>

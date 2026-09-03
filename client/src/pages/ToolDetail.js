@@ -6,6 +6,15 @@ import Seo from '../seo/Seo';
 import { breadcrumbs, softwareApplication } from '../seo/schema';
 import PdfCompressor from '../components/tools/PdfCompressor';
 import PdfMerger from '../components/tools/PdfMerger';
+import PdfWord from '../components/tools/PdfWord';
+import PdfSplitter from '../components/tools/PdfSplitter';
+import PdfOcr from '../components/tools/PdfOcr';
+import PdfToExcel from '../components/tools/PdfToExcel';
+import PdfPageRemover from '../components/tools/PdfPageRemover';
+import ExtractPages from '../components/tools/ExtractPages';
+import PdfJpg from '../components/tools/PdfJpg';
+import PdfOrganizer from '../components/tools/PdfOrganizer';
+import PdfProtect from '../components/tools/PdfProtect';
 
 const TONE = {
   emerald: 'bg-emerald-500/12 text-emerald-700 ring-emerald-600/25',
@@ -42,11 +51,31 @@ export default function ToolDetail() {
   const live = isImplemented(tool.slug);
 
   const renderToolComponent = () => {
-    if (tool.slug === 'pdf-compressor') {
-      return <PdfCompressor />;
-    }
-    if (tool.slug === 'pdf-merger') {
-      return <PdfMerger />;
+    switch (tool.slug) {
+      case 'pdf-compressor':
+        return <PdfCompressor />;
+      case 'pdf-merger':
+        return <PdfMerger />;
+      case 'pdf-word':
+        return <PdfWord />;
+      case 'pdf-splitter':
+        return <PdfSplitter />;
+      case 'pdf-ocr':
+        return <PdfOcr />;
+      case 'pdf-excel':
+        return <PdfToExcel />;
+      case 'pdf-page-remover':
+        return <PdfPageRemover />;
+      case 'extract-pages-from-pdf':
+        return <ExtractPages />;
+      case 'pdf-jpg':
+        return <PdfJpg />;
+      case 'pdf-organizer':
+        return <PdfOrganizer />;
+      case 'pdf-protect':
+        return <PdfProtect />;
+      default:
+        break;
     }
     return (
       <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 text-center border border-slate-200">

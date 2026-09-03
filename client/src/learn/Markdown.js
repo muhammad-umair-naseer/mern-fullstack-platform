@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { slugify } from '../lib/blogParser';
 import './Markdown.css';
 
 // Flattens a react-markdown code node back to the raw text, so the copy button
@@ -41,11 +42,6 @@ const LANG_LABEL = {
 
 /**
  * A fenced code block, with the language named and the sample one click away.
- *
- * Course bodies are full of code a learner is meant to actually run, and
- * retyping it from a scrollable box is where people give up. No syntax
- * highlighter is pulled in for this: it would be a new dependency on the
- * critical path of the page learners spend the most time on.
  */
 const CodeBlock = ({ children }) => {
   const [status, setStatus] = useState('idle');
@@ -55,10 +51,6 @@ const CodeBlock = ({ children }) => {
   const label = lang in LANG_LABEL ? LANG_LABEL[lang] : lang.toUpperCase();
   const source = textOf(children).replace(/\n$/, '');
 
-  // The async clipboard API is refused more often than you would expect: a page
-  // served over plain http, a browser that wants a stricter user gesture, a
-  // locked down corporate profile. Falling back to execCommand covers all of
-  // those, and if even that fails the button says so rather than doing nothing.
   const copy = useCallback(async () => {
     const viaTextarea = () => {
       const el = document.createElement('textarea');
@@ -109,18 +101,39 @@ const CodeBlock = ({ children }) => {
 
 // Wide tables scroll inside their own box rather than pushing the article out.
 const Table = ({ children }) => (
-  <div className="cx-md-table">
-    <table>{children}</table>
+  <div className="cx-md-table my-6 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+    <table className="min-w-full divide-y divide-slate-200 text-left text-sm">{children}</table>
   </div>
 );
 
-// Lesson bodies rendered as rich high-contrast Markdown for clean white theme
+// Custom Heading with automatic ID and scroll margin for TOC jump links
+const Heading2 = ({ children }) => {
+  const text = textOf(children);
+  const id = slugify(text);
+  return (
+    <h2 id={id} className="scroll-mt-24 text-2xl font-bold text-black mt-10 mb-4 group flex items-center gap-2">
+      <span>{children}</span>
+    </h2>
+  );
+};
+
+const Heading3 = ({ children }) => {
+  const text = textOf(children);
+  const id = slugify(text);
+  return (
+    <h3 id={id} className="scroll-mt-24 text-xl font-bold text-black mt-8 mb-3 group flex items-center gap-2">
+      <span>{children}</span>
+    </h3>
+  );
+};
+
+// Lesson & Blog bodies rendered as rich high-contrast Markdown
 const Markdown = ({ children }) => (
   <div
     className="cx-md prose prose-slate max-w-none
       prose-headings:font-extrabold prose-headings:text-black
       prose-h1:text-3xl prose-h1:text-black prose-h1:font-extrabold prose-h1:mt-8 prose-h1:mb-4
-      prose-h2:text-2xl prose-h2:text-black prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4
+      prose-h2:text-2xl prose-h2:text-black prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4
       prose-h3:text-xl prose-h3:text-black prose-h3:font-bold prose-h3:mt-8 prose-h3:mb-3
       prose-h4:text-lg prose-h4:text-black prose-h4:font-bold
       prose-p:text-black prose-p:font-medium prose-p:leading-relaxed prose-p:text-base
@@ -135,7 +148,15 @@ const Markdown = ({ children }) => (
       prose-td:text-black prose-td:font-medium prose-td:border-b prose-td:border-slate-200
       prose-blockquote:text-black prose-blockquote:border-l-orange-500 prose-blockquote:bg-orange-50/60 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:font-medium"
   >
-    <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ pre: CodeBlock, table: Table }}>
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        pre: CodeBlock,
+        table: Table,
+        h2: Heading2,
+        h3: Heading3,
+      }}
+    >
       {children}
     </ReactMarkdown>
   </div>

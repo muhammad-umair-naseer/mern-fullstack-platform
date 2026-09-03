@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>PDF → Excel</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+    :root {
+      --ink: #16211C;
+      --paper: #EEEEE4;
+      --paper-2: #E2E2D4;
+      --line: #C9C9B6;
+      --green: #2E6E4E;
+      --green-dark: #1F4E38;
+      --amber: #C98A2E;
+      --red: #B4432F;
+      --white: #FBFBF6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'IBM Plex Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 36px 24px 64px;
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 14px;
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 2rem;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    h1 .arrow {
+      color: var(--green);
+      font-weight: 400;
+    }
+
+    .badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--green-dark);
+      border: 1px solid var(--green-dark);
+      padding: 4px 9px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .sub {
+      font-size: 0.92rem;
+      color: #4B5750;
+      margin: 10px 0 30px;
+      max-width: 60ch;
+      line-height: 1.5;
+    }
+
+    .dropzone {
+      border: 2px dashed var(--line);
+      border-radius: 10px;
+      background: var(--white);
+      padding: 44px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      position: relative;
+    }
+
+    .dropzone.drag {
+      border-color: var(--green);
+      background: #F1F6F1;
+    }
+
+    .dropzone .glyph {
+      font-family: 'Fraunces', serif;
+      font-size: 2.4rem;
+      color: var(--line);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .dropzone.drag .glyph {
+      color: var(--green);
+    }
+
+    .dz-title {
+      font-weight: 600;
+      font-size: 1.02rem;
+      margin-bottom: 4px;
+    }
+
+    .dz-sub {
+      font-size: 0.84rem;
+      color: #6b6b5c;
+    }
+
+    input[type=file] {
+      display: none;
+    }
+
+    .filelist {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .file-row .fname {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-row .fname .n {
+      font-weight: 500;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-row .fname .m {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: #7a7a6a;
+      margin-top: 2px;
+    }
+
+    .status {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .status.pending {
+      background: #eee;
+      color: #777;
+    }
+
+    .status.working {
+      background: #FBEFD9;
+      color: var(--amber);
+    }
+
+    .status.done {
+      background: #E4F0E6;
+      color: var(--green-dark);
+    }
+
+    .status.error {
+      background: #F4E1DC;
+      color: var(--red);
+    }
+
+    .bar-track {
+      width: 70px;
+      height: 5px;
+      background: var(--paper-2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--green);
+      width: 0%;
+      transition: width .2s;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0 4px;
+    }
+
+    .remove-btn:hover {
+      color: var(--red);
+    }
+
+    .actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button.primary {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      padding: 12px 22px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    button.primary:hover:not(:disabled) {
+      background: var(--green-dark);
+    }
+
+    button.primary:disabled {
+      background: #B9C4BB;
+      cursor: not-allowed;
+    }
+
+    button.ghost {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.86rem;
+      background: none;
+      border: 1px solid var(--line);
+      padding: 11px 16px;
+      border-radius: 7px;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    button.ghost:hover {
+      border-color: var(--ink);
+    }
+
+    .note {
+      font-size: 0.78rem;
+      color: #7a7a6a;
+      margin-top: 4px;
+    }
+
+    .preview {
+      margin-top: 34px;
+    }
+
+    .preview h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+
+    .preview .sheet-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 10px 0 12px;
+    }
+
+    .sheet-tab {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--white);
+      cursor: pointer;
+    }
+
+    .sheet-tab.active {
+      background: var(--green);
+      color: var(--white);
+      border-color: var(--green);
+    }
+
+    .table-scroll {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: auto;
+      max-height: 360px;
+      background: var(--white);
+    }
+
+    table.grid {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    table.grid td {
+      border: 1px solid var(--paper-2);
+      padding: 6px 9px;
+      white-space: nowrap;
+      color: #2a332c;
+    }
+
+    table.grid tr:nth-child(even) {
+      background: #F7F7F0;
+    }
+
+    .empty-hint {
+      font-size: 0.82rem;
+      color: #8a8a78;
+      padding: 16px;
+    }
+
+    footer.disclaimer {
+      margin-top: 30px;
+      font-size: 0.76rem;
+      color: #8a8a78;
+      line-height: 1.5;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <h1>PDF <span class="arrow">→</span> Excel</h1>
+      <span class="badge" id="engineBadge">● engine loading…</span>
+    </header>
+    <p class="sub">Drop in one or more PDFs. Tables and text are reconstructed into rows and columns and packaged into a
+      single .xlsx file — entirely in this browser tab. Your files are never uploaded anywhere.</p>
+
+    <div class="dropzone" id="dropzone">
+      <div class="glyph">⇩</div>
+      <div class="dz-title">Drop PDF files here, or click to browse</div>
+      <div class="dz-sub">Multiple files supported · processed locally on your device</div>
+      <input type="file" id="fileInput" accept="application/pdf" multiple>
+    </div>
+
+    <div class="filelist" id="fileList"></div>
+
+    <div class="actions" id="actions" style="display:none;">
+      <button class="primary" id="convertBtn">Convert to Excel</button>
+      <button class="ghost" id="downloadBtn" style="display:none;">Download .xlsx</button>
+      <button class="ghost" id="clearBtn">Clear all</button>
+    </div>
+    <div class="note" id="overallNote"></div>
+
+    <div class="preview" id="previewSection" style="display:none;">
+      <h2>Preview</h2>
+      <div class="sheet-tabs" id="sheetTabs"></div>
+      <div class="table-scroll" id="tableScroll">
+        <div class="empty-hint">Convert a file to see a preview here.</div>
+      </div>
+    </div>
+
+    <footer class="disclaimer">
+      Extraction uses text-position clustering to guess rows and columns — it works well on ruled/aligned tables and
+      plain text, but complex nested tables or scanned (image-only) PDFs won't extract cleanly (scanned pages need OCR
+      first). Nothing is sent to a server: parsing (pdf.js) and spreadsheet generation (SheetJS) both run as JavaScript
+      in your browser.
+    </footer>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    (function () {
+      const engineBadge = document.getElementById('engineBadge');
+      let ready = false;
+      function checkReady() {
+        if (window.pdfjsLib && window.XLSX) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          ready = true;
+          engineBadge.textContent = '● ready — runs on your device';
+          engineBadge.style.color = '#2E6E4E';
+          engineBadge.style.borderColor = '#2E6E4E';
+        } else {
+          setTimeout(checkReady, 150);
+        }
+      }
+      checkReady();
+
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('fileInput');
+      const fileListEl = document.getElementById('fileList');
+      const actions = document.getElementById('actions');
+      const convertBtn = document.getElementById('convertBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const overallNote = document.getElementById('overallNote');
+      const previewSection = document.getElementById('previewSection');
+      const sheetTabs = document.getElementById('sheetTabs');
+      const tableScroll = document.getElementById('tableScroll');
+
+      let queue = [];      // {id, file, status, progress, sheets:[{name, rows}]}
+      let workbookSheets = []; // {name, rows} across all files, in order
+      let idCounter = 0;
+
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.classList.remove('drag');
+        addFiles(e.dataTransfer.files);
+      });
+      fileInput.addEventListener('change', e => addFiles(e.target.files));
+
+      function addFiles(fileListObj) {
+        const files = Array.from(fileListObj).filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+        files.forEach(f => {
+          queue.push({ id: 'f' + (idCounter++), file: f, status: 'pending', progress: 0, sheets: [] });
+        });
+        renderList();
+      }
+
+      function fmtSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+      }
+
+      function renderList() {
+        fileListEl.innerHTML = '';
+        queue.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'file-row';
+          const statusLabel = { pending: 'queued', working: 'converting…', done: 'done', error: 'failed' }[item.status];
+          row.innerHTML = `
+        <div class="fname">
+          <div class="n">${item.file.name}</div>
+          <div class="m">${fmtSize(item.file.size)}</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${item.progress}%"></div></div>
+        <span class="status ${item.status}">${statusLabel}</span>
+        <button class="remove-btn" data-id="${item.id}" title="Remove">✕</button>
+      `;
+          fileListEl.appendChild(row);
+        });
+        actions.style.display = queue.length ? 'flex' : 'none';
+        fileListEl.querySelectorAll('.remove-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            queue = queue.filter(q => q.id !== btn.dataset.id);
+            renderList();
+          });
+        });
+      }
+
+      clearBtn.addEventListener('click', () => {
+        queue = [];
+        workbookSheets = [];
+        downloadBtn.style.display = 'none';
+        previewSection.style.display = 'none';
+        overallNote.textContent = '';
+        renderList();
+      });
+
+      // ---- Core extraction: cluster text items into rows/columns per page ----
+
+      function clusterColumns(xs, tol) {
+        xs.sort((a, b) => a - b);
+        const clusters = [];
+        xs.forEach(x => {
+          let c = clusters.find(c => Math.abs(c.center - x) <= tol);
+          if (c) {
+            c.sum += x; c.n += 1; c.center = c.sum / c.n;
+          } else {
+            clusters.push({ center: x, sum: x, n: 1 });
+          }
+        });
+        clusters.sort((a, b) => a.center - b.center);
+        return clusters.map(c => c.center);
+      }
+
+      function nearestIndex(value, arr) {
+        let best = 0, bestDist = Infinity;
+        arr.forEach((v, i) => {
+          const d = Math.abs(v - value);
+          if (d < bestDist) { bestDist = d; best = i; }
+        });
+        return best;
+      }
+
+      async function extractPdfToSheets(file) {
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+        const sheets = [];
+        for (let p = 1; p <= pdf.numPages; p++) {
+          const page = await pdf.getPage(p);
+          const content = await page.getTextContent();
+          const items = content.items.filter(it => it.str && it.str.trim() !== '');
+          if (items.length === 0) {
+            sheets.push({ name: `p${p}`, rows: [['(no extractable text — possibly a scanned image page)']] });
+            continue;
+          }
+          // group into lines by y
+          const yTol = 3.5;
+          const lines = [];
+          items.forEach(it => {
+            const y = it.transform[5];
+            const x = it.transform[4];
+            let line = lines.find(l => Math.abs(l.y - y) <= yTol);
+            if (!line) { line = { y, items: [] }; lines.push(line); }
+            line.items.push({ x, str: it.str });
+          });
+          lines.sort((a, b) => b.y - a.y);
+          lines.forEach(l => l.items.sort((a, b) => a.x - b.x));
+
+          // determine column anchors from all x starts on the page
+          const allX = [];
+          lines.forEach(l => l.items.forEach(it => allX.push(it.x)));
+          const colTol = 12;
+          const columns = clusterColumns(allX.slice(), colTol);
+
+          const rows = lines.map(line => {
+            const row = new Array(columns.length).fill('');
+            line.items.forEach(it => {
+              const idx = nearestIndex(it.x, columns);
+              row[idx] = row[idx] ? (row[idx] + ' ' + it.str) : it.str;
+            });
+            // trim fully-empty trailing columns for readability
+            return row;
+          });
+
+          // drop columns that are empty across every row (can happen with sparse clustering)
+          const usedCols = [];
+          for (let c = 0; c < columns.length; c++) {
+            if (rows.some(r => r[c] !== '')) usedCols.push(c);
+          }
+          const trimmedRows = rows.map(r => usedCols.map(c => r[c]));
+
+          sheets.push({ name: `p${p}`, rows: trimmedRows });
+        }
+        return sheets;
+      }
+
+      function sanitizeSheetName(name) {
+        return name.replace(/[\\\/\?\*\[\]:]/g, '-').slice(0, 31) || 'Sheet';
+      }
+
+      convertBtn.addEventListener('click', async () => {
+        if (!ready) { overallNote.textContent = 'Engine still loading, one second…'; return; }
+        if (!queue.length) return;
+        convertBtn.disabled = true;
+        downloadBtn.style.display = 'none';
+        workbookSheets = [];
+        overallNote.textContent = 'Converting locally in this tab — larger files take longer.';
+
+        for (const item of queue) {
+          item.status = 'working';
+          item.progress = 10;
+          renderList();
+          try {
+            const sheets = await extractPdfToSheets(item.file);
+            item.progress = 100;
+            item.status = 'done';
+            item.sheets = sheets;
+            const base = item.file.name.replace(/\.pdf$/i, '');
+            sheets.forEach(s => {
+              const sheetName = sanitizeSheetName(queue.length > 1 ? `${base}_${s.name}` : s.name === 'p1' && sheets.length === 1 ? base : `${base}_${s.name}`);
+              workbookSheets.push({ name: sheetName, rows: s.rows });
+            });
+          } catch (err) {
+            console.error(err);
+            item.status = 'error';
+            item.progress = 100;
+          }
+          renderList();
+        }
+
+        convertBtn.disabled = false;
+        const okCount = queue.filter(q => q.status === 'done').length;
+        overallNote.textContent = `${okCount}/${queue.length} file(s) converted.` + (workbookSheets.length ? ' Ready to download.' : '');
+        if (workbookSheets.length) {
+          downloadBtn.style.display = 'inline-block';
+          renderPreview();
+        }
+      });
+
+      downloadBtn.addEventListener('click', () => {
+        if (!workbookSheets.length) return;
+        const wb = XLSX.utils.book_new();
+        workbookSheets.forEach(sheet => {
+          const ws = XLSX.utils.aoa_to_sheet(sheet.rows);
+          XLSX.utils.book_append_sheet(wb, ws, sheet.name);
+        });
+        const outName = queue.length === 1
+          ? queue[0].file.name.replace(/\.pdf$/i, '') + '.xlsx'
+          : 'converted-pdfs.xlsx';
+        XLSX.writeFile(wb, outName);
+      });
+
+      let activeSheetIdx = 0;
+      function renderPreview() {
+        previewSection.style.display = 'block';
+        sheetTabs.innerHTML = '';
+        workbookSheets.forEach((s, i) => {
+          const tab = document.createElement('div');
+          tab.className = 'sheet-tab' + (i === activeSheetIdx ? ' active' : '');
+          tab.textContent = s.name;
+          tab.addEventListener('click', () => { activeSheetIdx = i; renderPreview(); });
+          sheetTabs.appendChild(tab);
+        });
+        const sheet = workbookSheets[activeSheetIdx];
+        if (!sheet) {
+          tableScroll.innerHTML = '<div class="empty-hint">No data.</div>';
+          return;
+        }
+        const rowsToShow = sheet.rows.slice(0, 60);
+        let html = '<table class="grid">';
+        rowsToShow.forEach(r => {
+          html += '<tr>' + r.map(c => `<td>${(c || '').toString().replace(/</g, '&lt;')}</td>`).join('') + '</tr>';
+        });
+        html += '</table>';
+        if (sheet.rows.length > 60) {
+          html += `<div class="empty-hint">Showing first 60 of ${sheet.rows.length} rows — full data is in the downloaded file.</div>`;
+        }
+        tableScroll.innerHTML = html;
+      }
+    })();
+  </script>
+</body>
+
+</html>

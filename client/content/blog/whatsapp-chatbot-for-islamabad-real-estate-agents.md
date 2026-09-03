@@ -12,6 +12,17 @@ A WhatsApp bot can handle the first two minutes of almost every property enquiry
 
 What it buys you is that when you do pick up the phone, you already know which listing they mean, roughly what they can spend, and whether they can visit this week. Below is where that line sits in practice, for the way property trades in DHA, Bahria Town and Gulberg.
 
+## Table of Contents
+- [The Five Questions Real Estate Agents Answer All Day](#the-five-questions-you-answer-all-day)
+- [What the Bot Answers vs What It Must Hand Over](#what-it-answers-and-what-it-must-hand-over)
+- [Handling Roman Urdu and Voice Notes](#roman-urdu-and-voice-notes-which-is-where-these-usually-break)
+- [Qualifying Property Buyers Before You Call](#qualifying-before-you-call)
+- [Handling Overseas Pakistani Enquiries at 3 AM](#overseas-buyers-and-the-enquiry-that-arrives-at-3am)
+- [The Follow-up Rules and Broadcast Restrictions](#the-follow-up-problem-and-the-thing-you-cannot-do)
+- [Why Your Inventory Sheet Is the Actual Project](#the-listing-sheet-is-the-actual-project)
+- [When an Agency Should Not Automate](#when-we-would-tell-you-not-to-bother)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## The five questions you answer all day
 
 A listing goes up, or a reel does well, and the enquiries arrive almost identical:
@@ -107,6 +118,20 @@ And moving a number onto the official platform means it stops working as a norma
 Instagram matters too, since plenty of Islamabad property now moves through reels and DMs. The handoff rule is the same, but the plumbing is not: it needs a professional account properly connected to a Page, and re-engaging someone after the reply window closes works differently from WhatsApp's approved templates. [Your Bot](/your-bot) covers both, and we will tell you which of the two is worth doing first.
 
 None of this closes a deal. A buyer decides after standing on the plot, seeing the street at Maghrib, and talking to someone who knows what the neighbours paid last month. The automation exists so that conversation happens sooner, with the right person, and without you typing the same five answers for the fortieth time today.
+
+## Frequently Asked Questions (FAQ)
+
+### Can a WhatsApp chatbot handle property inquiries in Roman Urdu?
+Yes. Effective real estate chatbots in Pakistan are designed with bilingual intent matching for common Roman Urdu queries (such as *"location pin send karein"*, *"possession available hai?"*, or *"demand kitni hai"*).
+
+### Can a chatbot schedule physical site visits for buyers?
+Yes. The chatbot can provide available viewing time slots (e.g., Saturday morning or Sunday afternoon), capture the buyer’s preferred slot and contact details, and immediately alert your designated on-ground sales agent.
+
+### Should a real estate bot negotiate property prices on WhatsApp?
+No. Chatbots should only present official asking prices, property specs, and brochures. Price negotiations, NOC status discussions, and tax/transfer details should always be transferred to a licensed human broker.
+
+### How does a real estate chatbot help with overseas Pakistani buyers?
+Overseas buyers in the UK, UAE, and US typically browse properties outside Pakistan business hours. A 24/7 automated WhatsApp bot instantly shares Google Map pins, HD photo galleries, and video walkthroughs, ensuring leads never go cold.
 
 ---
 

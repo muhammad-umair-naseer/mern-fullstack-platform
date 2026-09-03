@@ -12,6 +12,17 @@ Yes, if your bot works by driving the ordinary WhatsApp app. No, if it runs on M
 
 That distinction explains nearly every ban story you will read. The rest of this is where the line sits, why the cheap tools all sit on the wrong side of it, and what makes WhatsApp pull the trigger.
 
+## Table of Contents
+- [There Are Two WhatsApps, and Only One May Have a Bot](#there-are-two-whatsapps-and-only-one-of-them-may-have-a-bot)
+- [How Unofficial QR-Code Tools Actually Work](#what-the-unofficial-tools-actually-do)
+- [Why Unofficial Bot Tools Are Cheap](#why-the-cheap-tools-are-cheap)
+- [The 24-Hour Window & Message Templates](#the-24-hour-window-and-template-messages)
+- [What Actually Triggers a WhatsApp Number Ban](#what-actually-triggers-a-ban)
+- [The Real Costs of Doing It Officially](#the-honest-costs-of-doing-it-properly)
+- [When You Should Not Bother with Automation](#when-we-would-tell-you-not-to-bother)
+- [What to Do if Your Number Is Already Banned](#if-your-number-is-already-gone)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## There are two WhatsApps, and only one of them may have a bot
 
 The first is the consumer product and its sibling, the WhatsApp Business app. Both run on a phone, built for a human tapping a screen. The Business app has sanctioned automation built in, greeting messages, away messages, quick replies and a catalogue, and it is free. What it does not have is a way for your own software to log in and drive it.
@@ -91,6 +102,20 @@ Automation earns its cost in the opposite pattern: people who messaged you first
 ## If your number is already gone
 
 WhatsApp offers a review request from inside the app, and bans can be temporary or permanent. Before appealing, stop whatever caused it, because appealing while the script still runs wastes the one request that might have worked. A fresh SIM resets nothing either: the same sending pattern on a new number usually produces the same result faster.
+
+## Frequently Asked Questions (FAQ)
+
+### Can I legally connect a chatbot to my WhatsApp business number without risk of a ban?
+Yes, by using the official Meta WhatsApp Business Platform (Cloud API). Meta explicitly supports automated chatbots, CRM integrations, and multi-agent inboxes on this official architecture without risking sudden phone number bans.
+
+### Why do unofficial WhatsApp bot tools cause number bans?
+Unofficial tools scrape web interfaces or mimic linked phone devices. When an account suddenly initiates high volumes of cold messages or receives customer spam reports, Meta's automated security algorithms flag and permanently restrict the unauthorized client.
+
+### How does the official WhatsApp 24-hour customer service window work?
+When a customer sends your business a WhatsApp message, a 24-hour session opens during which your bot or live agents can exchange unlimited free-form messages. To initiate conversations outside this window, you must send pre-approved message templates.
+
+### What should a business do if its WhatsApp number receives a temporary restriction?
+Immediately stop all automated scripts or third-party web scrapers. Submit an official review request through the WhatsApp Business app or Meta Business Support Manager, clearly stating your business identity and compliance commitment.
 
 ---
 

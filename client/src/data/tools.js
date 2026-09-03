@@ -133,7 +133,19 @@ export const TOOLS = [
  * TO SHIP A TOOL: add its component, add a branch in ToolDetail.js, and add its
  * slug here. Nothing else needs touching — the sitemap and the noindex follow.
  */
-export const IMPLEMENTED = new Set(['pdf-compressor', 'pdf-merger']);
+export const IMPLEMENTED = new Set([
+  'pdf-compressor',
+  'pdf-merger',
+  'pdf-word',
+  'pdf-splitter',
+  'pdf-ocr',
+  'pdf-excel',
+  'pdf-page-remover',
+  'extract-pages-from-pdf',
+  'pdf-jpg',
+  'pdf-organizer',
+  'pdf-protect',
+]);
 
 /** Is there real code behind this slug, or only a catalogue entry? */
 export const isImplemented = (slug) => IMPLEMENTED.has(slug);

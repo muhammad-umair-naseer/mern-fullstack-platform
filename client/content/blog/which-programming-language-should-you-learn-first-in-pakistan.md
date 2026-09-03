@@ -12,6 +12,16 @@ Start with JavaScript if you want a job at a software house here. Start with Pyt
 
 That last sentence is the whole article, but you deserve the local detail behind it: what companies in Islamabad, Lahore and Karachi put in their job posts, what freelance clients actually pay for, and what to do if your university has already made this decision for you.
 
+## Table of Contents
+- [Career Goals & Language Selection Matrix](#answer-this-first-then-pick)
+- [What Local Pakistani Software Houses Actually Hire For](#what-local-software-houses-actually-post-for)
+- [What International Freelancing Platforms Truly Reward](#freelancing-rewards-something-completely-different)
+- [How to Handle University Syllabus Languages (C++/Java)](#if-you-are-a-student-your-syllabus-already-decided)
+- [Python vs JavaScript: The Honest Head-to-Head Comparison](#python-or-javascript-decided-honestly)
+- [Why Your First Programming Language Matters Least](#why-the-first-one-matters-least)
+- [Practical Action Plan for Your First 7 Days](#what-to-do-this-week)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## Answer this first, then pick
 
 The question "which language is best" has no answer. The question "what do I want out of this in twelve months" has a very clear one.
@@ -83,21 +93,25 @@ What ruins beginners in this country is not choosing wrong. It is choosing four 
 
 What a junior actually gets hired on, in our experience of reading CVs and running [internships](/internships), is short and boring: one thing that runs at a URL a stranger can open, a repository with commits spread over weeks rather than one dump on a Sunday, and the ability to explain out loud a bug you fixed and how you found it. That last one separates people who built something from people who watched someone build something, and it takes an interviewer about ninety seconds to tell the difference.
 
-## Where we are not the answer
-
-We give away 23 [free courses](/courses), so our interest in you starting one is obvious. Which is exactly why these need saying.
-
-A certificate from us, or from anyone else, will not get you hired. The projects you build while earning it might. Treat the certificate as a deadline that makes you reach the last chapter, not as a credential.
-
-A course gives you a syllabus and an order. It does not give you a mentor. At eleven at night, stuck on an error nobody else on the internet seems to have had, a course cannot help you and a person can. Find that person: a senior in your department, a Discord, a local meetup, anyone.
-
-And if your university teaches C++, our Python course is a side path, not a shortcut through your degree. Nothing here replaces your coursework.
-
 ## What to do this week
 
 Pick the row that matches you. Pick one language from it. Install it today, not on Monday. Build the smallest thing that does something real, a currency converter, a script that renames your files, a page listing your three favourite restaurants, and put it where somebody else can see it. Learn Git in week two, before your code is worth losing. Then build a second thing that is slightly harder than the first.
 
 Do that for four months without switching languages and you will be ahead of most people who asked this question the same week you did.
+
+## Frequently Asked Questions (FAQ)
+
+### Is Python or JavaScript better for getting a junior developer job in Pakistan?
+JavaScript offers the highest number of entry-level job openings across Pakistani tech hubs (Islamabad, Lahore, Karachi) through the MERN/Full-Stack ecosystem. Python is ideal for AI, data science, automation, and backend development (FastAPI/Django).
+
+### Can I get freelance web development clients without learning complex algorithms?
+Yes. Freelance clients prioritize responsive UI, fast load times, working contact forms, payment integrations, and clear communication over complex theoretical data structures.
+
+### How long does it take to learn your first programming language?
+Dedicate 2 to 3 hours daily for 3 to 4 months to master fundamental syntax, problem-solving, version control (Git), and building 2 or 3 complete portfolio projects.
+
+### Should I drop my university coursework to focus only on learning modern tech stacks?
+No. Maintain good academic standing in your university degree (which provides the baseline credential for visa processing, formal corporate hiring, and ATS filters) while committing 5–10 hours per week to building practical projects on the side.
 
 ---
 

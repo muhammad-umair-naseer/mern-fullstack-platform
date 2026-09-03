@@ -12,6 +12,15 @@ Usually, yes. Sometimes, absolutely not. The honest answer depends on what is in
 
 Here is what actually happens, and how to decide.
 
+## Table of Contents
+- [What "Upload" Really Means](#what-upload-really-means)
+- [When It Genuinely Does Not Matter](#when-it-genuinely-does-not-matter)
+- [When It Genuinely Does Matter](#when-it-genuinely-does-matter)
+- [The Litmus Test Question That Settles It](#the-question-that-settles-it)
+- [What "No Upload" Actually Means](#what-no-upload-actually-means)
+- [Quick Pre-Upload Security Checklist](#a-short-checklist)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## What "upload" really means
 
 When you drag a PDF onto a typical compression site, the file leaves your computer. It travels across the internet to a server, gets written to that server's disk, is processed there, and the result is sent back to you. The original then sits on that disk until a deletion timer fires.
@@ -27,9 +36,9 @@ For most files, trusting a policy document is completely reasonable. For some fi
 Be honest about how boring most PDFs are. If you are compressing:
 
 - a brochure or menu you already publish on your website
-- a university handout that thousands of students already have
-- a CV you actively send to strangers
-- anything already public
+- a university handout or public textbook that thousands of students already have
+- a CV or resume you actively send to employers
+- anything already in the public domain
 
 then the privacy question is theoretical. The file is not secret. Upload it, get your smaller file, move on. Anyone telling you to agonise over a restaurant menu is selling something.
 
@@ -37,13 +46,13 @@ then the privacy question is theoretical. The file is not secret. Upload it, get
 
 The calculation changes completely for anything you would not email to a stranger:
 
-- **Identity documents.** CNIC scans, passport copies, driving licences. These are the raw material for identity fraud.
-- **Financial records.** Bank statements, salary slips, tax filings, invoices with account numbers on them.
-- **Medical records.** Reports, prescriptions, test results.
+- **Identity documents.** National ID cards, SSN documents, passport copies, driving licences. These are the raw material for identity fraud.
+- **Financial records.** Bank statements, salary slips, tax filings, invoices with private account details.
+- **Medical records.** Diagnostic reports, prescriptions, clinical test results.
 - **Anything under an NDA.** Client contracts, unsigned agreements, commercial terms. If you have signed something promising to protect a document, uploading it to a third party may be a breach regardless of what happens to it afterwards.
-- **Legal documents.** Case files, affidavits, anything connected to a live matter.
+- **Legal documents.** Case files, affidavits, privileged corporate paperwork.
 
-There is a specific trap here worth naming. A signed contract usually contains a **wet signature image**, a company stamp, and often a CNIC number. That combination is more sensitive than any of the three alone, and it is exactly the kind of file people compress, because signed scans are enormous.
+There is a specific trap here worth naming. A signed contract usually contains a **wet signature image**, a corporate stamp, and sensitive registration numbers. That combination is more sensitive than any of the three alone, and it is exactly the kind of file people compress, because signed scans are enormous.
 
 ## The question that settles it
 
@@ -80,11 +89,25 @@ Before you drop a PDF on any online tool:
 | Ask | If the answer worries you |
 | --- | --- |
 | Would I email this to a stranger? | Use a tool that does not upload |
-| Does it contain a CNIC, account number or signature? | Use a tool that does not upload |
+| Does it contain an ID number, account details or signature? | Use a tool that does not upload |
 | Am I contractually obliged to protect it? | Use a tool that does not upload, and check your contract |
 | Is it already public? | Upload it anywhere, it does not matter |
 
 And whichever tool you choose, open the Network tab once and see for yourself. A tool that is genuinely private will show you nothing at all.
+
+## Frequently Asked Questions (FAQ)
+
+### Are online PDF compressors safe for sensitive documents like bank statements and ID copies?
+Traditional online compressors upload your document to third-party cloud servers where it resides until a deletion script executes. For confidential documents like bank statements, national ID cards, and signed contracts, you should strictly use client-side in-browser tools where the file never leaves your machine.
+
+### How can I verify if an online PDF compressor is truly client-side?
+Open your browser’s Developer Tools (`F12` or `Ctrl + Shift + I`), switch to the **Network** tab, and process your PDF. If no `POST` or `PUT` network requests occur during compression, the tool is operating 100% locally in your device's memory.
+
+### Does client-side PDF compression reduce document quality?
+Client-side compressors optimize and re-encode high-resolution embedded images to web-standard DPI while preserving vector text, fonts, and hyperlinks. You can customize the compression level (Low, Medium, High) to balance crispness and file size.
+
+### Why do some online PDF tools add watermarks or charge monthly fees?
+Server-based PDF tools incur high cloud computing and bandwidth costs for handling large files on their backend servers. Client-side tools utilize your local device's CPU/RAM, allowing platforms like Cortexis to offer completely free, unlimited, watermark-free tools.
 
 ---
 

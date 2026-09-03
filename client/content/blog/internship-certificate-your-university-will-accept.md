@@ -12,6 +12,16 @@ Most departments want four things, not one: a certificate on company letterhead 
 
 The mistake almost everyone makes is asking for all of this on the last day. By then your supervisor has moved on, the person who prints letterhead is on leave, and nobody remembers your exact joining date. Ask in week one.
 
+## Table of Contents
+- [What Your Department Is Really Checking](#what-your-department-is-really-checking)
+- [The Complete Document Checklist](#the-documents-and-who-produces-each)
+- [Mandatory Elements on the Certificate](#what-has-to-be-on-the-certificate-itself)
+- [Why Universities Rigorously Verify Certificates](#why-verification-suddenly-matters)
+- [Solving the Duration Gap (Weeks vs Months)](#duration-and-dates-where-most-certificates-fail)
+- [First-Week Request Template for Your Supervisor](#ask-for-this-in-your-first-week)
+- [How Cortexis Handles Verification and University Credit](#where-we-can-help-and-where-we-cannot)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## What your department is really checking
 
 Coordinators are not reading your certificate for the compliments. They are answering three separate questions:
@@ -58,14 +68,8 @@ Forging a certificate takes a template and twenty minutes, and everyone involved
 - Phone the number printed on the letterhead and ask whether the student worked there.
 - Email the supervisor at the company domain and expect a reply from that domain. Some coordinators will not accept a reply from a free webmail account.
 - Look up the company registration. In Pakistan that usually means an SECP company search, or asking for the registration number or NTN.
-- Check that the company has a real presence: a working website, staff who exist, an address that resolves to a place.
-- Ask you about the work. A student who cannot describe what they built for six weeks is the loudest signal of all.
 
-This is worth knowing because it changes what you should ask for. A certificate that carries a landline, a company domain email and a named signatory survives every one of those checks without you doing anything. One that carries an unnamed signature and no phone number may not, even when it is completely honest.
-
-Some companies now print a reference number or a verification link. That helps, but be realistic about it: a verification page is only as reliable as the company's willingness to keep it online for the next four years. A phone number and a named human are, oddly, the more durable option. Ours is the phone number on our [contact page](/contact), and a coordinator is welcome to use it.
-
-## The six week problem
+## Duration and dates, where most certificates fail
 
 Universities tend to specify a duration in weeks. Six and eight weeks are the common ones. Companies tend to run internships in months. These do not line up, and the gap causes most of the certificate disputes we hear about.
 
@@ -119,5 +123,21 @@ We run free internships in Islamabad, unpaid but with no fee of any kind, we are
 What we will not do is more informative. We will not backdate a certificate, certify hours nobody worked, or describe a four week internship as eight. We cannot fill your department's proforma unless you bring us the blank form. Our tracks run in monthly blocks, so if your requirement is exactly six weeks, raise it before you accept a place rather than after, and we will tell you honestly whether the dates work.
 
 And one thing that is unflattering to say on our own website: a course certificate is not an internship certificate. We give away [23 free courses](/courses) with verifiable certificates, and they are genuinely useful on a CV, but no department will accept one in place of a supervised internship. If your credit requires an internship, you need an internship.
+
+## Frequently Asked Questions (FAQ)
+
+### What happens if my university requires a 6-week internship but the company offers 4 weeks?
+Speak with your company supervisor in week one. Most software houses allow students to extend their duration by two weeks or split the requirement across two blocks. Never request artificial date alterations on the final letter.
+
+### Do Pakistani universities accept certificates from remote internships?
+Most major universities (including NUST, FAST, COMSATS, and Bahria) accept remote or hybrid software internships provided the certificate clearly outlines your project deliverables, timesheets, and supervisor contact details.
+
+### How do university coordinators verify that an internship is authentic?
+University department heads or placement officers typically call the official company landline/phone number printed on the letterhead, email the supervisor at their corporate domain, or check the company's registration on the SECP/FBR database.
+
+### Can an online course completion certificate replace a mandatory university internship?
+No. An online course certificate verifies self-paced study and testing, whereas university degree accreditation bodies (like HEC and NCEAC) strictly mandate supervised workplace training under an industry mentor.
+
+---
 
 *If you need a placement in Islamabad, the [internships page](/internships) lists the current tracks, the durations we run, and what each one actually involves.*

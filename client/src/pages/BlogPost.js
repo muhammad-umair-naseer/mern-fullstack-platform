@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { POSTS, postBySlug } from '../data/blog.generated';
 import Markdown from '../learn/Markdown';
 import PostCard, { CATEGORY } from '../components/PostCard';
+import TableOfContents from '../components/blog/TableOfContents';
+import BlogFaq from '../components/blog/BlogFaq';
+import { parseBlogContent } from '../lib/blogParser';
 import Seo from '../seo/Seo';
 import { breadcrumbs } from '../seo/schema';
 import { SITE, absolute } from '../seo/site';
@@ -20,6 +23,12 @@ const BlogPost = () => {
   const { slug } = useParams();
   const post = postBySlug(slug);
 
+  // Parse TOC and FAQ from post body
+  const { toc, faqs, cleanedBody } = useMemo(() => {
+    if (!post?.body) return { toc: [], faqs: [], cleanedBody: '' };
+    return parseBlogContent(post.body);
+  }, [post?.body]);
+
   if (!post) {
     return (
       <main className="max-w-3xl mx-auto px-6 py-24 text-center">
@@ -32,8 +41,7 @@ const BlogPost = () => {
     );
   }
 
-  // Read next: the newest other posts. Keeps a reader moving and stops each post
-  // being a dead end in the link graph.
+  // Read next: the newest other posts
   const more = POSTS.filter((p) => p.slug !== post.slug).slice(0, 2);
 
   return (
@@ -94,9 +102,16 @@ const BlogPost = () => {
           </div>
         )}
 
+        {/* Interactive Table of Contents Table at top of article */}
+        {toc.length > 0 && <TableOfContents items={toc} />}
+
+        {/* Cleaned Article Body */}
         <div className="cx-lv-in cx-lv-body" style={{ '--i': 3 }}>
-          <Markdown>{post.body}</Markdown>
+          <Markdown>{cleanedBody}</Markdown>
         </div>
+
+        {/* Interactive FAQ Accordion Component at end of article */}
+        {faqs.length > 0 && <BlogFaq faqs={faqs} />}
 
         {more.length > 0 && (
           <div className="cx-lv-foot">

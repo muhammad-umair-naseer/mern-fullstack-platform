@@ -12,6 +12,18 @@ You need three things: a number on the WhatsApp Business Platform, a message tem
 
 Here is the whole flow for a cash on delivery order, the wording we would actually send, and the parts of the fake order problem no automation touches.
 
+## Table of Contents
+- [The Flow, Stage by Stage](#the-flow-stage-by-stage)
+- [Why the First Message Cannot Be Free Text](#why-the-first-message-cannot-be-free-text)
+- [Customer Opt-in and Consent](#opt-in-done-so-it-holds-up)
+- [What the Confirmation Message Should Actually Say](#what-the-confirmation-should-actually-say)
+- [Handling Non-Responsive Customers](#when-nobody-replies)
+- [What Delivery Status Tells You About a Number](#what-delivery-status-tells-you-about-a-number)
+- [Dispatch and Delivery Updates](#dispatch-and-delivery-updates)
+- [What Automation Cannot Fix](#what-this-will-not-fix)
+- [Should You Build This at All?](#should-you-build-this-at-all)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## The flow, stage by stage
 
 | Stage | What triggers it | Who starts the message | What you may send |
@@ -124,6 +136,20 @@ The case for automating starts when confirmations get missed, when dispatch happ
 When you do build it, WhatsApp is the easy half. The hard half is the order state machine behind it: one order cannot be confirmed twice, a manual confirmation by phone has to update the same field the bot writes to, courier statuses arriving out of order must not announce delivery before dispatch, and a retry after a timeout must not fire a second template. That is ordinary backend engineering, and our free [Node.js backend course](/learn/nodejs-backend) covers webhooks and idempotent handlers if you would rather understand it than buy it.
 
 If your order data lives in three places that do not talk to each other, messaging is not your problem and [custom software](/services) probably is. We would rather say so now than sell you a bot that sends confident updates about the wrong stock levels.
+
+## Frequently Asked Questions (FAQ)
+
+### How much does WhatsApp COD order confirmation reduce return rates (RTO)?
+Automating WhatsApp order confirmation typically reduces Cash on Delivery return-to-origin (RTO) rates by 25% to 45% by filtering fake phone numbers, clarifying order amounts in advance, and verifying delivery addresses before parcels leave your warehouse.
+
+### Can I send automated WhatsApp order confirmations without the official Meta API?
+Using unofficial QR-code scrapers or WhatsApp Web automation tools risks permanent phone number bans from Meta. Legitimate e-commerce automation requires the official WhatsApp Business Platform (Cloud API) with pre-approved utility message templates.
+
+### How much does Meta charge for WhatsApp utility template messages in Pakistan?
+Meta bills utility templates (such as order confirmations and shipping updates) per conversation or message at regional rates. Utility templates are significantly cheaper than marketing templates and are free within an active 24-hour customer service window.
+
+### What should an e-commerce store do if a customer does not tap the Confirm button?
+Establish an automated dispatch rule: for low-value orders, proceed with dispatch after 12 hours; for high-value orders or first-time buyers, trigger a single automated reminder before routing the order to a manual phone confirmation call.
 
 ---
 

@@ -14,6 +14,17 @@ So before any numbers: an app is not one thing you buy, it is usually three. The
 
 Everything below is for the Pakistani market: local teams in Islamabad, Lahore or Karachi, billed in PKR. Rates from US, UK or Gulf agencies are a different economy and not a useful comparison.
 
+## Table of Contents
+- [The Real Cost Bands in Pakistan](#the-bands)
+- [Cross-Platform (Flutter/React Native) vs Native Costs](#cross-platform-or-native-and-what-it-does-to-the-price)
+- [What Is Always Extra in a Quote](#what-is-always-extra)
+- [Keeping the App Alive: Ongoing Maintenance](#the-cost-nobody-mentions-keeping-the-app-alive)
+- [Payment Gateways and In-App Purchases in Pakistan](#payments-specifically-in-pakistan)
+- [When an App Is the Wrong First Answer](#when-an-app-is-the-wrong-first-answer)
+- [What a Suspiciously Cheap Quote Leaves Out](#what-a-suspiciously-cheap-quote-usually-means)
+- [Crucial Questions to Ask Any Development Agency](#questions-to-ask-any-agency-including-us)
+- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
+
 ## The bands
 
 These assume one cross platform code base shipping to both stores, and a team that has done this before.
@@ -120,6 +131,20 @@ It is not always a scam. It is almost always one of these:
 - Show me an app of yours live on both stores right now, and open it on your phone.
 
 If a quote is far below the bands above, one of those answers explains why. Ask before you sign, not after.
+
+## Frequently Asked Questions (FAQ)
+
+### How much does it cost to build a mobile app in Pakistan on average?
+A standard custom mobile app with user authentication, a cloud backend, and a web admin panel typically costs between PKR 300,000 and PKR 500,000 in Pakistan. Simple single-purpose apps range from PKR 150,000 to PKR 300,000, while multi-role marketplaces (like Careem or Foodpanda clones) start above PKR 800,000.
+
+### Should I choose Flutter or Native (Kotlin/Swift) for my mobile app?
+For 90% of commercial business apps, Flutter is the most cost-effective choice. It allows a single development team to deploy high-performance apps to both the Apple App Store and Google Play Store simultaneously, reducing build and maintenance costs by 35% to 45%.
+
+### How much do Google Play and Apple App Store accounts cost in Pakistan?
+Google Play charges a one-time developer registration fee of $25 USD. Apple charges an annual Developer Program membership fee of $99 USD/year. Both fees are paid directly to Google and Apple using a foreign-currency-enabled international debit/credit card.
+
+### What annual maintenance budget should I expect for a mobile app?
+Budget approximately 15% to 20% of your initial development cost annually. This ensures regular updates for new Android/iOS versions, SDK patches, security updates, and Google Play target API level compliance.
 
 ---
 
