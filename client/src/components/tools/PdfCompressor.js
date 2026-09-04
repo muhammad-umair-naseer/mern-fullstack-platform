@@ -554,9 +554,9 @@ export default function PdfCompressor() {
           <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center mb-4">
             <Sparkles className="w-5 h-5" />
           </div>
-          <h4 className="font-bold text-slate-900 text-base mb-1">Deep Object Traversal</h4>
+          <h4 className="font-bold text-slate-900 text-base mb-1">Smart Image Optimization</h4>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Discovers all embedded images inside nested Form XObjects, Transparency Groups, and deep layers across any PDF.
+            Finds and compresses heavy photos, background scans, and graphics while keeping document text 100% crisp and readable.
           </p>
         </div>
 
@@ -564,9 +564,9 @@ export default function PdfCompressor() {
           <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center mb-4">
             <Clock className="w-5 h-5" />
           </div>
-          <h4 className="font-bold text-slate-900 text-base mb-1">Non-Blocking Memory Batching</h4>
+          <h4 className="font-bold text-slate-900 text-base mb-1">Fast & Smooth Processing</h4>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Smart micro-yielding allows large PDFs (50MB–500MB+) to compress smoothly without tab freezing or memory crashes.
+            Efficiently handles multi-page documents and large PDF files smoothly without lag, queues, or long waiting times.
           </p>
         </div>
 
@@ -576,7 +576,7 @@ export default function PdfCompressor() {
           </div>
           <h4 className="font-bold text-slate-900 text-base mb-1">Extreme Compression Mode</h4>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Shrink heavy scanned documents by 80%–95% with dedicated ultra-compression and custom dimension sliders.
+            Shrink heavy scanned pages and large documents by up to 80%–90% with custom quality and dimension sliders.
           </p>
         </div>
       </div>
