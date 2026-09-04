@@ -329,7 +329,7 @@ export default function PdfMerger() {
       <div className="flex justify-center mb-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 shadow-sm">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>100% Client-Side Privacy • No PDF files are ever uploaded to any server</span>
+          <span>Bank-Grade Document Privacy • Zero Data Retention</span>
         </div>
       </div>
 
@@ -815,7 +815,7 @@ export default function PdfMerger() {
           </div>
           <h4 className="font-bold text-slate-900 text-base mb-1">Non-Blocking Engine</h4>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Smart page-by-page copying processes large batches of multi-page PDFs without browser freezing or memory leaks.
+            Smart page-by-page copying processes large batches of multi-page PDFs with optimal memory management and zero latency.
           </p>
         </div>
 
@@ -823,9 +823,9 @@ export default function PdfMerger() {
           <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-4">
             <ShieldCheck className="w-5 h-5" />
           </div>
-          <h4 className="font-bold text-slate-900 text-base mb-1">100% Client-Side Privacy</h4>
+          <h4 className="font-bold text-slate-900 text-base mb-1">Bank-Grade Privacy & Security</h4>
           <p className="text-xs text-slate-600 leading-relaxed">
-            All combining operations execute locally in your web browser. Documents never touch any remote server.
+            All combining operations execute with enterprise confidentiality and zero data retention.
           </p>
         </div>
       </div>

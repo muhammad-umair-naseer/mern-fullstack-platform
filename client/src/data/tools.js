@@ -52,6 +52,7 @@ export const TOOLS = [
   t(25, 'PDF Crop', 'pdf', 3, 'Trim unnecessary margins and areas from PDF pages.'),
   t(27, 'PDF Rotate', 'pdf', 1, 'Rotate pages by 90°, 180° or 270°.'),
   t(29, 'PDF Flatten', 'pdf', 4, 'Flatten forms, annotations and layers into fixed page content.'),
+  t(63, 'Make PDF Fillable', 'pdf', 3, 'Convert flat documents into editable, interactive fillable PDF forms.'),
   t(31, 'PDF Resize', 'pdf', 3, 'Change the page size and layout of a PDF.'),
   t(33, 'Extract Images from PDF', 'pdf', 3, 'Pull embedded images out of a PDF as usable original files.'),
   t(35, 'PDF → PNG, WebP, TIFF, BMP, GIF', 'pdf', 4, 'Export PDF pages to a range of image formats.'),
@@ -145,6 +146,20 @@ export const IMPLEMENTED = new Set([
   'pdf-jpg',
   'pdf-organizer',
   'pdf-protect',
+  'pdf-crop',
+  'pdf-rotate',
+  'pdf-flatten',
+  'make-pdf-fillable',
+  'pdf-resize',
+  'extract-images-from-pdf',
+  'pdf-png-webp-tiff-bmp-gif',
+  'png-compressor',
+  'qr-generator',
+  'image-resizer',
+  'image-cropper',
+  'image-enlarger',
+  'colour-picker',
+  'save-web-as-pdf',
 ]);
 
 /** Is there real code behind this slug, or only a catalogue entry? */
@@ -160,7 +175,7 @@ export const allToolsLive = () => TOOLS.every((x) => x.isLive);
 /** The one sentence used wherever the tools are summarised. */
 export const toolsBlurb = () => {
   const live = liveTools().length;
-  if (live === TOOLS.length) return 'Every tool is free, and nothing you open leaves your device.';
+  if (live === TOOLS.length) return 'Professional document & media processing suite with zero data retention.';
   return `${live} of ${TOOLS.length} live, free to use.`;
 };
 

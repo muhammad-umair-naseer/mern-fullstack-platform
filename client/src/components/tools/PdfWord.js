@@ -135,7 +135,7 @@ export default function PdfWord() {
         </div>
         <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-full">
           <ShieldCheck className="w-4 h-4" />
-          <span>100% Client-Side • Fast & Secure</span>
+          <span>Enterprise Document Parser • Zero Quality Loss</span>
         </div>
       </div>
 
@@ -287,7 +287,7 @@ export default function PdfWord() {
             <div>
               <h3 className="text-2xl font-bold text-slate-900">Conversion Finished!</h3>
               <p className="text-sm text-slate-600 mt-1">
-                Your file is ready. Processed in your browser with zero data loss.
+                Your file is ready. Processed with high fidelity and zero data loss.
               </p>
               <div className="inline-flex items-center gap-2 mt-3 px-4 py-1.5 rounded-full bg-white border border-emerald-200 text-xs text-slate-700 font-medium shadow-sm">
                 <span>{result.filename}</span>

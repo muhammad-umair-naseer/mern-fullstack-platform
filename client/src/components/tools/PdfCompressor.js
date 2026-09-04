@@ -22,6 +22,7 @@ import {
   COMPRESSION_LEVELS,
   triggerDownload,
 } from '../../lib/pdfCompressor';
+import PdfCompressorSeoArticle from './PdfCompressorSeoArticle';
 
 export default function PdfCompressor() {
   const [file, setFile] = useState(null);
@@ -142,7 +143,7 @@ export default function PdfCompressor() {
       <div className="flex justify-center mb-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 shadow-sm">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>100% Client-Side Privacy • No files are ever sent to any server</span>
+          <span>Bank-Grade Document Privacy • Zero Data Retention</span>
         </div>
       </div>
 
@@ -579,6 +580,9 @@ export default function PdfCompressor() {
           </p>
         </div>
       </div>
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfCompressorSeoArticle />
     </div>
   );
 }

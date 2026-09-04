@@ -15,6 +15,20 @@ import ExtractPages from '../components/tools/ExtractPages';
 import PdfJpg from '../components/tools/PdfJpg';
 import PdfOrganizer from '../components/tools/PdfOrganizer';
 import PdfProtect from '../components/tools/PdfProtect';
+import PdfExtractImages from '../components/tools/PdfExtractImages';
+import PdfRotate from '../components/tools/PdfRotate';
+import PdfFlatten from '../components/tools/PdfFlatten';
+import PdfFormBuilder from '../components/tools/PdfFormBuilder';
+import PdfCrop from '../components/tools/PdfCrop';
+import PdfResize from '../components/tools/PdfResize';
+import PdfPngWebp from '../components/tools/PdfPngWebp';
+import PngCompressor from '../components/tools/PngCompressor';
+import QrGenerator from '../components/tools/QrGenerator';
+import ImageResizer from '../components/tools/ImageResizer';
+import ImageCropper from '../components/tools/ImageCropper';
+import ImageEnlarger from '../components/tools/ImageEnlarger';
+import ColourPicker from '../components/tools/ColourPicker';
+import SaveWebAsPdf from '../components/tools/SaveWebAsPdf';
 
 const TONE = {
   emerald: 'bg-emerald-500/12 text-emerald-700 ring-emerald-600/25',
@@ -74,6 +88,34 @@ export default function ToolDetail() {
         return <PdfOrganizer />;
       case 'pdf-protect':
         return <PdfProtect />;
+      case 'extract-images-from-pdf':
+        return <PdfExtractImages />;
+      case 'pdf-rotate':
+        return <PdfRotate />;
+      case 'pdf-flatten':
+        return <PdfFlatten />;
+      case 'make-pdf-fillable':
+        return <PdfFormBuilder />;
+      case 'pdf-crop':
+        return <PdfCrop />;
+      case 'pdf-resize':
+        return <PdfResize />;
+      case 'pdf-png-webp-tiff-bmp-gif':
+        return <PdfPngWebp />;
+      case 'png-compressor':
+        return <PngCompressor />;
+      case 'qr-generator':
+        return <QrGenerator />;
+      case 'image-resizer':
+        return <ImageResizer />;
+      case 'image-cropper':
+        return <ImageCropper />;
+      case 'image-enlarger':
+        return <ImageEnlarger />;
+      case 'colour-picker':
+        return <ColourPicker />;
+      case 'save-web-as-pdf':
+        return <SaveWebAsPdf />;
       default:
         break;
     }
@@ -84,8 +126,8 @@ export default function ToolDetail() {
         </span>
         <h2 className="mt-5 text-2xl font-bold text-slate-900">Tool in Active Development</h2>
         <p className="mt-2 text-slate-600 max-w-xl mx-auto text-sm leading-relaxed">
-          This tool is planned on our roadmap. When it ships it will be completely free, client-side, need no account
-          and add no watermark. Tell us if you need this tool prioritized.
+          This tool is planned on our roadmap. When it ships it will be completely free with enterprise security,
+          zero account requirements, and zero watermarks. Tell us if you need this tool prioritized.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
@@ -98,7 +140,7 @@ export default function ToolDetail() {
             to="/tools"
             className="px-6 py-3 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 transition"
           >
-            Browse other tools
+            Browse all tools
           </Link>
         </div>
       </div>
@@ -111,7 +153,7 @@ export default function ToolDetail() {
         title={`${tool.name} — Free ${category.label} Tool`}
         description={
           live
-            ? `${tool.description} Free, runs in your browser, no account and no watermark.`
+            ? `${tool.description} Fast, secure, zero account required, and 100% watermark-free.`
             : `${tool.description} Planned as a free Cortexis tool, currently in development.`
         }
         path={`/tools/${tool.slug}`}
@@ -140,7 +182,7 @@ export default function ToolDetail() {
               {live && (
                 <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-orange-500 text-white shadow-sm flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                  INSTANT BROWSER TOOL
+                  PRO UTILITY SUITE
                 </span>
               )}
               <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/10 text-white">
@@ -172,7 +214,7 @@ export default function ToolDetail() {
         {related.length > 0 && (
           <div className="mt-16">
             <h2 className="text-xl font-bold text-slate-900 mb-6">
-              Other {category?.label?.toLowerCase() || ''} tools
+              Related {category?.label || 'Pro'} Tools
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {related.map((r) => (

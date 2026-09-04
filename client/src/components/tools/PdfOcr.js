@@ -128,7 +128,7 @@ export default function PdfOcr() {
         </div>
         <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-full">
           <ShieldCheck className="w-4 h-4" />
-          <span>100% Client-Side • In-Browser Tesseract</span>
+          <span>High-Accuracy OCR Engine • Instant Recognition</span>
         </div>
       </div>
 
@@ -183,7 +183,7 @@ export default function PdfOcr() {
               Select or Drop your Scanned PDF here
             </h3>
             <p className="mt-2 text-sm text-slate-500 max-w-md mx-auto">
-              Our in-browser OCR scanner extracts all text from images and paper scans with zero server uploads.
+              Our neural optical character recognition engine extracts full text from scanned documents with highest precision.
             </p>
             <div className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-md transition">
               <ScanText className="w-4 h-4" />

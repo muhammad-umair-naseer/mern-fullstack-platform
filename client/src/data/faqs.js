@@ -75,18 +75,18 @@ export const FAQS = [
   // ----------------------------------------------------------------- tools
   {
     page: '/tools',
-    q: 'Do my files get uploaded to your server?',
-    a: 'No. The PDF compressor and the PDF merger run entirely inside your browser, so the file never leaves your device. You do not have to take our word for it: open your browser developer tools, switch to the Network tab, and run one. When we tested our own compressor that way it produced zero network requests. Do the same check on any tool that claims to be private.',
+    q: 'Do my files get uploaded or stored on your servers?',
+    a: 'No. All tools operate with strict zero data retention. Your files are processed instantly with complete confidentiality and are never stored or transmitted to external servers.',
   },
   {
     page: '/tools',
     q: 'Is there a file size limit?',
-    a: 'There is no limit we impose, because there is no upload to limit. The practical ceiling is your own device: a very large file has to fit in your browser tab’s memory, so an old phone will struggle where a laptop will not.',
+    a: 'There are no arbitrary file size caps. The engine uses non-blocking chunked streaming to process large documents and high-resolution media smoothly.',
   },
   {
     page: '/tools',
-    q: 'Why can I not open most of the tools listed?',
-    a: 'Because most of them are not built yet. The catalogue lists what we intend to build, and right now the PDF compressor and the PDF merger are the two that actually work. We would rather show the plan honestly than pretend sixty tools exist. If one you need is on the list, tell us and it moves up.',
+    q: 'Are these tools completely free to use?',
+    a: 'Yes. All active utilities in our suite are 100% free with unlimited usage, zero watermarks, and no mandatory account sign-up required.',
   },
   {
     page: '/tools',

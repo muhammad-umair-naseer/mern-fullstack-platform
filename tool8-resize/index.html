@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Resize</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .card { max-width: 480px; }
+  #page-info { margin-top: 10px; font-size: 13px; color: #64748b; text-align: center; display: none; }
+  #options { display: none; margin-top: 16px; }
+  .field-row { margin-bottom: 14px; }
+  .field-row label { display: block; font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+  select, .custom-dims input {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background: #fff;
+  }
+  .custom-dims { display: none; gap: 8px; }
+  .custom-dims .dim-field { flex: 1; }
+  .custom-dims .dim-field span { font-size: 11px; color: #94a3b8; }
+  .row-flex { display: flex; gap: 8px; }
+
+  .mode-options { display: flex; gap: 8px; }
+  .mode-btn {
+    flex: 1;
+    padding: 10px 6px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    text-align: center;
+    font-size: 12px;
+    color: #475569;
+  }
+  .mode-btn.active { border-color: #4f46e5; background: #f5f5ff; color: #4f46e5; font-weight: 600; }
+  .mode-btn .mode-name { display: block; font-weight: 600; margin-bottom: 2px; }
+  .mode-btn .mode-desc { display: block; font-size: 10px; color: #94a3b8; font-weight: 400; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>PDF Resize</h1>
+    <p class="subtitle">Change the page size of your PDF — fit it to a new standard size or custom dimensions. Everything happens in your browser; your file is never uploaded anywhere.</p>
+
+    <form id="resize-form">
+      <label id="drop-zone" for="file-input">
+        <span id="drop-text">Click to choose a PDF, or drag &amp; drop here</span>
+        <span id="file-name"></span>
+      </label>
+      <input type="file" id="file-input" accept=".pdf" hidden>
+
+      <p id="page-info"></p>
+
+      <div id="options">
+        <div class="field-row">
+          <label for="size-select">Target page size</label>
+          <select id="size-select">
+            <option value="a4">A4 (210 × 297 mm)</option>
+            <option value="letter">Letter (8.5 × 11 in)</option>
+            <option value="legal">Legal (8.5 × 14 in)</option>
+            <option value="a3">A3 (297 × 420 mm)</option>
+            <option value="a5">A5 (148 × 210 mm)</option>
+            <option value="tabloid">Tabloid (11 × 17 in)</option>
+            <option value="custom">Custom size...</option>
+          </select>
+          <div class="row-flex custom-dims" id="custom-dims">
+            <div class="dim-field">
+              <input type="number" id="custom-width" min="10" value="210" step="any">
+              <span>Width (mm)</span>
+            </div>
+            <div class="dim-field">
+              <input type="number" id="custom-height" min="10" value="297" step="any">
+              <span>Height (mm)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row" id="orientation-row">
+          <label>Page orientation</label>
+          <div class="mode-options" id="orientation-options">
+            <div class="mode-btn active" data-orient="auto">
+              <span class="mode-name">Auto</span>
+              <span class="mode-desc">Match each page</span>
+            </div>
+            <div class="mode-btn" data-orient="portrait">
+              <span class="mode-name">Portrait</span>
+              <span class="mode-desc">Vertical</span>
+            </div>
+            <div class="mode-btn" data-orient="landscape">
+              <span class="mode-name">Landscape</span>
+              <span class="mode-desc">Horizontal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label>How content should fit the new size</label>
+          <div class="mode-options" id="mode-options">
+            <div class="mode-btn active" data-mode="fit">
+              <span class="mode-name">Fit</span>
+              <span class="mode-desc">Whole page visible, may add borders</span>
+            </div>
+            <div class="mode-btn" data-mode="fill">
+              <span class="mode-name">Fill</span>
+              <span class="mode-desc">No borders, may crop edges</span>
+            </div>
+            <div class="mode-btn" data-mode="stretch">
+              <span class="mode-name">Stretch</span>
+              <span class="mode-desc">Exact fit, may distort</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" id="resize-btn" disabled>Resize PDF</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="vendor/pdf-lib.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extract Images from PDF — pull embedded images, on your machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --void:#12151a; --panel:#1b1f27; --panel-2:#20252e; --line:#2b303a;
+    --paper:#f6f3ea; --ink:#eae7de; --ink-dim:#8d939d;
+    --amber:#ffb454; --amber-dim:rgba(255,180,84,0.16);
+    --success:#6fcf97; --success-dim:rgba(111,207,151,0.16);
+    --danger:#e0716a; --danger-dim:rgba(224,113,106,0.16);
+    --font-display:'Space Grotesk',sans-serif; --font-mono:'IBM Plex Mono',monospace; --font-body:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--void);color:var(--ink);font-family:var(--font-body);}
+  body{min-height:100vh;}
+  .app{display:flex;flex-direction:column;min-height:100vh;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--void));flex-wrap:wrap;gap:10px;}
+  .brand{display:flex;align-items:baseline;gap:10px;}
+  .brand .mark{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--amber);border:1px solid var(--amber-dim);background:var(--amber-dim);padding:3px 7px;border-radius:4px;text-transform:uppercase;}
+  .brand h1{font-family:var(--font-display);font-weight:600;font-size:19px;margin:0;letter-spacing:-.01em;}
+  .device-note{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);display:flex;align-items:center;gap:7px;}
+  .dot-live{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px var(--success-dim);}
+
+  .actionbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 28px;border-bottom:1px solid var(--line);background:var(--panel);}
+  .actionbar .status{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .actionbar .status strong{color:var(--ink);font-weight:600;}
+  .btnrow{display:flex;gap:9px;flex-wrap:wrap;}
+
+  button{font-family:var(--font-display);font-weight:600;font-size:13.5px;padding:10px 15px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);cursor:pointer;transition:transform .1s ease, border-color .15s ease, filter .15s ease;}
+  button:hover:not(:disabled){border-color:var(--amber);}
+  button:active:not(:disabled){transform:scale(0.98);}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  button.primary{background:var(--amber);color:#1c1406;border-color:var(--amber);}
+  button.primary:hover:not(:disabled){filter:brightness(1.06);}
+  button.ghost{background:transparent;}
+
+  .stage{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .stage-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ink-dim);gap:14px;padding:40px;text-align:center;}
+  .dropzone{border:1.5px dashed var(--line);border-radius:12px;padding:40px 60px;text-align:center;cursor:pointer;transition:border-color .15s ease, background .15s ease;}
+  .dropzone:hover, .dropzone.drag{border-color:var(--amber);background:var(--amber-dim);}
+  .dropzone .dz-title{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--ink);}
+  .dropzone .dz-sub{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-dim);margin-top:6px;}
+  input[type=file]{display:none;}
+  .stage-empty h2{font-family:var(--font-display);color:var(--ink);font-weight:600;font-size:20px;margin:0;}
+  .stage-empty p{font-size:13.5px;max-width:440px;line-height:1.55;margin:0;}
+
+  .grid-wrap{flex:1;overflow-y:auto;padding:26px 28px;}
+  .pagegroup{margin-bottom:30px;}
+  .pagegroup-label{font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(160px,1fr));gap:20px;}
+
+  .card{display:flex;flex-direction:column;gap:8px;}
+  .frame{
+    position:relative;width:100%;aspect-ratio:1;border-radius:3px;overflow:hidden;
+    background:
+      repeating-conic-gradient(#2a2e37 0% 25%, #22262e 0% 50%) 50% / 14px 14px;
+    box-shadow:0 8px 22px rgba(0,0,0,0.35);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .frame canvas{max-width:100%;max-height:100%;display:block;}
+  .cardmeta{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-dim);}
+  .cardmeta .dims{white-space:nowrap;}
+  .cardmeta button{font-family:var(--font-mono);font-size:10.5px;padding:4px 8px;border-radius:5px;}
+
+  .empty-notice{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    color:var(--ink-dim);padding:60px 20px;text-align:center;font-size:13.5px;
+  }
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--panel-2);border:1px solid var(--line);color:var(--ink);font-family:var(--font-mono);font-size:12.5px;padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;box-shadow:0 10px 30px rgba(0,0,0,0.4);max-width:80vw;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+  .toast.error{border-color:var(--danger);color:var(--danger);}
+
+  .spinner-overlay{position:fixed;inset:0;background:rgba(18,21,26,0.75);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:50;}
+  .spinner-overlay.show{display:flex;}
+  .spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--amber);animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .spinner-overlay .label{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-dim);}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">Tool 33</span>
+      <h1>Extract Images from PDF</h1>
+    </div>
+    <div class="device-note"><span class="dot-live"></span> runs entirely on this device — nothing is uploaded</div>
+  </div>
+
+  <div class="actionbar" id="actionbar" style="display:none;">
+    <div class="status">
+      <span><strong id="imgCount">0</strong> images found across <strong id="pageCount">0</strong> pages</span>
+    </div>
+    <div class="btnrow">
+      <button class="ghost" id="newFileBtn">Load a different PDF</button>
+      <button class="primary" id="zipBtn" disabled>Download all as ZIP</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-empty" id="stageEmpty">
+      <div class="dropzone" id="dropzone">
+        <div class="dz-title">Drop a PDF here</div>
+        <div class="dz-sub">or click to browse · .pdf only</div>
+        <input type="file" id="fileInput" accept="application/pdf">
+      </div>
+      <p>Every embedded image object is pulled out at its original resolution — not a screenshot of the page — and saved as a standalone PNG. Read and decoded entirely in your browser.</p>
+    </div>
+
+    <div class="grid-wrap" id="gridWrap" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="spinner-overlay" id="spinnerOverlay">
+  <div class="spinner"></div>
+  <div class="label" id="spinnerLabel">Working…</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const OPS = pdfjsLib.OPS;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const stageEmpty = document.getElementById('stageEmpty');
+const gridWrap = document.getElementById('gridWrap');
+const actionbar = document.getElementById('actionbar');
+const imgCountEl = document.getElementById('imgCount');
+const pageCountEl = document.getElementById('pageCount');
+const newFileBtn = document.getElementById('newFileBtn');
+const zipBtn = document.getElementById('zipBtn');
+const toast = document.getElementById('toast');
+const spinnerOverlay = document.getElementById('spinnerOverlay');
+const spinnerLabel = document.getElementById('spinnerLabel');
+
+let sourceFileName = 'document';
+let extractedImages = []; // [{pageNum, indexOnPage, canvas, width, height}]
+
+function showToast(msg, isError){
+  toast.textContent = msg;
+  toast.classList.toggle('error', !!isError);
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 2600);
+}
+function showSpinner(label){ spinnerLabel.textContent = label; spinnerOverlay.classList.add('show'); }
+function hideSpinner(){ spinnerOverlay.classList.remove('show'); }
+
+// ---- file intake ----
+dropzone.addEventListener('click', ()=>fileInput.click());
+dropzone.addEventListener('dragover', e=>{e.preventDefault();dropzone.classList.add('drag');});
+dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e=>{
+  e.preventDefault();dropzone.classList.remove('drag');
+  if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e=>{
+  if(e.target.files[0]) handleFile(e.target.files[0]);
+  fileInput.value = '';
+});
+newFileBtn.addEventListener('click', resetToEmpty);
+
+function resetToEmpty(){
+  extractedImages = [];
+  gridWrap.innerHTML = '';
+  gridWrap.style.display = 'none';
+  actionbar.style.display = 'none';
+  stageEmpty.style.display = 'flex';
+  zipBtn.disabled = true;
+}
+
+// ---- pdf.js image-object -> canvas conversion ----
+// pdf.js resolves embedded image XObjects into page.objs as a side effect of
+// building the operator list (no page render/canvas needed for this step).
+// The cached value is usually a raw {width, height, kind, data} record; on
+// some builds/browsers it can instead be an ImageBitmap-like drawable. Both
+// are handled here defensively since that shape isn't a stable public API.
+const ImageKind = { GRAYSCALE_1BPP: 1, RGB_24BPP: 2, RGBA_32BPP: 3 };
+
+function imageObjToCanvas(obj){
+  if(!obj) return null;
+
+  // Directly-drawable case (ImageBitmap / HTMLImageElement / HTMLCanvasElement).
+  if(typeof ImageBitmap !== 'undefined' && obj instanceof ImageBitmap ||
+     typeof HTMLImageElement !== 'undefined' && obj instanceof HTMLImageElement ||
+     typeof HTMLCanvasElement !== 'undefined' && obj instanceof HTMLCanvasElement){
+    const canvas = document.createElement('canvas');
+    canvas.width = obj.width; canvas.height = obj.height;
+    canvas.getContext('2d').drawImage(obj, 0, 0);
+    return canvas;
+  }
+  if(obj.bitmap){ return imageObjToCanvas(obj.bitmap); }
+
+  // Raw pixel-data case.
+  if(obj.width && obj.height && obj.data){
+    const { width, height, kind, data } = obj;
+    const rgba = new Uint8ClampedArray(width * height * 4);
+
+    if(kind === ImageKind.RGBA_32BPP){
+      rgba.set(data.subarray ? data.subarray(0, rgba.length) : data);
+    } else if(kind === ImageKind.RGB_24BPP){
+      for(let i=0, s=0; i<rgba.length; i+=4, s+=3){
+        rgba[i]=data[s]; rgba[i+1]=data[s+1]; rgba[i+2]=data[s+2]; rgba[i+3]=255;
+      }
+    } else if(kind === ImageKind.GRAYSCALE_1BPP){
+      // 1 bit per pixel, packed MSB-first, rows padded to byte boundaries.
+      const bytesPerRow = Math.ceil(width/8);
+      for(let y=0;y<height;y++){
+        for(let x=0;x<width;x++){
+          const byte = data[y*bytesPerRow + (x>>3)];
+          const bit = (byte >> (7 - (x & 7))) & 1;
+          const v = bit ? 255 : 0;
+          const i = (y*width + x) * 4;
+          rgba[i]=v; rgba[i+1]=v; rgba[i+2]=v; rgba[i+3]=255;
+        }
+      }
+    } else {
+      // Unknown/uncommon kind — best-effort grayscale interpretation so the
+      // image still shows something rather than failing silently.
+      const channels = Math.max(1, Math.floor(data.length / (width*height)) || 1);
+      for(let i=0, s=0; i<rgba.length; i+=4, s+=channels){
+        const v = data[s] || 0;
+        rgba[i]=v; rgba[i+1]=v; rgba[i+2]=v; rgba[i+3]=255;
+      }
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    canvas.getContext('2d').putImageData(new ImageData(rgba, width, height), 0, 0);
+    return canvas;
+  }
+
+  return null;
+}
+
+async function handleFile(file){
+  const looksLikePdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  if(!looksLikePdf){ showToast("That's not a PDF file", true); return; }
+
+  showSpinner('Scanning for embedded images…');
+  try{
+    const buf = await file.arrayBuffer();
+    sourceFileName = file.name.replace(/\.pdf$/i,'') || 'document';
+    const pdfDoc = await pdfjsLib.getDocument({data: buf}).promise;
+
+    extractedImages = [];
+    const pageGroups = []; // [{pageNum, images:[...]}]
+
+    for(let pageNum=1; pageNum<=pdfDoc.numPages; pageNum++){
+      const page = await pdfDoc.getPage(pageNum);
+      const opList = await page.getOperatorList();
+
+      const seenOnPage = new Set();
+      const imagesThisPage = [];
+
+      for(let i=0;i<opList.fnArray.length;i++){
+        const fn = opList.fnArray[i];
+        if(fn !== OPS.paintImageXObject && fn !== OPS.paintImageXObjectRepeat) continue;
+        const objId = opList.argsArray[i][0];
+        if(!objId || seenOnPage.has(objId)) continue;
+        seenOnPage.add(objId);
+
+        if(!page.objs.has(objId)) continue;
+        const raw = page.objs.get(objId);
+        const canvas = imageObjToCanvas(raw);
+        if(!canvas || canvas.width < 2 || canvas.height < 2) continue; // skip 1x1 stencil/mask noise
+
+        const entry = { pageNum, indexOnPage: imagesThisPage.length+1, canvas, width: canvas.width, height: canvas.height };
+        imagesThisPage.push(entry);
+        extractedImages.push(entry);
+      }
+
+      if(imagesThisPage.length) pageGroups.push({ pageNum, images: imagesThisPage });
+    }
+
+    renderResults(pageGroups, pdfDoc.numPages);
+    showToast(extractedImages.length
+      ? `Found ${extractedImages.length} image${extractedImages.length>1?'s':''}`
+      : 'No embedded images found in this PDF');
+  }catch(err){
+    console.error(err);
+    showToast('Could not read that PDF — it may be corrupted or password-protected', true);
+    resetToEmpty();
+  }finally{
+    hideSpinner();
+  }
+}
+
+function renderResults(pageGroups, totalPages){
+  gridWrap.innerHTML = '';
+  imgCountEl.textContent = extractedImages.length;
+  pageCountEl.textContent = totalPages;
+  stageEmpty.style.display = 'none';
+  gridWrap.style.display = 'block';
+  actionbar.style.display = 'flex';
+  zipBtn.disabled = extractedImages.length === 0;
+
+  if(pageGroups.length === 0){
+    const notice = document.createElement('div');
+    notice.className = 'empty-notice';
+    notice.innerHTML = `<div>No embedded images turned up in this PDF's ${totalPages} page${totalPages>1?'s':''}.</div><div>(Pages built entirely from vector graphics or text won't have any raster images to pull out.)</div>`;
+    gridWrap.appendChild(notice);
+    return;
+  }
+
+  pageGroups.forEach(group=>{
+    const section = document.createElement('div');
+    section.className = 'pagegroup';
+    const label = document.createElement('div');
+    label.className = 'pagegroup-label';
+    label.textContent = `Page ${group.pageNum} — ${group.images.length} image${group.images.length>1?'s':''}`;
+    section.appendChild(label);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    group.images.forEach(entry=>grid.appendChild(buildCard(entry)));
+    section.appendChild(grid);
+
+    gridWrap.appendChild(section);
+  });
+}
+
+function buildCard(entry){
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const frame = document.createElement('div');
+  frame.className = 'frame';
+  const thumb = document.createElement('canvas');
+  thumb.width = entry.canvas.width; thumb.height = entry.canvas.height;
+  thumb.getContext('2d').drawImage(entry.canvas, 0, 0);
+  frame.appendChild(thumb);
+
+  const meta = document.createElement('div');
+  meta.className = 'cardmeta';
+  const dims = document.createElement('span');
+  dims.className = 'dims';
+  dims.textContent = `${entry.width}×${entry.height}`;
+  const dl = document.createElement('button');
+  dl.textContent = 'Download';
+  dl.addEventListener('click', ()=>downloadSingle(entry));
+  meta.appendChild(dims);
+  meta.appendChild(dl);
+
+  card.appendChild(frame);
+  card.appendChild(meta);
+  return card;
+}
+
+function downloadSingle(entry){
+  entry.canvas.toBlob(blob=>{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${sourceFileName}-p${entry.pageNum}-img${entry.indexOnPage}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+}
+
+zipBtn.addEventListener('click', async ()=>{
+  if(extractedImages.length === 0) return;
+  zipBtn.disabled = true;
+  showSpinner('Zipping images…');
+  try{
+    const zip = new JSZip();
+    for(const entry of extractedImages){
+      const blob = await new Promise(res=>entry.canvas.toBlob(res, 'image/png'));
+      zip.file(`${sourceFileName}-p${entry.pageNum}-img${entry.indexOnPage}.png`, blob);
+    }
+    const zipBlob = await zip.generateAsync({type:'blob'});
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${sourceFileName}-images.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Downloaded ZIP of all images');
+  }catch(err){
+    console.error(err);
+    showToast('Something went wrong building the ZIP — please try again', true);
+  }finally{
+    hideSpinner();
+    zipBtn.disabled = extractedImages.length === 0;
+  }
+});
+</script>
+</body>
+</html>
