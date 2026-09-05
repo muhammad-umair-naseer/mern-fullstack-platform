@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import PdfResizeSeoArticle from './PdfResizeSeoArticle';
 
 const MM_TO_PT = 72 / 25.4;
 const IN_TO_PT = 72;
@@ -288,6 +289,9 @@ export default function PdfResize() {
           </div>
         </div>
       )}
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfResizeSeoArticle />
     </div>
   );
 }

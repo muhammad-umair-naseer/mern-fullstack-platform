@@ -43,7 +43,7 @@ export default function PdfWordSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 9 min read
         </span>
       </div>
 
@@ -100,7 +100,7 @@ export default function PdfWordSeoArticle() {
             ['#formatting', '3. Formatting: What Survives and What Does Not'],
             ['#scanned-pdf', '4. Converting a Scanned PDF to Word'],
             ['#word-to-pdf', '5. Converting Word Back to PDF'],
-            ['#large-files-mobile', '6. Large Files, Mobile and Offline Use'],
+            ['#large-files-mobile', '6. Large Files and Working on Mobile'],
             ['#why-cortexis', '7. Why Cortexis Is the Best Free PDF to Word Converter'],
             ['#faq', '8. Frequently Asked Questions (FAQ)'],
           ].map(([href, label]) => (
@@ -339,7 +339,7 @@ export default function PdfWordSeoArticle() {
       <section id="large-files-mobile" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Smartphone className="w-6 h-6 text-orange-500 shrink-0" />
-          6. Large Files, Mobile and Working Offline
+          6. Large Files and Working on Mobile
         </h3>
         <p>
           Most free converters cap you at around 10&ndash;25 MB, or two files a
@@ -348,7 +348,7 @@ export default function PdfWordSeoArticle() {
           artificial size ceiling, and you can do it as many times as you like.
         </p>
         <p>
-          The tool works on a phone browser as well as a laptop, so{' '}
+          The tool works on a phone as well as a laptop, so{' '}
           <strong>pdf to word on mobile</strong> needs no app install and no
           Play Store detour. A 400-page document will naturally take longer on a
           budget handset than on a desktop &mdash; the work is real and the

@@ -22,7 +22,7 @@ export default function PdfCompressorSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 12 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 12 min read
         </span>
       </div>
 

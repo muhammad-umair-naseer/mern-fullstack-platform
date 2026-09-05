@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import PdfFlattenSeoArticle from './PdfFlattenSeoArticle';
 
 // Parse page ranges like "1-3, 5" into 0-indexed page indices
 function parsePageRanges(input, maxPages) {
@@ -467,6 +468,9 @@ export default function PdfFlatten() {
           </div>
         </div>
       )}
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfFlattenSeoArticle />
     </div>
   );
 }

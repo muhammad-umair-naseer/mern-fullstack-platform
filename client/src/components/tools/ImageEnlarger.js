@@ -8,6 +8,7 @@ import {
   X,
 } from 'lucide-react';
 import { formatBytes, triggerDownload, yieldToMain } from '../../lib/pdfCommon';
+import ImageEnlargerSeoArticle from './ImageEnlargerSeoArticle';
 
 const MAX_PIXELS = 25000000; // 25 Megapixels clamp to protect browser memory
 
@@ -340,6 +341,9 @@ export default function ImageEnlarger() {
           </div>
         </div>
       )}
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <ImageEnlargerSeoArticle />
     </div>
   );
 }

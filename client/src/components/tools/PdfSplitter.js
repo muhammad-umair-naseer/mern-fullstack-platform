@@ -14,6 +14,7 @@ import {
 import { PDFDocument } from 'pdf-lib';
 import { splitPdf, parseRanges, chunkEveryN, everyPageSeparate } from '../../lib/pdfSplitter';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import PdfSplitterSeoArticle from './PdfSplitterSeoArticle';
 
 export default function PdfSplitter() {
   const [file, setFile] = useState(null);
@@ -405,6 +406,9 @@ export default function PdfSplitter() {
           </div>
         )}
       </div>
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfSplitterSeoArticle />
     </div>
   );
 }

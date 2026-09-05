@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 import { pdfjsLib, triggerDownload } from '../../lib/pdfCommon';
+import PdfCropSeoArticle from './PdfCropSeoArticle';
 
 export default function PdfCrop() {
   const [file, setFile] = useState(null);
@@ -365,6 +366,9 @@ export default function PdfCrop() {
           </div>
         </div>
       )}
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfCropSeoArticle />
     </div>
   );
 }

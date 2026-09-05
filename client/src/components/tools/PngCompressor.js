@@ -10,6 +10,7 @@ import {
   Sliders,
 } from 'lucide-react';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import PngCompressorSeoArticle from './PngCompressorSeoArticle';
 
 export default function PngCompressor() {
   const [file, setFile] = useState(null);
@@ -299,6 +300,9 @@ export default function PngCompressor() {
           </div>
         </div>
       )}
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PngCompressorSeoArticle />
     </div>
   );
 }

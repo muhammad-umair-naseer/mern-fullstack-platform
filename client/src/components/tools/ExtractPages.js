@@ -19,6 +19,7 @@ import {
   extractPagesToPdf,
 } from '../../lib/extractPages';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import ExtractPagesSeoArticle from './ExtractPagesSeoArticle';
 
 export default function ExtractPages() {
   const [file, setFile] = useState(null);
@@ -402,6 +403,9 @@ export default function ExtractPages() {
           </div>
         )}
       </div>
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <ExtractPagesSeoArticle />
     </div>
   );
 }

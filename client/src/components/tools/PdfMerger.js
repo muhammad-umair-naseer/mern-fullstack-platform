@@ -27,6 +27,7 @@ import {
   formatBytes,
   triggerDownload,
 } from '../../lib/pdfMerger';
+import PdfMergerSeoArticle from './PdfMergerSeoArticle';
 
 const FILE_COLORS = [
   'bg-blue-500/10 text-blue-700 border-blue-200',
@@ -829,6 +830,9 @@ export default function PdfMerger() {
           </p>
         </div>
       </div>
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfMergerSeoArticle />
     </div>
   );
 }

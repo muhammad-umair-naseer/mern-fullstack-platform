@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { convertPdfsToExcel } from '../../lib/pdfToExcel';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import PdfToExcelSeoArticle from './PdfToExcelSeoArticle';
 
 export default function PdfToExcel() {
   const [files, setFiles] = useState([]);
@@ -368,6 +369,9 @@ export default function PdfToExcel() {
           </div>
         )}
       </div>
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfToExcelSeoArticle />
     </div>
   );
 }
