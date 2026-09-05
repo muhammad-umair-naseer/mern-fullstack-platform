@@ -342,7 +342,7 @@ export default function PdfMerger() {
       <div className="flex justify-center mb-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 shadow-sm">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Bank-Grade Document Privacy • Zero Data Retention</span>
+          <span>Free and Unlimited • Zero Data Retention</span>
         </div>
       </div>
 
@@ -838,7 +838,7 @@ export default function PdfMerger() {
           </div>
           <h4 className="font-bold text-slate-900 text-base mb-1">Bank-Grade Privacy & Security</h4>
           <p className="text-xs text-slate-600 leading-relaxed">
-            All combining operations execute with enterprise confidentiality and zero data retention.
+            Files are never stored and nothing is retained after your session.
           </p>
         </div>
       </div>

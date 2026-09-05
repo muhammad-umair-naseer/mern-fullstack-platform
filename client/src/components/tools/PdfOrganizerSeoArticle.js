@@ -21,7 +21,7 @@ import {
  * Same shape as PdfWordSeoArticle: H2 under the page's H1, anchored table of
  * contents, H3 sections with icons, benefit grid, FAQ, closing link block.
  *
- * Three decisions shaped the copy, and they matter if anyone edits this later.
+ * Four decisions shaped the copy, and they matter if anyone edits this later.
  *
  * First, the primary keyword is "organize PDF pages" because it matches the
  * tool name and the slug, but the phrases people actually type are "reorder",
@@ -33,13 +33,32 @@ import {
  * left/right buttons, and only the file itself can be dropped. Section 3 says
  * so plainly instead of promising a gesture that does not exist. Also declined:
  * merging two PDFs, splitting into separate files, inserting blank pages,
- * adding page numbers, editing text, and opening password-protected files.
- * Section 7 answers the intent behind each and points at the right tool. A page
- * that answers honestly outranks one that lies, and it generates no complaints.
+ * adding page numbers, editing text, multi-page block moves, and opening
+ * password-protected files. Section 7 answers the intent behind each and points
+ * at the right tool. A page that answers honestly outranks one that lies, and
+ * it generates no complaints.
  *
- * Third, privacy is sold strictly as an outcome — files are not stored, not
+ * Third, two capability claims were removed after a source read and must not
+ * come back. (a) The thumbnail is NOT a preview of the saved rotation:
+ * renderOrganizerThumbnail passes the user's rotation straight into
+ * page.getViewport({ scale, rotation }), and in pdfjs-dist that REPLACES the
+ * page's intrinsic /Rotate, while saveOrganizedPdf ADDS the user's rotation to
+ * the stored one. For a page that arrived already rotated the two disagree, so
+ * no sentence here promises the grid confirms the finished orientation — the
+ * article tells the reader to check the saved file instead. Fix the render call
+ * to pass `page.rotate + rotation` and the promise can come back. (b) The OCR
+ * tool returns a plain-text file, not a searchable PDF — pdfOcr.js returns
+ * { combinedText, pages, pageCount } and PdfOcr.js downloads it as a .txt. No
+ * wording here may suggest the scan itself becomes selectable.
+ *
+ * Fourth, privacy is sold strictly as an outcome — files are not stored, not
  * queued, not retained, not used for training. The mechanism is deliberately
- * absent from every line of this file.
+ * absent from every line of this file, and so is any reference to where the
+ * user's original copy physically sits.
+ *
+ * Internal links: /tools is deliberate and approved for these articles — the
+ * route exists (App.js) and is on the linkable list — alongside /tools/<slug>
+ * and /learn/<slug>. Nothing else is linked internally.
  */
 export default function PdfOrganizerSeoArticle() {
   return (
@@ -50,7 +69,7 @@ export default function PdfOrganizerSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab &bull; 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab &bull; 9 min read
         </span>
       </div>
 
@@ -106,7 +125,7 @@ export default function PdfOrganizerSeoArticle() {
             ['#reorder', '3. Reordering: Moving a Page to Where It Belongs'],
             ['#rotate', '4. Rotating a Single Page That Came Out Sideways'],
             ['#duplicate-delete', '5. Duplicating and Deleting Pages'],
-            ['#real-jobs', '6. Six Real Jobs This Fixes in Under a Minute'],
+            ['#real-jobs', '6. Six Real Jobs This Tool Fixes'],
             ['#limits', '7. What This Tool Will Not Do (And Where to Go)'],
             ['#why-cortexis', '8. Why Cortexis Is the Best Free PDF Page Organizer'],
             ['#faq', '9. Frequently Asked Questions (FAQ)'],
@@ -157,8 +176,9 @@ export default function PdfOrganizerSeoArticle() {
         <p>The tool above gives you four page-level operations:</p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
-            <strong>Move</strong> &mdash; shift any page earlier or later until
-            the running order is the one you want.
+            <strong>Move</strong> &mdash; shift any page one position earlier or
+            later, as many times as it takes, until the running order is the one
+            you want.
           </li>
           <li>
             <strong>Rotate</strong> &mdash; turn one individual page ninety
@@ -174,10 +194,12 @@ export default function PdfOrganizerSeoArticle() {
           </li>
         </ul>
         <p>
-          When you save, a fresh PDF is assembled from your arrangement and
-          downloads as{' '}
-          <code className="text-sm">yourfile-organized.pdf</code>, leaving the
-          original file on your disk exactly as it was.
+          When you save, a fresh PDF is assembled from your arrangement and is
+          ready to download as{' '}
+          <code className="text-sm">yourfile-organized.pdf</code> &mdash; a
+          success panel appears with the new file name and its size, and the file
+          reaches you when you press the download button. Your original file is
+          left exactly as it was; the organizer only ever writes a separate copy.
         </p>
       </section>
 
@@ -226,8 +248,8 @@ export default function PdfOrganizerSeoArticle() {
           3. Reordering: How to Move a Page to Where It Belongs
         </h3>
         <p>
-          Each thumbnail carries a left arrow and a right arrow. Left moves the
-          page one position earlier, right moves it one position later, and the
+          Each thumbnail carries a left arrow and a right arrow. Left swaps the
+          page with the one before it, right swaps it with the one after, and the
           numbers on every card update immediately so you are always looking at
           the real running order rather than a plan of it. The arrows switch
           themselves off at the ends, because the first page cannot move earlier
@@ -247,16 +269,26 @@ export default function PdfOrganizerSeoArticle() {
           arriving.
         </p>
         <p>
+          That arithmetic is worth knowing before you start, because it decides
+          the best route through a big job. Nudging one page a few slots is
+          trivial. Rebuilding the order of a long document one swap at a time is
+          not, and the honest advice is to shorten the document first.
+        </p>
+        <p>
           For the most common <strong>reorder PDF pages</strong> job of all
           &mdash; a stack fed into a scanner the wrong way up, so the document
           runs from the last sheet to the first &mdash; work from the front:
           walk the final page to the start, then the next one, and the reversal
-          unwinds itself. If the document is very long, it is usually faster to
-          pull out the section you actually need with the{' '}
+          unwinds itself. Be realistic about the size of that job, though: since
+          each tap moves a page a single position, fully reversing a long scan is
+          a great many taps, and it grows sharply with the page count. If the
+          document is more than a handful of pages, it is usually faster to pull
+          out the section you actually need with the{' '}
           <Link to="/tools/extract-pages-from-pdf" className="text-orange-600 font-semibold underline hover:text-orange-700">
             page extractor
           </Link>{' '}
-          first and organize the short version.
+          first and organize the short version, or to feed the stack back through
+          the scanner the right way round and organize what comes out.
         </p>
       </section>
 
@@ -277,11 +309,22 @@ export default function PdfOrganizerSeoArticle() {
           The rotate button on each thumbnail turns <em>that page only</em>, by
           ninety degrees clockwise per tap. Tap twice for a hundred and eighty to
           fix an upside-down sheet, three times for the counter-clockwise
-          quarter turn, four times to land back where you started. The preview
-          redraws so you can confirm it reads correctly before saving, and the
-          rotation is applied on top of whatever orientation the page was already
-          stored with &mdash; so a page that was already landscape stays sensible
-          rather than jumping to a random angle.
+          quarter turn, four times to land back where you started. The turn you
+          ask for is applied on top of whatever orientation the page was already
+          stored with, so a page that was authored as landscape keeps its
+          landscape base and your quarter turn is added to it rather than
+          replacing it.
+        </p>
+        <p>
+          One practical note, because it saves a wasted save. The grid thumbnail
+          is there to tell you <em>which</em> page you are working on and how many
+          turns you have asked for &mdash; treat it as a handle on the page, not
+          as a proof sheet of the finished document. If a page arrived with an
+          orientation already baked into it, the surest check is the saved file
+          itself: press save, open the downloaded PDF, and confirm the page reads
+          the right way up. If it does not, load the file back into the organizer
+          and add the remaining quarter turns &mdash; the operation is loss-free,
+          so there is no penalty for a second pass.
         </p>
         <p>
           This is the honest answer to <strong>how to rotate one page in a PDF</strong>{' '}
@@ -347,18 +390,23 @@ export default function PdfOrganizerSeoArticle() {
       <section id="real-jobs" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <ClipboardList className="w-6 h-6 text-orange-500 shrink-0" />
-          6. Six Real Jobs This Fixes in Under a Minute
+          6. Six Real Jobs This Tool Fixes
         </h3>
         <p>
           Most people arrive here describing a symptom rather than naming a tool.
-          These are the five that come up again and again.
+          These are the six that come up again and again. The small ones &mdash;
+          turning a single sideways page, dropping a blank sheet, copying a
+          signature page &mdash; really are a few taps and a save. The big ones,
+          like reversing a whole scan, are the same few taps repeated a great many
+          times, because every move is one position; plan those the way section 3
+          suggests rather than expecting a single button.
         </p>
         <div className="grid sm:grid-cols-2 gap-5 not-prose my-6">
           {[
-            ['The scan came out backwards', 'A stack fed face-up runs from the last page to the first. Walk pages forward from the end until the order reads correctly, then save.'],
-            ['One page is on its side', 'A landscape table or a phone-camera page sits sideways. Rotate that single thumbnail until it reads, and leave every other page alone.'],
+            ['The scan came out backwards', 'A stack fed face-up runs from the last page to the first. Walk pages forward from the end until the order reads correctly, then save. Expect a lot of taps on a long document — shortening it first is usually quicker.'],
+            ['One page is on its side', 'A landscape table or a phone-camera page sits sideways. Rotate that single page, then check the saved file, and leave every other page alone.'],
             ['Blank sheets in the middle', 'Double-sided scanning captures the empty backs. Delete each blank thumbnail and the page count drops as you go.'],
-            ['The appendix is in the wrong place', 'Annexes landed ahead of the summary. Move the block to the end so the document reads in the order a reader expects.'],
+            ['The appendix is in the wrong place', 'Annexes landed ahead of the summary. Walk each annex page to the end one position at a time — or pull the body pages out with the page extractor first if the annex is long.'],
             ['A page needs to appear twice', 'Signature sheets, terms pages and duplicate tickets. Copy the page and the second one lands directly behind the first.'],
             ['A tender pack in a fixed order', 'Bid documents must follow a numbered checklist. Arrange the grid to match the checklist and save it once, correctly.'],
           ].map(([title, body]) => (
@@ -411,10 +459,17 @@ export default function PdfOrganizerSeoArticle() {
             headers. Pages move as whole units.
           </li>
           <li>
-            <strong>It cannot open a password-protected file.</strong> An
-            encrypted document is refused at load with a plain notice. Remove the
-            restriction with the owner password first &mdash; and if you need to{' '}
-            <em>add</em> protection to the finished file, the{' '}
+            <strong>It moves one page at a time.</strong> There is no
+            multi-select and no way to grab a block of pages and slide it
+            somewhere else in one go. Each card has its own move, rotate,
+            duplicate and delete buttons, and each move is a single position.
+          </li>
+          <li>
+            <strong>It cannot open a password-protected file.</strong> If the
+            document is encrypted the tool reports that it cannot open the file
+            and nothing is loaded into the grid. Remove the restriction with the
+            owner password first &mdash; and if you need to <em>add</em>{' '}
+            protection to the finished file, the{' '}
             <Link to="/tools/pdf-protect" className="text-orange-600 font-semibold underline hover:text-orange-700">
               PDF protect tool
             </Link>{' '}
@@ -439,7 +494,12 @@ export default function PdfOrganizerSeoArticle() {
           <Link to="/tools/pdf-ocr" className="text-orange-600 font-semibold underline hover:text-orange-700">
             OCR tool
           </Link>{' '}
-          will add a searchable text layer once the order is right.
+          reads the text off the scanned pages and hands you a plain-text file of
+          what it found, page by page, which you can copy out or download as a
+          .txt. It is the right answer when you need the words &mdash; to search
+          them, quote them or paste them into a report. It does not change the
+          PDF itself: your scan comes back from the organizer as the same picture
+          of a page it always was, in the order you put it in.
         </p>
       </section>
 
@@ -458,7 +518,7 @@ export default function PdfOrganizerSeoArticle() {
           {[
             ['Genuinely free, no account', 'No sign-up, no email address, no card and no seven-day countdown. The tool on this page is the whole product.'],
             ['No watermark on the output', 'Your organized PDF comes out clean. Nothing is stamped across the pages and nothing is appended at the end.'],
-            ['Every page visible at once', 'You work from real thumbnails with live numbering, not from a page-range box you have to guess at.'],
+            ['Every page as a real thumbnail', 'You work from pictures of your pages with live numbering, not from a page-range box you have to guess at.'],
             ['Your documents stay private', 'Files are never stored on our servers, never retained after your session, and never used for training or analytics.'],
             ['No size or page limits', 'Organize a three-page letter or a three-hundred-page manual. There is no tier above this one to upsell you to.'],
             ['Four operations in one pass', 'Reorder, rotate, duplicate and delete in a single sitting, then save once — instead of running four separate tools.'],
@@ -494,7 +554,7 @@ export default function PdfOrganizerSeoArticle() {
         <div className="space-y-6 mt-4">
           {[
             [
-              'How do I organize PDF pages for free without Acrobat?',
+              'How do I organize PDF pages for free without a paid PDF editor?',
               'Open the organizer at the top of this page and load your PDF. Every page appears as a thumbnail you can move, rotate, copy or delete, and saving gives you a new document in your chosen order. There is no sign-up, no watermark and no trial period, so no paid editor is involved at any point.',
             ],
             [
@@ -503,11 +563,11 @@ export default function PdfOrganizerSeoArticle() {
             ],
             [
               'My scanned document is in reverse order. How do I fix it?',
-              'Load it into the organizer and walk the last page forward to the front, then the next one, and so on. The thumbnails renumber as you go so you can see the order correcting itself. Save when it reads properly and you get a new PDF in the right sequence.',
+              'Load it into the organizer and walk the last page forward to the front, then the next one, and so on. The thumbnails renumber as you go so you can see the order correcting itself. Since each tap moves a page a single position, a full reversal is a lot of taps on a long file — for anything beyond a handful of pages it is quicker to re-scan the stack the right way round, or to extract the section you actually need first and organize that.',
             ],
             [
               'Can I rotate just one page instead of the whole document?',
-              'Yes. The rotate button on a thumbnail turns that page only, ninety degrees clockwise per tap, and the preview redraws so you can check it before saving. Every other page is left exactly as it was. To turn an entire document instead, use the dedicated PDF rotate tool.',
+              'Yes. The rotate button on a thumbnail turns that page only, ninety degrees clockwise per tap, and the turn is added on top of the orientation the page was already stored with. Every other page is left exactly as it was. Open the saved PDF once to confirm the page reads the right way up, and add another quarter turn in a second pass if it needs one. To turn an entire document instead, use the dedicated PDF rotate tool.',
             ],
             [
               'Does reordering pages reduce the quality of my PDF?',
@@ -515,7 +575,7 @@ export default function PdfOrganizerSeoArticle() {
             ],
             [
               'Are my documents safe when I organize them?',
-              'Your files are never stored on our servers, never retained after your session, and never used for training or analytics. No file is kept, queued or logged, and your original document on disk is left untouched — the tool always saves a separate organized copy.',
+              'Your files are never stored on our servers, never retained after your session, and never used for training or analytics. No file is kept, queued or logged, and your original document is left untouched — the tool always saves a separate organized copy.',
             ],
           ].map(([q, a]) => (
             <div key={q}>

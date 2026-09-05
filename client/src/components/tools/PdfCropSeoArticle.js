@@ -20,7 +20,7 @@ import {
  * Same shape as PdfWordSeoArticle: H2 under the page's H1, anchored contents,
  * H3 sections, benefit grid, FAQ, closing link block.
  *
- * Three decisions drove the copy, and anyone editing this later should keep
+ * Four decisions drove the copy, and anyone editing this later should keep
  * them.
  *
  * 1. The tool sets a page's crop box. It does not delete the trimmed strip
@@ -28,17 +28,28 @@ import {
  *    "Redact pdf", "permanently remove content from pdf" and "crop pdf to
  *    hide confidential text" are large, tempting phrases and every one of them
  *    is declined here, in writing, because promising them would be both false
- *    and dangerous. We answer the question behind the query instead.
+ *    and dangerous. We answer the question behind the query instead. Section 4
+ *    therefore says "hide", never "remove", and never uses a sensitive example
+ *    such as a draft stamp or a confidentiality strip.
  *
- * 2. The "Trim 12%" button is a fixed preset, not content analysis. So
+ * 2. Only the crop box is set. The media box, trim box, bleed box and art box
+ *    keep their original values, so any consumer that reads the underlying
+ *    sheet size still sees the full page. The article says "viewers and
+ *    printers that follow the crop box, which is most of them" and never
+ *    "all viewers" or "every serious viewer".
+ *
+ * 3. The "Trim 12%" button is a fixed preset, not content analysis. So
  *    "auto detect white margins" and "automatically crop pdf borders" are not
  *    claimed anywhere. The controls are four percentage sliders, capped at 40%
  *    a side, applied either to every page or to the page on screen — that is
  *    exactly what the article describes and nothing more.
  *
- * 3. Changing page dimensions to a named paper size is the resize tool's job,
+ * 4. Changing page dimensions to a named paper size is the resize tool's job,
  *    not this one's, so "crop pdf to A4" is deliberately routed to
  *    /tools/pdf-resize rather than half-answered here.
+ *
+ * No timing figures, no benchmarks and no superlatives about third-party
+ * rendering: nothing in the component measures any of that.
  *
  * Privacy is stated as an outcome only — files are not stored, not retained,
  * not used for training. The mechanism is deliberately absent throughout.
@@ -52,7 +63,7 @@ export default function PdfCropSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab
         </span>
       </div>
 
@@ -66,7 +77,7 @@ export default function PdfCropSeoArticle() {
         enough to write a second report in, and a slide deck exported to PDF
         arrives ringed in white. When you <strong>crop a PDF online</strong> you
         are not editing the words &mdash; you are redrawing the edge of the page
-        so only the part you care about survives. This guide covers how to{' '}
+        so only the part you care about is shown. This guide covers how to{' '}
         <strong>trim PDF margins</strong> properly, what the{' '}
         <strong>free PDF cropper</strong> above can and cannot do, and the one
         thing about cropping that almost nobody explains.
@@ -107,7 +118,7 @@ export default function PdfCropSeoArticle() {
             ['#what-cropping-does', '1. What Cropping a PDF Actually Changes'],
             ['#how-to-crop', '2. How to Crop a PDF Online Free (Step-by-Step)'],
             ['#controls', '3. The Crop Controls, Explained'],
-            ['#headers-and-scans', '4. Cutting Headers, Footers and Scanned Edges'],
+            ['#headers-and-scans', '4. Headers, Footers and Scanned Edges'],
             ['#hidden-not-deleted', '5. What Cropping Does Not Do'],
             ['#print-kindle-slides', '6. Cropping for Print, E-Readers and Slides'],
             ['#why-cortexis', '7. Why Cortexis Is the Best Free PDF Cropper'],
@@ -138,7 +149,8 @@ export default function PdfCropSeoArticle() {
           the crop box, which is the window a reader is told to display and a
           printer is told to print. They usually sit on top of one another,
           which is why most people never learn the difference. Cropping moves
-          the second one inwards. The description of these boxes is part of{' '}
+          the second one inwards and leaves the first one exactly where it was.
+          The description of these boxes is part of{' '}
           <a
             href="https://www.iso.org/standard/51502.html"
             target="_blank"
@@ -147,8 +159,9 @@ export default function PdfCropSeoArticle() {
           >
             ISO 32000, the published PDF specification
           </a>
-          , which is why a cropped file opens correctly in every serious viewer
-          rather than only in the tool that made it.
+          , so a crop box is a standard construct rather than a private
+          extension, and mainstream viewers follow it rather than needing the
+          tool that made the file.
         </p>
         <p>
           That has a consequence worth understanding before you touch a slider.
@@ -163,8 +176,11 @@ export default function PdfCropSeoArticle() {
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
-            <strong>The visible page gets smaller.</strong> Readers, printers
-            and thumbnails all honour the new boundary.
+            <strong>The visible page gets smaller.</strong> Viewers and printers
+            that follow the crop box &mdash; which is most of them &mdash; show
+            and print only the new area. Some software reads the underlying
+            sheet size instead, so the occasional thumbnailer, page-size readout
+            or print pipeline will still report the original dimensions.
           </li>
           <li>
             <strong>The content is untouched.</strong> No character is deleted,
@@ -175,6 +191,20 @@ export default function PdfCropSeoArticle() {
             prints and uploads exactly like the original did.
           </li>
         </ul>
+        <p>
+          That first bullet is the honest half of the story, and it is worth a
+          sentence more. Because only the display window moves, a cropped page
+          is best thought of as the same sheet of paper with a smaller frame
+          drawn on it. In day-to-day reading, printing and sharing you will see
+          the tighter page; in the rare tool that measures the sheet rather than
+          the frame, you will see the original size. If you need the page
+          dimensions themselves rewritten to a named format, that is a different
+          job and the{' '}
+          <Link to="/tools/pdf-resize" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF resize tool
+          </Link>{' '}
+          is the one to use.
+        </p>
       </section>
 
       {/* 2 */}
@@ -235,9 +265,9 @@ export default function PdfCropSeoArticle() {
           sheets gets a proportional trim on every one rather than a crop that
           fits the first page and ruins the rest. The 40% ceiling is a guard
           rail: past that point you are no longer trimming a margin, you are
-          deleting the page. If a combination would leave a scrap of page
-          smaller than a postage stamp, that page is quietly left alone instead
-          of being mangled.
+          deleting the page. As a backstop, a setting that would leave a sliver
+          only a few millimetres across leaves that page untouched &mdash; with
+          the 40% cap in place you are unlikely ever to hit it.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           Two presets and a live boundary
@@ -270,23 +300,34 @@ export default function PdfCropSeoArticle() {
       <section id="headers-and-scans" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Crop className="w-6 h-6 text-orange-500 shrink-0" />
-          4. Cutting Headers, Footers and Scanned Edges
+          4. Headers, Footers and Scanned Edges
         </h3>
         <p>
           Three jobs account for most of the traffic to a tool like this one,
           and each has its own approach.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
-          Removing a header or footer from a PDF
+          Hiding a header or footer from view
         </h4>
         <p>
-          A running header, a draft stamp, a confidentiality strip or a page
-          number band all live in a predictable ribbon at the top or bottom of
-          the sheet. Raise the top slider a few percent at a time and watch the
-          boundary swallow it. Because the crop applies to every page, a header
-          repeated across two hundred pages disappears in one pass. Do check the
-          first and last pages though: title pages and appendices often sit
-          differently from the body.
+          A running header or a page-number band lives in a predictable ribbon
+          at the top or bottom of the sheet. Raise the top slider a few percent
+          at a time until the boundary excludes it and the band stops showing on
+          every page &mdash; it is hidden from the visible window, not deleted
+          from the file, which is why section 5 below is worth reading before
+          you use this on anything sensitive. Do check the first and last pages
+          though: title pages and appendices often sit differently from the
+          body, and a ribbon that clears the header on page 40 can eat the title
+          on page 1.
+        </p>
+        <p>
+          If what you actually need is the header gone from the file rather than
+          out of frame, no crop of any kind will do it, here or anywhere else
+          &mdash; the honest answer is that you need the source document, or a
+          proper redaction workflow, and this tool does not claim to be either.
+          What it does do well is make a long, repetitively headed document
+          pleasant to read and print, with the same measurements applied to
+          every page in one pass.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           Getting rid of black borders on a scanned PDF
@@ -315,8 +356,8 @@ export default function PdfCropSeoArticle() {
           Certificates, receipts, tickets and single-paragraph letters often sit
           marooned in the middle of an A4 sheet. Cropping tight to the content
           means it fills the screen on a phone instead of appearing as a stamp
-          in a field of white. This is the most satisfying use of the tool and
-          takes about fifteen seconds.
+          in a field of white. This is the most satisfying use of the tool: four
+          sliders and a download.
         </p>
       </section>
 
@@ -338,9 +379,10 @@ export default function PdfCropSeoArticle() {
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             The trimmed strip is outside the visible window, not out of the
             file. Anyone who widens the crop box again can see it. Never use
-            cropping to conceal a signature, an address, a salary line or any
-            other sensitive detail &mdash; that is redaction, it is a different
-            job, and this tool does not claim to do it.
+            cropping to conceal a signature, an address, a salary line, a draft
+            or confidentiality marking, or any other sensitive detail &mdash;
+            that is redaction, it is a different job, and this tool does not
+            claim to do it.
           </p>
         </div>
         <p>
@@ -377,8 +419,8 @@ export default function PdfCropSeoArticle() {
           </li>
           <li>
             <strong>Password-protected files must be unlocked first.</strong> An
-            encrypted PDF cannot be opened for editing, and the tool will say so
-            plainly instead of producing a broken file.
+            encrypted PDF cannot be opened for editing, and the crop will fail
+            with an error rather than silently producing a broken file.
           </li>
         </ul>
         <p>
@@ -410,15 +452,19 @@ export default function PdfCropSeoArticle() {
           than reflowing text, so a small screen spends a third of itself on
           empty paper and the type comes out unreadably small. Cropping the
           margins away lets the remaining text fill the display, which is the
-          single most effective way to <strong>crop a PDF for Kindle</strong> or
-          any six-inch reader without converting the file to another format.
+          simplest way to <strong>crop a PDF for Kindle</strong> or any six-inch
+          reader without converting the file to another format. How much any
+          particular device zooms the result is the device&rsquo;s business, so
+          try one cropped chapter before you commit a whole library.
         </p>
         <p>
           <strong>In print,</strong> a printer adds its own unprintable margin
           to whatever margin the document already has, and the result is a
           shrunken block floating high on the sheet. Trimming the document
           margin first gives the printer room to scale the content up. It also
-          rescues slide decks exported at 16:9 onto portrait paper.
+          helps with slide decks exported at 16:9 onto portrait paper &mdash;
+          trim the empty bands above and below and the print dialog&rsquo;s
+          fit-to-page has more to work with.
         </p>
         <p>
           <strong>For reuse,</strong> a tightly cropped page drops into a
@@ -511,12 +557,20 @@ export default function PdfCropSeoArticle() {
               'No, and this matters. The trimmed area is hidden, not destroyed, and someone who widens the crop box can bring it back. Never crop a document to conceal confidential information such as signatures, addresses or figures.',
             ],
             [
+              'Can I crop out a header or a stamp before sending the file to someone?',
+              'You can stop it being displayed, and for a tidier read or a cleaner print that is usually all you want. You cannot use it to keep that band away from a determined recipient, because the strip is still inside the file and reappears if the crop box is widened. If the marking is sensitive, do not crop it: get a clean copy of the source document instead.',
+            ],
+            [
+              'Will the cropped page report a smaller page size everywhere?',
+              'Not necessarily. Cropping moves the display window, so viewers and printers that follow the crop box show and print the tighter page, while software that reads the underlying sheet size may still report the original dimensions. If it is the page dimensions themselves you need changed, the PDF resize tool is the right one.',
+            ],
+            [
               'Will cropping make my PDF blurry or unselectable?',
               'No. Nothing is re-rendered, so text remains real searchable text, vector graphics stay sharp at any zoom, and photographs are not recompressed. The page frame changes and the quality does not.',
             ],
             [
               'Why can I only trim up to 40% from each side?',
-              'It is a deliberate limit. A crop beyond forty percent per side stops being a margin trim and starts being page destruction, and settings that would leave almost nothing of a page are skipped rather than applied. If you want to lose whole pages, the page remover or the splitter is the right tool.',
+              'It is a deliberate limit. A crop beyond forty percent per side stops being a margin trim and starts being page destruction. There is also a backstop that leaves a page alone if the settings would reduce it to a sliver a few millimetres across, though with the 40% cap you are unlikely ever to reach it. If you want to lose whole pages, the page remover or the splitter is the right tool.',
             ],
           ].map(([q, a]) => (
             <div key={q}>

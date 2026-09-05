@@ -15,7 +15,7 @@ const starterBody = `Paste or write the article or webpage text you wish to save
 Features & Benefits:
 • Converts webpage text into an organized, publication-ready PDF.
 • Includes custom title, subtitle, source URL timestamp, and automatic multi-page pagination.
-• Bank-grade privacy: instant document rendering with zero data retention.`;
+• Private by default: nothing is stored and nothing is retained.`;
 
 export default function SaveWebAsPdf() {
   const [title, setTitle] = useState('Saved Web Article');

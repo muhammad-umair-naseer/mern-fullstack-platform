@@ -10,7 +10,7 @@ import {
 import { formatBytes, triggerDownload, yieldToMain } from '../../lib/pdfCommon';
 import ImageEnlargerSeoArticle from './ImageEnlargerSeoArticle';
 
-const MAX_PIXELS = 25000000; // 25 Megapixels clamp to protect browser memory
+const MAX_PIXELS = 25000000; // 25 Megapixels output ceiling
 
 // Apply local clarity / unsharp sharpening kernel on pixel data
 function applyClarityFilter(ctx, width, height) {
@@ -122,7 +122,7 @@ export default function ImageEnlarger() {
 
       if (targetW * targetH > MAX_PIXELS) {
         throw new Error(
-          `Enlarged image (${targetW}×${targetH}px) exceeds the safe browser memory cap. Try 2× scaling.`
+          `Enlarged image (${targetW}×${targetH}px) exceeds the 25 megapixel output limit. Try 2× scaling, or crop the image first.`
         );
       }
 
@@ -219,12 +219,12 @@ export default function ImageEnlarger() {
                 Choose an image to enlarge
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Upscale resolution 2× or 4× with edge enhancement in memory
+                Upscale resolution 2× or 4× with optional edge enhancement
               </p>
             </div>
             <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-2">
               <ShieldCheck className="w-4 h-4" />
-              <span>Lossless Resolution Upscaler • Crisp Edge Enhancement</span>
+              <span>High-Quality Resolution Upscaler • Crisp Edge Enhancement</span>
             </div>
           </div>
         </div>

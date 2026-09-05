@@ -19,28 +19,35 @@ import {
  *
  * Same skeleton as PdfWordSeoArticle: one H2 beneath the page's H1, an
  * anchored table of contents, H3 sections with icons, a benefit grid, an FAQ
- * and a closing link block. Three decisions shaped the copy and they matter to
+ * and a closing link block. Four decisions shaped the copy and they matter to
  * anyone editing it later.
  *
  * First, every claim traces back to ImageCropper.js. The tool takes one image
  * at a time, offers Free Form plus 1:1, 4:3, 16:9, 9:16 and 3:2, gives a move
- * drag and two corner handles, refuses a selection smaller than five percent of
- * a side, shows a live pixel readout of the selection against the original, and
- * returns PNG for a PNG input or high-quality JPEG for everything else, named
- * "<original>-cropped.<ext>". Nothing beyond that is promised anywhere below.
+ * drag and exactly two resize handles, refuses a selection smaller than five
+ * percent of a side, shows a live pixel readout of the selection against the
+ * original, and returns PNG for a PNG input or high-quality JPEG for
+ * everything else, named "<original>-cropped.<ext>". Nothing beyond that is
+ * promised anywhere below.
  *
- * Second, the aspect presets are described as setting the frame rather than
- * locking it, because the code lets a corner handle move freely afterwards.
- * Saying "locked ratio" would be a lie the reader catches in ten seconds, and a
- * caught lie costs more traffic than the phrase was ever worth.
+ * Second, the quality language is scoped to the format. Only the PNG path is
+ * pixel-for-pixel; every other input is re-encoded once as JPEG at quality
+ * 0.95, so the article says "re-encoded once at high quality" and never
+ * "lossless" or "never blurs". A JPG original takes a second generation and
+ * the copy admits it, because a reader comparing files can measure this.
  *
- * Third, several fat keywords name things this cropper genuinely cannot do:
- * "crop image to circle", "rotate and straighten a photo", "batch crop multiple
+ * Third, there are two resize handles, not four — top-left and bottom-right.
+ * The other two corners belong to the move area. Every place the article used
+ * to say "the corners" now names the two that actually resize, because a
+ * reader who grabs the top-right corner finds out in one second.
+ *
+ * Fourth, the aspect presets are described as setting the frame rather than
+ * locking it, because the code lets a handle move freely afterwards, and
+ * several fat keywords name things this cropper genuinely cannot do: "crop
+ * image to circle", "rotate and straighten a photo", "batch crop multiple
  * images", "crop image to an exact file size in KB", "crop and resize to exact
  * dimensions" and "crop a PDF". None are promised. Section 6 answers the
- * question behind each and points at the tool that actually handles it. A page
- * that answers honestly outranks a page that oversells, and it generates no
- * complaint mail.
+ * question behind each and points at the tool that actually handles it.
  *
  * Privacy is stated as an outcome only — files are not stored, not retained,
  * not used for training. How that happens is deliberately absent.
@@ -54,7 +61,7 @@ export default function ImageCropperSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 13 min read
         </span>
       </div>
 
@@ -97,7 +104,8 @@ export default function ImageCropperSeoArticle() {
           <div className="p-4 bg-slate-900/90 border-t border-slate-800 text-center text-xs text-slate-400">
             <span>
               Drag a box around what matters, pick a ratio if you need one, and
-              download the trimmed picture at full original resolution.
+              download the trimmed picture cut from the original at its full
+              resolution.
             </span>
           </div>
         </div>
@@ -140,22 +148,26 @@ export default function ImageCropperSeoArticle() {
           1. What Cropping Actually Does to a Picture
         </h3>
         <p>
-          Cropping is subtraction and nothing else. When you{' '}
-          <strong>crop an image</strong>, you keep the rectangle you drew and
-          discard every pixel outside it. The pixels that survive are not
-          stretched, squashed, re-drawn or softened &mdash; they are the exact
-          same pixels that were in the original file, simply with fewer
-          neighbours. That single fact explains most of what people find
-          confusing about cropping, so it is worth sitting with for a moment.
+          Cropping is subtraction. When you <strong>crop an image</strong>, you
+          keep the rectangle you drew and discard every pixel outside it. The
+          rectangle you keep is taken from the original at full resolution; a
+          PNG comes back untouched, and everything else is saved as a
+          high-quality JPEG, so it is re-encoded once at near-original quality.
+          Nothing is stretched, squashed or scaled to fit a new size. That
+          distinction &mdash; between removing pixels and rescaling them &mdash;
+          explains most of what people find confusing about cropping, so it is
+          worth sitting with for a moment.
         </p>
         <p>
-          It explains, first, why <strong>cropping never blurs a photo</strong>.
-          Resizing does that, because resizing has to invent or discard detail to
-          hit a new dimension. Cropping only removes. It also explains the one
-          real cost of cropping hard: take a small corner out of a modest photo
-          and what is left has lost no sharpness, but it has far fewer pixels, so
-          blown up on a large screen it will look soft. Crop from a big original
-          wherever you can.
+          It explains, first, why <strong>cropping is not resizing</strong>.
+          Resizing has to invent or throw away detail to reach a new dimension,
+          and that is what genuinely softens a picture. Cropping does no such
+          arithmetic: the part you keep stays at its original scale, one pixel
+          of your file to one pixel of the result. It also explains the one real
+          cost of cropping hard. Take a small corner out of a modest photo and
+          nothing has been scaled, but what is left simply has far fewer pixels,
+          so blown up on a large screen it will look soft. Crop from a big
+          original wherever you can.
         </p>
         <p>
           The panel above tells you exactly where you stand while you drag. The{' '}
@@ -183,7 +195,7 @@ export default function ImageCropperSeoArticle() {
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
             ['Add your picture', 'Drop a JPG, PNG or WebP onto the panel, or click to browse and pick one. A crop box appears over the image straight away, set a comfortable distance in from every edge.'],
-            ['Frame the shot', 'Drag inside the box to slide the frame around, and pull the round corner handles to make it bigger or smaller. A rule-of-thirds grid sits inside the box to help you line things up.'],
+            ['Frame the shot', 'Drag inside the box to slide the frame around, and pull the round handle at the top-left or bottom-right to make it bigger or smaller. A rule-of-thirds grid sits inside the box to help you line things up.'],
             ['Download the result', 'Press Download Cropped Image. The trimmed picture saves as your original filename with "-cropped" on the end, ready to post, print or attach.'],
           ].map(([title, body], i) => (
             <div
@@ -198,6 +210,15 @@ export default function ImageCropperSeoArticle() {
             </div>
           ))}
         </div>
+        <p>
+          One detail is worth knowing before you start pulling at the frame:
+          there are two round handles, not four. They sit at the{' '}
+          <strong>top-left and bottom-right</strong> corners, and between them
+          they reach any rectangle you want, because either one changes both the
+          width and the height. The other two corners belong to the move area,
+          so grabbing the top-right or bottom-left slides the whole box instead
+          of resizing it.
+        </p>
         <p>
           The whole thing runs on touch as happily as it does with a mouse, so{' '}
           <strong>cropping a picture on your phone</strong> works the same way
@@ -228,7 +249,7 @@ export default function ImageCropperSeoArticle() {
             ['9:16 Story or Reel', 'The full-height vertical frame used by stories, reels and shorts. Turns a landscape photo into a portrait one by choosing which slice survives.'],
             ['4:3 Photo', 'The classic compact-camera and tablet shape. Safe, familiar, and what most photo print sizes were built around.'],
             ['3:2 Standard', 'The proportion of 35mm film and most DSLR sensors, which is also why 6x4 prints fit it without trimming.'],
-            ['Free Form', 'No shape imposed at all. Pull the corners wherever the picture wants them — best for trimming a distraction off one edge.'],
+            ['Free Form', 'No shape imposed at all. Drag the top-left or bottom-right handle wherever the picture wants it — best for trimming a distraction off one edge.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -249,10 +270,10 @@ export default function ImageCropperSeoArticle() {
           Picking a ratio reshapes the crop box to that proportion in real image
           pixels, so a 1:1 selection genuinely produces a square file rather than
           a square-looking box over a rectangular picture. What it does not do is
-          weld the handles shut afterwards. Drag a corner and you are back to
-          free form. The workflow that avoids surprises is simple: size the box
+          weld the handles shut afterwards. Drag one and you are back to free
+          form. The workflow that avoids surprises is simple: size the box
           roughly first, then apply the ratio, then move the box into position
-          with the inside drag rather than the corners. If you do resize
+          with the inside drag rather than the two handles. If you do resize
           afterwards and want the shape back, tap the preset once more and check
           the <strong>Output Area</strong> figures agree with the ratio you asked
           for.
@@ -267,13 +288,18 @@ export default function ImageCropperSeoArticle() {
         </h3>
         <p>
           &ldquo;<strong>Crop image without losing quality</strong>&rdquo; is one
-          of the most searched phrases in this category, and the honest answer is
-          a reassuring one. Your crop is taken from the original picture at its
-          full resolution, not from the shrunken preview you were dragging over.
-          Select half of a 4000-pixel-wide photo and you get a 2000-pixel-wide
-          file, every pixel as detailed as it was before.
+          of the most searched phrases in this category, and the honest answer
+          comes in two halves. The first half is the reassuring one: your crop is
+          taken from the original picture at its full resolution, not from the
+          shrunken preview you were dragging over. Select half of a
+          4000-pixel-wide photo and you get a file at the full 2000-pixel width,
+          re-saved at high quality. Nothing is downscaled on the way out.
         </p>
-        <p>Format is where the detail lives, so here is the whole rule.</p>
+        <p>
+          The second half is the part most tools skip: what happens on the way
+          out depends entirely on the format you arrived with. Here is the whole
+          rule.
+        </p>
         <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
           <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/25">
             <h4 className="font-bold text-slate-900 dark:text-white text-base mb-3 flex items-center gap-2">
@@ -292,12 +318,23 @@ export default function ImageCropperSeoArticle() {
             </h4>
             <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
               <li>JPG, WebP, BMP and GIF all come back as high-quality JPG</li>
+              <li>Re-encoded once at near-original quality &mdash; a JPG original therefore takes a second generation, at a level you will not see at normal viewing size</li>
               <li>Perfect for photographs, which is what JPG was designed for</li>
               <li>Transparency is not carried into a JPG &mdash; start from PNG if you need it</li>
               <li>An animated GIF returns a single still frame, not an animation</li>
             </ul>
           </div>
         </div>
+        <p>
+          That second generation sounds worse than it is. JPG is a lossy format
+          by design, and every save writes a slightly different approximation of
+          the same picture; at the quality level used here, finding the
+          difference means flicking between two files at heavy magnification,
+          not looking at a post. The rule that follows is about repetition
+          rather than panic: <strong>always crop from the original</strong>, not
+          from yesterday&rsquo;s crop of it. One generation is invisible. Six,
+          stacked, are not.
+        </p>
         <p>
           If you are cropping a logo, an icon or a screenshot with a see-through
           background, keep it as a PNG on the way in. Transparency is written
@@ -312,7 +349,8 @@ export default function ImageCropperSeoArticle() {
           </a>
           , and a JPG has no equivalent to hold it in. This is the answer to{' '}
           <strong>crop PNG keep transparent background</strong>: the format you
-          arrive with decides the format you leave with.
+          arrive with decides the format you leave with, and the PNG route is
+          the one that comes back pixel-for-pixel.
         </p>
         <p>
           One useful side effect worth knowing about: the cropped file comes out
@@ -375,10 +413,11 @@ export default function ImageCropperSeoArticle() {
           Never crop the only copy
         </h4>
         <p>
-          The download arrives as a new file named after the original with{' '}
-          <em>-cropped</em> appended, so your untouched picture stays where it
-          was. Keep it: you can always crop the full-size original again, but you
-          can never put back pixels you threw away two crops ago.
+          The download arrives as a new file &mdash; your original name with{' '}
+          <em>-cropped</em> on the end, and a .png or .jpg extension depending on
+          what you put in &mdash; so your untouched picture stays where it was.
+          Keep it: you can always crop the full-size original again, but you can
+          never put back pixels you threw away two crops ago.
         </p>
       </section>
 
@@ -390,8 +429,9 @@ export default function ImageCropperSeoArticle() {
         </h3>
         <p>
           This is a rectangular cropper for one picture at a time, and it is
-          better to say so plainly than to let you discover it after uploading.
-          Here are the jobs people arrive looking for that belong somewhere else.
+          better to say so plainly than to let you discover it after you have
+          added your picture. Here are the jobs people arrive looking for that
+          belong somewhere else.
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
@@ -446,13 +486,20 @@ export default function ImageCropperSeoArticle() {
           </li>
         </ul>
         <p>
-          Two error messages are worth recognising. &ldquo;Please select an image
-          file&rdquo; means the file you chose is not a picture at all &mdash;
-          usually a PDF or a document that needs one of the tools above.
-          &ldquo;Failed to open image&rdquo; means the file is a picture in name
-          but cannot be displayed, which most often happens with an iPhone HEIC
-          shot that has not been exported as JPG, or with a file that was damaged
-          in transfer.
+          Three messages are worth recognising if one appears. &ldquo;Please
+          select an image file (JPG, PNG, WebP)&rdquo; means the file you chose is
+          not a picture at all &mdash; usually a PDF or a document that needs one
+          of the tools above. &ldquo;Failed to open image&rdquo; means the file is
+          a picture in name but cannot be displayed, which most often happens with
+          an iPhone HEIC shot that has not been exported as JPG, or with a file
+          that was damaged in transfer. &ldquo;Failed to crop image&rdquo; is the
+          rarest of the three and usually means the picture is larger than the
+          device you are working on can handle in one piece; scale it down with
+          the{' '}
+          <Link to="/tools/image-resizer" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            image resizer
+          </Link>{' '}
+          and crop the smaller copy.
         </p>
       </section>
 
@@ -472,10 +519,10 @@ export default function ImageCropperSeoArticle() {
           {[
             ['Free, with no trial attached', 'No account, no email address, no card and no seven-day countdown. What you are using is the entire product.'],
             ['No watermark on your picture', 'The cropped image comes out clean. Nothing is stamped in a corner and nothing is added along an edge.'],
-            ['Full original resolution kept', 'The crop is taken from your picture at its native size, so the result is as sharp as what you started with.'],
+            ['Cut from the full-size original', 'The crop is taken from your picture at its native size rather than from the preview you dragged over, so nothing is scaled down on the way out.'],
             ['Your images stay private', 'Files are never stored on our servers, never retained after your visit, and never used to train or analyse anything.'],
-            ['No daily limit and no size cap', 'Crop one photo or fifty, small or enormous. There is no counter ticking down and no tier above this one.'],
-            ['An honest account of the limits', 'We tell you what the tool does not do before you spend time on it, rather than after you have uploaded.'],
+            ['No daily limit and no file size limit imposed', 'Crop one photo or fifty. There is no counter ticking down and no tier above this one. Very large images are limited only by what your device can handle.'],
+            ['An honest account of the limits', 'We tell you what the tool does not do before you spend time on it, rather than after you have spent time on it.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -521,7 +568,11 @@ export default function ImageCropperSeoArticle() {
             ],
             [
               'Does cropping reduce the quality of my photo?',
-              'No. Cropping removes pixels from the edges but never alters the ones it keeps, and the crop is taken from your file at full original resolution. The only thing that changes is size: crop away most of a picture and what is left has fewer pixels, so it will look soft if you then blow it up on a large screen.',
+              'Barely. The crop is taken at full original resolution and a PNG is returned pixel-for-pixel; other formats are saved as a high-quality JPG, which re-compresses the image once at a level that is not visible at normal viewing size. The bigger change is dimensions: crop away most of a picture and what is left has far fewer pixels, so it will look soft if you then blow it up on a large screen.',
+            ],
+            [
+              'How do I resize the crop box?',
+              'With the two round handles, at the top-left and the bottom-right corners of the box. Dragging either one moves that corner and reshapes the whole rectangle; dragging anywhere else inside the box, including the other two corners, slides the frame without changing its size.',
             ],
             [
               'How do I make an image square for a profile picture?',
@@ -529,7 +580,7 @@ export default function ImageCropperSeoArticle() {
             ],
             [
               'What file types can I crop, and what do I get back?',
-              'JPG, PNG, WebP, BMP and GIF all work. A PNG comes back as a PNG with its transparency intact; every other format comes back as a high-quality JPG, which is the right choice for photographs. An animated GIF returns a single still frame.',
+              'JPG, PNG, WebP, BMP and GIF all work. A PNG comes back as a PNG with its transparency intact; every other format comes back as a high-quality JPG, which is the right choice for photographs. That means the file extension can change — a .webp goes in and a .jpg comes out. An animated GIF returns a single still frame.',
             ],
             [
               'Can I crop several pictures at the same time?',

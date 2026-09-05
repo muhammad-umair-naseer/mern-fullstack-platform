@@ -191,7 +191,7 @@ export default function PdfWord() {
               Select or Drop your PDF or Word document here
             </h3>
             <p className="mt-2 text-sm text-slate-500 max-w-md mx-auto">
-              Auto-detects format. Converts PDF to editable DOCX or DOCX to PDF right on your device.
+              Auto-detects the format. Converts PDF to an editable DOCX, or a DOCX back to PDF.
             </p>
             <div className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-md transition">
               <FileText className="w-4 h-4" />

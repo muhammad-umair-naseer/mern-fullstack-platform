@@ -195,12 +195,12 @@ export default function ImageResizer() {
                 Choose an image to resize
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Change width, height, aspect ratio and format with pixel-perfect clarity
+                Change width, height, aspect ratio and format, with sharp results at any size
               </p>
             </div>
             <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-2">
               <ShieldCheck className="w-4 h-4" />
-              <span>High-Fidelity Resizing Engine • Lossless Output</span>
+              <span>High-Fidelity Resizing • PNG, JPG and WebP Output</span>
             </div>
           </div>
         </div>

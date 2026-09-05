@@ -202,7 +202,7 @@ export default function PngCompressor() {
             </div>
             <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-2">
               <ShieldCheck className="w-4 h-4" />
-              <span>Lossless PNG Compression • Alpha Channel Preserved</span>
+              <span>Three Compression Modes • Alpha Channel Preserved</span>
             </div>
           </div>
         </div>

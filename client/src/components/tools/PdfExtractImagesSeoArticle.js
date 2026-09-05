@@ -24,17 +24,29 @@ import {
  * neatly and the copy has to bridge that gap honestly.
  *
  * The extractor walks every page of the PDF and produces one PNG per page at
- * twice the page's native point grid. It does NOT reach into the file and pull
- * out each embedded image object at whatever resolution it was originally
- * stored at. So the following high-volume phrases were deliberately NOT
- * promised anywhere in this article:
+ * twice the page's native point grid (scale 2.0, fixed). It does NOT reach
+ * into the file and pull out each embedded image object at whatever resolution
+ * it was originally stored at. So the following high-volume phrases were
+ * deliberately NOT promised anywhere in this article:
  *
  *   - "extract images from pdf at original quality / original DPI"
  *   - "extract only the photos, not the text"
  *   - "extract embedded JPEGs from a PDF"
  *   - "extract images from specific pages only"
  *   - "extract images from multiple PDFs at once"
+ *   - "transparent background PNG" — every exported page is fully opaque,
+ *     because the page background is painted before any content is drawn.
+ *     Section 4 answers the transparency question instead of promising it.
  *   - any choice of output format other than PNG, or any DPI setting
+ *
+ * Exact output dimensions at scale 2.0 with Math.ceil: A4 (595.28 x 841.89pt)
+ * gives 1191 x 1684; US Letter (612 x 792pt) gives 1224 x 1584. Do not round
+ * these up to a friendlier number — A4 is below 1,200px wide.
+ *
+ * The component surfaces err.message when a document fails to open, so the
+ * article never quotes the 'Failed to extract images from PDF.' fallback as
+ * though it were the message a user sees. The only string emitted literally is
+ * 'Please select a valid .pdf file.'
  *
  * Section 3 exists precisely because "get one photo out of a PDF" is the
  * intent behind a large share of those searches. Rather than lie about it, the
@@ -54,7 +66,7 @@ export default function PdfExtractImagesSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 9 min read
         </span>
       </div>
 
@@ -108,7 +120,7 @@ export default function PdfExtractImagesSeoArticle() {
           {[
             ['#what-you-get', '1. What You Actually Get From the Extractor'],
             ['#how-to', '2. How to Extract Images From a PDF Online Free'],
-            ['#single-photo', '3. Getting One Photo Out of a Page'],
+            ['#single-photo', '3. How to Get One Photo Out of a PDF Page'],
             ['#png-quality', '4. Resolution, PNG and Transparency'],
             ['#zip-download', '5. Downloading Every Image at Once'],
             ['#troubleshooting', '6. When Nothing Comes Out: Common Problems'],
@@ -205,10 +217,12 @@ export default function PdfExtractImagesSeoArticle() {
         </div>
         <p>
           That is the entire process to <strong>save PDF pages as images</strong>.
-          There is no queue, <strong>no watermark</strong> stamped across the
-          corner of the result, and no counter ticking down toward a paywall. If
-          you want to work on a different document afterwards, the{' '}
-          <em>Change PDF</em> button clears everything and returns you to an
+          There is no waiting around for a turn, <strong>no watermark</strong>{' '}
+          stamped across the corner of the result, and no counter ticking down
+          toward a paywall. The pages appear as they are finished, so on a short
+          document the first previews are usually there before you have read
+          this sentence. If you want to work on a different document afterwards,
+          the <em>Change PDF</em> button clears everything and returns you to an
           empty panel.
         </p>
       </section>
@@ -227,8 +241,7 @@ export default function PdfExtractImagesSeoArticle() {
         </p>
         <p>
           What you get is the whole of page four as a high-resolution PNG.
-          Isolating the photograph from that is a thirty-second follow-up step,
-          not a dead end:
+          Isolating the photograph is a quick follow-up step, not a dead end:
         </p>
         <ol className="list-decimal pl-6 space-y-2">
           <li>
@@ -251,6 +264,12 @@ export default function PdfExtractImagesSeoArticle() {
             .
           </li>
         </ol>
+        <p>
+          Because the page was rendered at double scale to begin with, a
+          photograph that occupies a quarter of the page still has plenty of
+          pixels left in it once the rest is cropped away &mdash; which is the
+          part people usually worry about before they try it.
+        </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white pt-2">
           Why not just pull the embedded file out directly?
         </h4>
@@ -287,14 +306,20 @@ export default function PdfExtractImagesSeoArticle() {
           A PDF measures itself in points, not pixels &mdash; the page has a
           physical size and no inherent resolution at all. Something has to
           decide how many pixels a page becomes, and this tool renders at double
-          the page&rsquo;s native scale. A standard A4 or US Letter page comes
-          out around 1,200 by 1,550 pixels or larger: comfortably sharp for
-          slides, documents and screen reading, and fine for everyday print.
+          the page&rsquo;s native scale. In practice that means an{' '}
+          <strong>A4 page comes out at 1191 &times; 1684 pixels</strong> and a{' '}
+          <strong>US Letter page at 1224 &times; 1584 pixels</strong>. That is
+          sharp for slides, documents and screen reading, and fine for everyday
+          print at ordinary sizes. A page in an unusual format &mdash; a wide
+          spread, a poster, a small booklet &mdash; scales by the same factor,
+          so its numbers will differ.
         </p>
         <p>
           You do not have to guess. The exact dimensions of every page are
           printed on its card before you download it, so you can check a figure
-          is big enough for its destination in advance.
+          is big enough for its destination in advance. There is no DPI box and
+          no scale setting to get wrong; the trade-off has been made once, in
+          favour of detail.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white pt-2">
           Why the output is PNG
@@ -309,13 +334,40 @@ export default function PdfExtractImagesSeoArticle() {
           >
             W3C PNG specification
           </a>
-          , and two of its properties matter here. It introduces no compression
-          artefacts around text and line art &mdash; exactly what a document
-          page is full of, and exactly what grows fuzzy halos in a heavily
-          compressed photo format. And it carries a full alpha channel, so
-          transparency in the original artwork survives rather than being
-          flattened onto an unwanted white rectangle. That is why the tool{' '}
+          , and one property of it matters more than any other here: it
+          introduces no compression artefacts. A document page is mostly text,
+          rules, tables and line art &mdash; precisely the content that grows
+          fuzzy halos and blocky edges in a heavily compressed photographic
+          format, and precisely the content you notice it on, because a reader
+          knows what a letter is supposed to look like. Lossless means the page
+          image you download is what was rendered, pixel for pixel: small type
+          stays crisp at full zoom, hairlines stay thin, and a screenshot of the
+          result still reads cleanly. That is why the tool{' '}
           <strong>extracts PDF pages as PNG</strong>.
+        </p>
+        <h4 className="text-base font-bold text-slate-900 dark:text-white pt-2">
+          Will the PNG have a transparent background?
+        </h4>
+        <p>
+          No, and it is worth saying plainly, because &ldquo;PDF to transparent
+          PNG&rdquo; is a common search and most pages that answer it are
+          guessing. Every page here is exported as a fully opaque image: the
+          page&rsquo;s own background &mdash; white on almost every document
+          &mdash; is part of the picture, exactly as it looks on screen. PNG as
+          a format is capable of transparency, but that is not what this export
+          produces, and there is no setting that changes it.
+        </p>
+        <p>
+          If what you need is a logo or a diagram sitting on nothing, the route
+          is the same as for any flattened image: extract the page here, crop it
+          down in the{' '}
+          <Link to="/tools/image-cropper" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            image cropper
+          </Link>
+          , then remove the background in an editor that does that job. What
+          this export guarantees instead is fidelity &mdash; what you see on the
+          page is what lands in the file, correctly composed and in the right
+          colours, with nothing dropped out that you expected to keep.
         </p>
         <p>
           The trade is file size: a lossless page image is larger than a
@@ -355,9 +407,11 @@ export default function PdfExtractImagesSeoArticle() {
           The naming is the useful part. Because every file is{' '}
           <code>yourfile-page-1.png</code>, <code>yourfile-page-2.png</code> and
           so on, the archive opens in reading order without you renaming a
-          thing &mdash; unlike the generic numbering most other online tools
-          hand back when you <strong>convert PDF pages to images</strong> in
-          bulk.
+          thing. Six months later the folder still tells you which document the
+          pictures came from and where in it each one sat, which matters far
+          more than it sounds like it should when you{' '}
+          <strong>convert PDF pages to images</strong> in bulk and come back to
+          them after the fact.
         </p>
         <p>
           You can mix the two freely: take the three pages you actually need as
@@ -372,8 +426,8 @@ export default function PdfExtractImagesSeoArticle() {
           6. When Nothing Comes Out: Common Problems
         </h3>
         <p>
-          Extraction is reliable, but a handful of situations trip people up.
-          All of them are recognisable from the message you get.
+          Extraction is reliable, but a handful of situations trip people up. In
+          every one of them you get a message rather than a blank screen.
         </p>
         <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
           <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/25">
@@ -382,17 +436,20 @@ export default function PdfExtractImagesSeoArticle() {
             </h4>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               The tool takes PDFs and only PDFs. A .docx, a .pptx or an image
-              file is turned away at the door.
+              file is turned away at the door, before anything else happens.
             </p>
           </div>
           <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/25">
             <h4 className="font-bold text-slate-900 dark:text-white text-base mb-3 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" /> &ldquo;Failed to extract images from PDF&rdquo;
+              <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" /> When the document will not open
             </h4>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Usually a password-protected or damaged document. A file that
-              demands a password cannot be read until it is removed, and a PDF
-              truncated by a failed download has nothing complete to render.
+              Usually a password-protected or damaged file. The red banner shows
+              the reason reported for your document &mdash; a missing password,
+              or a structure that cannot be read &mdash; so the wording varies
+              with the fault. A file that demands a password cannot be read
+              until it is removed, and a PDF truncated by a failed download has
+              nothing complete to render.
             </p>
           </div>
         </div>
@@ -408,23 +465,26 @@ export default function PdfExtractImagesSeoArticle() {
           <Link to="/tools/pdf-ocr" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF OCR tool
           </Link>{' '}
-          instead, which reads the letters in the pixels and builds a real,
-          searchable text layer.
+          instead, which reads the letters in the pixels and gives you the text
+          back as a downloadable .txt file you can paste into a document, a
+          spreadsheet or an email. It is a transcript rather than a rebuilt PDF,
+          so keep the original alongside it if you still need the layout.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white pt-2">
           Very long or very heavy documents
         </h4>
         <p>
           There is <strong>no file size limit</strong> and no page cap. A
-          three-hundred page manual will genuinely take a while, and a laptop
-          will get through it more calmly than a phone will, because rendering
-          that many pages at high resolution is real work. If you only want a section, trim the
-          document with the{' '}
+          three-hundred page manual will genuinely take a while, because that is
+          three hundred full-resolution images to produce and preview. If you
+          only want a section, trim the document with the{' '}
           <Link to="/tools/pdf-page-remover" className="text-orange-600 font-semibold underline hover:text-orange-700">
             page remover
           </Link>{' '}
-          or the splitter first and extract from the short version. If an
-          extracted page came out smaller than you hoped for a print job, the{' '}
+          or the splitter first and extract from the short version &mdash; it is
+          almost always quicker than extracting everything and deleting the
+          pages you did not want. If an extracted page came out smaller than you
+          hoped for a print job, the{' '}
           <Link to="/tools/image-enlarger" className="text-orange-600 font-semibold underline hover:text-orange-700">
             image enlarger
           </Link>{' '}
@@ -440,11 +500,9 @@ export default function PdfExtractImagesSeoArticle() {
         </h3>
         <p>
           Plenty of sites will <strong>extract images from a PDF document</strong>.
-          Most of them make the free version deliberately annoying until you
-          reach for a card, or cap you at three files a day. This one is a{' '}
-          <strong>free PDF image extractor</strong> with no paid tier behind it.
-          Here is what is different, stated plainly enough that you can check
-          every line yourself.
+          This one is a <strong>free PDF image extractor</strong> with no paid
+          tier, no account and no daily limit. Here is what you get, stated
+          plainly enough that you can check every line yourself.
         </p>
         <div className="grid sm:grid-cols-2 gap-5 not-prose my-6">
           {[
@@ -491,23 +549,27 @@ export default function PdfExtractImagesSeoArticle() {
             ],
             [
               'Can I extract just one picture instead of the whole page?',
-              'The export gives you complete pages as PNG files, so the photograph you want arrives along with the rest of its page. Download that page, then use our free image cropper to trim away everything around the picture. It takes about thirty seconds and gives you the image correctly composed and in the right colours.',
+              'The export gives you complete pages as PNG files, so the photograph you want arrives along with the rest of its page. Download that page, then use our free image cropper to trim away everything around the picture. It is a quick follow-up step, and it gives you the image correctly composed and in the right colours.',
             ],
             [
               'What quality are the extracted images?',
-              'Each page is rendered at double its native scale, which puts a typical A4 or Letter page comfortably above 1,200 pixels wide. The exact width and height is shown on every card before you download, so you can confirm it is large enough for a slide or a print job.',
+              'Each page is rendered at double its native scale: an A4 page comes out at 1191 by 1684 pixels and a US Letter page at 1224 by 1584. The exact width and height is shown on every card before you download, so you can confirm it is large enough for a slide or a print job.',
+            ],
+            [
+              'Will the extracted PNG have a transparent background?',
+              'No. Every page is exported as a fully opaque image with the page background included, exactly as the page looks on screen. If you need a picture with the background removed, extract the page, crop it in the image cropper, and take that file into an editor that can knock the background out.',
             ],
             [
               'Why did nothing come out of my PDF?',
-              'Two likely causes. The file is password-protected, in which case the password has to be removed before anything can read it, or the document is damaged or incomplete from a failed download. In both cases the tool tells you rather than handing you an empty result.',
+              'Two likely causes. The file is password-protected, in which case the password has to be removed before anything can read it, or the document is damaged or incomplete from a failed download. Either way a banner appears with the reason reported for your file, so you are told what went wrong rather than handed an empty result.',
             ],
             [
               'Is there a limit on file size or number of pages?',
-              'No. There is no size cap, no page cap and no daily limit on how many documents you run through it. Very long documents simply take longer, and a laptop will work through a large manual faster than a phone will.',
+              'No. There is no size cap, no page cap and no daily limit on how many documents you run through it. Very long documents simply take longer, and you can trim one down with the page remover or the splitter first if you only need a section.',
             ],
             [
               'Are my files safe when I extract images from a PDF?',
-              'Your documents are never stored on our servers, never kept after your session and never used for training or analytics. No file is queued, logged or retained.',
+              'Your documents are never stored on our servers, never kept after your session and never used for training or analytics. No file is logged or retained.',
             ],
           ].map(([q, a]) => (
             <div key={q}>

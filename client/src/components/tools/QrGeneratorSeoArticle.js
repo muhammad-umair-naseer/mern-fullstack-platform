@@ -21,31 +21,42 @@ import {
  * Same shape as PdfWordSeoArticle: H2 under the page's H1, anchored table of
  * contents, H3 sections, six benefit cards, FAQ, closing link block.
  *
- * Four decisions shaped the copy, and they matter to anyone editing it later.
+ * Five decisions shaped the copy, and they matter to anyone editing it later.
  *
  * First, the article promises only the four modes the component actually
  * renders: URL, plain text, Wi-Fi (SSID + password + WPA/WEP/open) and a
- * VERSION:3.0 vCard carrying name, phone and email. The vCard writer keeps an
- * ORG field in state but renders no input for it, so nothing here mentions a
- * company name on a contact card. Exports are exactly two: an 800px PNG and a
- * vector SVG, both named qrcode-<mode>.
+ * VERSION:3.0 vCard carrying name, phone and email. The vCard writer also
+ * emits an ORG line, but no organisation input is rendered, so that line is
+ * always empty — section 3 says so rather than implying the card holds three
+ * properties and nothing else. Exports are exactly two: a PNG whose canvas is
+ * 800 * devicePixelRatio square, so 800px on a 1x display and more on a
+ * denser one, and a vector SVG, both named qrcode-<mode> and both including
+ * the four-module quiet zone.
  *
- * Second, and this is the important one: "dynamic qr code", "editable qr
+ * Second, the copy does not claim standards conformance the payloads do not
+ * have. ISO/IEC 18004 covers the symbology only. The WIFI: string is a
+ * de-facto convention with no standards body behind it, and the vCard omits
+ * the N property that RFC 2426 makes mandatory, so neither is described as
+ * "the format specified by" anything. Camera behaviour is described as what
+ * current phones do, never as a guarantee.
+ *
+ * Third, and this is the important one: "dynamic qr code", "editable qr
  * code", "qr code with logo", "trackable qr code", "qr code scanner" and
  * "bulk qr code generator" are all high-volume phrases and not one of them
  * describes this tool. It writes static symbols at a fixed medium error
- * correction level, with no logo slot, no scan counter, no batch input and no
- * decoding. Sections 3 and 7 answer the question behind those searches
- * honestly instead of pretending. A page that answers ranks; a page that
- * over-promises just collects complaints.
+ * correction level, one at a time, with no logo slot, no scan counter, no
+ * batch input and no decoding. Sections 2, 3 and 7 and the FAQ answer the
+ * question behind those searches honestly instead of pretending. A page that
+ * answers ranks; a page that over-promises just collects complaints.
  *
- * Third, "qr code for a pdf" is a recurring query and the honest answer is a
+ * Fourth, "qr code for a pdf" is a recurring query and the honest answer is a
  * redirect, not a feature — a symbol carries text, never a file. That sits as
  * a sub-point in section 3 rather than being quietly ignored.
  *
- * Fourth, privacy is stated as an outcome only: nothing typed here is stored,
+ * Fifth, privacy is stated as an outcome only: nothing typed here is stored,
  * kept or logged, and no Wi-Fi password or phone number is retained. How that
- * is achieved is deliberately absent from every line of this file.
+ * is achieved is deliberately absent from every line of this file, including
+ * any hint about where the data does or does not travel.
  */
 export default function QrGeneratorSeoArticle() {
   return (
@@ -56,7 +67,7 @@ export default function QrGeneratorSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 11 min read
         </span>
       </div>
 
@@ -69,8 +80,8 @@ export default function QrGeneratorSeoArticle() {
         between a printed page and a phone. Menus, posters, packaging, wedding
         invitations, guest Wi-Fi cards, conference badges &mdash; all of them
         lean on the same trick. A good <strong>QR code generator</strong> should
-        take fifteen seconds to use, hand back a file sharp enough to print, and
-        ask for nothing in return. That is what the tool above does:{' '}
+        take seconds to use, hand back a file sharp enough to print, and ask for
+        nothing in return. That is what the tool above does:{' '}
         <strong>create a QR code online free</strong>, choose your colours, and
         download a high-resolution PNG or a <strong>QR code SVG</strong> vector.
         No account, no watermark, no expiry date.
@@ -158,9 +169,21 @@ export default function QrGeneratorSeoArticle() {
           </a>
           , which specifies the finder patterns, the encoding modes and the
           Reed&ndash;Solomon error correction that lets a damaged code still
-          scan. Every conforming reader follows the same rules, which is why a
-          code made here works in the stock camera app on iOS and Android with no
-          reader app in between.
+          scan. What the standard covers is the symbology &mdash; the square
+          itself &mdash; which is why the pattern is read the same way by every
+          conforming reader, whatever software is doing the reading.
+        </p>
+        <p>
+          What happens next is a separate matter, and it belongs to the phone
+          rather than to the standard. Once the characters are recovered, the
+          camera app looks at them and guesses your intent: an address starting{' '}
+          <code>https://</code> is offered as a link, a run of ordinary words is
+          shown as text, and the Wi-Fi and contact formats in section 3 are
+          conventions phone makers have converged on rather than anything ISO
+          writes down. Recent iOS and Android camera apps handle all four
+          without a separate reader app, which is what made printed codes worth
+          using again. Older or unusual devices may still want a scanning app,
+          so test with whatever your audience actually carries.
         </p>
         <p>
           Three consequences follow, and between them they explain most questions
@@ -196,9 +219,9 @@ export default function QrGeneratorSeoArticle() {
         </p>
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
-            ['Pick the code type', 'Choose Website, Plain Text, Wi-Fi or vCard. The form underneath changes to ask for exactly the fields that type needs.'],
-            ['Fill in and restyle', 'Type your link, message, network or contact details. The preview redraws as you type, and two pickers set the foreground and background colour.'],
-            ['Download PNG or SVG', 'One button gives an 800 by 800 pixel PNG. The other gives a vector SVG that stays sharp at any size, from a business card to a shop window.'],
+            ['Pick the code type', 'Choose Website, Plain Text, Wi-Fi or vCard. The form underneath changes to ask for the fields that type needs.'],
+            ['Fill in and restyle', 'Type your link, message, network or contact details. The preview redraws as you type, and two pickers set the foreground and background colour — the defaults are a near-black slate on white.'],
+            ['Download PNG or SVG', 'One button gives a PNG of at least 800 by 800 pixels, named for the code type. The other gives a vector SVG that stays sharp at any size, from a business card to a shop window.'],
           ].map(([title, body], i) => (
             <div
               key={title}
@@ -213,10 +236,16 @@ export default function QrGeneratorSeoArticle() {
           ))}
         </div>
         <p>
-          That is the whole flow. The preview is live, so you never download
-          something you have not seen. Before anything goes to a printer, point
-          your own camera at the code on screen &mdash; ten seconds of testing
-          has saved a lot of reprints.
+          That is the whole flow. The panel builds one code at a time: fill the
+          form, download, then change the details for the next one. There is no
+          spreadsheet to upload and no list input, so a set of twenty table
+          numbers is twenty quick passes rather than one import &mdash; and
+          nothing counts or caps how many passes you make.
+        </p>
+        <p>
+          The preview is live, so you never download something you have not seen.
+          Before anything goes to a printer, point your own camera at the code on
+          screen &mdash; ten seconds of testing has saved a lot of reprints.
         </p>
       </section>
 
@@ -276,29 +305,28 @@ export default function QrGeneratorSeoArticle() {
         </h4>
         <p>
           Enter the network name, the password and the security type, and the tool
-          writes the standard Wi-Fi credential string that phone cameras
-          recognise. Section 4 covers it properly, because it is the most useful
-          thing on this page for cafes and holiday lets.
+          writes the widely recognised Wi-Fi credential string that current iOS
+          and Android cameras understand. It is worth knowing that this one is a
+          convention the phone makers settled on rather than a published
+          standard, which is exactly why it pays to scan your own code once
+          before printing it. Section 4 covers the field-by-field detail,
+          because this is the most useful thing on the page for cafes and
+          holiday lets.
         </p>
 
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           vCard: a scannable contact card
         </h4>
         <p>
-          The contact mode builds a{' '}
-          <a
-            href="https://datatracker.ietf.org/doc/html/rfc2426"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-orange-600 font-semibold underline hover:text-orange-700"
-          >
-            vCard 3.0 record, the format specified in RFC 2426
-          </a>
-          , holding a full name, a phone number and an email address. Scanning it
+          The contact mode builds a VERSION:3.0 vCard record carrying the full
+          name, the phone number and the email address you type. Scanning it
           prompts the phone to save a contact with those fields filled in, which
           makes a genuinely useful <strong>QR code for a business card</strong>,
-          email signature or conference badge. Keep the number in full
-          international form and it will dial correctly from anywhere.
+          email signature or conference badge. The form has no company field, so
+          the organisation line on the saved contact arrives blank &mdash; type
+          the employer or job title into the phone&rsquo;s own contacts app
+          afterwards if it matters to you. Keep the number in full international
+          form and it will dial correctly from anywhere.
         </p>
       </section>
 
@@ -318,7 +346,9 @@ export default function QrGeneratorSeoArticle() {
           <li>
             <strong>Network name (SSID).</strong> Type it exactly as it appears in
             the list of networks, capitals and spaces included. A mismatched
-            character is the main reason a Wi-Fi code silently fails.
+            character is a common reason a Wi-Fi code silently fails: the square
+            scans, the phone tries to join a network that does not exist under
+            that name, and nothing useful happens.
           </li>
           <li>
             <strong>Password.</strong> Enter the passphrase. The field is masked as
@@ -338,9 +368,10 @@ export default function QrGeneratorSeoArticle() {
         <p>
           One caution: anyone who can see the square can join the network, so treat
           it as you would the password written on a card &mdash; fine for a guest
-          network, not the one your accounts live on. What you type is never
-          stored on our servers and never logged; the credentials exist only in
-          the image you download.
+          network, not the one your accounts live on. If the passphrase changes,
+          the printed code is dead and you make a fresh one. What you type is
+          never stored on our servers, never logged and never used for analytics
+          or training.
         </p>
       </section>
 
@@ -360,11 +391,11 @@ export default function QrGeneratorSeoArticle() {
               <Check className="w-5 h-5 text-emerald-600 shrink-0" /> High-resolution PNG
             </h4>
             <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
-              <li>800 &times; 800 pixels, well above screen size</li>
+              <li>At least 800 &times; 800 pixels, well above screen size</li>
+              <li>The clear quiet-zone margin is already inside the square</li>
               <li>Opens anywhere, no special software</li>
-              <li>Right for slides, emails, social posts, web pages</li>
-              <li>Fine for labels and cards</li>
-              <li>Enlarging far past 800px softens the edges</li>
+              <li>Right for slides, emails, social posts, labels and cards</li>
+              <li>A fixed raster: blown up far beyond its own size, edges soften</li>
             </ul>
           </div>
           <div className="p-6 rounded-2xl bg-orange-500/5 border border-orange-500/25">
@@ -416,7 +447,7 @@ export default function QrGeneratorSeoArticle() {
         </h3>
         <p>
           The two colour pickers let you match a brand palette instead of settling
-          for black on white, which is why people look for a{' '}
+          for the default near-black on white, which is why people look for a{' '}
           <strong>custom colour QR code generator</strong>. Used carelessly it
           produces a square no camera will read, and the cause is almost always
           one of five things.
@@ -483,12 +514,12 @@ export default function QrGeneratorSeoArticle() {
           middle. No scan tracking, no redirect, no expiry, no account to lapse.
           A code you print today still works in ten years. The honest trade is that
           it is not <strong>editable after printing</strong> &mdash; if the
-          destination changes you generate a new one in fifteen seconds. For a
-          menu, a Wi-Fi network or a contact card, that trade is usually the
-          right way round. If you genuinely need analytics or a re-pointable
-          link, encode an address you control and change the redirect at your
-          end: same flexibility, without handing your printed material to
-          somebody else&rsquo;s subscription.
+          destination changes you generate a new one in seconds. For a menu, a
+          Wi-Fi network or a contact card, that trade is usually the right way
+          round. If you genuinely need analytics or a re-pointable link, encode
+          an address you control and change the redirect at your end: same
+          flexibility, without handing your printed material to somebody
+          else&rsquo;s subscription.
         </p>
       </section>
 
@@ -510,7 +541,7 @@ export default function QrGeneratorSeoArticle() {
             ['No watermark or branding', 'The PNG and SVG contain your code and nothing else. No logo in the corner, no promotional strip.'],
             ['Vector output included free', 'The SVG is not held back for a premium tier. Print at any size, badge to billboard.'],
             ['Nothing you type is kept', 'Links, notes, Wi-Fi passwords and contact details are never stored on our servers, never logged and never used for analytics or training.'],
-            ['Unlimited codes', 'Generate one code or two hundred. No daily counter ticking down.'],
+            ['Unlimited codes', 'Come back as often as you like. There is no daily counter ticking down and no limit on how many codes you make.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -551,8 +582,12 @@ export default function QrGeneratorSeoArticle() {
               'Choose the Wi-Fi tab, type the network name exactly as it appears in the list of networks, enter the password, and pick WPA/WPA2/WPA3 unless your router is very old. Download the PNG and print it. Guests point a camera at it and the phone offers to join.',
             ],
             [
+              'Can I generate a batch of codes at once?',
+              'Not from a list, no. The panel above makes one code at a time from one form, so a set of asset tags or table numbers means filling the form and downloading once per code. Nothing limits how often you repeat that, and each download is named for the code type, so a run of a dozen takes a couple of minutes. For thousands, a developer scripting a QR library is the sane route.',
+            ],
+            [
               'Can I add my logo to the middle of the QR code?',
-              'Not in this tool. It produces a clean standards-compliant symbol in your chosen colours, which is the version most likely to scan first time on every phone. If you need a logo, open the downloaded SVG in a design program and add it there, small and clear of the three corner squares, then test before printing.',
+              'Not in this tool. It produces a clean, unadorned symbol in your chosen colours, which is the version most likely to scan first time on every phone. If you need a logo, open the downloaded SVG in a design program and add it there, small and clear of the three corner squares, then test before printing.',
             ],
             [
               'Why will my QR code not scan?',

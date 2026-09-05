@@ -185,12 +185,12 @@ export default function PdfExtractImages() {
                 Choose a PDF file or drop it here
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Extract high-resolution images from every page in memory
+                Turn every page of your PDF into a downloadable PNG
               </p>
             </div>
             <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-2">
               <ShieldCheck className="w-4 h-4" />
-              <span>Lossless Image Extraction • Original DPI Preserved</span>
+              <span>Every Page Exported as a High-Resolution PNG</span>
             </div>
           </div>
         </div>

@@ -18,7 +18,7 @@ import {
  * Long-form guide rendered under the Image Enlarger tool.
  *
  * Same shape as PdfWordSeoArticle: H2 under the page's H1, anchored contents,
- * H3 sections, six benefit cards, FAQ. Four decisions are worth recording,
+ * H3 sections, six benefit cards, FAQ. Five decisions are worth recording,
  * because each was made against the search data rather than with it.
  *
  * 1. "AI image upscaler", "AI enlarge image", "unblur photo", "remove blur",
@@ -34,7 +34,10 @@ import {
  *    its own section rather than a footnote. 25 MP / 16 means a 4x run needs a
  *    source under roughly 1.56 MP; 2x needs one under 6.25 MP. Those numbers
  *    are arithmetic from MAX_PIXELS in the component, not marketing figures.
- *    Section 4 exists so "why can't I upscale 4x" lands somewhere useful.
+ *    The guard tests targetW * targetH, not the factor, so a source over
+ *    6.25 MP is refused at BOTH settings — section 4 says so plainly rather
+ *    than implying 2x is always a way out. Section 4 exists so "why can't I
+ *    upscale 4x" lands somewhere useful.
  *
  * 3. There is no custom width/height field and no DPI field. "Resize image to
  *    exact dimensions" and "enlarge image to 300 DPI" are therefore declined
@@ -45,6 +48,11 @@ import {
  * 4. Privacy is sold strictly as an outcome — nothing stored, nothing
  *    retained, nothing used for training. The mechanism is deliberately absent
  *    from every sentence in this file.
+ *
+ * 5. Enlarging and downloading are two separate presses in the component:
+ *    processEnlarge only sets result state, and a second button performs the
+ *    download. Section 2 and the FAQ describe both presses, because a reader
+ *    who walks away after the first one gets no file.
  */
 export default function ImageEnlargerSeoArticle() {
   return (
@@ -68,9 +76,10 @@ export default function ImageEnlargerSeoArticle() {
         the moment somebody asks for it bigger &mdash; a marketplace listing
         rejects it, a print shop says the resolution is too low, a slide deck
         stretches it into mush. A good <strong>image enlarger</strong> rebuilds
-        that picture at two or four times its original size and runs an edge
-        pass over the result so it lands crisp rather than soft. This guide
-        covers how to <strong>enlarge an image without losing quality</strong>,
+        that picture at two or four times its original size and optionally
+        runs an edge pass over the result so it lands crisp rather than soft.
+        This guide covers how to{' '}
+        <strong>enlarge an image without losing quality</strong>,
         what an <strong>image upscaler</strong> can genuinely do, what no tool
         anywhere can do, and how to choose the right output format.
       </p>
@@ -185,7 +194,7 @@ export default function ImageEnlargerSeoArticle() {
           {[
             ['Select your picture', 'Drop a JPG, PNG or WebP onto the panel above, or click to browse. One image at a time. The tool reads its true dimensions and shows them alongside the file size, so you know what you are starting from.'],
             ['Pick 2x or 4x', 'Choose the upscale factor, choose PNG, JPG or WebP for the output, and leave the clarity and edge filter on unless your picture is a soft portrait or a smooth gradient.'],
-            ['Enlarge and download', 'Press the button — it names the exact target size — and the enlarged file downloads with the scale in its filename. No watermark, no queue, no cap on how many you run.'],
+            ['Enlarge and download', 'Press the button — it names the exact target size — then press the download button that appears, and the file saves with the scale in its filename. No watermark, no queue, no cap on how many you run.'],
           ].map(([title, body], i) => (
             <div
               key={title}
@@ -203,11 +212,24 @@ export default function ImageEnlargerSeoArticle() {
           When the image enlarger tells you something is wrong
         </h4>
         <p>
-          Two messages account for nearly every failed run. Select something
-          that is not a picture and the tool asks for a JPG, PNG or WebP
-          instead. If a file claims to be an image but is truncated or corrupt,
-          you are told that rather than left staring at a spinner. Either way,
-          swap the file with the <em>Change Image</em> button and try again.
+          The tool tells you when something is wrong rather than failing
+          silently, and there is only a short list of things it will object to.
+          Select something that is not a picture and it asks for a JPG, PNG or
+          WebP instead. If a file claims to be an image but is truncated or
+          unreadable, you are told it could not be opened rather than left
+          staring at a spinner. If the enlargement you asked for would land
+          over the 25-megapixel output limit, it says so before doing any work
+          and prints the exact dimensions it would have had to produce &mdash;
+          section 4 covers that ceiling and how to get under it. Anything else
+          that goes wrong mid-run surfaces as a plain failure message instead
+          of a half-finished file.
+        </p>
+        <p>
+          The size limit and the general failure message both leave your
+          picture loaded, so you can drop the factor, change the format and run
+          it again without starting over; the two selection messages are simply
+          asking you for a different file, which the <em>Change Image</em>
+          button gives you. Any of them clears with the &times; on its right.
         </p>
         <p>
           If your picture is currently inside a PDF, pull it out first with the{' '}
@@ -294,9 +316,12 @@ export default function ImageEnlargerSeoArticle() {
         </p>
         <p>
           That growth is why there is a ceiling. Output is capped at 25
-          megapixels, and if the factor you picked would exceed it the tool
-          stops before doing any work and suggests 2&times; instead &mdash;
-          nothing is half-produced or silently truncated. In practice:
+          megapixels, and the check is on the finished size rather than on the
+          factor you chose &mdash; so it applies to 2&times; exactly as it does
+          to 4&times;. If the run you asked for would breach it, the tool stops
+          before doing any work, names the size it would have had to produce,
+          and points you at the smaller factor or at cropping first. Nothing is
+          half-produced or silently truncated. In practice:
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
@@ -309,8 +334,11 @@ export default function ImageEnlargerSeoArticle() {
             megapixels &mdash; about 2500 &times; 2500.
           </li>
           <li>
-            <strong>Above that</strong>, your picture is already large and what
-            you want is probably not an enlargement at all.
+            <strong>Above roughly 6.25 megapixels</strong>, the tool declines
+            both factors &mdash; the output would breach the ceiling either
+            way, so there is no smaller setting left to fall back to. Crop the
+            frame down first, or reach for the resizer if what you actually
+            need is a specific set of dimensions.
           </li>
         </ul>
         <p>
@@ -326,7 +354,9 @@ export default function ImageEnlargerSeoArticle() {
           </Link>{' '}
           will cut it down first, bringing the pixel count under the ceiling so
           you can go 4&times; on the part you care about. That crop-then-enlarge
-          order is the most useful trick on this page.
+          order is the most useful trick on this page, and it is the only route
+          through when even 2&times; is refused: get the source under 6.25
+          megapixels and the doubling goes ahead.
         </p>
       </section>
 
@@ -338,8 +368,9 @@ export default function ImageEnlargerSeoArticle() {
         </h3>
         <p>
           You pick the output format before running the enlargement, and the
-          choice changes both the file size and what survives. All three are
-          written at a high quality setting you never have to configure.
+          choice changes both the file size and what survives. PNG stores the
+          enlargement exactly as it was produced; JPG and WebP compress it, at
+          a high quality setting you never have to configure.
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
@@ -482,7 +513,7 @@ export default function ImageEnlargerSeoArticle() {
           {[
             [
               'How do I enlarge an image without losing quality?',
-              'Use the image enlarger at the top of this page: select your picture, pick 2x or 4x, and download the result. It rebuilds the picture at the larger size and runs an edge pass so it stays crisp instead of going blocky. What it cannot do is add detail that was never in the original.',
+              'Use the image enlarger at the top of this page: select your picture, pick 2x or 4x, press Enlarge, then press the download button that appears. It rebuilds the picture at the larger size and, with the clarity filter left on, runs an edge pass so it stays crisp instead of going blocky. What it cannot do is add detail that was never in the original.',
             ],
             [
               'Why does my picture look blurry or pixelated when I make it bigger?',
@@ -490,7 +521,7 @@ export default function ImageEnlargerSeoArticle() {
             ],
             [
               'Why can I not upscale my photo 4x?',
-              'Output is capped at 25 megapixels, so a 4x run needs a source under roughly 1.5 megapixels — around 1250 x 1250 pixels. If your photo is larger, the tool tells you before doing any work and suggests 2x instead. If you only need part of the frame, crop it first and 4x becomes available on the smaller piece.',
+              'Output is capped at 25 megapixels, so a 4x run needs a source under roughly 1.5 megapixels — around 1250 x 1250 pixels. Above that the tool tells you before doing any work and names the size it would have had to produce. The same ceiling governs 2x: past roughly 6.25 megapixels both factors are declined, because either output would breach it. Cropping is the way through — cut the frame down to the part that matters and the enlargement runs on the smaller piece.',
             ],
             [
               'Is this an AI image upscaler?',

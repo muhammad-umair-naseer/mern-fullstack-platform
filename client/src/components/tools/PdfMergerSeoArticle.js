@@ -38,17 +38,32 @@ import {
  *   - "combine jpg/word/excel into one pdf" — the picker accepts .pdf only and
  *     the validator re-checks the extension and the %PDF- header. Section 4
  *     points at the converters rather than pretending this tool takes images.
+ *     The JPG-to-PDF route named there is real: PdfJpg.js has a 'jpg2pdf' mode
+ *     backed by convertJpgToPdf in lib/pdfJpg.js.
  *   - "merge pdf with bookmarks / table of contents" — pages are copied, an
  *     outline tree is not rebuilt, so nothing here promises bookmarks.
  *   - "compress merged pdf" / "reduce size while merging" — there is no
  *     compression stage, so section 6 sends people to the compressor instead.
+ *   - "make the merged scan searchable" — the OCR tool (lib/pdfOcr.js) returns
+ *     { combinedText, pages, pageCount } and PdfOcr.js downloads that as a
+ *     .txt file. It does NOT write a text layer back into the PDF. Section 6
+ *     therefore promises a text file, never a searchable PDF.
+ *   - "save any web page as pdf" — SaveWebAsPdf.js fetches nothing. It renders
+ *     pasted text plus title/subtitle/sourceUrl through jsPDF. Section 4 says
+ *     exactly that and does not imply URL capture.
  *   - page thumbnails: the organiser cards show page number and source file
  *     name, not a rendered preview of the page. The copy says "cards", never
  *     "thumbnails" or "previews".
  *
  * Third, privacy is sold strictly as an outcome — files are not stored, not
  * queued, not retained, not used for training. How that happens is absent by
- * design and must stay absent.
+ * design and must stay absent. The only ceiling stated anywhere is the memory
+ * one in FAQ 2 and section 7, which is a real limit users hit on very large
+ * batches (mergePdfsByPagePlan preloads every source document before copying).
+ *
+ * Note on headings: this file must contain exactly one h2 (the guide title).
+ * The page H1 lives in ToolDetail, which also renders the Related Tools h2.
+ * Do not promote any h4 in here to an h3 or h2.
  */
 export default function PdfMergerSeoArticle() {
   return (
@@ -59,7 +74,7 @@ export default function PdfMergerSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 9 min read
         </span>
       </div>
 
@@ -76,8 +91,8 @@ export default function PdfMergerSeoArticle() {
         into one document in whatever sequence you decide &mdash; whole files in
         order, or individual pages picked out of several documents and arranged
         by hand. It is a <strong>free PDF merger</strong> with no account, no
-        watermark and no size cap, and this guide covers exactly how to use it,
-        what it will refuse, and why.
+        watermark and no daily limit, and this guide covers exactly how to use
+        it, what it will refuse, and why.
       </p>
 
       {/* Featured WebP banner. Hides itself if the asset is missing rather than
@@ -205,8 +220,8 @@ export default function PdfMergerSeoArticle() {
           {[
             ['Add two or more PDFs', 'Drag your files onto the panel or click to browse. Each document is checked as it arrives, with its page count and size shown on its card.'],
             ['Put them in order', 'Drag a file card by its handle, or nudge it with the arrows, until the sequence reads the way you want. Remove a mistake with the bin icon.'],
-            ['Run the merge', 'Press merge. A progress readout names the file being combined and shows a percentage, and you can cancel part-way through without leaving anything behind.'],
-            ['Download the result', 'One combined PDF, named after your first file with "-merged" on the end. The summary shows how many documents went in, how many pages came out and how large the file is.'],
+            ['Run the merge', 'Press merge. A progress readout names what is being combined and shows a percentage. Change your mind and cancel: the merge stops at the next file or page boundary, and nothing half-finished is produced or downloaded.'],
+            ['Download the result', 'One combined PDF, named after the first document being merged, with "-merged" on the end. The summary shows how many documents you added, how many pages came out and how large the finished file is.'],
           ].map(([title, body], i) => (
             <div
               key={title}
@@ -221,10 +236,12 @@ export default function PdfMergerSeoArticle() {
           ))}
         </div>
         <p>
-          Two valid documents is the only real rule. There is no daily cap on
-          how often you can <strong>join PDF files</strong>, no queue and no
-          watermark stamped across the output &mdash; the usual catch with a free
-          tier elsewhere.
+          Two valid documents is the only rule &mdash; and, if you are working
+          page by page, at least one page left in the plan. Delete every card in
+          the organiser and the merge button waits for you to put one back.
+          Beyond that there is no daily cap on how often you can{' '}
+          <strong>join PDF files</strong>, no queue and no watermark stamped
+          across the output &mdash; the usual catch with a free tier elsewhere.
         </p>
       </section>
 
@@ -258,13 +275,17 @@ export default function PdfMergerSeoArticle() {
           </li>
           <li>
             <strong>Exclude pages before merging.</strong> Delete a card and
-            that page does not appear in the output. This is how you{' '}
+            that page is left out of the result. Work in that order &mdash; add
+            every file you need first, then delete the pages you do not want
+            &mdash; and the grid you end up looking at is exactly the document
+            you get. This is how you{' '}
             <strong>combine specific pages from multiple PDFs</strong> in one
             pass, instead of splitting every file first.
           </li>
           <li>
             <strong>Start again cheaply.</strong> Reset order restores the
-            plain sequential arrangement whenever an experiment goes wrong.
+            plain sequential arrangement, deleted pages included, whenever an
+            experiment goes wrong.
           </li>
         </ul>
         <p>
@@ -315,12 +336,22 @@ export default function PdfMergerSeoArticle() {
             Word converter
           </Link>{' '}
           for a .docx, the{' '}
-          <Link to="/tools/save-web-as-pdf" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            web page to PDF tool
+          <Link to="/tools/pdf-jpg" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            JPG to PDF converter
           </Link>{' '}
-          for anything on the internet, and then bring the results back here.
-          Done in that order it takes a minute longer and behaves properly
-          afterwards.
+          to turn photos, screenshots and phone scans into PDF pages, and the{' '}
+          <Link to="/tools/save-web-as-pdf" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            web-page-to-PDF tool
+          </Link>
+          , which turns text you paste from a page into a clean, titled PDF that
+          records the source URL you give it. Then bring the results back here. Two things
+          are worth knowing about that last one before you rely on it: it works
+          from the text you paste rather than from a link, and what it produces
+          is typeset plainly, so the original page&rsquo;s pictures and styling
+          are not carried over. For a quotation, a reference or an article you
+          want to keep in the pack, that is usually the point &mdash; it reads
+          cleanly next to the rest of your merge. Done in this order the whole
+          job takes a minute longer and behaves properly afterwards.
         </p>
       </section>
 
@@ -362,7 +393,6 @@ export default function PdfMergerSeoArticle() {
           become one file per quarter, and the page organiser earns its keep:
           drop the cover page every statement repeats and keep the numbers.
         </p>
-
       </section>
 
       {/* 6 */}
@@ -407,12 +437,26 @@ export default function PdfMergerSeoArticle() {
           <Link to="/tools/pdf-protect" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF protect tool
           </Link>
-          . And if any source document was a scan, the combined file is a stack
-          of pictures with no searchable text in it; the{' '}
+          .
+        </p>
+        <p>
+          And if any source document was a scan, be clear about what you have.
+          A scan is a picture of a page, so the merged file contains no text to
+          search, select or quote, and merging does not change that in either
+          direction: it neither adds text nor takes any away. What you can do is
+          get the words out. The{' '}
           <Link to="/tools/pdf-ocr" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF OCR tool
           </Link>{' '}
-          adds a real text layer so the result can be searched and quoted.
+          reads the text off those scans and hands it back as a text file you
+          can search, copy or quote from &mdash; enough to find the clause, pull
+          the figure, or paste a paragraph into an email. The PDF itself comes
+          back unchanged, so treat the text file as a companion to the merged
+          document rather than a replacement for it: the PDF is what you send,
+          the text is what you search. Where the wording matters more than the
+          layout &mdash; a contract you will be quoting from, a receipt whose
+          numbers you need to total &mdash; run the OCR before you merge, so you
+          have both by the time the pack goes out.
         </p>
       </section>
 
@@ -431,10 +475,10 @@ export default function PdfMergerSeoArticle() {
           {[
             ['Genuinely free, with no trial', 'No account, no email, no card and no countdown to a paid tier. The tool you are using is the whole product.'],
             ['Page-level control, not just file order', 'Reorder and exclude individual pages across every document you added, in one grid, before anything runs.'],
-            ['No file size or quantity limit', 'Merge three memos or forty scanned chapters. No ceiling to upsell you past, no daily counter ticking down.'],
+            ['No imposed file or quantity limit', 'Merge three memos or a stack of scanned chapters. There is no ceiling put there to upsell you past and no daily counter ticking down — only the practical limit of a very large batch, which splits neatly into two merges.'],
             ['No watermark on the output', 'Your merged PDF comes out clean. Nothing is stamped across the pages and nothing is appended to the end.'],
             ['Your documents stay private', 'Files are never stored on our servers, never retained after your session, and never used to train or analyse anything.'],
-            ['Honest about what it will not do', 'Encrypted and damaged files are named as such immediately, and we point you at the better tool rather than failing quietly.'],
+            ['Honest about what it will not do', 'Encrypted and damaged files are named as such the moment you add them, instead of failing quietly halfway through.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -472,11 +516,11 @@ export default function PdfMergerSeoArticle() {
             ],
             [
               'How many PDFs can I combine at once, and is there a size limit?',
-              'Two is the minimum and there is no maximum, on either the number of documents or their size. Large batches take longer to work through, but nothing is capped, queued or counted.',
+              'Two is the minimum, and nothing is capped, queued or counted — neither the number of documents nor their size. Large batches simply take longer to work through, though a very large one is limited by the memory available to your session; if a merge stalls, split it into two and merge the two results. The summary at the end tells you how many documents you added, how many pages came out and how large the finished file is.',
             ],
             [
               'Can I choose the order of pages instead of just the order of files?',
-              'Yes, and this is the tool’s main advantage. Switch to the Page-by-Page Organizer and every page from every file appears as its own card. Drag them into any sequence, jump a page straight to a position, or delete pages you do not want in the result.',
+              'Yes, and this is the tool’s main advantage. Switch to the Page-by-Page Organizer and every page from every file appears as its own card. Drag them into any sequence, jump a page straight to a position, or delete the pages you do not want in the result. Add all of your files before you start deleting, so the plan you build is the plan you merge.',
             ],
             [
               'Why does it say my PDF is password-protected?',
@@ -485,6 +529,10 @@ export default function PdfMergerSeoArticle() {
             [
               'Will merging reduce the quality of my pages or my scans?',
               'No. Pages are carried across as they are, so text stays text, vectors stay sharp and images are not re-compressed. That also means the merged file is about as large as its parts combined — use the compressor afterwards if you need it smaller.',
+            ],
+            [
+              'Can I make a merged stack of scans searchable?',
+              'Not by merging: a scanned page is an image, and combining images gives you more images. The OCR tool reads the words off those pages and gives them back as a text file you can search, copy and quote from, while the PDF itself is unchanged. Keep the two together — send the PDF, search the text.',
             ],
             [
               'Are my files safe when I merge them?',
@@ -517,12 +565,12 @@ export default function PdfMergerSeoArticle() {
           <Link to="/tools/pdf-protect" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF protect tool
           </Link>{' '}
-          locks it before you send. If you would rather understand how document
-          processing works than simply use it, our free{' '}
+          locks it before you send. If you would rather understand documents than
+          simply process them, our free{' '}
           <Link to="/learn/full-stack-web" className="text-orange-600 font-semibold underline hover:text-orange-700">
             full-stack web development course
           </Link>{' '}
-          covers the file and document APIs behind tools like this one.
+          covers how document formats like PDF are structured and handled.
         </p>
       </div>
     </article>

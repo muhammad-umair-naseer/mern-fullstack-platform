@@ -18,7 +18,7 @@ import {
  * Long-form guide rendered under the PDF Protect tool.
  *
  * Same shape as PdfWordSeoArticle: H2 under the page's H1, anchored contents,
- * H3 sections, benefit grid, FAQ. Three decisions shaped the copy and they are
+ * H3 sections, benefit grid, FAQ. Four decisions shaped the copy and they are
  * worth knowing before anyone edits it.
  *
  * 1. The tool ADDS protection. It does not remove it. "Remove password from
@@ -29,22 +29,34 @@ import {
  *    own success screen tells the user. Promising an unlocker we do not ship
  *    would earn one click and one complaint.
  *
- * 2. No bit-strength is quoted anywhere in this article. Encryption strength
- *    claims ("AES-256", "bank-grade") are the easiest thing in this category to
- *    overstate, so the copy says what is verifiably true — the file is locked
- *    with the PDF standard's own password security handler, which every mainstream
- *    reader understands — and stops there. Section 3 is deliberately candid that
- *    permission flags are honoured by reader software rather than physically
- *    enforced, because a user who learns that from us does not learn it from a
- *    bad surprise later.
+ * 2. No bit-strength is quoted anywhere in this article, and no adequacy claim
+ *    is made either. Encryption strength claims ("AES-256", "bank-grade") are
+ *    the easiest thing in this category to overstate, so the copy says only
+ *    what is verifiably true — the file carries the PDF standard's own password
+ *    security handler, so common desktop and mobile readers prompt for the
+ *    password — and stops there. It must never tell a reader that the password
+ *    alone is sufficient for genuinely sensitive material, and section 3 says
+ *    the opposite on purpose. Compatibility is described as "common desktop and
+ *    mobile readers", never as every reader on every platform, and e-readers
+ *    are deliberately not listed: many refuse protected PDFs outright.
  *
- * 3. Privacy is sold as an outcome only: files are not stored, not queued, not
+ * 3. Section 5 states the real behaviour for an already-locked input: it is
+ *    accepted, not refused, and the file that comes back opens with no
+ *    password at all. That warning is the whole reason the paragraph exists —
+ *    do not shorten it back into a bullet that reads like a guard rail.
+ *
+ * 4. Privacy is sold as an outcome only: files are not stored, not queued, not
  *    retained, never used for training. How that is achieved is absent on
  *    purpose and must stay absent.
  *
  * Section 6 (protect last) exists because it is the single most common support
  * question in this shape: an encrypted PDF cannot be fed back into the merge,
  * compress or convert tools, so ordering matters.
+ *
+ * Heading note: this article's H2 is the page's second H2, because the tool
+ * panel emits one at PdfProtect.js:131. That is the house pattern across every
+ * tool guide and is not this file's to fix; if it is ever addressed, the tool
+ * panel heading should be demoted across all tool components at once.
  */
 export default function PdfProtectSeoArticle() {
   return (
@@ -55,7 +67,7 @@ export default function PdfProtectSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 9 min read
         </span>
       </div>
 
@@ -66,9 +78,10 @@ export default function PdfProtectSeoArticle() {
       <p className="lead text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal mb-8">
         A PDF travels further than you ever intended. It gets forwarded, printed,
         dropped into a shared drive and attached to a reply you were never copied
-        on. The only thing that reliably interrupts that chain is a password on
-        the file itself. This guide covers how to{' '}
-        <strong>password protect a PDF</strong> in about thirty seconds, what an{' '}
+        on. A password on the file itself puts a door in the middle of that
+        chain: whoever ends up holding the document still has to know something
+        before they can read a word of it. This guide covers how to{' '}
+        <strong>password protect a PDF</strong>, what an{' '}
         <strong>open password</strong> and an <strong>owner password</strong>{' '}
         each control, which permissions you can switch off, and &mdash; just as
         important &mdash; what a <strong>locked PDF</strong> does not protect you
@@ -147,8 +160,10 @@ export default function PdfProtectSeoArticle() {
           >
             ISO 32000-1, the published PDF specification
           </a>{' '}
-          &mdash; which is why every mainstream reader on every platform
-          understands a file you lock here.
+          &mdash; so the lock you add here is the format&rsquo;s own standard
+          password security rather than anything proprietary, and the common
+          desktop and mobile readers prompt for the password rather than needing
+          something installed first.
         </p>
         <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -199,7 +214,7 @@ export default function PdfProtectSeoArticle() {
         </p>
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
-            ['Add your PDF', 'Drop a .pdf onto the panel or click to browse. One document at a time, and only .pdf is accepted — anything else is refused straight away rather than failing halfway through.'],
+            ['Add your PDF', 'Drop a .pdf onto the panel or click to browse. One document at a time, and only .pdf is accepted — anything with the wrong extension is turned away before you type a password.'],
             ['Set the password and rules', 'Type the password readers will need to open the file. Add a separate owner password if you want to, then tick the four permission switches to suit the document.'],
             ['Download the locked file', 'Press Encrypt & Protect. Your document arrives back named after the original with -protected on the end, so the locked copy never overwrites your working one.'],
           ].map(([title, body], i) => (
@@ -219,9 +234,19 @@ export default function PdfProtectSeoArticle() {
           That is the whole job. Nothing is stamped across the pages, no trial
           badge is appended, and there is no queue to sit in. The result is an
           ordinary PDF that happens to be locked, so it opens on a phone, a
-          laptop, a work machine or an e-reader with nothing to install. If you
-          need to <strong>password protect a PDF on a phone</strong>, the same
-          page does it &mdash; there is no separate app and no store detour.
+          laptop or a work machine with nothing to install. If you need to{' '}
+          <strong>password protect a PDF on a phone</strong>, the same page does
+          it &mdash; there is no separate app and no store detour.
+        </p>
+        <p>
+          The extension check is a name check, not an inspection of the contents,
+          so a file that is a PDF in name only &mdash; a renamed document, or a
+          download that was truncated on the way in &mdash; gets as far as the
+          password screen. When the document then turns out not to be readable,
+          the tool reports the error and stops. You get a message rather than a
+          broken download, which is the outcome that matters, but it is worth
+          knowing that a damaged file is caught at that point rather than at the
+          door.
         </p>
       </section>
 
@@ -272,7 +297,18 @@ export default function PdfProtectSeoArticle() {
             not a physical barrier, though: anyone determined enough can still
             photograph a page or retype a sentence. Treat restrictions as a clear
             statement of intent that stops honest accidents, and treat the open
-            password as the part that does the real work of keeping a file shut.
+            password as the part that actually keeps the file shut to a casual
+            recipient.
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-3">
+            Where the material would genuinely damage someone if it went astray,
+            do not let the password on the file be the only control standing
+            between it and the wrong reader. Send the document through a channel
+            you actually trust, keep the distribution list as short as the job
+            allows, and say plainly in the covering message that it is not to be
+            forwarded. A file password is one layer among several, and the
+            sensible way to use it is as the layer that stops an accident &mdash;
+            not as the reason you stopped thinking about the other layers.
           </p>
         </div>
       </section>
@@ -340,7 +376,7 @@ export default function PdfProtectSeoArticle() {
         <p>
           Plenty of people arrive at a page like this one searching for the
           opposite job, so it is fairer to say plainly what is out of scope than
-          to let you find out after uploading.
+          to let you find out halfway through.
         </p>
         <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -348,7 +384,7 @@ export default function PdfProtectSeoArticle() {
             <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
               <li>No password removal or unlocking</li>
               <li>No password recovery or cracking</li>
-              <li>An already-encrypted PDF is not a valid input</li>
+              <li>An already-locked PDF cannot be re-protected</li>
               <li>No way for us to open what you have locked</li>
             </ul>
           </div>
@@ -363,12 +399,25 @@ export default function PdfProtectSeoArticle() {
           </div>
         </div>
         <p>
-          The redaction point deserves a sentence of its own, because it catches
-          out serious organisations. Drawing a black box over a paragraph, or
-          covering it with a shape, hides it from your eyes and not from the file.
-          A password stops the wrong people opening the document; it does nothing
-          about sensitive text still sitting inside it. If a section must not
-          exist, delete the page with the{' '}
+          The third point on that first list needs spelling out, because it is
+          the one that costs people work. An{' '}
+          <strong>already-locked PDF cannot be re-protected</strong>, and the
+          tool does not stop you trying: feed one in and you will get a file back
+          that no password opens &mdash; not the password it already had, and not
+          the new one you just typed. Nothing about that copy can be undone
+          afterwards. So if you need to change the password on a protected
+          document, or change which permissions it carries, always start again
+          from the unprotected original and lock that. If the original is gone,
+          whoever locked the file in the first place is the only route back to a
+          version anyone can work with.
+        </p>
+        <p>
+          The redaction point deserves a sentence of its own too, because it
+          catches out serious organisations. Drawing a black box over a
+          paragraph, or covering it with a shape, hides it from your eyes and not
+          from the file. A password stops the wrong people opening the document;
+          it does nothing about sensitive text still sitting inside it. If a
+          section must not exist, delete the page with the{' '}
           <Link to="/tools/pdf-page-remover" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF page remover
           </Link>{' '}
@@ -388,8 +437,8 @@ export default function PdfProtectSeoArticle() {
         </h3>
         <p>
           Encryption is the final step, not the first. A locked PDF is a closed
-          box &mdash; no tool, ours or anyone else&rsquo;s, can merge it,
-          compress it, convert it or reorder it while it is shut. Do the shaping
+          box as far as these tools are concerned &mdash; none of them can merge,
+          compress, convert or reorder a file they cannot open. Do the shaping
           first and the locking afterwards, and you will never have to undo your
           own security to make one small change.
         </p>
@@ -423,7 +472,7 @@ export default function PdfProtectSeoArticle() {
             <Link to="/tools/pdf-compressor" className="text-orange-600 font-semibold underline hover:text-orange-700">
               PDF compressor
             </Link>
-            , since compression cannot run once the file is encrypted.
+            , since compression here cannot run once the file is encrypted.
           </li>
           <li>
             Then come back here and{' '}
@@ -433,9 +482,9 @@ export default function PdfProtectSeoArticle() {
         <p>
           This is also the answer to a question we get in a dozen phrasings:{' '}
           <em>why will your other tools not read my file?</em> If a document
-          refuses to load anywhere, check whether a password was put on it at some
-          earlier stage. Start again from the unprotected original, make the
-          changes, and lock the finished copy.
+          refuses to load anywhere on this site, check whether a password was put
+          on it at some earlier stage. Start again from the unprotected original,
+          make the changes, and lock the finished copy last.
         </p>
       </section>
 
@@ -457,7 +506,7 @@ export default function PdfProtectSeoArticle() {
             ['Real permission control', 'Printing, copying, modifying and annotating are four separate switches, not one blunt "secure" checkbox you cannot inspect.'],
             ['Your documents stay private', 'Files are never stored on our servers, never queued, never logged and never retained after your session.'],
             ['Nothing is used for training', 'Your documents are never fed into training data or analytics. A confidential file stays confidential by policy, not by luck.'],
-            ['No watermark, no size cap', 'The protected PDF comes back clean, with nothing stamped on the pages and no artificial ceiling on how large your document may be.'],
+            ['No watermark, no imposed limit', 'The protected PDF comes back clean, with nothing stamped across the pages, and there is no page count or file-size cap imposed as policy. Very large or image-heavy documents are the honest exception — heavy files are heavy work, and one may not get through.'],
             ['Your original is left alone', 'The lock is written to a new -protected.pdf copy, so you always keep an unencrypted master to work from.'],
           ].map(([title, body]) => (
             <div
@@ -504,15 +553,19 @@ export default function PdfProtectSeoArticle() {
             ],
             [
               'How do I stop people copying text or printing my PDF?',
-              'Untick "Allow copying text & graphics" and "Allow printing" before you lock the file. Those restrictions are carried inside the document and honoured by mainstream PDF readers. They stop casual reuse rather than a determined person with a camera, so pair them with a strong open password if the content is genuinely sensitive.',
+              'Untick "Allow copying text & graphics" and "Allow printing" before you lock the file. Those restrictions are carried inside the document and honoured by mainstream PDF readers. They stop casual reuse rather than a determined person with a camera, so treat them as a statement of intent and let the open password do the work of keeping the file shut.',
             ],
             [
               'Is it safe to password protect a confidential document here?',
-              'Your files are never stored on our servers, never queued or logged, and never retained after your session, and they are never used for training or analytics. Nothing you protect is kept. Send the password to your recipient through a different channel than the file itself.',
+              'Your files are never stored on our servers, never queued or logged, and never retained after your session, and they are never used for training or analytics. Nothing you protect is kept. Send the password to your recipient through a different channel than the file itself, and for material that would be damaging in the wrong hands keep the distribution list short rather than relying on the file password alone.',
+            ],
+            [
+              'Can I change the password on a PDF that is already protected?',
+              'Not by putting the locked file through this tool. An already-locked PDF is accepted rather than refused, but what comes back opens with neither the old password nor the new one, and that copy cannot be repaired. Go back to the unprotected original, lock it again with the password and permissions you now want, and keep that original safe for the next time the terms change.',
             ],
             [
               'Will a password protected PDF open on a phone or on someone else’s computer?',
-              'Yes. The lock uses the PDF format’s own standard password security, so mainstream readers on phones, tablets, laptops and e-readers all recognise it and simply ask your recipient for the password. Nothing special needs to be installed at the other end.',
+              'In the common readers, yes. The lock is the PDF format’s own standard password security, so mainstream desktop and mobile readers on phones, tablets and laptops recognise it and simply ask your recipient for the password, with nothing special to install at the other end. More limited viewers — some e-reader devices and lightweight in-app previewers among them — may decline to open a protected file at all rather than prompting, so if your recipient reads on a device like that, expect to send the unlocked document by another route.',
             ],
           ].map(([q, a]) => (
             <div key={q}>

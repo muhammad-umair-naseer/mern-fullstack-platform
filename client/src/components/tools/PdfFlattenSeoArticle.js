@@ -20,34 +20,38 @@ import {
  * Same shape as PdfWordSeoArticle: H2 under the page's H1, anchored table of
  * contents, H3 sections, six benefit cards, FAQ, closing link block.
  *
- * Three decisions shaped the copy, and they matter if anyone edits it later.
+ * The copy is written against what PdfFlatten.js actually does. Read that file
+ * before editing a word of this one, because several obvious-sounding claims
+ * are false for this implementation:
  *
- * First, the tool has three switches, not one, and the article is organised
- * around them: flatten form fields, flatten annotations and markup, or keep
- * the fields as form objects and mark them read-only. Most of the search
- * traffic here ("make pdf uneditable", "flatten pdf form") is really one of
- * those three jobs described in the searcher's own words, so section 4 maps
- * the phrasing onto the switch rather than assuming the reader knows the
- * vocabulary.
+ *   - The "Annotations & Markup Layers" switch rebuilds each page with
+ *     embedPdf() + drawPage(). pdf-lib's PDFPageEmbedder copies only Contents
+ *     and Resources into the form XObject; /Annots is never read. So that
+ *     option DELETES highlights, sticky notes, stamps and ink markup rather
+ *     than baking them in. Filled field values survive only when the form
+ *     switch ran first, because form.flatten() pushes the widget appearance
+ *     XObjects into the page content stream before the rebuild happens.
+ *     Never describe this option as preserving markup.
+ *   - The read-only lock (option 3) is destroyed by that same rebuild:
+ *     finalDoc = flattenedDoc has no AcroForm, so the fields and their values
+ *     both vanish unless the annotations switch is off. The dependency is
+ *     stated explicitly in the card.
+ *   - The page-range control is dead code: both branches of the
+ *     targetIndices check call the identical drawPage(). Section 5 says so.
+ *   - Rotation set by the rotate tool lives in /Rotate. The rebuild sizes
+ *     pages from getSize() (MediaBox) and writes no /Rotate, so rotating
+ *     before flattening loses the rotation. The advice is flatten first.
+ *   - Both loads pass ignoreEncryption: true, so an encrypted file produces
+ *     unusable output with no warning. Never promise a graceful failure.
  *
- * Second, two high-volume keywords are deliberately NOT promised.
- *   - "redact pdf" / "black out text in pdf". Flattening bakes an annotation's
- *     appearance into fixed page content; it does not delete the characters
- *     underneath, and the text stays selectable. Promising redaction here
- *     would be a data-leak waiting to happen, so section 6 answers the
- *     question honestly and sends the reader elsewhere instead.
- *   - "flatten only pages 3-5". The page-range control exists in the panel,
- *     but form flattening is a whole-document operation and the rebuilt output
- *     is fixed throughout, so section 5 tells people to split, flatten and
- *     merge if they genuinely need a partly interactive file. Answering the
- *     question beats ranking for a promise the output does not keep.
- *   - "flatten pdf to reduce file size" is also declined: nothing in the tool
- *     compresses, and flattening can make a file larger. The compressor is
- *     linked instead.
+ * Keywords deliberately NOT promised: "flatten pdf comments/annotations" (the
+ * tool removes them), "redact pdf" (nothing is removed from the text layer and
+ * the covering markup is not even kept), "flatten only pages 3-5" (inert
+ * control), "flatten pdf to reduce file size" (nothing compresses). Each is
+ * answered honestly in its section instead of being sold.
  *
- * Third, privacy is sold as an outcome only — files are not stored, not
- * queued, not retained, not used for training. How that is achieved is
- * deliberately absent from the page.
+ * Privacy is sold as an outcome only — files are not stored, not queued, not
+ * retained, not used for training. How that is achieved is deliberately absent.
  */
 export default function PdfFlattenSeoArticle() {
   return (
@@ -63,20 +67,21 @@ export default function PdfFlattenSeoArticle() {
       </div>
 
       <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight not-prose mb-4">
-        How to <span className="text-orange-600 dark:text-orange-400">Flatten a PDF</span>: Lock Forms, Comments and Markup Into Fixed Pages
+        How to <span className="text-orange-600 dark:text-orange-400">Flatten a PDF</span>: Lock Filled Form Fields Into Fixed Pages
       </h2>
 
       <p className="lead text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal mb-8">
         You filled in the form, saved it, emailed it &mdash; and the person at
-        the other end opened a blank one. Or your reviewer&rsquo;s comments
-        drifted, or the signature vanished on print. All of that is one problem
-        wearing different hats: parts of your document are still <em>live</em>
-        rather than printed onto the page. To <strong>flatten a PDF</strong> is
-        to bake those live parts into fixed page content so what you see is what
-        everybody sees. This guide covers how to{' '}
-        <strong>flatten a PDF online free</strong>, which switch to use to{' '}
-        <strong>make a PDF uneditable</strong>, and the one thing flattening is
-        very often mistaken for.
+        the other end opened a blank one. Or the figures in your quote were
+        still typeable when they arrived, so nothing about the total was
+        final. Both are the same problem wearing different hats: your answers
+        are still <em>live</em> field data rather than printed onto the page.
+        To <strong>flatten a PDF</strong> is to bake those values into fixed
+        page content so what you see is what everybody sees. This guide covers
+        how to <strong>flatten a PDF online free</strong>, which switch to use
+        to <strong>make a PDF uneditable</strong>, exactly what this tool does
+        not carry across, and the one thing flattening is very often mistaken
+        for.
       </p>
 
       {/* Featured WebP banner. Hides itself if the asset is missing rather than
@@ -85,7 +90,7 @@ export default function PdfFlattenSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/flatten-pdf.webp"
-            alt="Flatten a PDF online free - PDF flattener baking interactive form fields, comments and markup layers into fixed page content"
+            alt="Flatten a PDF online free - PDF flattener baking filled interactive form fields into fixed page content"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"
@@ -96,8 +101,8 @@ export default function PdfFlattenSeoArticle() {
           />
           <div className="p-4 bg-slate-900/90 border-t border-slate-800 text-center text-xs text-slate-400">
             <span>
-              From a live, editable form to a fixed page: flatten fields,
-              annotations and markup into content that travels intact.
+              From a live, editable form to a fixed page: filled answers become
+              page content that travels intact.
             </span>
           </div>
         </div>
@@ -159,17 +164,25 @@ export default function PdfFlattenSeoArticle() {
         </p>
         <p>
           That freedom is the source of nearly every complaint about shared
-          PDFs. When you <strong>flatten a PDF</strong>, the floating layer stops
-          floating: form values and markup become part of the fixed page content
-          instead of objects sitting on top of it. The result is a document
-          whose appearance no longer depends on which reader opens it, and whose
-          fields nobody can type over. In everyday language, this is how you{' '}
-          <strong>make a PDF uneditable</strong> and how you{' '}
-          <strong>flatten a PDF form</strong> so the answers stay put.
+          forms. When you <strong>flatten a PDF form</strong> here, the values
+          you typed stop floating: they are written into the fixed page content
+          and the fields themselves are removed. The result is a document whose
+          answers appear the same in every reader, and that nobody can type
+          over. In everyday language, this is how you{' '}
+          <strong>make a PDF uneditable</strong> so the answers stay put.
         </p>
         <p>
-          The tool at the top of this page does exactly that, and it lets you
-          choose which parts of the stack to press down.
+          One thing to be straight about from the start, because it decides
+          whether this is the right tool for your file. The second switch,{' '}
+          <em>Annotations &amp; Markup Layers</em>, does not fold markup into
+          the page. It rebuilds each page from the page content alone, so the
+          file you download contains that content and nothing else. Comments,
+          highlights, sticky notes, stamps and drawn ink are separate objects,
+          and they are not carried into the rebuilt document. If your file
+          carries review markup you need to keep,{' '}
+          <strong>leave that switch off</strong> &mdash; section 4 explains
+          what each switch is genuinely for, and section 2 covers what to do
+          about markup instead.
         </p>
       </section>
 
@@ -182,7 +195,7 @@ export default function PdfFlattenSeoArticle() {
         <p>
           Most people looking for a <strong>PDF flattener</strong> do not arrive
           knowing the word. They arrive with a symptom. If any of these sound
-          familiar, flattening is the fix:
+          familiar, flattening the form fields is the fix:
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
@@ -195,26 +208,56 @@ export default function PdfFlattenSeoArticle() {
             your answers. Some print paths render page content only.
           </li>
           <li>
-            <strong>Comments and highlights shift or disappear</strong> when a
-            reviewed document moves between apps.
-          </li>
-          <li>
             <strong>Someone changed your numbers.</strong> An invoice or a quote
             went out with fields that were still typeable, so the total was not
             actually final.
           </li>
           <li>
-            <strong>A stamp or drawn signature does not survive</strong> the trip
-            to the other side.
+            <strong>A signature field looks filled on your screen</strong> but
+            not on theirs. A signature <em>widget</em> is a form field, so
+            flattening the fields writes its appearance into the page for good.
+          </li>
+          <li>
+            <strong>A reviewer keeps editing the copy you sent.</strong> Once
+            the fields are gone there is nothing left to type into, so the
+            version you circulated is the version that stays.
           </li>
         </ul>
         <p>
           The searches behind these read like{' '}
           <em>&ldquo;pdf form shows blank when emailed&rdquo;</em>,{' '}
           <em>&ldquo;stop people editing my pdf&rdquo;</em> or{' '}
-          <em>&ldquo;merge comments into pdf&rdquo;</em>. Every one of them ends
-          at the same operation: <strong>flatten PDF annotations</strong> and
-          form fields into fixed content, then send that file instead.
+          <em>&ldquo;flatten filled pdf form&rdquo;</em>. Every one of them ends
+          at the same operation: write the field values into fixed page content,
+          then send that file instead.
+        </p>
+        <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
+          If your symptom is about comments and markup, read this first
+        </h4>
+        <p>
+          A different crowd arrives searching{' '}
+          <em>&ldquo;merge comments into pdf&rdquo;</em> or{' '}
+          <em>&ldquo;flatten pdf annotations&rdquo;</em>, usually because
+          highlights drifted or a stamp did not survive a trip between apps.
+          That is a real problem, but this tool is not its answer, and it is
+          worth saying so before you run a contract through it. Nothing here
+          converts a comment, a highlight, a stamp or a drawn note into page
+          content. The markup switch discards those objects instead, so a
+          reviewed document comes back clean of them.
+        </p>
+        <p>
+          If the markup has to survive, the dependable route is to export a
+          fixed copy from whichever app you added the comments in &mdash; most
+          readers and review tools have a print-to-PDF or &ldquo;export with
+          markup&rdquo; path that renders annotations into the page. Failing
+          that, turning the pages into images with the{' '}
+          <Link to="/tools/pdf-jpg" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF to JPG converter
+          </Link>{' '}
+          and rebuilding from those images gives you a page that cannot lose
+          anything it is already showing. Check the exported image actually
+          contains your markup before you rely on it, and keep the original
+          either way.
         </p>
       </section>
 
@@ -231,7 +274,7 @@ export default function PdfFlattenSeoArticle() {
         </p>
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
-            ['Select your PDF', 'Drop a .pdf onto the panel or click to browse. Anything that is not a PDF is turned away with a plain message rather than a mystery failure.'],
+            ['Select your PDF', 'Drop a .pdf onto the panel or click to browse. A file that is not named .pdf is turned away straight away with a plain message.'],
             ['Read the inspection', 'The tool reports the page count, the file size and how many interactive form fields it found, so you know what you are dealing with before you commit.'],
             ['Choose and flatten', 'Tick what should become uneditable, press flatten, and download the finished file. It saves as your original name with -flattened added.'],
           ].map(([title, body], i) => (
@@ -248,13 +291,19 @@ export default function PdfFlattenSeoArticle() {
           ))}
         </div>
         <p>
-          The inspection step is worth a second of attention. If it reports{' '}
-          <em>no interactive form fields</em>, your document is not a fillable
-          form &mdash; it is ordinary pages with annotations or markup, and the
-          second switch is the one that matters. If it counts fields, you have a
-          real <strong>fillable PDF</strong> and the first switch is yours.
-          Output is a single PDF, with no watermark and no cap on how many
-          documents you run.
+          The inspection step is worth a second of attention, because it tells
+          you whether the main switch has anything to act on. If it counts
+          fields, you have a real <strong>fillable PDF</strong> and the form
+          switch is yours. If it reports <em>no interactive form fields</em>,
+          your document is not a fillable form, and ticking the form switch will
+          not change it &mdash; there is nothing to bake in, so the file comes
+          back as it went in. Output is a single PDF, with no watermark and no
+          cap on how many documents you run.
+        </p>
+        <p>
+          One caveat on what you feed it. A password-protected PDF is not
+          supported, and it does not announce itself &mdash; see section 6
+          before you try one.
         </p>
       </section>
 
@@ -265,9 +314,10 @@ export default function PdfFlattenSeoArticle() {
           4. Choosing What to Flatten: Forms, Markup or a Read-Only Lock
         </h3>
         <p>
-          Most tools give you one button. This one gives you three choices,
-          because &ldquo;make it uneditable&rdquo; means three different things
-          depending on what is in the file.
+          Most tools give you one button. This one gives you three switches, and
+          they do genuinely different things &mdash; different enough that the
+          wrong combination can cost you content. Read the three cards before
+          you tick.
         </p>
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -275,10 +325,12 @@ export default function PdfFlattenSeoArticle() {
               <Check className="w-5 h-5 text-orange-500 shrink-0" /> Interactive form fields
             </h4>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Bakes text boxes, checkboxes, radio buttons and signature widgets
-              into the page. The typed answers stay visible; the boxes stop
-              being typeable. This is the switch for{' '}
-              <strong>flatten a filled PDF form</strong>.
+              Writes the current value of every text box, checkbox, radio button
+              and signature widget into the page, then removes the fields
+              themselves. The typed answers stay visible; the boxes stop being
+              typeable. This is the switch for{' '}
+              <strong>flatten a filled PDF form</strong>, and it is the one most
+              people came for. It does nothing if the file has no fields.
             </p>
           </div>
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -286,10 +338,12 @@ export default function PdfFlattenSeoArticle() {
               <MessageSquare className="w-5 h-5 text-orange-500 shrink-0" /> Annotations &amp; markup layers
             </h4>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Rebuilds every page as fixed content so highlights, stamps,
-              comments and drawn notes are part of the page rather than objects
-              hovering over it. This is <strong>flatten PDF layers</strong> in
-              the sense most reviewers mean it.
+              Rebuilds every page from its page content, producing a document
+              that holds that content and nothing else. Understand what that
+              means before ticking it: comments, highlights, sticky notes,
+              stamps, drawn ink, link areas and bookmarks are separate objects,
+              and they are <strong>not</strong> carried into the rebuilt file.
+              Leave it off if your document carries markup worth keeping.
             </p>
           </div>
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -297,10 +351,15 @@ export default function PdfFlattenSeoArticle() {
               <Lock className="w-5 h-5 text-amber-500 shrink-0" /> Lock as read-only
             </h4>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Offered when a form is detected and you have turned field
-              flattening off. Fields stay real form objects &mdash; keeping their
-              names and structure for systems that read them &mdash; but are
-              marked read-only so the values cannot be altered.
+              Appears when a form is detected and you have turned field
+              flattening off. Fields stay real form objects, keeping their names
+              and structure for systems that read them, but are marked read-only
+              so the values cannot be altered.{' '}
+              <strong>
+                Untick &ldquo;Annotations &amp; Markup Layers&rdquo; as well
+              </strong>{' '}
+              &mdash; the rebuild that switch performs removes the form
+              entirely, taking the field names and the filled values with it.
             </p>
           </div>
         </div>
@@ -309,13 +368,23 @@ export default function PdfFlattenSeoArticle() {
         </h4>
         <p>
           Sending a finished, filled form to a client, a landlord or a
-          university? Flatten the fields. Circulating a reviewed draft whose
-          markup must arrive exactly as drawn? Flatten the annotations. If a
-          downstream system still needs to read the field names but nobody
-          should change what is in them, use the read-only lock instead.
-          Ticking both of the first two is the common case, and is what the
-          tool starts with. The button stays disabled until at least one choice
-          is made, so you never download a copy identical to the original.
+          university? Tick the form fields switch and untick the markup one.
+          That combination is the safest default for the common job: your
+          answers become permanent page content, and anything else the document
+          carries &mdash; bookmarks, clickable links, review notes &mdash; is
+          left alone. If a downstream system still needs to read the field
+          names but nobody should change what is in them, use the read-only
+          lock instead, with the markup switch off.
+        </p>
+        <p>
+          Both of the first two switches start ticked. That default suits a
+          plain filled form with no markup and no links, and it costs you
+          something on any other file, so it is worth a deliberate second of
+          thought rather than a straight run. The flatten button is enabled as
+          soon as any one switch is on, which is not the same as those settings
+          having an effect on your particular document &mdash; on a file with no
+          form fields and the markup switch off, there is nothing for the tool
+          to change.
         </p>
         <p>
           Going the other direction? If you need to <em>create</em> the fields
@@ -335,11 +404,12 @@ export default function PdfFlattenSeoArticle() {
         </h3>
         <p>
           The panel includes a page selection control &mdash; all pages, or a
-          custom range typed as <code>1-3, 5</code>. It is worth being straight
-          about what to expect from it. Treat the flattened file as fixed
-          throughout: form flattening is document-wide by the nature of a PDF
-          form, because fields belong to the document rather than to a page, so
-          freezing them freezes them everywhere.
+          custom range typed as <code>1-3, 5</code>. Here is the honest position
+          on it: <strong>it does not currently change the output</strong>. The
+          range you type produces the same file as leaving it on all pages, for
+          every document, whether or not it contains form fields. Treat the
+          result as flattened throughout and ignore the control until it earns
+          its place.
         </p>
         <p>
           If you genuinely need a file where some pages stay interactive and
@@ -367,15 +437,25 @@ export default function PdfFlattenSeoArticle() {
           </li>
         </ol>
         <p>
-          Two more expectations worth setting. Bookmarks and clickable links are
-          themselves interactive objects, so a flattened document is a document
-          without them &mdash; that is the trade you are making for a page that
-          renders identically everywhere. And if a page arrives with an odd
-          orientation, straighten it with the{' '}
+          Worth remembering that a PDF form is a document-level structure rather
+          than a per-page one, so even a working range would not let you freeze
+          the fields on page two and leave page three fillable. Splitting first
+          is the reliable answer to that request in any tool.
+        </p>
+        <p>
+          Two more expectations worth setting, both tied to the markup switch.
+          Bookmarks and clickable links are themselves interactive objects, so
+          the rebuild that switch performs returns a document without them
+          &mdash; that is the trade you make for it, and it is another reason to
+          leave the switch off when you only need the fields frozen. And if a
+          page arrives with an odd orientation,{' '}
+          <strong>flatten first and straighten afterwards</strong> with the{' '}
           <Link to="/tools/pdf-rotate" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF rotate tool
-          </Link>{' '}
-          before you flatten, not after.
+          </Link>
+          , not the other way round. A rotation applied before flattening is not
+          preserved by the rebuild, and the page comes back at its original
+          orientation.
         </p>
       </section>
 
@@ -393,12 +473,16 @@ export default function PdfFlattenSeoArticle() {
           Flattening is not redaction
         </h4>
         <p>
-          If you draw a black box over a name and flatten the file, the black
-          box becomes permanent page content &mdash; and the name underneath is
-          still there in the document&rsquo;s text, still selectable, still
-          copyable by anyone who tries. <strong>Flattening hides nothing.</strong>{' '}
-          It fixes appearance, not secrecy. To genuinely remove sensitive
-          content, delete the pages that carry it with the{' '}
+          Suppose you draw a black box over a name and flatten the file. Two
+          things go wrong, and the second is worse than most people expect.
+          First, flattening never touches the text layer, so the name is still
+          in the document, still selectable and still copyable. Second, the box
+          you drew is markup, and the markup switch does not preserve markup
+          &mdash; so the box is not in the file you download at all. The page
+          comes back with the name sitting there in the open, uncovered.{' '}
+          <strong>Flattening hides nothing, and here it uncovers.</strong> Never
+          use it as a redaction step. To genuinely remove sensitive content,
+          delete the pages that carry it with the{' '}
           <Link to="/tools/pdf-page-remover" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF page remover
           </Link>
@@ -406,7 +490,9 @@ export default function PdfFlattenSeoArticle() {
           <Link to="/tools/pdf-jpg" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF to JPG converter
           </Link>{' '}
-          and rebuilding from images.
+          and rebuilding from images &mdash; then open the result and confirm
+          with your own eyes that the content is gone before it leaves your
+          hands.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           Flattening is not a password
@@ -414,20 +500,23 @@ export default function PdfFlattenSeoArticle() {
         <p>
           A flattened PDF cannot be typed into, but anyone can still open, copy
           and forward it. If the requirement is{' '}
-          <strong>stop people editing a PDF</strong> in the access-control sense,
-          add a password with the{' '}
+          <strong>stop people editing a PDF</strong> in the access-control
+          sense, add a password with the{' '}
           <Link to="/tools/pdf-protect" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF protect tool
           </Link>{' '}
-          as well: flatten first, protect second. A document already locked with
-          a password may not open here at all &mdash; if it fails, the tool says
-          so plainly rather than handing you a broken file.
+          as well: flatten first, protect second. That order matters, because a
+          document that <em>already</em> carries a password is not supported
+          here and will not tell you so. It does not refuse the file and it does
+          not raise an error &mdash; it runs, and hands you an output that your
+          reader is likely to be unable to open. Remove the password first,
+          wherever the file was protected, then flatten the unlocked copy.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           Flattening is not signing, and does not shrink files
         </h4>
         <p>
-          Baking a drawn signature into the page keeps its <em>picture</em>; it
+          Baking a signature field into the page keeps its <em>picture</em>; it
           does not create a cryptographic digital signature, and flattening a
           document that already carries one will invalidate it. Nor is
           flattening a compression step &mdash; a flattened file is sometimes
@@ -452,12 +541,12 @@ export default function PdfFlattenSeoArticle() {
         </p>
         <div className="grid sm:grid-cols-2 gap-5 not-prose my-6">
           {[
-            ['Granular control, not one button', 'Flatten form fields, flatten annotations and markup, or lock fields read-only. You decide which layer stops being editable.'],
-            ['It inspects before it acts', 'Page count, file size and the number of interactive fields are reported up front, so you know whether you have a form or just markup.'],
+            ['Switches, not one blind button', 'Flatten the form fields, rebuild the pages, or lock fields read-only. You decide which part of the document stops being editable, and you are told what each choice costs.'],
+            ['It inspects before it acts', 'Page count, file size and the number of interactive fields are reported up front, so you know whether you have a real form or ordinary pages before you commit.'],
             ['Genuinely free, with no trial', 'No account, no email address, no credit card and no countdown. The tool you are using is the whole product.'],
             ['No watermark and no size limit', 'A flattened contract comes out clean, at any page count, as many times as you need.'],
             ['Your documents stay private', 'Files are never stored on our servers, never retained after your session, and never used for training or analytics.'],
-            ['An honest account of the result', 'We tell you that flattening is not redaction and not encryption before you rely on it, rather than after something goes out.'],
+            ['An honest account of the result', 'We tell you what this tool does not keep, that flattening is not redaction, and that an encrypted file will not work here — before you rely on it, rather than after something goes out.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -472,12 +561,15 @@ export default function PdfFlattenSeoArticle() {
           ))}
         </div>
         <p>
-          It sits inside a wider set of{' '}
+          The last card is the one we would defend hardest. A flattener that
+          quietly drops something you needed is worse than one that refuses the
+          job, so this page tells you where the edges are. It sits inside a
+          wider set of{' '}
           <Link to="/tools" className="text-orange-600 font-semibold underline hover:text-orange-700">
             free document tools
           </Link>{' '}
           built on the same terms, and it works on a phone as readily as on a
-          laptop &mdash; there is nothing to install and nothing to sign up for.
+          laptop, with nothing to install and nothing to sign up for.
         </p>
       </section>
 
@@ -491,23 +583,31 @@ export default function PdfFlattenSeoArticle() {
           {[
             [
               'How do I flatten a PDF for free without an account?',
-              'Open the tool at the top of this page, select your .pdf, tick whether you want form fields, annotations or both made uneditable, and download the result. There is no sign-up, no email verification, no watermark and no daily limit. The file saves as your original name with -flattened added.',
+              'Open the tool at the top of this page, select your .pdf, tick the switches for what should become uneditable, and download the result. There is no sign-up, no email verification, no watermark and no daily limit. The file saves as your original name with -flattened added.',
             ],
             [
               'Why does my filled PDF form look blank when I send it?',
-              'Because the answers are still live field values sitting above the page rather than part of it, and the recipient’s reader is not drawing them. Flattening the form fields writes those values into the page content, so the document looks the same to everyone who opens or prints it.',
+              'Because the answers are still live field values sitting above the page rather than part of it, and the recipient’s reader is not drawing them. Flattening the form fields writes those values into the page content and removes the fields, so the document looks the same to everyone who opens or prints it.',
+            ],
+            [
+              'Does this tool merge comments and highlights into the page?',
+              'No, and this is the most important thing to know before running a reviewed document through it. The annotations and markup option rebuilds each page from the page content alone, so comments, highlights, sticky notes, stamps and drawn ink are not carried into the file you download. If you need markup preserved, leave that switch off and export a fixed copy from the app you commented in, or turn the pages into images and rebuild from those.',
             ],
             [
               'Does flattening a PDF make the text uneditable?',
-              'It makes the interactive parts uneditable: form fields can no longer be typed into and markup can no longer be moved or deleted. The underlying page text is still text, so it remains selectable and searchable. That is a feature for accessibility and search, but it means flattening is not a way to hide anything.',
+              'It makes the interactive parts uneditable: form fields can no longer be typed into, because they are no longer there. The underlying page text is still text, so it remains selectable and searchable. That is a feature for accessibility and search, but it means flattening is not a way to hide anything.',
             ],
             [
               'Is flattening the same as redacting a PDF?',
-              'No, and this is the one that catches people out. A black box drawn over a name and then flattened is a permanent black box with the name still readable underneath in the document’s text. Use page removal or an image-based rebuild if content genuinely has to be gone.',
+              'No, and this one catches people out badly. Flattening does not remove the text under a black box — and the box itself, being markup, is not preserved either, so you can end up with the name fully visible and nothing covering it. Use page removal or an image-based rebuild if content genuinely has to be gone, and check the output yourself before sending it.',
             ],
             [
               'Can I flatten only certain pages of a PDF?',
-              'Treat the output as fixed across the whole document — form fields belong to the document rather than to individual pages, so freezing them freezes them everywhere. If you need part of a file interactive, split it, flatten the piece that should be frozen, and merge the two back together.',
+              'Not at the moment. The page range control is in the panel but it does not change the output — the file comes back flattened throughout whatever you type. If you need part of a document to stay interactive, split it, flatten the piece that should be frozen, and merge the two back together.',
+            ],
+            [
+              'Why did my rotated pages come back the wrong way round?',
+              'Because a rotation is stored as a page property, and the rebuild that the markup switch performs does not carry it over. Flatten first and rotate afterwards, and the orientation sticks.',
             ],
             [
               'Are my documents safe when I flatten them?',
@@ -541,12 +641,12 @@ export default function PdfFlattenSeoArticle() {
           <Link to="/tools/pdf-compressor" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF compressor
           </Link>
-          . If you would rather understand how document processing works than
-          simply use it, our free{' '}
+          . If you would rather understand document work than simply use it, our
+          free{' '}
           <Link to="/learn/full-stack-web" className="text-orange-600 font-semibold underline hover:text-orange-700">
             full-stack web development course
           </Link>{' '}
-          covers the file and document APIs behind tools like this one.
+          covers how document formats and file handling work.
         </p>
       </div>
     </article>
