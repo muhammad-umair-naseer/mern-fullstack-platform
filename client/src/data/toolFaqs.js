@@ -248,6 +248,36 @@ const TOOL_FAQS = {
       a: "There is no page limit, no size cap and no daily quota; a very long document simply takes longer to render its previews. Your files are not stored on our servers, not retained after your session, and never used for training or analytics.",
     },
   ],
+  'pdf-jpg': [
+    {
+      q: "How do I convert a PDF to JPG for free without an account?",
+      a: "Drop your PDF into the panel at the top of this page, set the quality and resolution if you want to, and download the zip. There is no sign-up, no email step and no watermark on the images. It is free every time, not free for the first few files.",
+    },
+    {
+      q: "Why did I get a zip file instead of a JPG?",
+      a: "Because one JPG can only hold one page, so a document always produces a set of images. They are bundled into a single zip named after your PDF so a long document does not trigger dozens of separate downloads. Double-click it to open — Windows, macOS, Android and iOS all handle zip files without extra software.",
+    },
+    {
+      q: "How do I get sharper images out of a PDF?",
+      a: "Raise the resolution scale, not the JPEG quality. Scale decides how large the page is drawn before it is saved, so it is what controls sharpness. Quality only decides how hard the finished image is compressed. A high quality setting on a low scale gives you a big file that still looks soft.",
+    },
+    {
+      q: "Can I convert a PDF to PNG instead of JPG?",
+      a: "Not with this tool — it writes JPG. Use our PDF to PNG, WebP, TIFF, BMP and GIF exporter for other formats. Choose PNG when you need sharp edges on text and diagrams, and JPG when you need smaller files for photographs.",
+    },
+    {
+      q: "How do I turn several JPG photos into one PDF?",
+      a: "Use the second panel on this page. Add your images in the order you want them, and they become one PDF with a page per image. JPG, PNG and WebP are all accepted, and PNG transparency is preserved.",
+    },
+    {
+      q: "Why are the pages different sizes when I convert JPG to PDF?",
+      a: "Each page is created to match the exact dimensions of the image it contains, so a portrait phone photo makes a tall page and a wide screenshot makes a short one. Nothing is fitted to A4 and no margin is added. If you need uniform paper for printing, run the PDF through our page resizer afterwards and pick A4 or Letter.",
+    },
+    {
+      q: "Is there a limit on how many pages I can convert?",
+      a: "No. There is no page cap, no file size limit and no daily quota. A long document simply takes longer to work through than a short one.",
+    },
+  ],
   'pdf-organizer': [
     {
       q: "How do I organize PDF pages for free without a paid PDF editor?",

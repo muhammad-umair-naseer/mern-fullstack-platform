@@ -78,6 +78,35 @@ export async function convertPdfToJpg(file, options = {}, onProgress, signal) {
   };
 }
 
+/**
+ * Repaint an image the PDF format cannot carry directly into PNG bytes.
+ *
+ * PDF supports JPEG and PNG image streams only. WebP, and anything else the
+ * picker lets through, has to be decoded and re-encoded before it can be
+ * embedded. PNG is the target rather than JPEG so an image with transparency
+ * keeps it.
+ */
+async function toPngBytes(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error(`Could not read ${file.name}. Try a JPG or PNG.`));
+      el.src = url;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) throw new Error(`Could not convert ${file.name}. Try a JPG or PNG.`);
+    return await blob.arrayBuffer();
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 export async function convertJpgToPdf(imageFiles, onProgress, signal) {
   if (!imageFiles || imageFiles.length === 0) {
     throw new Error('Please select at least one image file.');
@@ -95,15 +124,20 @@ export async function convertJpgToPdf(imageFiles, onProgress, signal) {
     onProgress?.({ progress: pct, message: `Embedding image ${i + 1} of ${imageFiles.length} (${file.name})…` });
     await yieldToMain();
 
-    const bytes = await file.arrayBuffer();
     const isPng = /\.png$/i.test(file.name) || file.type === 'image/png';
+    const isJpeg = /\.jpe?g$/i.test(file.name) || file.type === 'image/jpeg';
 
     let embedded;
     if (isPng) {
-      embedded = await doc.embedPng(bytes);
+      embedded = await doc.embedPng(await file.arrayBuffer());
+    } else if (isJpeg) {
+      embedded = await doc.embedJpg(await file.arrayBuffer());
     } else {
-      // JPEG / JPG
-      embedded = await doc.embedJpg(bytes);
+      // Anything else the picker accepts — WebP in particular. A PDF can only
+      // carry JPEG or PNG image data, so the file is repainted onto a canvas
+      // and re-encoded as PNG first. Without this a .webp reached embedJpg and
+      // threw a raw parser error, even though the file input advertises it.
+      embedded = await doc.embedPng(await toPngBytes(file));
     }
 
     const { width, height } = embedded.scale(1);

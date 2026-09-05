@@ -420,3 +420,73 @@ main,
     color: #1e293b !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Dark panels
+   --------------------------------------------------------------------------
+   Every rule above forces text dark because it assumes a white ground. The
+   tool pages break that assumption: each opens with a bg-slate-900 banner
+   carrying a heading and a subtitle, and 23 of them were rendering near-black
+   text on near-black. The h1..h6 rule and the .text-slate-400 rule are both
+   !important, so inheriting `text-white` from the banner never had a chance.
+
+   The :not() guard matters. A first attempt selected [class*="bg-slate-9"]
+   alone, which also matches `dark:bg-slate-900/80` — a panel that is WHITE in
+   light mode and only goes dark under a media query. That inverted the bug on
+   the QR generator and the PNG compressor: white text on white, 1.05:1.
+   Excluding anything that also carries a light background class keeps this to
+   panels that really are dark in both modes.
+
+   Scoped by background class rather than by component, so a new tool built to
+   the same pattern is correct without anyone remembering this file exists.
+   -------------------------------------------------------------------------- */
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h1,
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h2,
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h3,
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h4,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h1,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h2,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h3,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h4 {
+  color: #f8fafc !important;
+}
+
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) p,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) p {
+  color: #cbd5e1 !important;
+}
+
+/* The muted utilities, restored to something legible on a dark ground
+   rather than the #334155 the global rule pins them to. */
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-300,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-400,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-500,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+/* Accent text inside dark panels keeps its own hue — these are already
+   chosen for a dark ground and the global rules were flattening them. */
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-white,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-white {
+  color: #ffffff !important;
+}
+
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-orange-400,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-orange-400 {
+  color: #fb923c !important;
+}
+
+[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-emerald-400,
+[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-emerald-400 {
+  color: #34d399 !important;
+}
+
