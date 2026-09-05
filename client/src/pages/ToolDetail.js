@@ -2,9 +2,10 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY, isImplemented } from '../data/tools';
 import { toolSeo } from '../data/toolSeo';
+import { toolFaqs } from '../data/toolFaqs';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import Seo from '../seo/Seo';
-import { breadcrumbs, softwareApplication } from '../seo/schema';
+import { breadcrumbs, softwareApplication, faq } from '../seo/schema';
 import PdfCompressor from '../components/tools/PdfCompressor';
 import PdfMerger from '../components/tools/PdfMerger';
 import PdfWord from '../components/tools/PdfWord';
@@ -65,6 +66,10 @@ export default function ToolDetail() {
   // isLive flag, which is true for every tool in the catalogue.
   const live = isImplemented(tool.slug);
   const seo = toolSeo(tool.slug);
+  // Only emit FAQPage markup where the guide is actually on the page. Google
+  // treats structured data describing content a visitor cannot see as a
+  // violation, and an unbuilt tool renders no guide.
+  const faqs = live ? toolFaqs(tool.slug) : [];
 
   const renderToolComponent = () => {
     switch (tool.slug) {
@@ -179,6 +184,7 @@ export default function ToolDetail() {
           ]),
           // Only claim to be an application once the tool actually runs.
           ...(live ? [softwareApplication(tool, category.label)] : []),
+          ...(faqs.length ? [faq(faqs)] : []),
         ]}
       />
       {/* Header Banner */}
