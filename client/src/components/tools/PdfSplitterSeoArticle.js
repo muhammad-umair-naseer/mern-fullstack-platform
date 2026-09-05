@@ -22,7 +22,7 @@ import {
  * block. If you edit this, keep that rhythm — the tool pages are meant to read
  * as one series.
  *
- * Three decisions drove the copy, and all three are about not overpromising.
+ * Five decisions drove the copy, and all five are about not overpromising.
  *
  * 1. The splitter has exactly three modes: every page, every N pages, and
  *    comma-separated custom ranges. It has no other axis. So "split pdf by
@@ -42,6 +42,17 @@ import {
  *    not unlock anything. Section 7 says so, and points at the protect tool for
  *    the opposite job rather than implying a password remover exists here.
  *
+ * 4. splitPdf builds each output with PDFDocument.create() + copyPages(), which
+ *    carries the page tree and nothing else. Bookmarks/outline, AcroForm field
+ *    definitions and source metadata do NOT survive into the pieces. Sections 1
+ *    and 5 say so plainly, because a reader who splits a fillable form and
+ *    discovers dead fields afterwards is a complaint we chose to pre-empt.
+ *
+ * 5. There is no mid-run cancel in the UI: while status === 'splitting' the
+ *    panel renders a progress bar and no controls at all. Nothing in this file
+ *    may promise stopping a run until such a button ships. Section 7 turns that
+ *    into useful advice — check your ranges before starting a long job.
+ *
  * Privacy is sold strictly as an outcome: files are not stored, not retained,
  * not used for training. The mechanism is deliberately absent from this file.
  */
@@ -54,7 +65,7 @@ export default function PdfSplitterSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 9 min read
         </span>
       </div>
 
@@ -71,7 +82,8 @@ export default function PdfSplitterSeoArticle() {
         batch, the job is the same: one document in, several smaller documents
         out. This guide covers how to <strong>split PDF pages online free</strong>,
         which of the three modes fits your file, the exact range syntax that
-        works, and the handful of things a splitter honestly cannot do.
+        works, what carries across into the pieces and what does not, and the
+        handful of things a splitter honestly cannot do.
       </p>
 
       {/* Featured WebP banner. Hides itself if the asset is missing rather than
@@ -157,14 +169,32 @@ export default function PdfSplitterSeoArticle() {
           selected are copied into it whole, carrying their text, vectors and
           images exactly as they were. A 12&nbsp;MB report cut into twelve
           single-page files gives you twelve pages that look identical to the
-          originals, because they <em>are</em> the originals.
+          originals, because the page content <em>is</em> the original page
+          content.
+        </p>
+        <p>
+          What travels is the page and everything drawn on it. What does not
+          travel is the document-level furniture wrapped around those pages. A
+          bookmark or outline tree, the field definitions that make a form
+          fillable, and the source file&rsquo;s own metadata are not copied into
+          the smaller documents. In practice that means a bookmarked manual
+          splits cleanly but the pieces open without a bookmark panel, and a
+          fillable form splits into pages that still look right but no longer
+          behave as fields. If the interactivity is the point, split a copy,
+          keep the full file as your master, and rebuild the inputs on the piece
+          you need with the{' '}
+          <Link to="/tools/make-pdf-fillable" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            fillable PDF tool
+          </Link>
+          .
         </p>
         <p>
           It is also worth being clear that splitting never touches your source.
           The PDF you selected is read, not rewritten, so the complete original
-          document survives the split exactly as it was. If you
-          wanted the opposite &mdash; one long file rather than several short
-          ones &mdash; the{' '}
+          document survives the split exactly as it was &mdash; which is what
+          makes the &ldquo;split a copy, keep the master&rdquo; habit costless.
+          If you wanted the opposite &mdash; one long file rather than several
+          short ones &mdash; the{' '}
           <Link to="/tools/pdf-merger" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF merger
           </Link>{' '}
@@ -186,8 +216,8 @@ export default function PdfSplitterSeoArticle() {
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
             ['Select your PDF', 'Drop a .pdf onto the panel above or click to browse. The document is read straight away and the total page count appears next to the filename, so you know exactly what you are working with before choosing anything.'],
-            ['Choose a split mode', 'Pick every page, every N pages, or your own list of page ranges. The mode cards update live — the first one tells you how many single-page files it will produce.'],
-            ['Download the results', 'Press Split PDF, watch the progress readout name each document as it is built, then download everything as one archive. You can cancel mid-run and nothing is left behind.'],
+            ['Choose a split mode', 'Pick every page, every N pages, or your own list of page ranges. The Every Page card tells you how many single-page files it will produce, and the range box arrives pre-filled with a working example sized to your document.'],
+            ['Download the results', 'Press Split PDF. The progress readout names each document as it is built — "Creating split document 3 of 12 (pages 5-8)" — and when the run finishes, one button hands you everything as a single archive.'],
           ].map(([title, body], i) => (
             <div
               key={title}
@@ -204,7 +234,11 @@ export default function PdfSplitterSeoArticle() {
         <p>
           That is the entire flow. There is no page limit, no file size ceiling
           and no watermark stamped across the output &mdash; the usual catch
-          with a free tier elsewhere. Every split document comes out clean.
+          with a free tier elsewhere. Every split document comes out clean. The
+          one thing worth doing before you press the button is reading your
+          ranges back to yourself, because a run goes through to the end once it
+          starts; if you mistype a boundary, the fix is to split again rather
+          than to interrupt.
         </p>
       </section>
 
@@ -242,7 +276,10 @@ export default function PdfSplitterSeoArticle() {
           are two clean ways: set custom ranges to something like{' '}
           <code>1-20, 21-40</code> for a forty-page file, or use every N pages
           with N set to half the total. Both produce two documents; the range
-          version is safer if the halves are not exactly even.
+          version is safer if the halves are not exactly even. Every N pages
+          always starts counting from page one, so an odd total leaves a short
+          final chunk rather than an error &mdash; a 41-page file split every 20
+          gives you 1&ndash;20, 21&ndash;40 and a one-page tail.
         </p>
       </section>
 
@@ -275,6 +312,20 @@ export default function PdfSplitterSeoArticle() {
             <strong>Order is yours to set.</strong> The entries are processed in
             the order you type them, so you control which output is first.
           </li>
+          <li>
+            <strong>A repeated entry does not give you two copies.</strong> Each
+            output is named after the pages it holds, so{' '}
+            <code>1-3, 1-3</code> resolves to a single{' '}
+            <code>report-pages-1-3.pdf</code> inside the archive &mdash;
+            identical entries share a filename. If you genuinely want the same
+            pages twice, save the archive and duplicate the file yourself.
+          </li>
+          <li>
+            <strong>A span has to run forwards.</strong> <code>9-4</code> is
+            rejected rather than silently reversed; write <code>4-9</code> and
+            reorder the finished documents afterwards if you need them the other
+            way round.
+          </li>
         </ul>
         <p>
           Page numbers are counted from one and refer to the physical sheets in
@@ -284,7 +335,8 @@ export default function PdfSplitterSeoArticle() {
           have, the tool refuses the range and tells you how many pages it
           actually has rather than quietly producing something wrong. It does the
           same for anything it cannot parse, with an example of the correct
-          format.
+          format. Nothing is created until the whole list validates, so a typo in
+          the fourth entry costs you a retype, not a bad archive.
         </p>
       </section>
 
@@ -320,7 +372,7 @@ export default function PdfSplitterSeoArticle() {
               <li>Split every page into its own PDF</li>
               <li>Split into fixed chunks of any size</li>
               <li>Split by custom page ranges</li>
-              <li>Preserve page quality exactly</li>
+              <li>Carry page content across untouched</li>
               <li>Name each output by its page numbers</li>
             </ul>
           </div>
@@ -330,6 +382,7 @@ export default function PdfSplitterSeoArticle() {
             </h4>
             <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
               <li>Split by bookmark or chapter automatically</li>
+              <li>Carry bookmarks, form fields or metadata into the outputs</li>
               <li>Split by target file size in MB</li>
               <li>Split on matching text or a keyword</li>
               <li>Open password-protected documents</li>
@@ -338,11 +391,24 @@ export default function PdfSplitterSeoArticle() {
           </div>
         </div>
         <p>
+          The second line in that right-hand column is the one people are most
+          often surprised by, so it is worth repeating in full: page content
+          &mdash; text, vectors and images &mdash; is carried across untouched,
+          but document-level extras do not survive the split. The outline tree
+          that draws a bookmark panel, the field definitions behind a fillable
+          form, and the title, author and keyword metadata attached to the source
+          file are not copied into the smaller documents. Nothing is damaged;
+          those things simply live at the document level rather than on any
+          particular page, and each piece is a new document.
+        </p>
+        <p>
           If you came looking to <strong>split a PDF by chapter</strong>, the
           practical route is to open the document, note the page each chapter
           begins on, and type those boundaries as custom ranges. It takes a
           minute and gives you cleaner results than automatic detection usually
-          does, because you decide where a section really starts.
+          does, because you decide where a section really starts &mdash; and
+          since a bookmark panel would not have survived into the pieces anyway,
+          reading the boundaries off it once is the whole cost.
         </p>
       </section>
 
@@ -393,9 +459,11 @@ export default function PdfSplitterSeoArticle() {
         </ul>
         <p>
           A useful pattern: split a long document here, work on the piece you
-          care about, then merge the finished parts back together. Splitting
-          first also makes every other tool faster, since each one is then
-          handling ten pages instead of four hundred.
+          care about, then merge the finished parts back together. Page-by-page
+          work such as OCR or compression finishes sooner on a ten-page piece
+          than on a four-hundred-page file, simply because there is less to go
+          through &mdash; and if a step goes wrong, you redo one section instead
+          of the whole manual.
         </p>
       </section>
 
@@ -436,11 +504,15 @@ export default function PdfSplitterSeoArticle() {
           Large and very long files
         </h4>
         <p>
-          There is no size cap and no page cap, so a{' '}
-          <strong>large PDF split</strong> of several hundred pages is fine. It
-          simply takes longer, and the progress readout names each document as it
-          goes so you can see it moving. If the resulting pieces are still too
-          large to email, the{' '}
+          There is no size cap and no page cap. Very long documents take
+          proportionally longer &mdash; a <strong>large PDF split</strong> of
+          several hundred pages is several hundred documents to build, one after
+          another &mdash; and the progress readout names each one as it goes, so
+          you can see the run moving rather than guessing. Two practical notes
+          for a job that size: a run continues to the end once it has started, so
+          check your mode and your ranges before pressing the button, and it is
+          worth leaving the page alone until the archive is ready. If the
+          resulting pieces are still too large to email, the{' '}
           <Link to="/tools/pdf-compressor" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF compressor
           </Link>{' '}
@@ -465,7 +537,7 @@ export default function PdfSplitterSeoArticle() {
             ['No file size or page limit', 'Split a four-page memo or a six-hundred-page manual. There is no premium tier waiting above this one.'],
             ['No watermark on any output', 'Every split document comes out clean. Nothing is stamped across the pages and nothing is appended at the end.'],
             ['Your documents stay private', 'Files are never stored on our servers, never retained after your session, and never used for training or analytics.'],
-            ['Quality is untouched', 'Pages are copied, not re-rendered, so each smaller PDF is visually identical to the source.'],
+            ['Page quality is untouched', 'Pages are copied, not re-rendered, so each smaller PDF is visually identical to the source. Document-level extras such as bookmarks and form fields do not carry over.'],
             ['Sensible filenames', 'Outputs are named after your document and the pages they contain, so the archive still makes sense weeks later.'],
           ].map(([title, body]) => (
             <div
@@ -508,7 +580,11 @@ export default function PdfSplitterSeoArticle() {
             ],
             [
               'Can I split a PDF by a specific page range?',
-              'Yes. Pick Custom Ranges and type something like 1-3, 5, 7-10. Each comma-separated entry becomes its own document, so that example returns three files. Out-of-range page numbers are refused with a message telling you how many pages the document actually has.',
+              'Yes. Pick Custom Ranges and type something like 1-3, 5, 7-10. Each comma-separated entry becomes its own document, so that example returns three files. Identical entries share a filename, so repeating the same range does not produce a second copy. Out-of-range page numbers are refused with a message telling you how many pages the document actually has.',
+            ],
+            [
+              'Do bookmarks and form fields survive the split?',
+              'No. Page content is carried across untouched, but bookmarks, the outline tree, fillable form fields and the source file’s metadata are not copied into the smaller documents. Keep the full original as your master if you need any of them, and rebuild inputs on a piece with the fillable PDF tool.',
             ],
             [
               'Why do my split files download as a zip?',
@@ -517,6 +593,10 @@ export default function PdfSplitterSeoArticle() {
             [
               'Does splitting reduce the quality of my PDF?',
               'No. Pages are copied into the new documents rather than re-rendered or re-compressed, so text stays sharp and images stay exactly as they were. Your original file is not modified either.',
+            ],
+            [
+              'Is there a limit on how big the PDF can be?',
+              'There is no size cap and no page cap. A longer document simply takes proportionally longer, and the progress readout names each split document as it is built. A run carries on to the end once it starts, so it is worth checking your ranges before you begin a very long job.',
             ],
             [
               'Is it safe to split confidential documents here?',
@@ -545,12 +625,12 @@ export default function PdfSplitterSeoArticle() {
           <Link to="/tools/pdf-word" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF to Word converter
           </Link>{' '}
-          to make a section editable. If you would rather understand how
-          document processing works than simply use it, our free{' '}
+          to make a section editable. If you would rather build tools like these
+          than simply use them, our free{' '}
           <Link to="/learn/full-stack-web" className="text-orange-600 font-semibold underline hover:text-orange-700">
             full-stack web development course
           </Link>{' '}
-          covers the file and document APIs behind tools like this one.
+          covers how document tools like this one are designed and built.
         </p>
       </div>
     </article>

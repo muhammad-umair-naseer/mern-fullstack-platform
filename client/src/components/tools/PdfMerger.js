@@ -55,6 +55,9 @@ export default function PdfMerger() {
   const fileInputRef = useRef(null);
   const abortControllerRef = useRef(null);
   const nextIdRef = useRef(1);
+  // Page ids the user has deliberately excluded, so the sync effect below
+  // never re-appends them when `entries` changes for an unrelated reason.
+  const removedPageIdsRef = useRef(new Set());
 
   // Sync pagePlan whenever valid entries change (if user hasn't heavily customized or on initial add)
   useEffect(() => {
@@ -80,15 +83,18 @@ export default function PdfMerger() {
     });
 
     setPagePlan((prev) => {
-      // If previous plan exists and has matching items, keep customized ordering where possible
-      if (prev.length > 0) {
-        const validIds = new Set(newPlan.map((x) => x.id));
-        const filtered = prev.filter((p) => validIds.has(p.id));
-        const existingIds = new Set(filtered.map((x) => x.id));
-        const added = newPlan.filter((p) => !existingIds.has(p.id));
-        return [...filtered, ...added];
-      }
-      return newPlan;
+      // Keep the customised ordering, drop pages whose file is gone, and append
+      // only pages the user has never seen before. Pages the user deleted on
+      // purpose stay deleted: without the removedPageIds guard they would be
+      // treated as new and re-appended at the end of the plan every time
+      // `entries` changed for any other reason.
+      const validIds = new Set(newPlan.map((x) => x.id));
+      const filtered = prev.filter((p) => validIds.has(p.id));
+      const existingIds = new Set(filtered.map((x) => x.id));
+      const added = newPlan.filter(
+        (p) => !existingIds.has(p.id) && !removedPageIdsRef.current.has(p.id)
+      );
+      return [...filtered, ...added];
     });
   }, [entries]);
 
@@ -214,10 +220,15 @@ export default function PdfMerger() {
   };
 
   const handleRemovePage = (index) => {
-    setPagePlan((prev) => prev.filter((_, i) => i !== index));
+    setPagePlan((prev) => {
+      const target = prev[index];
+      if (target) removedPageIdsRef.current.add(target.id);
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleResetPagesToDefault = () => {
+    removedPageIdsRef.current = new Set();
     const valid = entries.filter((e) => e.status === 'ok');
     const newPlan = [];
     valid.forEach((entry, fIdx) => {
@@ -252,6 +263,7 @@ export default function PdfMerger() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+    removedPageIdsRef.current = new Set();
     setEntries([]);
     setPagePlan([]);
     setResult(null);
@@ -384,9 +396,9 @@ export default function PdfMerger() {
                 <Upload className="w-8 h-8 animate-bounce" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-900">
+                <p className="text-xl font-bold text-slate-900">
                   {entries.length === 0 ? 'Choose PDF files or drag & drop here' : 'Add more PDF files'}
-                </h2>
+                </p>
                 <p className="text-xs text-slate-500 mt-1">
                   Select 2 or more <span className="font-semibold text-slate-700">.PDF</span> documents to merge in your chosen order
                 </p>

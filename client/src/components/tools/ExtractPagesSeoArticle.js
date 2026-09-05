@@ -21,7 +21,7 @@ import {
  * contents, H3 sections with a lucide icon each, benefit grid, FAQ, closing
  * cross-links. Copy it if you add another one of these.
  *
- * Three decisions shaped the copy, and they matter if anyone edits it later.
+ * Four decisions shaped the copy, and they matter if anyone edits it later.
  *
  * First, the tool copies pages rather than re-rendering them, so the output is a
  * genuine lossless subset of the original — same vectors, same fonts, same
@@ -40,7 +40,15 @@ import {
  * those gets an honest sentence rather than a promise; a page that answers the
  * question outranks a page that lies about it and generates no complaints.
  *
- * Third, privacy is sold as an outcome only — files are not stored, not queued,
+ * Third, the finish line is a RESULT PANEL, not an automatic download. In
+ * ExtractPages.js handleExtract only sets result + status 'completed'; the file
+ * reaches disk solely through the "Download Extracted PDF" button, which is the
+ * only caller of handleDownload. Never write "downloads automatically" here.
+ * For the same reason the organiser is described as moving pages with the
+ * left/right arrow buttons it actually has — PdfOrganizer.js has no page
+ * drag-and-drop, only a file dropzone.
+ *
+ * Fourth, privacy is sold as an outcome only — files are not stored, not queued,
  * not retained, not used for training. How that is achieved is deliberately
  * absent from every line of this file.
  */
@@ -53,7 +61,7 @@ export default function ExtractPagesSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab
         </span>
       </div>
 
@@ -62,7 +70,7 @@ export default function ExtractPagesSeoArticle() {
       </h2>
 
       <p className="lead text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal mb-8">
-        Nine times out of ten you do not need the whole document. You need
+        Most of the time you do not need the whole document. You need
         pages 4 to 9 of a forty-page contract, the two pages of a bank statement
         your landlord asked for, or the one chapter you are actually revising.
         Learning to <strong>extract pages from PDF</strong> files turns a heavy,
@@ -197,9 +205,9 @@ export default function ExtractPagesSeoArticle() {
         </p>
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
-            ['Select your PDF', 'Drop a .pdf onto the panel above or click to browse. Every page is rendered as a thumbnail, so you see what you are choosing.'],
-            ['Tick the pages you want', 'Click a thumbnail to select or deselect it. Use Select All, Clear Selection, or type a range like 1-3, 5, 7-10 and press Apply Range.'],
-            ['Extract and download', 'Press Extract. A progress readout counts through the job, then your new PDF downloads as your-file-extracted.pdf.'],
+            ['Select your PDF', 'Drop a .pdf onto the panel above or click to browse. A short "Rendering page previews" step runs, then every page appears as a thumbnail, so you see what you are choosing.'],
+            ['Tick the pages you want', 'Click a thumbnail to select or deselect it. Use Select All, Clear Selection, or type a range like 1-3, 5, 7-10 and press Apply Range. Page 1 is ticked for you to begin with.'],
+            ['Extract, then download', 'Press Extract. A progress readout steps through opening, extracting and saving, then a result panel shows how many pages went in and how big the new file is. Click Download Extracted PDF to save your-file-extracted.pdf.'],
           ].map(([title, body], i) => (
             <div
               key={title}
@@ -214,10 +222,23 @@ export default function ExtractPagesSeoArticle() {
           ))}
         </div>
         <p>
-          That is the entire process, whether you want to <strong>save one page
-          of a PDF as a separate file</strong> or lift out a fifty-page chapter.
-          No queue, no daily counter and no watermark stamped across the result,
-          which is the usual catch elsewhere.
+          The last step is worth spelling out, because it is where people expect
+          a file to appear on its own. Nothing is written to disk until you ask
+          for it: the result panel is a checkpoint. It names the file, counts the
+          extracted pages and shows the finished size, so you can confirm you
+          picked the right ones before you save anything. Only then does{' '}
+          <strong>Download Extracted PDF</strong> hand you the file. Beside it,{' '}
+          <strong>Extract Another File</strong> clears everything and takes you
+          back to an empty dropzone for the next document.
+        </p>
+        <p>
+          The Extract button also tells you what it is about to do &mdash; it
+          reads &ldquo;Extract 6 Pages&rdquo; when six thumbnails are ticked
+          &mdash; which is the fastest way to catch a stray click before you run
+          it. That is the entire process, whether you want to <strong>save one
+          page of a PDF as a separate file</strong> or lift out a fifty-page
+          chapter. No queue, no daily counter and no watermark stamped across the
+          result, which is the usual catch elsewhere.
         </p>
       </section>
 
@@ -238,7 +259,8 @@ export default function ExtractPagesSeoArticle() {
           clicking toggles it in or out. This is the right method when you are
           hunting for something visual &mdash; the page with the signature, the
           chart, the invoice among twenty delivery notes &mdash; because you can
-          recognise it on sight.
+          recognise it on sight. A tick badge in the corner of each card marks
+          what is currently in, and the toolbar keeps a running count.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           Typing a page range
@@ -264,7 +286,9 @@ export default function ExtractPagesSeoArticle() {
           <Link to="/tools/pdf-organizer" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF organizer
           </Link>
-          , which is built for dragging pages into any sequence you like.
+          , which lets you move pages left or right into any sequence you like,
+          one position at a time, and can also rotate, duplicate or delete a page
+          while you are in there.
         </p>
       </section>
 
@@ -316,7 +340,8 @@ export default function ExtractPagesSeoArticle() {
             fillable PDF tool
           </Link>
           . And because it holds fewer pages, the new file is almost always
-          smaller than the original.
+          smaller than the original &mdash; the result panel prints that size, so
+          you can check it against an upload limit before you download.
         </p>
       </section>
 
@@ -392,27 +417,40 @@ export default function ExtractPagesSeoArticle() {
         </h3>
         <p>
           The tool says plainly when something has gone wrong rather than handing
-          you a broken file. Here is what each message means.
+          you a broken file. Notices appear in a red panel above the dropzone.
+          Here is what each one is telling you, and what to do about it.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           &ldquo;Please select a valid .pdf file&rdquo;
         </h4>
         <p>
           Only PDFs can be extracted from, and the check is on the file
-          extension, so a .docx, a .jpg or a renamed file is turned away. If your
-          document is really a Word file, convert it first with the{' '}
+          extension, so anything not ending in .pdf is turned away before it is
+          opened at all. Note the gap that leaves: a non-PDF renamed to .pdf gets
+          past this check and fails later, when the document itself is opened, so
+          a photo saved as scan.pdf produces the load failure described next
+          rather than this notice. If your document is really a Word file,
+          convert it first with the{' '}
           <Link to="/tools/pdf-word" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF to Word converter
           </Link>
           , which runs in both directions.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
-          &ldquo;Could not load PDF document&rdquo;
+          When the PDF will not open
         </h4>
         <p>
-          Either the file is password-protected, in which case it must be
-          unlocked before any tool can read its pages, or it is damaged after a
-          half-finished download. Fetch it again from the source.
+          If the file cannot be read, the notice quotes the reason the PDF reader
+          itself gave, so the exact wording varies with the fault rather than
+          being one fixed sentence. Two causes account for nearly all of them.
+          A password-protected document reports a missing or wrong password: it
+          has to be unlocked before any tool can reach its pages, so open it in
+          your usual PDF reader, supply the password and save an unprotected copy
+          first. A file that arrived from a half-finished download or a flaky
+          email attachment reports a broken or invalid structure instead &mdash;
+          there the fix is to fetch the original again from the source rather
+          than to retry the same damaged copy. Either way, no partial file is
+          produced; you simply get the notice and the dropzone back.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           &ldquo;No valid page numbers found in that range&rdquo;
@@ -422,6 +460,8 @@ export default function ExtractPagesSeoArticle() {
           numerals, labels like &ldquo;A-4&rdquo; and numbers past the end of the
           document are discarded. Stick to digits and hyphens, and count from
           page one of the file rather than from the number printed on the page.
+          Your existing selection is left alone when a range fails, so nothing is
+          lost by trying again.
         </p>
         <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
           The Extract button will not press
@@ -429,6 +469,16 @@ export default function ExtractPagesSeoArticle() {
         <p>
           It stays disabled while zero pages are selected, which usually happens
           straight after Clear Selection; tick one thumbnail and it wakes up.
+        </p>
+        <h4 className="text-base font-bold text-slate-900 dark:text-white mt-6">
+          The file never reached your downloads folder
+        </h4>
+        <p>
+          Extraction finishing and the file being saved are two separate moments.
+          If the green result panel is on screen, the new PDF exists and is
+          waiting behind the <strong>Download Extracted PDF</strong> button
+          &mdash; press it. Starting a new file with Extract Another File, or
+          reloading the page, clears that result, so download before you move on.
         </p>
       </section>
 
@@ -449,8 +499,10 @@ export default function ExtractPagesSeoArticle() {
             ['See the pages before you choose', 'Every page is rendered as a thumbnail, so you pick the page you recognise rather than guessing at a number.'],
             ['Lossless output, every time', 'Pages are copied, not re-rendered. Text stays selectable, images stay sharp, fonts stay as the author embedded them.'],
             ['No watermark and no page cap', 'Extract two pages or two hundred from a file of any length. Nothing is stamped on the result.'],
+            ['Check the result before you save it', 'The finished panel names the file, counts the pages and shows the size, and the download only happens when you press the button.'],
             ['Your documents stay private', 'Files are never stored on our servers, never retained after your session, and never used to train anything.'],
             ['Honest about what it does not do', 'It makes one new PDF in page order, and it tells you when the splitter or page remover is the better tool.'],
+            ['Part of a complete set', 'Rotate, crop, compress, protect or merge the extract afterwards without hunting for another site.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -495,7 +547,7 @@ export default function ExtractPagesSeoArticle() {
           {[
             [
               'How do I extract pages from a PDF for free without an account?',
-              'Open the tool at the top of this page, drop your PDF in, click the page thumbnails you want or type a range like 1-3, 5, 7-10, then press Extract. Your new PDF downloads immediately. There is no sign-up and no watermark, and it is free every time rather than free for the first three files.',
+              'Open the tool at the top of this page, drop your PDF in, click the page thumbnails you want or type a range like 1-3, 5, 7-10, then press Extract and click Download Extracted PDF to save the result. There is no sign-up and no watermark, and it is free every time rather than free for the first three files.',
             ],
             [
               'Can I save just one page of a PDF as a separate file?',
@@ -511,7 +563,11 @@ export default function ExtractPagesSeoArticle() {
             ],
             [
               'Can I put the extracted pages in a custom order?',
-              'Not in this tool — pages are always written out in ascending order, whichever order you clicked them. Extract them first, then drag them into any sequence using the PDF organizer, which is built for that job.',
+              'Not in this tool — pages are always written out in ascending order, whichever order you clicked them. Extract them first, then move them into any order with the PDF organizer, which shifts a page one position left or right with its arrow buttons and can also rotate, duplicate or remove pages.',
+            ],
+            [
+              'Where does the extracted file go when it is finished?',
+              'Nowhere until you say so. When extraction finishes you get a result panel naming the file, counting the extracted pages and showing the new size; pressing Download Extracted PDF is what saves it, so check the summary first and download before you start another file.',
             ],
             [
               'Is there a page or file size limit, and are my files kept?',
@@ -545,11 +601,12 @@ export default function ExtractPagesSeoArticle() {
             image extractor
           </Link>{' '}
           to pull out the pictures instead of the pages. If you would rather
-          understand how document processing works, our free{' '}
+          understand document work from the ground up, our free{' '}
           <Link to="/learn/full-stack-web" className="text-orange-600 font-semibold underline hover:text-orange-700">
             full-stack web development course
           </Link>{' '}
-          covers the file and document APIs behind tools like this one.
+          covers the document formats and file handling behind tools like this
+          one.
         </p>
       </div>
     </article>

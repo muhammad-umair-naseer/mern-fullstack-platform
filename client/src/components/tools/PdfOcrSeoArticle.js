@@ -20,7 +20,7 @@ import {
  * Same shape as PdfWordSeoArticle: an H2 beneath the page H1, an anchored
  * table of contents, H3 sections with icons, six benefit cards and an FAQ.
  *
- * Three decisions shaped this copy. Anyone editing it should keep them.
+ * Four decisions shaped this copy. Anyone editing it should keep them.
  *
  * 1. The single biggest keyword in this space is "searchable PDF" — people
  *    search for "make scanned pdf searchable", "ocr pdf to searchable pdf",
@@ -33,7 +33,7 @@ import {
  *    generates no complaints; a page that lies about it earns a refund inbox.
  *
  * 2. Likewise declined: "image to text", "jpg to text", "photo to text",
- *    "ocr pdf to word", "ocr pdf to excel". The dropzone accepts .pdf and
+ *    "ocr pdf to word", "ocr pdf to excel". The dropzone takes one .pdf and
  *    nothing else, and the only output is plain text. Those queries are
  *    handled by pointing at the right tool, not by implying we do it here.
  *
@@ -41,11 +41,28 @@ import {
  *    not retained, not used for training. How that is achieved is deliberately
  *    absent from every line of this file.
  *
- * Everything factual here traces to PdfOcr.js and lib/pdfOcr.js: one .pdf at a
- * time, nine selectable recognition languages, per-page progress, a cancel
- * path, page-delimited combined text, copy to clipboard and a
- * "<name>-ocr-text.txt" download. No size cap and no page cap appear anywhere
- * in the code, so the article says there is none — and claims nothing further.
+ * 4. NO CANCEL IS PROMISED ANYWHERE, and nothing here invites a 200-page run.
+ *    PdfOcr.js builds an AbortController but never calls .abort(), and every
+ *    button in the component is gated behind `status !== 'scanning'`, so a run
+ *    in progress has no on-screen control at all. Earlier drafts of this file
+ *    sold "you can cancel at any point" in step 3 and a benefit card titled
+ *    "Progress you can see, and cancel". Both were false and both are gone. If
+ *    a stop button is ever wired to abortControllerRef.current.abort() and
+ *    rendered while scanning, the claim may come back — not before. The same
+ *    reason governs the long-document copy: performPdfOcr walks every page in
+ *    order, rendering at scale 2.0 and recognising each canvas, so a very long
+ *    document is a long run the user cannot escape. Section 7 says so and
+ *    points at the splitter instead of cheering for a 200-page report.
+ *
+ * Everything factual here traces to PdfOcr.js and lib/pdfOcr.js: one .pdf per
+ * run, a filename-only .pdf check at the dropzone, nine selectable recognition
+ * languages, per-page progress messages, page-delimited combined text, a copy
+ * button and a "<name>-ocr-text.txt" download. No size cap and no page cap
+ * appear anywhere in the code, so the article says there is none — with the
+ * practical caveat above, and claims nothing further. The copy button calls
+ * navigator.clipboard.writeText without awaiting it, so the copy claim is
+ * worded as an action, never as a guarantee, and the .txt download is named as
+ * the dependable route.
  */
 export default function PdfOcrSeoArticle() {
   return (
@@ -56,7 +73,7 @@ export default function PdfOcrSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Document Research Lab • 10 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 10 min read
         </span>
       </div>
 
@@ -78,16 +95,14 @@ export default function PdfOcrSeoArticle() {
       </p>
 
       {/* Featured WebP banner. Hides itself if the asset is missing rather than
-          shipping a broken image icon. */}
+          shipping a broken image icon. The alt text describes the real output —
+          copyable plain text, not a searchable file. Section 3 and the FAQ both
+          turn that promise down, so the alt must not make it. */}
       <div className="my-8 not-prose">
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
-          {/* eslint-disable-next-line jsx-a11y/img-redundant-alt --
-              the rule bans the word "image" in alt text to prevent
-              "image of a cat". Here it is the search term the alt
-              attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/pdf-ocr.webp"
-            alt="OCR a PDF online free - PDF OCR tool extracting selectable, searchable text from a scanned image-based document"
+            alt="PDF OCR tool extracting the recognised text of a scanned document as copyable plain text"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"
@@ -98,8 +113,8 @@ export default function PdfOcrSeoArticle() {
           />
           <div className="p-4 bg-slate-900/90 border-t border-slate-800 text-center text-xs text-slate-400">
             <span>
-              From a flat scan to words you can copy: optical character
-              recognition turns pictures of letters back into real, selectable
+              From a flat scan to words you can work with: optical character
+              recognition turns pictures of letters back into real, readable
               text.
             </span>
           </div>
@@ -206,10 +221,10 @@ export default function PdfOcrSeoArticle() {
         </p>
         <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
           {[
-            ['Select your scanned PDF', 'Drop a .pdf onto the panel above or click to browse. Only PDF files are accepted — anything else is refused straight away with a plain message rather than a failed run five minutes later.'],
+            ['Select your scanned PDF', 'Drop one .pdf onto the panel above or click to browse. Non-PDF files are turned away at the dropzone rather than failing partway through a run. It is one document per run, so pick the scan you want first.'],
             ['Choose the document language', 'Pick the language the document is actually written in from the dropdown. This matters more than people expect, and section 4 explains why.'],
-            ['Run the extraction', 'Press the button. A progress readout names the page being rendered and the page being recognised, so a long document never looks like it has stalled. You can cancel at any point.'],
-            ['Copy or download the text', 'The recognised text appears in a panel you can read and scroll. Copy it to the clipboard in one click, or download it as a .txt file named after your original document.'],
+            ['Run the extraction', 'Press the button. A progress readout names the page being rendered and the page being recognised, with a percentage beside it, so a long document never looks like it has stalled. A run goes through to the last page once it starts, so if you are unsure about the scan quality, try a short document first.'],
+            ['Copy or download the text', 'The recognised text appears in a panel you can read and scroll. Press copy to put it on the clipboard — paste it once to confirm it landed — or download it as a .txt file named after your original document, which is the dependable route for anything long.'],
           ].map(([title, body], i) => (
             <div
               key={title}
@@ -226,8 +241,9 @@ export default function PdfOcrSeoArticle() {
         <p>
           Every page of the document is scanned, not just the first, and the
           output is delimited page by page so you always know which paragraph
-          came from where. There is no watermark, no queue and no cap on how
-          many documents you run — the usual catch with a free tier elsewhere.
+          came from where. There is no watermark and no daily counter: one
+          document per run, and as many runs as you care to do, which is the
+          usual catch with a free tier elsewhere.
         </p>
       </section>
 
@@ -250,7 +266,7 @@ export default function PdfOcrSeoArticle() {
             <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
               <li>The full recognised text of every page, on screen</li>
               <li>Page-by-page delimiters so nothing loses its place</li>
-              <li>One-click copy to the clipboard</li>
+              <li>A copy button for the whole text in one press</li>
               <li>A .txt download named after your original file</li>
               <li>Text you can search, edit, translate or reuse anywhere</li>
             </ul>
@@ -263,6 +279,8 @@ export default function PdfOcrSeoArticle() {
               <li>Rewrite the original PDF with an invisible text layer</li>
               <li>Return a .docx, .xlsx or formatted output file</li>
               <li>Accept a JPG, PNG or photo on its own</li>
+              <li>Take more than one document per run, or queue a batch</li>
+              <li>Stop a scan once it has started, or resume a part-finished one</li>
               <li>Reproduce columns, tables or images as layout</li>
               <li>Open a password-protected or encrypted PDF</li>
             </ul>
@@ -373,13 +391,21 @@ export default function PdfOcrSeoArticle() {
             stop existing, and no amount of processing invents them back.
           </li>
           <li>
-            <strong>Keep the page straight.</strong> A few degrees of rotation
-            costs real accuracy. If a page came in sideways, straighten it with
-            the{' '}
+            <strong>Keep the page straight.</strong> A few degrees of skew costs
+            real accuracy, and nothing downstream can undo it — re-scan the page
+            squarely if you still have the paper, because a tilted line of type
+            is the single most common cause of a mangled result on an otherwise
+            clean document.
+          </li>
+          <li>
+            <strong>Turn sideways pages the right way up.</strong> That is a
+            different problem from skew, and a fixable one. If a page came out
+            of the scanner a full 90 or 180 degrees out, the{' '}
             <Link to="/tools/pdf-rotate" className="text-orange-600 font-semibold underline hover:text-orange-700">
               PDF rotate tool
             </Link>{' '}
-            before scanning it here.
+            turns it upright in quarter turns and saves the corrected file, and
+            you scan that here instead.
           </li>
           <li>
             <strong>Light it evenly.</strong> Phone photos are the worst case:
@@ -431,9 +457,12 @@ export default function PdfOcrSeoArticle() {
             guess at your layout.
           </li>
           <li>
-            <strong>Searching an archive.</strong> Run a stack of scans through,
-            keep the .txt files beside the PDFs, and suddenly a folder of dead
-            images is grep-able, indexable and quotable.
+            <strong>Searching an archive.</strong> Run your scans through one at
+            a time, keep each .txt file beside its PDF under the same name, and
+            a folder of dead images becomes grep-able, indexable and quotable.
+            There is no queue here, so this is a working session rather than a
+            batch job — but it only has to be done once per document, and the
+            .txt files are the thing you search from then on.
           </li>
           <li>
             <strong>Translation and summarising.</strong> Text pastes cleanly
@@ -484,11 +513,22 @@ export default function PdfOcrSeoArticle() {
         <div className="grid sm:grid-cols-2 gap-5 not-prose my-6">
           {[
             ['Genuinely free, no account', 'No sign-up, no email address, no credit card and no trial that expires. What you are using is the whole product.'],
-            ['No page limit or file size cap', 'Scan a one-page receipt or a two-hundred-page report. There is no premium tier above this one to upsell you to.'],
+            [
+              'No page limit, no file size cap',
+              <>
+                There is no page limit and no file size cap coded into the tool
+                — though a very long document is a long run, so work in sections
+                if you are scanning hundreds of pages. The{' '}
+                <Link to="/tools/pdf-splitter" className="text-orange-600 font-semibold underline hover:text-orange-700">
+                  PDF splitter
+                </Link>{' '}
+                breaks a big report into parts you can scan one after another.
+              </>,
+            ],
             ['Nine recognition languages', 'English, Spanish, French, German, Italian, Portuguese, Arabic, Urdu and Hindi — including the right-to-left and Indic scripts most free tools skip.'],
             ['Your documents stay private', 'Files are never stored on our servers, never retained after your session, and never used to train or profile anything.'],
-            ['Progress you can see, and cancel', 'A live readout names the page being processed instead of a spinner, and you can stop a long run without leaving anything behind.'],
-            ['Clean, usable output', 'Copy the text in one click or download a .txt named after your file. No watermark, no stamped footer, no locked preview.'],
+            ['Progress you can see', 'A live readout names the page being rendered and the page being recognised, with a percentage, instead of an anonymous spinner that tells you nothing about where a long document has got to.'],
+            ['Clean, usable output', 'Every page recognised and delimited, then a copy button or a .txt download named after your file. No watermark, no stamped footer, no locked preview.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -534,7 +574,7 @@ export default function PdfOcrSeoArticle() {
           {[
             [
               'How do I OCR a PDF for free without installing anything?',
-              'Open the tool at the top of this page, drop in your scanned PDF, choose the document language and run it. The recognised text appears on screen with a copy button and a .txt download. There is no sign-up, no watermark and no limit on how many documents you run.',
+              'Open the tool at the top of this page, drop in one scanned PDF, choose the document language and run it. The recognised text appears on screen with a copy button and a .txt download. There is no sign-up, no watermark and no cap on how many documents you run — they simply go through one at a time rather than as a batch.',
             ],
             [
               'Why can I not select or search the text in my PDF?',
@@ -542,7 +582,15 @@ export default function PdfOcrSeoArticle() {
             ],
             [
               'Does this give me back a searchable PDF file?',
-              'No, and it is worth being precise about that. It gives you the recognised text: on screen, on the clipboard, and as a .txt download. It does not rewrite your original PDF with a hidden text layer inside it. If the words are what you need, this is the right tool; if you specifically need the PDF itself rebuilt with a text layer, that is a different operation.',
+              'No, and it is worth being precise about that. It gives you the recognised text: on screen, with a copy button, and as a .txt download. It does not rewrite your original PDF with a hidden text layer inside it. If the words are what you need, this is the right tool; if you specifically need the PDF itself rebuilt with a text layer, that is a different operation.',
+            ],
+            [
+              'Can I stop a scan once it has started?',
+              'Not from the panel — once a run begins it works through to the last page, and there is no pause or resume. In practice that only matters on very long documents, which is the reason to split a hundred-page report into sections and scan them one part at a time rather than committing to the whole thing in one go. A short test document is also a cheap way to check the scan quality and the language setting before you start something big.',
+            ],
+            [
+              'How long does a long document take?',
+              'It depends on the page count and how dense each page is, and we will not quote a figure we have not measured on your file. What we can tell you is the shape of it: pages are handled one after another in order, so the time grows with the number of pages rather than staying flat, and the progress readout names the page it is on so you can judge the pace after the first few. For anything in the hundreds of pages, split it first.',
             ],
             [
               'Which languages can it recognise?',
@@ -550,7 +598,7 @@ export default function PdfOcrSeoArticle() {
             ],
             [
               'Can I OCR a JPG, PNG or a photo of a page?',
-              'Not directly — the tool accepts PDF files only and will tell you so if you drop anything else in. If your source is a photo or an image, place it into a PDF first and then run it here.',
+              'Not directly — the dropzone takes .pdf files and nothing else, and the only output is plain text. If your source is a photo or an image, place it into a PDF first and then run it here.',
             ],
             [
               'Are my scanned documents private?',
@@ -571,11 +619,13 @@ export default function PdfOcrSeoArticle() {
           <Link to="/tools/pdf-splitter" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF splitter
           </Link>{' '}
-          breaks a long document into manageable parts, the{' '}
+          breaks a long document into manageable parts you can scan one at a
+          time, the{' '}
           <Link to="/tools/pdf-rotate" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF rotate tool
           </Link>{' '}
-          straightens pages that came in sideways, and the{' '}
+          turns pages that came in sideways back upright in quarter turns, and
+          the{' '}
           <Link to="/tools/pdf-compressor" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF compressor
           </Link>{' '}

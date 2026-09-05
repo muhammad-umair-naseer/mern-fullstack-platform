@@ -14,6 +14,7 @@ import {
 import { loadPdfForRemoval, removePagesFromPdf } from '../../lib/pdfPageRemover';
 import { renderOrganizerThumbnail } from '../../lib/pdfOrganizer';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import PdfPageRemoverSeoArticle from './PdfPageRemoverSeoArticle';
 
 export default function PdfPageRemover() {
   const [file, setFile] = useState(null);
@@ -396,6 +397,9 @@ export default function PdfPageRemover() {
           </div>
         )}
       </div>
+
+      {/* Complete SEO Master Guide & Knowledge Base */}
+      <PdfPageRemoverSeoArticle />
     </div>
   );
 }
