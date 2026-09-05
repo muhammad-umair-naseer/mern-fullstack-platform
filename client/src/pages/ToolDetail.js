@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY, isImplemented } from '../data/tools';
+import { toolSeo } from '../data/toolSeo';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import Seo from '../seo/Seo';
 import { breadcrumbs, softwareApplication } from '../seo/schema';
@@ -63,6 +64,7 @@ export default function ToolDetail() {
   // both depend on there being code behind the slug — not on the editorial
   // isLive flag, which is true for every tool in the catalogue.
   const live = isImplemented(tool.slug);
+  const seo = toolSeo(tool.slug);
 
   const renderToolComponent = () => {
     switch (tool.slug) {
@@ -150,11 +152,22 @@ export default function ToolDetail() {
   return (
     <main className="text-slate-800 pb-20">
       <Seo
-        title={`${tool.name} — Free ${category.label} Tool`}
+        // A written, keyword-first title where one exists. The generated
+        // fallback produced sixty variations of "X — Free PDF Tool", which
+        // spends the strongest signal on the page on the word "Tool".
+        //
+        // `bare` skips the site-wide " | Cortexis Solution Hub" suffix. At 24
+        // characters it pushed these past the ~60 Google renders, and the half
+        // that got truncated was the brand anyway. A short brand is appended
+        // here instead, which keeps every one of these under 60.
+        bare={Boolean(seo)}
+        title={seo ? `${seo.title} | Cortexis` : `${tool.name} — Free ${category.label} Tool`}
         description={
-          live
-            ? `${tool.description} Fast, secure, zero account required, and 100% watermark-free.`
-            : `${tool.description} Planned as a free Cortexis tool, currently in development.`
+          seo && live
+            ? seo.description
+            : live
+              ? `${tool.description} Fast, secure, zero account required, and 100% watermark-free.`
+              : `${tool.description} Planned as a free Cortexis tool, currently in development.`
         }
         path={`/tools/${tool.slug}`}
         noindex={!live}
