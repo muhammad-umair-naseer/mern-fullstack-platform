@@ -21,6 +21,25 @@ export default function QrGenerator() {
   const [fgColor, setFgColor] = useState('#0f172a');
   const [bgColor, setBgColor] = useState('#ffffff');
 
+  /**
+   * Escape a value going into a WIFI: payload.
+   *
+   * The Wi-Fi QR convention treats \ ; , : and " as structural, so a password
+   * containing any of them silently truncates the payload and produces a code
+   * that scans but will not connect. Semicolons and colons are common in
+   * generated router passwords, so this was not a theoretical problem.
+   */
+  const escapeWifi = (value) => String(value).replace(/([\\;,:"])/g, '\\$1');
+
+  /**
+   * Escape a value going into a vCard property.
+   *
+   * RFC 6350 gives \ ; and , structural meaning inside a property value, and a
+   * name like "Khan, Abdullah" or an org with a semicolon would otherwise split
+   * into fields the reader misinterprets.
+   */
+  const escapeVCard = (value) => String(value).replace(/([\\;,])/g, '\\$1');
+
   const getQrValue = () => {
     switch (mode) {
       case 'url':
@@ -28,9 +47,19 @@ export default function QrGenerator() {
       case 'text':
         return text.trim() || 'Cortexis';
       case 'wifi':
-        return `WIFI:T:${encryption};S:${ssid};P:${password};;`;
+        return `WIFI:T:${encryption};S:${escapeWifi(ssid)};P:${escapeWifi(password)};;`;
       case 'contact':
-        return `BEGIN:VCARD\nVERSION:3.0\nFN:${contact.name}\nTEL:${contact.phone}\nEMAIL:${contact.email}\nORG:${contact.org}\nEND:VCARD`;
+        // CRLF, not \n: RFC 6350 requires it, and several Android scanners
+      // refuse a vCard that uses bare line feeds.
+      return [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        `FN:${escapeVCard(contact.name)}`,
+        `TEL:${escapeVCard(contact.phone)}`,
+        `EMAIL:${escapeVCard(contact.email)}`,
+        `ORG:${escapeVCard(contact.org)}`,
+        'END:VCARD',
+      ].join('\r\n');
       default:
         return url;
     }
@@ -276,7 +305,7 @@ export default function QrGenerator() {
               fgColor={fgColor}
               bgColor={bgColor}
               level="M"
-              marginSize={2}
+              marginSize={4}
             />
             {/* Hidden canvas for high-res PNG export */}
             <div className="hidden">
@@ -287,7 +316,7 @@ export default function QrGenerator() {
                 fgColor={fgColor}
                 bgColor={bgColor}
                 level="M"
-                marginSize={2}
+                marginSize={4}
               />
             </div>
           </div>
