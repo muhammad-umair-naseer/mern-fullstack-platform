@@ -2,12 +2,11 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { liveTools } from '../data/tools';
-import { ArrowRight, Sparkles, Award, GraduationCap, Wrench, CheckCircle2, ShieldCheck, Zap, Code2 } from 'lucide-react';
+import { ArrowRight, Award, GraduationCap, Wrench, CheckCircle2, ShieldCheck, Zap, Code2 } from 'lucide-react';
 import './Hero.css';
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 
 // Each stat has to survive a visitor clicking through to check it, so every one
 // of these points at something already on this site: the SECP incorporation on
@@ -78,19 +77,6 @@ const Hero = () => {
             '<'
           );
         });
-
-        // Subtle parallax: content drifts up and fades as the hero scrolls away
-        gsap.to('.hero-content', {
-          y: -50,
-          opacity: 0.4,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: scope.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-          },
-        });
       });
 
       // Reduced motion — render final values immediately
@@ -155,7 +141,6 @@ const Hero = () => {
               <ArrowRight className="btn-icon" size={18} />
             </Link>
             <Link to="/services" className="btn btn-secondary cta-alt">
-              <Sparkles className="btn-icon-left" size={17} />
               <span>See what we build</span>
             </Link>
           </div>

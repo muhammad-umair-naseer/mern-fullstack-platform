@@ -217,7 +217,6 @@ export default function Internships() {
         <span
           className="inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1.5 text-xs sm:text-sm font-bold text-orange-800 ring-1 ring-orange-300 shadow-sm"
         >
-          <Sparkles className="h-4 w-4 text-orange-600" />
           Cortexis Internship Program {new Date().getFullYear()}
         </span>
 
