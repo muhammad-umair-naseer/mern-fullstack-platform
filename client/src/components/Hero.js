@@ -4,26 +4,35 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { liveTools } from '../data/tools';
+import { ArrowRight, Sparkles, Award, GraduationCap, Wrench, CheckCircle2, ShieldCheck, Zap, Code2 } from 'lucide-react';
 import './Hero.css';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 // Each stat has to survive a visitor clicking through to check it, so every one
 // of these points at something already on this site: the SECP incorporation on
-// /about, the course catalogue on /courses, the two working tools on /tools.
-// A stat with `display` opts out of the count-up below, for values that read as
-// a fact rather than a quantity.
-//
-// The brief's third stat was "3 — Products of our own in use [confirm count]".
-// Only Your Bot (/your-bot) exists in this repository, so 3 is a number a
-// visitor cannot confirm; it is replaced by the two shipped tools, which anyone
-// can open and use. To restore the product stat once the real count is known,
-// swap the third entry back to { count: N, suffix: '', label: 'Products of our
-// own in use' } — the evidence needed is a live page per product.
+// /about, the course catalogue on /courses, the live tools on /tools.
 const stats = [
-  { display: 'Since 2025', label: 'Engineering Excellence' },
-  { count: 23, suffix: '', label: 'Free courses, open to anyone' },
-  { count: liveTools().length, suffix: '', label: 'Free tools that never upload your file' },
+  { 
+    display: 'Since 2025', 
+    label: 'Engineering Excellence', 
+    icon: Award,
+    badge: 'Standard',
+  },
+  { 
+    count: 23, 
+    suffix: '', 
+    label: 'Free courses, open to anyone', 
+    icon: GraduationCap,
+    badge: '1,100+ Lessons',
+  },
+  { 
+    count: liveTools().length, 
+    suffix: '', 
+    label: 'Free developer & document tools', 
+    icon: Wrench,
+    badge: '100% Free',
+  },
 ];
 
 const Hero = () => {
@@ -42,13 +51,12 @@ const Hero = () => {
           opacity: 0,
           y: 28,
           duration: 0.7,
-          stagger: 0.12,
+          stagger: 0.1,
           delay: 0.05,
         });
 
         // Count-up the numeric stats, tied to the same timeline. The markup
-        // renders the finished number so the prerendered HTML is truthful, so
-        // the animation has to wind it back to zero before it can count up.
+        // renders the finished number so the prerendered HTML is truthful.
         counters.forEach((el) => {
           el.textContent = '0' + (el.dataset.suffix || '');
         });
@@ -67,14 +75,14 @@ const Hero = () => {
                 el.textContent = proxy.v + suffix;
               },
             },
-            '<' // start together with the previous tween
+            '<'
           );
         });
 
         // Subtle parallax: content drifts up and fades as the hero scrolls away
         gsap.to('.hero-content', {
-          y: -60,
-          opacity: 0.35,
+          y: -50,
+          opacity: 0.4,
           ease: 'none',
           scrollTrigger: {
             trigger: scope.current,
@@ -98,21 +106,36 @@ const Hero = () => {
 
   return (
     <section className="hero" aria-labelledby="hero-heading" ref={scope}>
-      {/* Decorative floating glows for depth */}
+      {/* Decorative ambient glowing auras */}
       <div className="hero-orbs" aria-hidden="true">
         <span className="hero-orb hero-orb--1" />
         <span className="hero-orb hero-orb--2" />
         <span className="hero-orb hero-orb--3" />
+        <div className="hero-grid-pattern" />
+      </div>
+
+      {/* Floating interactive tech badges */}
+      <div className="hero-floating-badges" aria-hidden="true">
+        <div className="hero-float-tag hero-float-tag--left" data-hero>
+          <Code2 className="w-3.5 h-3.5 text-orange-500" />
+          <span>Full-Stack &amp; AI Systems</span>
+        </div>
+        <div className="hero-float-tag hero-float-tag--right" data-hero>
+          <Zap className="w-3.5 h-3.5 text-amber-500" />
+          <span>High-Velocity Delivery</span>
+        </div>
       </div>
 
       <div className="hero-content">
-        <span className="hero-badge" data-hero>
-          <span className="hero-badge-dot" />
-          Enterprise Software &amp; AI Solutions
-        </span>
+        {/* Top Eyebrow Badge */}
+        <div className="hero-badge-container" data-hero>
+          <span className="hero-badge">
+            <span className="hero-badge-dot" />
+            <span className="hero-badge-text">Enterprise Software &amp; AI Solutions</span>
+          </span>
+        </div>
 
-        {/* The page's only h1 — the document outline and the aria-labelledby
-            above both hang off it, so it stays an h1 whatever the copy says. */}
+        {/* The page's main h1 */}
         <h1 id="hero-heading" data-hero>
           Software built for your business, by{' '}
           <em className="hero-gradient-text">engineers you can reach</em>.
@@ -124,42 +147,74 @@ const Hero = () => {
           writing your code, from the first call to the hand-over.
         </p>
 
-        <div className="hero-buttons" role="group" aria-label="Primary actions" data-hero>
-          <Link to="/contact" className="btn btn-primary cta">Start a project</Link>
-          {/* The brief asked for "See our work" pointing at /work. There is no
-              /work route and no case studies to put behind one, so this goes to
-              /services — the nearest page that actually answers the question —
-              and the label was changed to match what the visitor will find. */}
-          <Link to="/services" className="btn btn-secondary cta-alt">See what we build</Link>
+        {/* Primary CTA action group */}
+        <div className="hero-cta-wrapper" data-hero>
+          <div className="hero-buttons" role="group" aria-label="Primary actions">
+            <Link to="/contact" className="btn btn-primary cta">
+              <span>Start a project</span>
+              <ArrowRight className="btn-icon" size={18} />
+            </Link>
+            <Link to="/services" className="btn btn-secondary cta-alt">
+              <Sparkles className="btn-icon-left" size={17} />
+              <span>See what we build</span>
+            </Link>
+          </div>
+
+          {/* Micro trust indicators */}
+          <div className="hero-trust-row">
+            <span className="hero-trust-item">
+              <CheckCircle2 size={14} className="hero-trust-icon" />
+              Direct Senior Developer Access
+            </span>
+            <span className="hero-trust-sep">•</span>
+            <span className="hero-trust-item">
+              <ShieldCheck size={14} className="hero-trust-icon" />
+              100% In-House Engineering
+            </span>
+            <span className="hero-trust-sep">•</span>
+            <span className="hero-trust-item">
+              <Zap size={14} className="hero-trust-icon" />
+              Milestone-Based Delivery
+            </span>
+          </div>
         </div>
 
+        {/* Coordinate metric cards */}
         <div className="hero-coords" data-hero>
-          {stats.map((s, i) => (
-            <div className="coord" key={i}>
-              {/* The true value is what is rendered, not the count-up's
-                    starting 0. scripts/prerender.mjs snapshots the real DOM into
-                    all 61 static pages, so whatever sits here is what a crawler
-                    and any visitor without JS will read — and shipping "0 free
-                    courses" would be a false statement of exactly the fact this
-                    stat exists to make checkable. The animation resets it to 0
-                    itself, below. */}
-              {s.display ? (
-                <span className="num">{s.display}</span>
-              ) : (
-                <span className="num" data-count={s.count} data-suffix={s.suffix}>
-                  {s.count}{s.suffix}
-                </span>
-              )}
-              <span className="lbl">{s.label}</span>
-            </div>
-          ))}
+          {stats.map((s, i) => {
+            const IconComponent = s.icon;
+            return (
+              <div className="coord" key={i}>
+                <div className="coord-header">
+                  <div className="coord-icon-box">
+                    <IconComponent size={20} className="coord-icon" />
+                  </div>
+                  {s.badge && <span className="coord-mini-badge">{s.badge}</span>}
+                </div>
+                <div className="coord-body">
+                  {s.display ? (
+                    <span className="num">{s.display}</span>
+                  ) : (
+                    <span className="num" data-count={s.count} data-suffix={s.suffix}>
+                      {s.count}{s.suffix}
+                    </span>
+                  )}
+                  <span className="lbl">{s.label}</span>
+                </div>
+                <div className="coord-glow-line" />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Scroll Cue Indicator */}
+        <div className="hero-scroll-wrapper" data-hero>
+          <a href="#services-heading" className="hero-scroll" aria-label="Scroll to explore">
+            <span className="hero-scroll-text">Scroll to explore</span>
+            <span className="hero-scroll-mouse"><span className="hero-scroll-wheel" /></span>
+          </a>
         </div>
       </div>
-
-      <a href="#services-heading" className="hero-scroll" aria-label="Scroll to explore" data-hero>
-        <span className="hero-scroll-text">Scroll</span>
-        <span className="hero-scroll-mouse"><span className="hero-scroll-wheel" /></span>
-      </a>
     </section>
   );
 };
