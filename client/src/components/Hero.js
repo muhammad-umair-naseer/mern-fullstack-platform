@@ -142,8 +142,8 @@ const Hero = () => {
         </h1>
 
         <p className="hero-subtitle" data-hero>
-          Cortexis designs and builds web apps, mobile apps, and AI automation for
-          companies in Pakistan and the Gulf. You work directly with the people
+          Cortexis designs and builds high-performance web apps, mobile apps, and AI automation for
+          modern businesses and fast-growing companies worldwide. You work directly with the people
           writing your code, from the first call to the hand-over.
         </p>
 
