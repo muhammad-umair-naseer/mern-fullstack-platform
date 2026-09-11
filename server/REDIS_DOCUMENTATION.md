@@ -226,20 +226,40 @@ To prevent BullMQ metadata from accumulating and exhausting Redis memory:
 
 ---
 
-## 10. Redis Memory Planning (Multi-Tenant Sharing)
+## 10. Redis Memory Planning & OOM Prevention (Multi-Tenant Sharing)
 
-Cache, Distributed Rate Limiter, and BullMQ share the same Redis instance. To ensure high availability and prevent OOM crashes:
+Cache, Distributed Rate Limiter, and BullMQ share the same Redis instance. 
 
-1. **Eviction Policy**: `volatile-lru` (configured via Redis server command / `docker-compose.yml`).
-2. **Key Isolation**:
-   - **Cache Keys** (`cortexis:*:cache:*`): Set with explicit TTL (1h - 24h). Under memory pressure, least recently used cached items are automatically evicted.
-   - **Rate Limiter Keys** (`cortexis:*:ratelimit:*`): Set with explicit TTL (1m - 15m). Evicted upon expiry.
-   - **BullMQ Task Keys** (`cortexis:emails:*`): Persistent stream and hash structures. Because `volatile-lru` only evicts keys with an explicit TTL, active in-flight BullMQ job data is protected from eviction.
-3. **Memory Ceiling**: Recommended `maxmemory 256mb` for small/medium production nodes.
+### Why `volatile-lru` Alone Does NOT Prevent OOM:
+- **`volatile-lru` Mechanics**: When `maxmemory` is reached, Redis ONLY evicts keys that have an expiration (TTL) set.
+- **Cache & Rate Limiter Keys** have TTLs (`cortexis:*:cache:*`, `cortexis:*:ratelimit:*`) and will be evicted under memory pressure to free space.
+- **BullMQ Keys** (job hashes, streams, queue metadata) do **NOT** have TTLs. Therefore, Redis will **NEVER** evict BullMQ keys under `volatile-lru`.
+- **The OOM Risk**: If BullMQ jobs/metadata accumulate unchecked, once all TTL keys are evicted and memory reaches `maxmemory`, Redis will reject all further write commands with:
+  `OOM command not allowed when used memory > 'maxmemory'`.
+
+### Comprehensive Multi-Tenant Protection Strategy:
+To guarantee that neither Cache nor BullMQ exhausts Redis memory:
+1. **Strict Job Retention Rules**: Completed jobs are retained for max 100 entries / 1 hour; failed jobs for max 500 entries / 24 hours.
+2. **Deterministic Deduplication**: Prevents queue bloat from duplicate form re-submits.
+3. **Queue Health & Metric Monitoring**: `GET /health` tracks active, waiting, and failed job counts.
+4. **Appropriate Sizing**: Recommended `maxmemory 256mb` (or 512mb in high volume) with active monitoring (`used_memory` metrics).
 
 ---
 
-## 11. Production Process Separation (API vs Worker)
+## 11. Worker Crash Recovery vs Graceful Restart
+
+BullMQ handles worker failures at two levels:
+
+1. **Graceful Restart / Worker Recycling**:
+   - `worker.close()` gracefully finishes in-flight jobs or pauses processing, then cleanly releases listeners and connections.
+2. **Abrupt Process Crash & Stalled Job Recovery**:
+   - If a worker process abruptly dies (e.g. `SIGKILL`, OOM kill, power loss) mid-execution, the in-flight job remains in `active` state with a temporary Redis lock (`lockDuration: 30s`).
+   - Once the lock TTL expires, any surviving or newly started worker's stalled-job checker (`stalledInterval: 30s`) detects the orphaned job.
+   - BullMQ moves the job back to `waiting` (or triggers a retry attempt), and Worker B picks it up to complete execution without data loss.
+
+---
+
+## 12. Production Process Separation (API vs Worker)
 
 By default in development, the email worker runs in-process with the Express API server (`initWorker()`).
 
