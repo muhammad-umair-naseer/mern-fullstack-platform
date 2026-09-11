@@ -1,29 +1,30 @@
 import { Router } from 'express';
 import InternshipApplication from '../models/InternshipApplication.model.js';
 import { internshipApplicationSchema } from '../validation/schemas.js';
-
+import { queueInternshipAlert } from '../services/queue.service.js';
 
 const router = Router();
 
-
 // POST /api/internships/apply
 router.post('/apply', async (req, res) => {
-try {
-const { error, value } = internshipApplicationSchema.validate(req.body, {
-abortEarly: false,
-stripUnknown: true,
-});
-if (error) {
-return res.status(400).json({ message: 'Validation failed', errors: error.details });
-}
+  try {
+    const { error, value } = internshipApplicationSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    if (error) {
+      return res.status(400).json({ message: 'Validation failed', errors: error.details });
+    }
 
+    const record = await InternshipApplication.create(value);
+    // Queue asynchronous alert
+    queueInternshipAlert(value);
 
-const record = await InternshipApplication.create(value);
-return res.status(201).json({ message: 'Application received', data: record });
-} catch (err) {
-console.error('Internship apply error:', err);
-return res.status(500).json({ message: 'Internal server error' });
-}
+    return res.status(201).json({ message: 'Application received', data: record });
+  } catch (err) {
+    console.error('Internship apply error:', err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 

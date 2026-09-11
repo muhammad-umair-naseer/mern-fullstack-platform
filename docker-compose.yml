@@ -33,7 +33,7 @@ services:
     image: redis:7-alpine
     container_name: cortexis-redis
     restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:-cortexis_secure_redis_pass}
+    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:-cortexis_secure_redis_pass} --maxmemory 256mb --maxmemory-policy volatile-lru
     # Security: No public ports exposed to host. Only accessible within the internal docker network.
     volumes:
       - cortexis_redis_data:/data

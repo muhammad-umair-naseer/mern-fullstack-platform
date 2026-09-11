@@ -8,8 +8,12 @@ import {
   verifySchema,
   resendSchema,
 } from '../validation/schemas.js';
-import { sendVerificationCode, smtpReady } from '../services/verificationMail.js';
-import { alertAdmin, notifySignup } from '../services/adminAlert.js';
+import { smtpReady } from '../services/verificationMail.js';
+import {
+  queueVerificationEmail,
+  queueSignupNotification,
+  queueAdminAlert,
+} from '../services/queue.service.js';
 import {
   publicUser,
   issueCode,
@@ -40,9 +44,7 @@ export const register = async (req, res) => {
       // them resume rather than telling them the address is taken.
       if (!existing.emailVerified) {
         const code = issueCode(db, existing);
-        sendVerificationCode({ name: existing.name, email, code }).catch((err) =>
-          console.error('verification email failed:', err.message)
-        );
+        queueVerificationEmail({ name: existing.name, email, code });
         return res.status(200).json({
           needsVerification: true,
           email,
@@ -64,16 +66,10 @@ export const register = async (req, res) => {
 
     const user = db.prepare('SELECT * FROM users WHERE id = ?').get(lastInsertRowid);
     const code = issueCode(db, user);
-    sendVerificationCode({ name: user.name, email, code }).catch((err) => {
-      console.error('verification email failed:', err.message);
-      alertAdmin({
-        key: 'verification-email-failed',
-        subject: 'Verification email failed to send',
-        detail: 'A learner signed up but could not be emailed their code, so they cannot sign in.',
-        context: { email, error: err.message },
-      });
-    });
-    notifySignup({ name: user.name, email });
+    
+    // Dispatch asynchronous jobs via BullMQ (with automatic retry & fallback)
+    queueVerificationEmail({ name: user.name, email, code });
+    queueSignupNotification({ name: user.name, email });
 
     // No token here — the account is unusable until the code is confirmed.
     return res.status(201).json({
@@ -84,7 +80,7 @@ export const register = async (req, res) => {
     });
   } catch (err) {
     console.error('Register error:', err);
-    alertAdmin({
+    queueAdminAlert({
       key: 'signup-failing',
       subject: 'Signup failing',
       detail: 'An unexpected error was thrown while handling a credential request.',
@@ -177,9 +173,7 @@ export const resend = async (req, res) => {
     }
 
     const code = issueCode(db, user);
-    sendVerificationCode({ name: user.name, email: user.email, code }).catch((err) =>
-      console.error('verification email failed:', err.message)
-    );
+    queueVerificationEmail({ name: user.name, email: user.email, code });
     return res.json({ ...generic, emailSent: smtpReady() });
   } catch (err) {
     console.error('Resend error:', err);
@@ -214,7 +208,7 @@ export const login = async (req, res) => {
     return res.json({ token: signToken(user), user: publicUser(user) });
   } catch (err) {
     console.error('Login error:', err);
-    alertAdmin({
+    queueAdminAlert({
       key: 'sign-in-failing',
       subject: 'Sign-in failing',
       detail: 'An unexpected error was thrown while handling a credential request.',

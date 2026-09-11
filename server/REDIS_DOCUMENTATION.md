@@ -173,3 +173,99 @@ Response when Redis is online:
 Inspect HTTP headers:
 - `X-Cache: MISS` (1st request — fetched from SQLite & stored in Redis)
 - `X-Cache: HIT` (2nd request — served from Redis in < 2 ms)
+
+---
+
+## 9. BullMQ Background Task Architecture
+
+BullMQ manages asynchronous, non-blocking background jobs (verification emails, contact forms, admin notifications, internship alerts) over Redis.
+
+```
+[API Endpoint] ───> [queue.service.js] ───> [Redis Queue: cortexis:emails]
+                                                       │
+                                                       v
+                                            [email.worker.js]
+                                          (Worker Concurrency = 2-5)
+                                                       │
+                                      ┌────────────────┴────────────────┐
+                                      v                                 v
+                              [Transient Error]                 [Permanent Error]
+                            (4xx / Network Timeout)           (5xx / Invalid Address)
+                                      │                                 │
+                                      v                                 v
+                            [3x Exponential Backoff]          [UnrecoverableError]
+                            (2s -> 4s -> 8s retries)         (Immediate Fail & Alert)
+```
+
+### 1. Best-Effort Offline Fallback Policy
+- **Definition**: If Redis is offline or unreachable at the moment an email job is dispatched, the system falls back to immediate in-memory asynchronous execution.
+- **Guarantee Level**: **Best-Effort Only**. No 100% "zero-email-dropped" guarantee is made if the Node.js server process is forcefully terminated while Redis is offline. Full persistent durability and automatic retry guarantees require an active Redis connection.
+
+### 2. Idempotency & Deduplication
+To prevent duplicate emails on rapid user re-submissions or network retries, deterministic Job IDs are generated:
+- **Verification Code**: `verify:${normalizedEmail}:${code}`
+- **Contact Inquiries**: `contact:${normalizedEmail}:${md5(message).slice(0,12)}:${1minWindow}`
+- **Admin Alerts**: `alert:${key}:${30sWindow}`
+- **Signup Notifications**: `signup:${normalizedEmail}`
+- **Internship Applications**: `intern:${normalizedEmail}:${encodedTitle}:${1minWindow}`
+
+If a client submits the same payload within the deduplication window, BullMQ ignores the duplicate job.
+
+### 3. Permanent vs Transient SMTP Error Classification
+- **Permanent Errors (5xx SMTP codes, invalid envelope, bad login credentials)**:
+  - Worker throws `UnrecoverableError`.
+  - BullMQ aborts the job immediately without useless infinite retries.
+- **Transient Errors (4xx SMTP codes, DNS timeouts, socket disconnects)**:
+  - Worker throws a standard error.
+  - BullMQ retries up to 3 times with exponential backoff (2s, 4s, 8s).
+
+### 4. Job Retention Configuration
+To prevent BullMQ metadata from accumulating and exhausting Redis memory:
+- **Completed Jobs**: Retains maximum 100 jobs or 1 hour (`age: 3600`).
+- **Failed Jobs**: Retains maximum 500 jobs or 24 hours (`age: 86400`) for debugging.
+
+---
+
+## 10. Redis Memory Planning (Multi-Tenant Sharing)
+
+Cache, Distributed Rate Limiter, and BullMQ share the same Redis instance. To ensure high availability and prevent OOM crashes:
+
+1. **Eviction Policy**: `volatile-lru` (configured via Redis server command / `docker-compose.yml`).
+2. **Key Isolation**:
+   - **Cache Keys** (`cortexis:*:cache:*`): Set with explicit TTL (1h - 24h). Under memory pressure, least recently used cached items are automatically evicted.
+   - **Rate Limiter Keys** (`cortexis:*:ratelimit:*`): Set with explicit TTL (1m - 15m). Evicted upon expiry.
+   - **BullMQ Task Keys** (`cortexis:emails:*`): Persistent stream and hash structures. Because `volatile-lru` only evicts keys with an explicit TTL, active in-flight BullMQ job data is protected from eviction.
+3. **Memory Ceiling**: Recommended `maxmemory 256mb` for small/medium production nodes.
+
+---
+
+## 11. Production Process Separation (API vs Worker)
+
+By default in development, the email worker runs in-process with the Express API server (`initWorker()`).
+
+For production horizontal scaling, the worker can run as an isolated background worker process:
+```bash
+# Run standalone worker microservice:
+node src/workers/email.worker.js
+```
+
+In `docker-compose.yml`:
+```yaml
+services:
+  cortexis-api:
+    build: ./server
+    command: npm start
+    environment:
+      - EMBEDDED_WORKER=false
+      ...
+
+  cortexis-worker:
+    build: ./server
+    command: node src/workers/email.worker.js
+    environment:
+      - REDIS_HOST=redis
+      ...
+    depends_on:
+      - redis
+```
+

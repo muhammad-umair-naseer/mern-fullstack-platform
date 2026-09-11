@@ -12,6 +12,8 @@ import { connectDB } from './setup/db.js';
 import { initRedis, redisPing, redisStats, closeRedis } from './services/redis.service.js';
 import { seedCourses } from './content/seed.js';
 import { createLimiter } from './middleware/rateLimiter.js';
+import { getQueueMetrics, closeQueue } from './services/queue.service.js';
+import { initWorker, closeWorker } from './workers/email.worker.js';
 import internshipsRouter from './routes/internships.routes.js';
 import contactRouter from './routes/contact.routes.js';
 import authRouter from './routes/auth.routes.js';
@@ -51,6 +53,7 @@ app.use('/api/learn', learnLimiter, learnRouter);
 app.get('/health', async (_req, res) => {
   const redis = await redisPing();
   const stats = await redisStats();
+  const queue = await getQueueMetrics();
   res.json({
     ok: true,
     uptime: Number(process.uptime().toFixed(2)),
@@ -60,6 +63,7 @@ app.get('/health', async (_req, res) => {
       latencyMs: redis.latencyMs,
       usedMemory: stats.usedMemory ?? 'n/a',
     },
+    queue,
   });
 });
 
@@ -76,6 +80,10 @@ const PORT = process.env.PORT || 5000;
 
 Promise.all([connectDB(), initRedis()])
   .then(async () => {
+    // In-process worker execution (can be disabled via EMBEDDED_WORKER=false in standalone worker deployments)
+    if (process.env.EMBEDDED_WORKER !== 'false') {
+      initWorker();
+    }
     const { courses, lessons } = await seedCourses();
     console.log(`📚 Seeded ${courses} course(s), ${lessons} lesson(s)`);
     app.listen(PORT, () => console.log(`\n✅ Server listening on http://localhost:${PORT}`));
@@ -88,10 +96,13 @@ Promise.all([connectDB(), initRedis()])
 // --- Graceful Shutdown ---
 const handleShutdown = async (signal) => {
   console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
+  await closeWorker();
+  await closeQueue();
   await closeRedis();
   process.exit(0);
 };
 
 process.on('SIGINT', () => handleShutdown('SIGINT'));
 process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+
 
