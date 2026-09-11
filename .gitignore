@@ -45,6 +45,7 @@ Thumbs.db
 
 # Large media files
 uploads/
+extracted_tools/
 *.mp4
 *.mov
 *.avi

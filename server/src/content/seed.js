@@ -1,5 +1,6 @@
 import { getDB } from '../setup/db.js';
 import { loadCourses } from './index.js';
+import { invalidateCourseCache } from '../services/cache.service.js';
 
 // Authored answers cluster heavily on one option (LLM- and human-written quizzes
 // both do this), which makes "always pick B" a viable strategy against the 70%
@@ -196,5 +197,8 @@ export const seedCourses = async () => {
   });
 
   run();
+  await invalidateCourseCache().catch((err) =>
+    console.warn('Cache invalidation notice after seed:', err.message)
+  );
   return { courses: courses.length, lessons: lessonTotal };
 };

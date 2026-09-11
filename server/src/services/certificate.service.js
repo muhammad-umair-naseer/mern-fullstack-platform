@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { getDB } from '../setup/db.js';
+import { getOrSet, CACHE_KEYS, CACHE_TTL, invalidateCertificate } from './cache.service.js';
 
 /**
  * Certificate codes and issuance.
@@ -32,22 +33,36 @@ export const issueCertificate = ({ userId, courseId, score }) => {
   db.prepare('UPDATE enrollments SET completedAt = ? WHERE userId = ? AND courseId = ?')
     .run(issuedAt, userId, courseId);
 
+  // Invalidate any negative cache or pre-warm if needed
+  invalidateCertificate(code).catch(() => {});
+
   return { code, score, issuedAt };
 };
 
-/** Public lookup used by the verification page. */
-export const findCertificateByCode = (code) =>
-  getDB()
-    .prepare(
-      `SELECT cert.code, cert.score, cert.issuedAt,
-              u.name AS learnerName,
-              c.id AS courseId, c.title AS courseTitle, c.duration, c.level, c.slug,
-              (SELECT COUNT(*) FROM chapters ch WHERE ch.courseId = c.id) AS chapterCount,
-              (SELECT COUNT(*) FROM lessons l JOIN chapters ch ON ch.id = l.chapterId
-                WHERE ch.courseId = c.id) AS lessonCount
-       FROM certificates cert
-       JOIN users u ON u.id = cert.userId
-       JOIN courses c ON c.id = cert.courseId
-       WHERE cert.code = ?`
-    )
-    .get(String(code).toUpperCase());
+/** Public lookup used by the verification page with cache-aside. */
+export const findCertificateByCode = async (code) => {
+  if (!code) return { data: null, cached: false };
+  const normalizedCode = String(code).trim().toUpperCase();
+
+  return await getOrSet(
+    CACHE_KEYS.certificate(normalizedCode),
+    () => {
+      const row = getDB()
+        .prepare(
+          `SELECT cert.code, cert.score, cert.issuedAt,
+                  u.name AS learnerName,
+                  c.id AS courseId, c.title AS courseTitle, c.duration, c.level, c.slug,
+                  (SELECT COUNT(*) FROM chapters ch WHERE ch.courseId = c.id) AS chapterCount,
+                  (SELECT COUNT(*) FROM lessons l JOIN chapters ch ON ch.id = l.chapterId
+                    WHERE ch.courseId = c.id) AS lessonCount
+           FROM certificates cert
+           JOIN users u ON u.id = cert.userId
+           JOIN courses c ON c.id = cert.courseId
+           WHERE cert.code = ?`
+        )
+        .get(normalizedCode);
+      return row || null;
+    },
+    CACHE_TTL.CERTIFICATE
+  );
+};

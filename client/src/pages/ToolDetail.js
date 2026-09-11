@@ -32,6 +32,38 @@ import ImageEnlarger from '../components/tools/ImageEnlarger';
 import ColourPicker from '../components/tools/ColourPicker';
 import SaveWebAsPdf from '../components/tools/SaveWebAsPdf';
 
+// Newly Integrated Client-Side Tools
+import Base64Tool from '../components/tools/Base64Tool';
+import ColorUtilities from '../components/tools/ColorUtilities';
+import CreateArchive from '../components/tools/CreateArchive';
+import ExtractArchive from '../components/tools/ExtractArchive';
+import JsonFormatter from '../components/tools/JsonFormatter';
+import SpreadsheetConverter from '../components/tools/SpreadsheetConverter';
+import ArchiveConverter from '../components/tools/ArchiveConverter';
+import FileRenamer from '../components/tools/FileRenamer';
+import GifCompressor from '../components/tools/GifCompressor';
+import GifMaker from '../components/tools/GifMaker';
+import WavCompressor from '../components/tools/WavCompressor';
+import AudioConverter from '../components/tools/AudioConverter';
+import Mp3Compressor from '../components/tools/Mp3Compressor';
+import Mp3ToMp4 from '../components/tools/Mp3ToMp4';
+import Mp4ToGif from '../components/tools/Mp4ToGif';
+import Mp4ToMp3 from '../components/tools/Mp4ToMp3';
+import VideoCompressor from '../components/tools/VideoCompressor';
+import VideoConverter from '../components/tools/VideoConverter';
+import EbookConverter from '../components/tools/EbookConverter';
+import FontConverter from '../components/tools/FontConverter';
+import PdfToHtml from '../components/tools/PdfToHtml';
+import PresentationConverter from '../components/tools/PresentationConverter';
+import VectorConverter from '../components/tools/VectorConverter';
+import CadConverter from '../components/tools/CadConverter';
+import PdfToEbook from '../components/tools/PdfToEbook';
+import PdfToPptx from '../components/tools/PdfToPptx';
+import PdfToPsdEpsPs from '../components/tools/PdfToPsdEpsPs';
+import WebsiteScreenshotJpg from '../components/tools/WebsiteScreenshotJpg';
+import WebsiteScreenshotPng from '../components/tools/WebsiteScreenshotPng';
+import ConverterHub from '../components/tools/ConverterHub';
+
 const TONE = {
   emerald: 'bg-emerald-500/12 text-emerald-700 ring-emerald-600/25',
   amber: 'bg-amber-500/12 text-amber-700 ring-amber-600/25',
@@ -95,6 +127,8 @@ export default function ToolDetail() {
         return <PdfOrganizer />;
       case 'pdf-protect':
         return <PdfProtect />;
+      case 'pdf-unlock':
+        return <PdfProtect />;
       case 'extract-images-from-pdf':
         return <PdfExtractImages />;
       case 'pdf-rotate':
@@ -123,6 +157,86 @@ export default function ToolDetail() {
         return <ColourPicker />;
       case 'save-web-as-pdf':
         return <SaveWebAsPdf />;
+
+      // Suite 1: Utilities & Data
+      case 'base64-encoder-decoder':
+        return <Base64Tool />;
+      case 'colour-format-utilities':
+        return <ColorUtilities />;
+      case 'create-archive':
+        return <CreateArchive />;
+      case 'extract-archive':
+        return <ExtractArchive />;
+      case 'json-formatter':
+        return <JsonFormatter />;
+      case 'spreadsheet-converter':
+        return <SpreadsheetConverter />;
+
+      // Suite 2: Archives, Renaming & Media
+      case 'archive-converter':
+        return <ArchiveConverter />;
+      case 'file-renamer':
+        return <FileRenamer />;
+      case 'gif-compressor':
+        return <GifCompressor />;
+      case 'gif-maker':
+        return <GifMaker />;
+      case 'wav-compressor':
+        return <WavCompressor />;
+
+      // Suite 3: Audio & Video
+      case 'audio-converter':
+        return <AudioConverter />;
+      case 'mp3-compressor':
+        return <Mp3Compressor />;
+      case 'mp3-mp4':
+        return <Mp3ToMp4 />;
+      case 'mp4-gif':
+        return <Mp4ToGif />;
+      case 'mp4-mp3':
+        return <Mp4ToMp3 />;
+      case 'video-compressor':
+        return <VideoCompressor />;
+      case 'video-converter':
+        return <VideoConverter />;
+
+      // Suite 4: Documents, Fonts & Presentations
+      case 'ebook-converter':
+        return <EbookConverter />;
+      case 'font-converter':
+        return <FontConverter />;
+      case 'pdf-html':
+      case 'pdf-txt-html-rtf-odt':
+        return <PdfToHtml />;
+      case 'presentation-converter':
+        return <PresentationConverter />;
+      case 'vector-converter':
+        return <VectorConverter />;
+
+      // Suite 5: CAD, Print Formats, Screenshots & Universal Hub
+      case 'cad-converter':
+        return <CadConverter />;
+      case 'pdf-ebook':
+        return <PdfToEbook />;
+      case 'pdf-powerpoint':
+        return <PdfToPptx />;
+      case 'pdf-psd-eps-ps':
+        return <PdfToPsdEpsPs />;
+      case 'website-jpg-screenshot':
+        return <WebsiteScreenshotJpg />;
+      case 'website-png-screenshot':
+        return <WebsiteScreenshotPng />;
+      case 'file-converter-hub':
+      case 'image-converter':
+      case 'image-compressor':
+      case 'jpeg-compressor':
+      case 'webp-png':
+        return <ConverterHub />;
+      case 'pdf-spreadsheet-suite':
+        return <PdfToExcel />;
+      case 'rotate-flip-image':
+        return <ImageCropper />;
+
       default:
         break;
     }
