@@ -146,7 +146,6 @@ export const IMPLEMENTED = new Set([
   'pdf-jpg',
   'pdf-organizer',
   'pdf-protect',
-  'pdf-unlock',
   'pdf-crop',
   'pdf-rotate',
   'pdf-flatten',
@@ -154,7 +153,6 @@ export const IMPLEMENTED = new Set([
   'pdf-resize',
   'extract-images-from-pdf',
   'pdf-png-webp-tiff-bmp-gif',
-  'pdf-txt-html-rtf-odt',
   'pdf-psd-eps-ps',
   'pdf-powerpoint',
   'pdf-ebook',
@@ -168,7 +166,6 @@ export const IMPLEMENTED = new Set([
   'png-compressor',
   'webp-png',
   'image-enlarger',
-  'rotate-flip-image',
   'video-compressor',
   'mp4-gif',
   'gif-maker',
@@ -199,6 +196,19 @@ export const IMPLEMENTED = new Set([
   'colour-picker',
   'qr-generator',
 ]);
+
+/*
+ * Three slugs are deliberately NOT in the set above although they route to a
+ * component and were previously listed. Each is a URL whose name promises a
+ * tool the routed component does not contain, which is worse than a
+ * coming-soon page: a visitor searching "unlock pdf" who lands on a tool that
+ * LOCKS PDFs has been misled, and a search engine that indexed it has been
+ * fed a false page. They come back the moment a real component exists.
+ *
+ *   rotate-flip-image     -> ImageCropper       no rotate or flip code at all
+ *   pdf-unlock            -> PdfProtect         encrypt only; no decrypt path
+ *   pdf-txt-html-rtf-odt  -> PdfToHtml          writes HTML only
+ */
 
 /** Is there real code behind this slug, or only a catalogue entry? */
 export const isImplemented = (slug) => IMPLEMENTED.has(slug);

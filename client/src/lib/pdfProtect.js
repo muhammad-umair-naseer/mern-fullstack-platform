@@ -1,6 +1,13 @@
 /**
  * Client-Side PDF Protect / Password Locker Engine
- * Implements Standard PDF Security Handler (RC4 128-bit / Algorithm 2/3) using pdf-lib.
+ * Implements the Standard PDF Security Handler at /V 1 /R 2 using pdf-lib.
+ *
+ * That is 40-bit RC4 — the file key is md5(...).slice(0, 5), five bytes — and
+ * NOT the 128-bit this comment used to claim. 40-bit RC4 is the original PDF
+ * 1.1 handler and is broken: any password-removal tool strips it in seconds
+ * regardless of how strong the password is. It stops a casual double-click,
+ * nothing more. The UI deliberately makes no strength claim. Moving to
+ * /V 4 with AESV2 (128-bit AES) or /V 5 with AESV3 (256-bit) is the real fix.
  * Completely client-side, zero server transmission.
  */
 

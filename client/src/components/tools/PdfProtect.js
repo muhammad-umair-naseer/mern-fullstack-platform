@@ -188,7 +188,7 @@ export default function PdfProtect() {
               Select or Drop your PDF to encrypt & protect
             </h3>
             <p className="mt-2 text-sm text-slate-500 max-w-md mx-auto">
-              Lock your PDF with a password using 128-bit standard PDF encryption. Nothing is retained.
+              Lock your PDF with a password so it asks for one on opening. Nothing is retained.
             </p>
             <div className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-md transition">
               <FileText className="w-4 h-4" />
