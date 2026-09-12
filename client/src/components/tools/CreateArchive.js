@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Upload, FolderPlus, FilePlus, Archive, Trash2, Download, Check, AlertCircle } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { FolderPlus, FilePlus, Archive, Trash2, Download, Check, AlertCircle } from 'lucide-react';
 import { loadZipLib } from '../../lib/dynamicVendor';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
@@ -71,9 +71,13 @@ export default function CreateArchive() {
         const item = files[i];
         setStatusMsg(`Adding ${i + 1}/${files.length}: ${item.path}`);
 
+        // Snapshot the running total for this file's progress callback: the
+        // closure should report against the bytes finished before this file
+        // started, not whatever the loop variable holds when it fires.
+        const doneBefore = processedBytes;
         await zipWriter.add(item.path, new zip.BlobReader(item.file), {
           onprogress: (curr) => {
-            const overall = totalBytes ? Math.round(((processedBytes + curr) / totalBytes) * 100) : 50;
+            const overall = totalBytes ? Math.round(((doneBefore + curr) / totalBytes) * 100) : 50;
             setProgress(Math.min(98, overall));
           },
         });

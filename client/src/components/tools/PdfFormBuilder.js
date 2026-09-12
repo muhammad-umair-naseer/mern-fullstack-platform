@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { PDFDocument, rgb } from 'pdf-lib';
 import { pdfjsLib, triggerDownload } from '../../lib/pdfCommon';
-import PdfFormBuilderSeoArticle from './PdfFormBuilderSeoArticle';
 
 export default function PdfFormBuilder() {
   const [file, setFile] = useState(null);
@@ -542,9 +541,6 @@ export default function PdfFormBuilder() {
           </div>
         </div>
       )}
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfFormBuilderSeoArticle />
     </div>
   );
 }

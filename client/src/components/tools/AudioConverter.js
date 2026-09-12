@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Music, Upload, Download, RefreshCw, AlertCircle, Check, Play } from 'lucide-react';
+import { Music, Download, AlertCircle, Check} from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { validateAudioFile, formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 const AUDIO_FORMATS = [
   { id: 'mp3', label: 'MP3 (MPEG Audio)', ext: 'mp3', mime: 'audio/mpeg', defaultBitrate: '192k' },

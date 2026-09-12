@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Type, Upload, Download, RefreshCw, AlertCircle, Check, Sparkles } from 'lucide-react';
+import { Type, Download, AlertCircle, Check} from 'lucide-react';
 import { loadOpenTypeLib } from '../../lib/dynamicVendor';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';

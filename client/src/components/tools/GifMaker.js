@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Upload, Plus, Trash2, ArrowLeft, ArrowRight, Play, Download, Sparkles, AlertCircle, Check, Film } from 'lucide-react';
+import { Plus, Download, Sparkles, AlertCircle, Check, Film } from 'lucide-react';
 import { loadGifEncLib } from '../../lib/dynamicVendor';
-import { triggerDownload } from '../../lib/pdfCommon';
 import { formatFileSize } from '../../lib/fileValidation';
 
 export default function GifMaker() {
@@ -10,7 +9,7 @@ export default function GifMaker() {
   const [height, setHeight] = useState(320);
   const [delay, setDelay] = useState(250); // ms
   const [fit, setFit] = useState('contain'); // 'contain' | 'cover' | 'stretch'
-  const [bgColor, setBgColor] = useState('#000000');
+  const [bgColor] = useState('#000000');
   const [maxColors, setMaxColors] = useState(256);
   const [loop, setLoop] = useState(true);
   const [status, setStatus] = useState('idle'); // 'idle' | 'building' | 'ready' | 'error'

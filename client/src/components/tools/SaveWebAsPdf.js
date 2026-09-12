@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { triggerDownload } from '../../lib/pdfCommon';
-import SaveWebAsPdfSeoArticle from './SaveWebAsPdfSeoArticle';
 
 const starterBody = `Paste or write the article or webpage text you wish to save as a clean PDF document.
 
@@ -276,9 +275,6 @@ export default function SaveWebAsPdf() {
           </button>
         </div>
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <SaveWebAsPdfSeoArticle />
     </div>
   );
 }

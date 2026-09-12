@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { PDFDocument, degrees } from 'pdf-lib';
 import { pdfjsLib, formatBytes, triggerDownload, yieldToMain } from '../../lib/pdfCommon';
-import PdfRotateSeoArticle from './PdfRotateSeoArticle';
 
 export default function PdfRotate() {
   const [file, setFile] = useState(null);
@@ -408,9 +407,6 @@ export default function PdfRotate() {
           </div>
         </div>
       )}
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfRotateSeoArticle />
     </div>
   );
 }

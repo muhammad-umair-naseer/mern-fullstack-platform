@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Copy, Check, Download, Upload, RefreshCw, FileText, Binary } from 'lucide-react';
+import { Copy, Check, Download, Upload} from 'lucide-react';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
 
@@ -73,14 +73,13 @@ export function base64ToBytes(str) {
 
 export default function Base64Tool() {
   const [mode, setMode] = useState('encode'); // 'encode' | 'decode'
-  const [tab, setTab] = useState('text'); // 'text' | 'file'
   const [inputVal, setInputVal] = useState('');
   const [outputVal, setOutputVal] = useState('');
   const [urlSafe, setUrlSafe] = useState(false);
   const [dataUriMode, setDataUriMode] = useState(false);
   const [fileName, setFileName] = useState('');
   const [fileMime, setFileMime] = useState('application/octet-stream');
-  const [fileSize, setFileSize] = useState(0);
+  const [, setFileSize] = useState(0);
   const [copied, setCopied] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 

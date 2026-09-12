@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Presentation, Download, RefreshCw, AlertCircle, CheckCircle2, Sliders, Eye } from 'lucide-react';
+import { Upload, Presentation, Download, RefreshCw, AlertCircle, CheckCircle2, Eye } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 import { validateFile } from '../../lib/fileValidation';
@@ -13,7 +13,6 @@ export default function PdfToPptx() {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [aspectRatio, setAspectRatio] = useState('16:9'); // 16:9, 4:3
   const [dpi, setDpi] = useState(150);
-  const [selectedPages, setSelectedPages] = useState('all');
 
   const [loading, setLoading] = useState(false);
   const [converting, setConverting] = useState(false);

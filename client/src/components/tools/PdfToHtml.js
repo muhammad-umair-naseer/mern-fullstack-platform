@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { FileCode, Upload, Download, Eye, AlertCircle, Check, Sparkles } from 'lucide-react';
+import { FileCode, Eye, AlertCircle, Check, Sparkles } from 'lucide-react';
 import { pdfjsLib, triggerDownload } from '../../lib/pdfCommon';
 import { validatePdfFile, formatFileSize } from '../../lib/fileValidation';
 

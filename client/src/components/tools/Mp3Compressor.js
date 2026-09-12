@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Music, Download, Sliders, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { validateAudioFile, formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 export default function Mp3Compressor() {
   const [file, setFile] = useState(null);

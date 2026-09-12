@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Archive, Download, File, Folder, FolderArchive, RefreshCw, AlertCircle, Check } from 'lucide-react';
+import { Archive, Download, File, Folder, FolderArchive, RefreshCw, AlertCircle} from 'lucide-react';
 import { loadZipLib } from '../../lib/dynamicVendor';
 import { validateArchiveFile, formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
@@ -72,7 +72,8 @@ export default function ExtractArchive() {
     if (window.showDirectoryPicker) {
       try {
         const dir = await window.showDirectoryPicker({ mode: 'readwrite' });
-        const zip = await loadZipLib();
+        // Loaded for its side effect: the entries below need the library resident.
+        await loadZipLib();
 
         for (const entry of fileEntries) {
           const parts = entry.filename.split('/').filter(Boolean);

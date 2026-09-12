@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Globe, Camera, Download, RefreshCw, AlertCircle, CheckCircle2, Monitor, Smartphone, Tablet, Sliders, Eye, Upload } from 'lucide-react';
+import { Globe, Camera, Download, RefreshCw, AlertCircle, CheckCircle2, Monitor, Smartphone, Tablet, Sliders} from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 const DEVICE_PRESETS = [

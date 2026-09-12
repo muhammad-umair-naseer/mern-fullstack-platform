@@ -12,7 +12,6 @@ import {
 import JSZip from 'jszip';
 import { pdfjsLib, formatBytes, triggerDownload, yieldToMain } from '../../lib/pdfCommon';
 import { canvasToExportBlob } from '../../lib/pdfEncoders';
-import PdfPngWebpSeoArticle from './PdfPngWebpSeoArticle';
 
 const FORMATS = [
   { value: 'png', label: 'PNG', ext: '.png', note: 'Lossless' },
@@ -347,9 +346,6 @@ export default function PdfPngWebp() {
           </div>
         </div>
       )}
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfPngWebpSeoArticle />
     </div>
   );
 }

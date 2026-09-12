@@ -22,7 +22,6 @@ import {
   COMPRESSION_LEVELS,
   triggerDownload,
 } from '../../lib/pdfCompressor';
-import PdfCompressorSeoArticle from './PdfCompressorSeoArticle';
 
 export default function PdfCompressor() {
   const [file, setFile] = useState(null);
@@ -580,9 +579,6 @@ export default function PdfCompressor() {
           </p>
         </div>
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfCompressorSeoArticle />
     </div>
   );
 }

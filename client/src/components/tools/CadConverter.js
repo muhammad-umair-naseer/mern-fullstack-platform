@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Download, RefreshCw, FileCode, CheckCircle2, AlertCircle, Eye, Layers, Settings, ZoomIn, ZoomOut } from 'lucide-react';
+import { Upload, Download, RefreshCw, FileCode, CheckCircle2, AlertCircle, Eye, ZoomIn, ZoomOut } from 'lucide-react';
 import { jsPDF } from 'jspdf';
-import { validateFile } from '../../lib/fileValidation';
 
 // AutoCAD ACI standard 7 colors
 const ACI_COLORS = {

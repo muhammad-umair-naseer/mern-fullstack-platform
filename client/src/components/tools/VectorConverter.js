@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Shapes, Upload, Download, Sparkles, AlertCircle, Check, Eye } from 'lucide-react';
-import { validateImageFile, formatFileSize } from '../../lib/fileValidation';
+import { Shapes, Download, AlertCircle, Check} from 'lucide-react';
+import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
 
 const UNIT = { px: 1, pt: 96 / 72, pc: 16, mm: 96 / 25.4, cm: 96 / 2.54, in: 96, '': 1 };

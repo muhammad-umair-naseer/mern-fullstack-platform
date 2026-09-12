@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Table, Download, Eye, RefreshCw, AlertCircle, Check, FileSpreadsheet } from 'lucide-react';
+import { Download, Eye, RefreshCw, AlertCircle, Check, FileSpreadsheet } from 'lucide-react';
 import { loadXlsxLib } from '../../lib/dynamicVendor';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';

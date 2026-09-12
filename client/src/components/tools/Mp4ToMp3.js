@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Music, Video, Download, Play, AlertCircle, Check } from 'lucide-react';
+import { Music, Video, Download, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 export default function Mp4ToMp3() {
   const [file, setFile] = useState(null);

@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Upload, Sliders, Play, Download, Sparkles, AlertCircle, Check, FileImage } from 'lucide-react';
+import { Download, Sparkles, AlertCircle, Check, FileImage } from 'lucide-react';
 import { loadGifEncLib, loadGifUctLib } from '../../lib/dynamicVendor';
 import { validateImageFile, formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 export default function GifCompressor() {
   const [file, setFile] = useState(null);
@@ -13,7 +12,7 @@ export default function GifCompressor() {
   const [maxColors, setMaxColors] = useState(128); // 2..256
   const [everyN, setEveryN] = useState(1); // 1..4 (frame skip)
   const [speed, setSpeed] = useState(1); // 0.5..2
-  const [bgColor, setBgColor] = useState('#000000');
+  const [bgColor] = useState('#000000');
   const [status, setStatus] = useState('idle'); // 'idle' | 'decoding' | 'compressing' | 'ready' | 'error'
   const [progress, setProgress] = useState(0);
   const [statusMsg, setStatusMsg] = useState('');

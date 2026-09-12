@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { protectPdf } from '../../lib/pdfProtect';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
-import PdfProtectSeoArticle from './PdfProtectSeoArticle';
 
 export default function PdfProtect() {
   const [file, setFile] = useState(null);
@@ -407,9 +406,6 @@ export default function PdfProtect() {
           </div>
         )}
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfProtectSeoArticle />
     </div>
   );
 }

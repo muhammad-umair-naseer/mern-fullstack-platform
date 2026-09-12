@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { BookOpen, Upload, Download, RefreshCw, AlertCircle, Check, FileText } from 'lucide-react';
+import { BookOpen, Download, AlertCircle, Check} from 'lucide-react';
 import { loadZipLib } from '../../lib/dynamicVendor';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
@@ -222,7 +222,6 @@ export default function EbookConverter() {
   const [outputFormat, setOutputFormat] = useState('epub'); // 'epub' | 'html' | 'txt'
   const [status, setStatus] = useState('idle');
   const [statusMsg, setStatusMsg] = useState('');
-  const [isDragOver, setIsDragOver] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -291,7 +290,7 @@ export default function EbookConverter() {
         if (!opf) throw new Error('EPUB package file missing');
 
         const dir = opfPath.indexOf('/') >= 0 ? opfPath.slice(0, opfPath.lastIndexOf('/') + 1) : '';
-        const bookTitle = (/ <dc:title[^>]*>([\s\S]*?)<\/dc:title>/i.exec(opf) || [, 'eBook'])[1].trim();
+        const bookTitle = (/ <dc:title[^>]*>([\s\S]*?)<\/dc:title>/i.exec(opf) || [null, 'eBook'])[1].trim();
 
         // Collect html chapters
         const items = {};

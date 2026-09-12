@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Shuffle, Download, RefreshCw, AlertCircle, CheckCircle2, FileText, Image as ImageIcon, Music, Video, Database, Archive, Sliders, Eye } from 'lucide-react';
+import { Upload, Shuffle, Download, RefreshCw, AlertCircle, CheckCircle2, FileText, Image as ImageIcon, Music, Video, Database} from 'lucide-react';
 import { validateFile } from '../../lib/fileValidation';
 import { runFfmpegCommand } from '../../lib/ffmpegEngine';
 import { loadVendorScript } from '../../lib/dynamicVendor';

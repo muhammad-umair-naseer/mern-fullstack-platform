@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY, isImplemented } from '../data/tools';
 import { toolSeo } from '../data/toolSeo';
 import { toolFaqs } from '../data/toolFaqs';
+import { toolArticle } from '../data/toolArticles';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import Seo from '../seo/Seo';
 import { breadcrumbs, softwareApplication, faq } from '../seo/schema';
@@ -102,6 +103,7 @@ export default function ToolDetail() {
   // treats structured data describing content a visitor cannot see as a
   // violation, and an unbuilt tool renders no guide.
   const faqs = live ? toolFaqs(tool.slug) : [];
+  const Article = live ? toolArticle(tool.slug) : null;
 
   const renderToolComponent = () => {
     switch (tool.slug) {
@@ -342,6 +344,15 @@ export default function ToolDetail() {
       {/* Main Tool Content */}
       <section className="max-w-5xl mx-auto px-6 -mt-8 relative z-10">
         {renderToolComponent()}
+
+        {/* The long-form guide, keyed by slug rather than mounted inside the
+            tool. One component can serve several URLs and each URL needs its
+            own guide, or they all carry the same text. */}
+        {Article && (
+          <Suspense fallback={null}>
+            <Article />
+          </Suspense>
+        )}
 
         {/* Related Tools */}
         {related.length > 0 && (

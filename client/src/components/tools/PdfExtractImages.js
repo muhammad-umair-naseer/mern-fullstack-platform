@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import JSZip from 'jszip';
 import { pdfjsLib, formatBytes, triggerDownload, yieldToMain } from '../../lib/pdfCommon';
-import PdfExtractImagesSeoArticle from './PdfExtractImagesSeoArticle';
 
 export default function PdfExtractImages() {
   const [file, setFile] = useState(null);
@@ -299,9 +298,6 @@ export default function PdfExtractImages() {
           </div>
         </div>
       )}
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfExtractImagesSeoArticle />
     </div>
   );
 }

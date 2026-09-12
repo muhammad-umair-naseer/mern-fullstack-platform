@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { convertPdfToDocx, convertDocxToPdf } from '../../lib/pdfWord';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
-import PdfWordSeoArticle from './PdfWordSeoArticle';
 
 export default function PdfWord() {
   const [file, setFile] = useState(null);
@@ -316,9 +315,6 @@ export default function PdfWord() {
           </div>
         )}
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfWordSeoArticle />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Upload, Music, Volume2, Download, RefreshCw, AlertCircle, Check, Play } from 'lucide-react';
+import { Music, Volume2, Download, AlertCircle, Check} from 'lucide-react';
 import { validateAudioFile, formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 function readString(dv, off, len) {
   let s = '';

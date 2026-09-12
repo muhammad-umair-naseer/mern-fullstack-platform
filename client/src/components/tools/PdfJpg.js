@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { convertPdfToJpg, convertJpgToPdf } from '../../lib/pdfJpg';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
-import PdfJpgSeoArticle from './PdfJpgSeoArticle';
 
 export default function PdfJpg() {
   const [mode, setMode] = useState('pdf2jpg'); // 'pdf2jpg' | 'jpg2pdf'
@@ -534,9 +533,6 @@ export default function PdfJpg() {
           </div>
         )}
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfJpgSeoArticle />
     </div>
   );
 }

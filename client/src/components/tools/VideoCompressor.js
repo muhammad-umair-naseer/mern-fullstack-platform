@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Video, Sliders, Download, Sparkles, AlertCircle, Check } from 'lucide-react';
+import { Video, Sliders, Download, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 export default function VideoCompressor() {
   const [file, setFile] = useState(null);

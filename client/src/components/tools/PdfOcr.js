@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { performPdfOcr } from '../../lib/pdfOcr';
 import { formatBytes } from '../../lib/pdfCommon';
-import PdfOcrSeoArticle from './PdfOcrSeoArticle';
 
 export default function PdfOcr() {
   const [file, setFile] = useState(null);
@@ -345,9 +344,6 @@ export default function PdfOcr() {
           </div>
         )}
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfOcrSeoArticle />
     </div>
   );
 }

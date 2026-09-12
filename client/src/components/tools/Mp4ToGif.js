@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Film, Video, Download, Scissors, Sparkles, AlertCircle, Check } from 'lucide-react';
+import { Film, Download, Sparkles, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 export default function Mp4ToGif() {
   const [file, setFile] = useState(null);
@@ -10,7 +9,7 @@ export default function Mp4ToGif() {
   const [duration, setDuration] = useState(5); // seconds
   const [fps, setFps] = useState(12);
   const [width, setWidth] = useState(480);
-  const [colors, setColors] = useState(256);
+  const [colors] = useState(256);
   const [status, setStatus] = useState('idle'); // 'idle' | 'converting' | 'ready' | 'error'
   const [progress, setProgress] = useState(0);
   const [statusMsg, setStatusMsg] = useState('');

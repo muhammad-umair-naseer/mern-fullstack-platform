@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Layers, Download, RefreshCw, AlertCircle, CheckCircle2, Sliders, Eye } from 'lucide-react';
+import { Upload, Layers, Download, RefreshCw, AlertCircle, CheckCircle2} from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 import { validateFile } from '../../lib/fileValidation';

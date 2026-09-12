@@ -10,7 +10,6 @@ import {
   Unlock,
 } from 'lucide-react';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
-import ImageResizerSeoArticle from './ImageResizerSeoArticle';
 
 const PRESETS = [
   { label: 'Original', w: 0, h: 0 },
@@ -347,9 +346,6 @@ export default function ImageResizer() {
           </div>
         </div>
       )}
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <ImageResizerSeoArticle />
     </div>
   );
 }

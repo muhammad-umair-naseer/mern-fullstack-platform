@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Copy, Check, Palette, Eye, Sliders, Sparkles } from 'lucide-react';
+import { Copy, Check, Palette, Eye} from 'lucide-react';
 
 function clamp(n, lo, hi) {
   return Math.min(hi, Math.max(lo, n));

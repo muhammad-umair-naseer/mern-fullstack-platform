@@ -7,7 +7,6 @@ import {
   AlertCircle,
   X,
 } from 'lucide-react';
-import ColourPickerSeoArticle from './ColourPickerSeoArticle';
 
 const toHex = (v) => v.toString(16).padStart(2, '0').toUpperCase();
 const hexFromRgb = (r, g, b) => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
@@ -359,9 +358,6 @@ export default function ColourPicker() {
           </div>
         </div>
       )}
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <ColourPickerSeoArticle />
     </div>
   );
 }

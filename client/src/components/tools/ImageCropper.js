@@ -7,7 +7,6 @@ import {
   X,
 } from 'lucide-react';
 import { triggerDownload } from '../../lib/pdfCommon';
-import ImageCropperSeoArticle from './ImageCropperSeoArticle';
 
 const MIN_CROP = 0.05;
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
@@ -378,9 +377,6 @@ export default function ImageCropper() {
           </div>
         </div>
       )}
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <ImageCropperSeoArticle />
     </div>
   );
 }

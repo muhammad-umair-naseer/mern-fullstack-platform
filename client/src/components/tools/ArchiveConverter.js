@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { RefreshCw, Download, Archive, ArrowRight, Check, AlertCircle, FileArchive } from 'lucide-react';
+import { RefreshCw, Download, Archive, Check, AlertCircle, FileArchive } from 'lucide-react';
 import { loadZipLib } from '../../lib/dynamicVendor';
-import { validateArchiveFile, formatFileSize } from '../../lib/fileValidation';
+import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
 
 const BLOCK = 512;

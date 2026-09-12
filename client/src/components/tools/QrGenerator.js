@@ -9,7 +9,6 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
-import QrGeneratorSeoArticle from './QrGeneratorSeoArticle';
 
 export default function QrGenerator() {
   const [mode, setMode] = useState('url'); // 'url' | 'text' | 'wifi' | 'contact'
@@ -341,9 +340,6 @@ export default function QrGenerator() {
           </div>
         </div>
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <QrGeneratorSeoArticle />
     </div>
   );
 }

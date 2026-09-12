@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { Upload, FileEdit, Download, Trash2, Check, RefreshCw, AlertTriangle, FileText } from 'lucide-react';
+import { FileEdit, Download, Trash2, AlertTriangle} from 'lucide-react';
 import { loadZipLib } from '../../lib/dynamicVendor';
 import { triggerDownload } from '../../lib/pdfCommon';
-import { formatFileSize } from '../../lib/fileValidation';
 
 function splitName(filename) {
   const dot = filename.lastIndexOf('.');
@@ -11,13 +10,13 @@ function splitName(filename) {
 }
 
 function toTitle(s) {
-  return s.replace(/([^\s_\-]+)/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  return s.replace(/([^\s_-]+)/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
 }
 function toKebab(s) {
   return s.trim().toLowerCase().replace(/[\s_]+/g, '-').replace(/-+/g, '-');
 }
 function toSnake(s) {
-  return s.trim().toLowerCase().replace(/[\s\-]+/g, '_').replace(/_+/g, '_');
+  return s.trim().toLowerCase().replace(/[\s-]+/g, '_').replace(/_+/g, '_');
 }
 
 function applyCase(s, mode) {
@@ -84,12 +83,12 @@ export default function FileRenamer() {
   const [caseMode, setCaseMode] = useState('none');
   const [newExt, setNewExt] = useState('');
   const [numberingEnabled, setNumberingEnabled] = useState(false);
-  const [numberStart, setNumberStart] = useState(1);
-  const [numberStep, setNumberStep] = useState(1);
-  const [numberPad, setNumberPad] = useState(2);
-  const [numberPos, setNumberPos] = useState('suffix');
-  const [numberSep, setNumberSep] = useState('_');
-  const [autoFixCollisions, setAutoFixCollisions] = useState(true);
+  const [numberStart] = useState(1);
+  const [numberStep] = useState(1);
+  const [numberPad] = useState(2);
+  const [numberPos] = useState('suffix');
+  const [numberSep] = useState('_');
+  const [autoFixCollisions] = useState(true);
   const [status, setStatus] = useState('idle');
   const [isDragOver, setIsDragOver] = useState(false);
 

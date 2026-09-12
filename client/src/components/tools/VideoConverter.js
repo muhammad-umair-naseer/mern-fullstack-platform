@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Video, RefreshCw, Download, Sparkles, AlertCircle, Check } from 'lucide-react';
+import { Video, RefreshCw, Download, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { formatFileSize } from '../../lib/fileValidation';
-import { triggerDownload } from '../../lib/pdfCommon';
 
 const VIDEO_FORMATS = [
   { id: 'mp4', label: 'MP4 (H.264 / AAC - Universal)', ext: 'mp4', mime: 'video/mp4' },

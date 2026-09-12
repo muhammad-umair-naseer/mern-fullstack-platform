@@ -22,7 +22,6 @@ import {
   saveOrganizedPdf,
 } from '../../lib/pdfOrganizer';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
-import PdfOrganizerSeoArticle from './PdfOrganizerSeoArticle';
 
 export default function PdfOrganizer() {
   const [file, setFile] = useState(null);
@@ -410,9 +409,6 @@ export default function PdfOrganizer() {
           </div>
         )}
       </div>
-
-      {/* Complete SEO Master Guide & Knowledge Base */}
-      <PdfOrganizerSeoArticle />
     </div>
   );
 }

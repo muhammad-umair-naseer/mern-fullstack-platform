@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, BookOpen, Download, RefreshCw, AlertCircle, CheckCircle2, FileText, Settings, Eye } from 'lucide-react';
+import { Upload, BookOpen, Download, RefreshCw, AlertCircle, CheckCircle2, Eye } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 import { validateFile } from '../../lib/fileValidation';
@@ -14,7 +14,7 @@ export default function PdfToEbook() {
   const [format, setFormat] = useState('epub'); // epub, mobi-html, fb2, txt, md
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('Unknown Author');
-  const [language, setLanguage] = useState('en');
+  const [language] = useState('en');
   const [splitBy, setSplitBy] = useState('page'); // page, single
 
   const [loading, setLoading] = useState(false);
