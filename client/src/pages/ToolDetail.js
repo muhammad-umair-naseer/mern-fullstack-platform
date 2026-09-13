@@ -18,6 +18,7 @@ import ExtractPages from '../components/tools/ExtractPages';
 import PdfJpg from '../components/tools/PdfJpg';
 import PdfOrganizer from '../components/tools/PdfOrganizer';
 import PdfProtect from '../components/tools/PdfProtect';
+import PdfUnlock from '../components/tools/PdfUnlock';
 import PdfExtractImages from '../components/tools/PdfExtractImages';
 import PdfRotate from '../components/tools/PdfRotate';
 import PdfFlatten from '../components/tools/PdfFlatten';
@@ -130,7 +131,7 @@ export default function ToolDetail() {
       case 'pdf-protect':
         return <PdfProtect />;
       case 'pdf-unlock':
-        return <PdfProtect />;
+        return <PdfUnlock />;
       case 'extract-images-from-pdf':
         return <PdfExtractImages />;
       case 'pdf-rotate':

@@ -30,6 +30,7 @@ const ARTICLES = {
   'pdf-jpg': lazy(() => import('../components/tools/PdfJpgSeoArticle')),
   'pdf-organizer': lazy(() => import('../components/tools/PdfOrganizerSeoArticle')),
   'pdf-protect': lazy(() => import('../components/tools/PdfProtectSeoArticle')),
+  'pdf-unlock': lazy(() => import('../components/tools/PdfUnlockSeoArticle')),
   'extract-images-from-pdf': lazy(() => import('../components/tools/PdfExtractImagesSeoArticle')),
   'pdf-rotate': lazy(() => import('../components/tools/PdfRotateSeoArticle')),
   'pdf-flatten': lazy(() => import('../components/tools/PdfFlattenSeoArticle')),

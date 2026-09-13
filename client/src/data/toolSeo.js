@@ -75,6 +75,11 @@ const TOOL_SEO = {
     description:
       'Lock a PDF with a password so only the right person can open it. Free PDF encryption with no sign-up and no watermark.',
   },
+  'pdf-unlock': {
+    title: 'Unlock PDF – Remove Password Online Free',
+    description:
+      'Remove the password from a PDF you know the password to. Open or owner password, AES-256 included, no sign-up, no watermark.',
+  },
   'pdf-crop': {
     title: 'Crop PDF Online Free — Trim PDF Margins',
     description:

@@ -315,7 +315,7 @@ const TOOL_FAQS = {
     },
     {
       q: "Can you remove a password from a PDF or recover one I have forgotten?",
-      a: "No. This tool only adds protection. There is no unlocking, no recovery and no back door, and nothing about your file or your password is kept, so there is nothing for us to look up. Always keep the unprotected original — the tool deliberately saves the locked version as a separate -protected.pdf file for that reason.",
+      a: "Not with this tool, which only adds protection. Removing a password you know is the job of the PDF unlocker elsewhere on this site: give it the open or owner password and it returns a copy with no lock. Recovering a password you have forgotten is not possible here or anywhere else on our site — there is no back door, and nothing about your file or your password is kept, so there is nothing for us to look up. Always keep the unprotected original; the tool deliberately saves the locked version as a separate -protected.pdf file for that reason.",
     },
     {
       q: "How do I stop people copying text or printing my PDF?",
@@ -327,7 +327,7 @@ const TOOL_FAQS = {
     },
     {
       q: "Can I change the password on a PDF that is already protected?",
-      a: "Not by putting the locked file through this tool. An already-locked PDF is accepted rather than refused, but what comes back opens with neither the old password nor the new one, and that copy cannot be repaired. Go back to the unprotected original, lock it again with the password and permissions you now want, and keep that original safe for the next time the terms change.",
+      a: "Yes, in two steps. Putting the locked file straight through this tool will not work — what comes back opens with neither the old password nor the new one, and that copy cannot be repaired. Instead, remove the current password with the PDF unlocker first, then lock the unlocked copy here with the password and permissions you now want. Keep an unprotected copy safe for the next time the terms change.",
     },
     {
       q: "Will a password protected PDF open on a phone or on someone else’s computer?",
@@ -1730,6 +1730,40 @@ const TOOL_FAQS = {
     {
       q: "Is it safe to put my phone number or Wi-Fi password in?",
       a: "What you type is never stored on our servers, never retained after your visit and never used for analytics or training. Do remember that a printed code is readable by anyone who can see it, so treat one with the care you would give the printed details themselves.",
+    },
+  ],
+  'pdf-unlock': [
+    {
+      q: "How do I unlock a PDF for free?",
+      a: "Add the locked PDF to the tool at the top of this page, type its password, press Unlock PDF and download the copy named -unlocked.pdf. There is no account, no watermark and no daily limit, and the original file is left exactly as it was.",
+    },
+    {
+      q: "Can you unlock a PDF without knowing the password?",
+      a: "No, and neither can any other page on the first screen of results, whatever the headline says. The tool needs the open password or the owner password. A wrong password is refused with a clear message, and nothing about your file or attempt is kept. If you have lost the password, check the message that delivered the file for the pattern the sender used, ask for a fresh copy, or download the document again from the portal it came from.",
+    },
+    {
+      q: "My PDF opens fine but I cannot print or copy from it. Do I need a password?",
+      a: "Usually not. That file has an owner password setting permissions but no open password. Add it to the tool, leave the password field empty and press Unlock PDF. The restrictions are removed and the copy prints, copies and edits normally.",
+    },
+    {
+      q: "Does it remove AES-256 encryption?",
+      a: "Yes. Every revision of the standard PDF password scheme is handled: RC4 40-bit, RC4 128-bit, AES-128 and both versions of AES-256, including passwords with accented or non-Latin characters. The success screen names the scheme that was removed.",
+    },
+    {
+      q: "Will unlocking change my document?",
+      a: "The encryption and the permission restrictions are removed; pages, text, images, bookmarks, links, form fields, comments and metadata are kept. The file is re-written with a clean structure, so its byte layout and often its exact size differ from the original, but the content is the same. One genuine side effect: an existing digital signature will show as invalid, because a signature covers the exact bytes it was applied to.",
+    },
+    {
+      q: "Is it safe to unlock a bank statement or a contract here?",
+      a: "Your files are never stored on our servers, never queued or logged, and never retained after your session, and they are never used for training or analytics. Remember that the unlocked copy opens for anyone who has it, so keep it where the locked one was meant to stay.",
+    },
+    {
+      q: "Can I set a new password instead of just removing the old one?",
+      a: "Not in the same step. Unlock the file here, then put it through the PDF password protector, which lets you choose a fresh open password, a separate owner password and exactly which permissions to allow.",
+    },
+    {
+      q: "Why does it say my PDF is not password-protected?",
+      a: "Because the file has no encryption on it — it already opens without a password. If a reader still refuses to show it, the block is coming from somewhere else: a viewer app with its own lock, a download that was actually a login page, or a document issued through a rights-management platform, which is not a password and is reported as such.",
     },
   ],
 };

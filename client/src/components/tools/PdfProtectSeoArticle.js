@@ -23,11 +23,10 @@ import {
  *
  * 1. The tool ADDS protection. It does not remove it. "Remove password from
  *    pdf", "unlock pdf" and "pdf password recovery" are far bigger search terms
- *    than "password protect pdf", and every one of them was declined. Section 5
- *    answers the question behind them honestly instead — including the fact
- *    that a lost password cannot be recovered by us, which is what the tool's
- *    own success screen tells the user. Promising an unlocker we do not ship
- *    would earn one click and one complaint.
+ *    than "password protect pdf"; the first two belong to /tools/pdf-unlock,
+ *    which this guide links to, and "recovery" is declined honestly in
+ *    section 5 — a lost password cannot be recovered by us, which is what the
+ *    tool's own success screen tells the user.
  *
  * 2. No bit-strength is quoted anywhere in this article, and no adequacy claim
  *    is made either. Encryption strength claims ("AES-256", "bank-grade") are
@@ -382,7 +381,7 @@ export default function PdfProtectSeoArticle() {
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <h4 className="font-bold text-slate-900 dark:text-white text-base mb-3">It adds protection, never removes it</h4>
             <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
-              <li>No password removal or unlocking</li>
+              <li>No unlocking here &mdash; that is a separate tool</li>
               <li>No password recovery or cracking</li>
               <li>An already-locked PDF cannot be re-protected</li>
               <li>No way for us to open what you have locked</li>
@@ -406,10 +405,15 @@ export default function PdfProtectSeoArticle() {
           that no password opens &mdash; not the password it already had, and not
           the new one you just typed. Nothing about that copy can be undone
           afterwards. So if you need to change the password on a protected
-          document, or change which permissions it carries, always start again
-          from the unprotected original and lock that. If the original is gone,
-          whoever locked the file in the first place is the only route back to a
-          version anyone can work with.
+          document, or change which permissions it carries, start from an
+          unlocked copy: either the unprotected original, or the output of the{' '}
+          <Link to="/tools/pdf-unlock" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF unlocker
+          </Link>
+          , which takes the current password and hands back a copy with no lock
+          on it. Then protect that copy here. If the original is gone and the
+          password with it, whoever locked the file in the first place is the
+          only route back to a version anyone can work with.
         </p>
         <p>
           The redaction point deserves a sentence of its own too, because it
@@ -549,7 +553,7 @@ export default function PdfProtectSeoArticle() {
             ],
             [
               'Can you remove a password from a PDF or recover one I have forgotten?',
-              'No. This tool only adds protection. There is no unlocking, no recovery and no back door, and nothing about your file or your password is kept, so there is nothing for us to look up. Always keep the unprotected original — the tool deliberately saves the locked version as a separate -protected.pdf file for that reason.',
+              'Not with this tool, which only adds protection. Removing a password you know is the job of the PDF unlocker elsewhere on this site: give it the open or owner password and it returns a copy with no lock. Recovering a password you have forgotten is not possible here or anywhere else on our site — there is no back door, and nothing about your file or your password is kept, so there is nothing for us to look up. Always keep the unprotected original; the tool deliberately saves the locked version as a separate -protected.pdf file for that reason.',
             ],
             [
               'How do I stop people copying text or printing my PDF?',
@@ -561,7 +565,7 @@ export default function PdfProtectSeoArticle() {
             ],
             [
               'Can I change the password on a PDF that is already protected?',
-              'Not by putting the locked file through this tool. An already-locked PDF is accepted rather than refused, but what comes back opens with neither the old password nor the new one, and that copy cannot be repaired. Go back to the unprotected original, lock it again with the password and permissions you now want, and keep that original safe for the next time the terms change.',
+              'Yes, in two steps. Putting the locked file straight through this tool will not work — what comes back opens with neither the old password nor the new one, and that copy cannot be repaired. Instead, remove the current password with the PDF unlocker first, then lock the unlocked copy here with the password and permissions you now want. Keep an unprotected copy safe for the next time the terms change.',
             ],
             [
               'Will a password protected PDF open on a phone or on someone else’s computer?',
