@@ -30,6 +30,7 @@ import PngCompressor from '../components/tools/PngCompressor';
 import QrGenerator from '../components/tools/QrGenerator';
 import ImageResizer from '../components/tools/ImageResizer';
 import ImageCropper from '../components/tools/ImageCropper';
+import RotateFlipImage from '../components/tools/RotateFlipImage';
 import ImageEnlarger from '../components/tools/ImageEnlarger';
 import ColourPicker from '../components/tools/ColourPicker';
 import SaveWebAsPdf from '../components/tools/SaveWebAsPdf';
@@ -209,8 +210,9 @@ export default function ToolDetail() {
       case 'font-converter':
         return <FontConverter />;
       case 'pdf-html':
-      case 'pdf-txt-html-rtf-odt':
         return <PdfToHtml />;
+      case 'pdf-txt-html-rtf-odt':
+        return <PdfToHtml formats={['txt', 'html', 'rtf', 'odt']} />;
       case 'presentation-converter':
         return <PresentationConverter />;
       case 'vector-converter':
@@ -236,9 +238,9 @@ export default function ToolDetail() {
       case 'webp-png':
         return <ConverterHub />;
       case 'pdf-spreadsheet-suite':
-        return <PdfToExcel />;
+        return <PdfToExcel suite />;
       case 'rotate-flip-image':
-        return <ImageCropper />;
+        return <RotateFlipImage />;
 
       default:
         break;

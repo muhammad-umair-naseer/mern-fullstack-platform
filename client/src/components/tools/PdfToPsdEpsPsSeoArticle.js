@@ -194,7 +194,11 @@ export default function PdfToPsdEpsPsSeoArticle() {
         <p>
           Two limits, stated up front: the panel takes one PDF at a time, and it
           cannot open a password-protected PDF. You get a load error rather than
-          a password prompt, so remove the password first.
+          a password prompt, so take the password off with the{' '}
+          <Link to="/tools/pdf-unlock" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF unlocker
+          </Link>{' '}
+          first.
         </p>
       </section>
 

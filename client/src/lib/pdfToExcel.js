@@ -101,7 +101,23 @@ function sanitizeSheetName(name) {
   return name.replace(/[\\/?*[\]:]/g, '-').slice(0, 31) || 'Sheet';
 }
 
-export async function convertPdfsToExcel(files, onProgress, signal) {
+/** Output formats of the spreadsheet suite. Excel-only callers never see these. */
+export const SHEET_FORMATS = {
+  xlsx: { label: 'Excel workbook (.xlsx)', ext: 'xlsx', mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+  xls: { label: 'Excel 97-2003 (.xls)', ext: 'xls', mime: 'application/vnd.ms-excel' },
+  ods: { label: 'OpenDocument spreadsheet (.ods) — LibreOffice, Google Sheets', ext: 'ods', mime: 'application/vnd.oasis.opendocument.spreadsheet' },
+  csv: { label: 'CSV (.csv) — one file per sheet, zipped when there are several', ext: 'csv', mime: 'text/csv;charset=utf-8', perSheet: true },
+  txt: { label: 'Tab-separated text (.tsv)', ext: 'tsv', mime: 'text/tab-separated-values;charset=utf-8', perSheet: true },
+  html: { label: 'HTML table (.html)', ext: 'html', mime: 'text/html;charset=utf-8', perSheet: true },
+};
+
+/**
+ * @param {File[]} files
+ * @param {(p: {progress:number, message:string}) => void} [onProgress]
+ * @param {AbortSignal} [signal]
+ * @param {{ format?: keyof typeof SHEET_FORMATS }} [options]  default xlsx
+ */
+export async function convertPdfsToExcel(files, onProgress, signal, { format = 'xlsx' } = {}) {
   if (!files || files.length === 0) {
     throw new Error('Please select at least one PDF file.');
   }
@@ -140,20 +156,36 @@ export async function convertPdfsToExcel(files, onProgress, signal) {
     });
   }
 
-  onProgress?.({ progress: 90, message: 'Generating Excel (.xlsx) file…' });
+  const spec = SHEET_FORMATS[format] || SHEET_FORMATS.xlsx;
+  onProgress?.({ progress: 90, message: `Generating ${spec.ext.toUpperCase()} file…` });
   await yieldToMain();
 
-  const outBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-  const blob = new Blob([outBuffer], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
+  let blob;
+  let ext = spec.ext;
+  if (spec.perSheet && wb.SheetNames.length > 1) {
+    // CSV, TSV and HTML hold one sheet each, so several sheets become a zip.
+    const { default: JSZip } = await import('jszip');
+    const zip = new JSZip();
+    wb.SheetNames.forEach((name) => {
+      const single = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(single, wb.Sheets[name], name);
+      zip.file(`${name}.${spec.ext}`, XLSX.write(single, { bookType: format, type: 'array' }));
+    });
+    blob = new Blob([await zip.generateAsync({ type: 'uint8array' })], { type: 'application/zip' });
+    ext = 'zip';
+  } else {
+    const outBuffer = XLSX.write(wb, { bookType: format, type: 'array' });
+    blob = new Blob([outBuffer], { type: spec.mime });
+  }
 
   const baseName = files.length === 1 ? files[0].name.replace(/\.pdf$/i, '') : 'extracted-tables';
 
-  onProgress?.({ progress: 100, message: 'Excel spreadsheet generated successfully!' });
+  onProgress?.({ progress: 100, message: 'Spreadsheet generated successfully!' });
   return {
     blob,
-    filename: `${baseName}.xlsx`,
+    filename: `${baseName}.${ext}`,
+    format,
+    ext,
     previewData,
     sheetCount: previewData.length,
   };

@@ -220,7 +220,7 @@ export default function WebpPngSeoArticle() {
         </p>
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
-            ['Pick your WebP', 'Click the upload zone and choose one .webp file (click to browse; dragging a file onto the zone does not pick it up). The tool recognises it as an image and selects PNG as the target automatically.'],
+            ['Pick your WebP', 'Click the upload zone and choose one .webp file, or drag it onto the zone. The tool recognises it as an image and selects PNG as the target automatically.'],
             ['Confirm the target', 'PNG is already highlighted. There is no quality slider for PNG because PNG is lossless — there is nothing to trade away. Press Convert to PNG.'],
             ['Check the size and download', 'The result card shows the new file size in KB beside the filename. The download is named after your original with a .png extension.'],
           ].map(([title, body], i) => (

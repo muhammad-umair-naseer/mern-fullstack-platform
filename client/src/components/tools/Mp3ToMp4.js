@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Music, Image as ImageIcon, Download, Sparkles, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { validateAudioFile, validateImageFile, formatFileSize } from '../../lib/fileValidation';
+import { dropHandlers } from '../../lib/dropzone';
 
 export default function Mp3ToMp4() {
   const [audioFile, setAudioFile] = useState(null);
@@ -166,6 +167,7 @@ export default function Mp3ToMp4() {
         {/* Audio upload box */}
         <div
           onClick={() => audioInputRef.current?.click()}
+          {...dropHandlers(handleAudioSelect)}
           className="border-2 border-dashed border-slate-700/80 bg-slate-950/40 hover:border-slate-600 rounded-3xl p-6 text-center cursor-pointer transition flex flex-col justify-center items-center"
         >
           <Music className="w-10 h-10 text-orange-400 mb-2 animate-pulse" />

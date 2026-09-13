@@ -148,8 +148,11 @@ export async function validateArchiveFile(file) {
 
   const isTar = name.endsWith('.tar') || name.endsWith('.tar.gz') || name.endsWith('.tgz');
 
-  if (!isZip && !isGz && !is7z && !isTar) {
-    return { valid: false, error: 'Please select a valid archive file (.zip, .tar, .tar.gz, .7z).' };
+  if (is7z) {
+    return { valid: false, error: '7z archives are not supported here — please use a .zip, .tar or .tar.gz file.' };
+  }
+  if (!isZip && !isGz && !isTar) {
+    return { valid: false, error: 'Please select a valid archive file (.zip, .tar, .tar.gz).' };
   }
 
   return { valid: true, isZip, isGz, is7z, isTar };

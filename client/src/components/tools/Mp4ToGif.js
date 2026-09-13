@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Film, Download, Sparkles, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { formatFileSize } from '../../lib/fileValidation';
+import { dropHandlers } from '../../lib/dropzone';
 
 export default function Mp4ToGif() {
   const [file, setFile] = useState(null);
@@ -120,6 +121,7 @@ export default function Mp4ToGif() {
       {!file ? (
         <div
           onClick={() => fileInputRef.current?.click()}
+          {...dropHandlers(handleSelectFile)}
           className="border-2 border-dashed border-slate-700/80 bg-slate-950/40 hover:border-slate-600 rounded-3xl p-10 text-center cursor-pointer transition"
         >
           <Film className="w-14 h-14 text-orange-400 mx-auto mb-3 animate-pulse" />

@@ -442,8 +442,11 @@ export default function ImageCropperSeoArticle() {
           </li>
           <li>
             <strong>Rotate or straighten a crooked photo.</strong> There is no
-            rotation control, so a tilted horizon stays tilted. Straighten it in
-            a photo editor first, then crop the result here.
+            rotation control on this page. Turn or level the picture with the{' '}
+            <Link to="/tools/rotate-flip-image" className="text-orange-600 font-semibold underline hover:text-orange-700">
+              rotate and flip tool
+            </Link>{' '}
+            first, then crop the result here.
           </li>
           <li>
             <strong>Batch crop multiple images at once.</strong> One picture at a

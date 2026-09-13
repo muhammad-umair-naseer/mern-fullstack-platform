@@ -3,6 +3,7 @@ import { RefreshCw, Download, Archive, Check, AlertCircle, FileArchive } from 'l
 import { loadZipLib } from '../../lib/dynamicVendor';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
+import { tarParse, streamThrough } from '../../lib/tar';
 
 const BLOCK = 512;
 
@@ -76,83 +77,6 @@ function tarCreate(entries) {
   });
   return out;
 }
-function readAscii(buf, off, len) {
-  let s = '';
-  for (let i = 0; i < len; i++) {
-    const b = buf[off + i];
-    if (b === 0) break;
-    s += String.fromCharCode(b);
-  }
-  return s;
-}
-function parseOctal(buf, off, len) {
-  const s = readAscii(buf, off, len).trim();
-  if (!s) return 0;
-  return parseInt(s, 8) || 0;
-}
-function isZeroBlock(buf, off) {
-  for (let i = 0; i < BLOCK; i++) if (buf[off + i] !== 0) return false;
-  return true;
-}
-function tarParse(bytes) {
-  const entries = [];
-  let off = 0;
-  let longName = null;
-  while (off + BLOCK <= bytes.length) {
-    if (isZeroBlock(bytes, off)) break;
-    const name = readAscii(bytes, 0 + off, 100);
-    const prefix = readAscii(bytes, 345 + off, 155);
-    const size = parseOctal(bytes, 124 + off, 12);
-    const type = bytes[156 + off];
-    const dataOff = off + BLOCK;
-    let full = prefix ? prefix + '/' + name : name;
-
-    if (type === 0x4c) {
-      longName = readAscii(bytes, dataOff, size).replace(/\0+$/, '');
-      off = dataOff + Math.ceil(size / BLOCK) * BLOCK;
-      continue;
-    }
-    if (type === 0x78 || type === 0x67) {
-      off = dataOff + Math.ceil(size / BLOCK) * BLOCK;
-      continue;
-    }
-    if (longName) {
-      full = longName;
-      longName = null;
-    }
-
-    const isDir = type === 0x35 || /\/$/.test(full);
-    let data = null;
-    if (!isDir && size > 0) data = bytes.slice(dataOff, dataOff + size);
-    entries.push({ name: full, data: data || new Uint8Array(0), dir: isDir });
-    off = dataOff + Math.ceil(size / BLOCK) * BLOCK;
-  }
-  return entries;
-}
-
-async function streamThrough(bytes, Ctor) {
-  const stream = new Ctor('gzip');
-  const writer = stream.writable.getWriter();
-  writer.write(bytes);
-  writer.close();
-  const reader = stream.readable.getReader();
-  const parts = [];
-  let len = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    parts.push(value);
-    len += value.length;
-  }
-  const out = new Uint8Array(len);
-  let o = 0;
-  parts.forEach((p) => {
-    out.set(p, o);
-    o += p.length;
-  });
-  return out;
-}
-
 export default function ArchiveConverter() {
   const [file, setFile] = useState(null);
   const [targetFormat, setTargetFormat] = useState('zip'); // 'zip' | 'tar' | 'tar.gz'

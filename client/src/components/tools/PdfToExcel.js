@@ -13,9 +13,16 @@ import {
 } from 'lucide-react';
 import { convertPdfsToExcel } from '../../lib/pdfToExcel';
 import { formatBytes, triggerDownload } from '../../lib/pdfCommon';
+import { SHEET_FORMATS } from '../../lib/pdfToExcel';
 
-export default function PdfToExcel() {
+/**
+ * @param {{ suite?: boolean }} props  /tools/pdf-excel renders the Excel-only
+ *   tool; /tools/pdf-spreadsheet-suite sets `suite` and gets a format chooser
+ *   (XLSX, XLS, ODS, CSV, TSV, HTML).
+ */
+export default function PdfToExcel({ suite = false }) {
   const [files, setFiles] = useState([]);
+  const [format, setFormat] = useState('xlsx');
   const [activePreviewSheet, setActivePreviewSheet] = useState(0);
 
   const [status, setStatus] = useState('idle'); // 'idle' | 'converting' | 'completed' | 'error'
@@ -69,7 +76,8 @@ export default function PdfToExcel() {
       const res = await convertPdfsToExcel(
         files,
         (p) => setProgressInfo(p),
-        abortControllerRef.current.signal
+        abortControllerRef.current.signal,
+        { format: suite ? format : 'xlsx' }
       );
       setResult(res);
       setActivePreviewSheet(0);
@@ -110,7 +118,7 @@ export default function PdfToExcel() {
           </span>
           <div>
             <h2 className="font-bold text-base">PDF → Excel Converter</h2>
-            <p className="text-xs text-slate-400">Extract tables and structured data into editable .xlsx spreadsheets</p>
+            <p className="text-xs text-slate-400">{suite ? 'Extract tables and structured data into XLSX, XLS, ODS, CSV, TSV or HTML' : 'Extract tables and structured data into editable .xlsx spreadsheets'}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-full">
@@ -267,6 +275,26 @@ export default function PdfToExcel() {
               </div>
             )}
 
+            {suite && status !== 'converting' && (
+              <div className="p-5 rounded-2xl bg-slate-50/70 border border-slate-200">
+                <label htmlFor="sheet-format" className="block text-sm font-semibold text-slate-800 mb-2">
+                  Output format
+                </label>
+                <select
+                  id="sheet-format"
+                  value={format}
+                  onChange={(e) => setFormat(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none"
+                >
+                  {Object.entries(SHEET_FORMATS).map(([key, f]) => (
+                    <option key={key} value={key}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Actions */}
             {status !== 'converting' && (
               <div className="flex justify-end gap-3 pt-2">
@@ -281,7 +309,7 @@ export default function PdfToExcel() {
                   className="px-8 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md transition flex items-center gap-2"
                 >
                   <FileSpreadsheet className="w-4 h-4" />
-                  Convert to Excel (.xlsx)
+                  {suite ? `Convert to ${SHEET_FORMATS[format].ext.toUpperCase()}` : 'Convert to Excel (.xlsx)'}
                 </button>
               </div>
             )}
@@ -311,7 +339,7 @@ export default function PdfToExcel() {
                   className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Download .xlsx File
+                  Download .{result.ext || 'xlsx'} File
                 </button>
               </div>
             </div>

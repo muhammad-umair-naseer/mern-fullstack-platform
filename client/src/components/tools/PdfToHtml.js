@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { FileCode, Eye, AlertCircle, Check, Sparkles } from 'lucide-react';
 import { pdfjsLib, triggerDownload } from '../../lib/pdfCommon';
 import { validatePdfFile, formatFileSize } from '../../lib/fileValidation';
+import { toTxt, toRtf, toOdt, escapeHtml, EXPORTS } from '../../lib/pdfTextExport';
+import { dropHandlers } from '../../lib/dropzone';
 
 function normalizeTextItems(items, pageHeight) {
   return items.map((it) => {
@@ -37,9 +39,10 @@ function toHtmlFlow(pages, title) {
     .map((p, idx) => {
       const pageLines = p.lines
         .map((l) => {
-          if (l.fontSize >= 18) return `<h1>${l.text}</h1>`;
-          if (l.fontSize >= 14) return `<h2>${l.text}</h2>`;
-          return `<p>${l.text}</p>`;
+          const text = escapeHtml(l.text);
+          if (l.fontSize >= 18) return `<h1>${text}</h1>`;
+          if (l.fontSize >= 14) return `<h2>${text}</h2>`;
+          return `<p>${text}</p>`;
         })
         .join('\n');
       return `<section class="pdf-page" data-page="${idx + 1}">\n${pageLines}\n</section>`;
@@ -51,7 +54,7 @@ function toHtmlFlow(pages, title) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title}</title>
+<title>${escapeHtml(title)}</title>
 <style>
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #1e293b; background: #f8fafc; }
 .pdf-page { background: #fff; padding: 40px; margin-bottom: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
@@ -67,8 +70,14 @@ ${body}
 </html>`;
 }
 
-export default function PdfToHtml() {
+/**
+ * @param {{ formats?: Array<'html'|'txt'|'rtf'|'odt'> }} props
+ *   /tools/pdf-html renders the default (HTML only); /tools/pdf-txt-html-rtf-odt
+ *   passes all four and gets an output-format selector.
+ */
+export default function PdfToHtml({ formats = ['html'] }) {
   const [file, setFile] = useState(null);
+  const [format, setFormat] = useState(formats[0]);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [numPages, setNumPages] = useState(0);
   const [fromPage, setFromPage] = useState(1);
@@ -144,13 +153,16 @@ export default function PdfToHtml() {
 
       const title = file.name.replace(/\.pdf$/i, '');
       const html = toHtmlFlow(pages, title);
-      setResultHtml(html);
+      setResultHtml(format === 'html' ? html : '');
 
-      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      triggerDownload(blob, `${title}.html`);
+      const { ext, mime } = EXPORTS[format];
+      const payload =
+        format === 'txt' ? toTxt(pages) : format === 'rtf' ? toRtf(pages, title) : format === 'odt' ? await toOdt(pages, title) : html;
+      const blob = new Blob([payload], { type: mime });
+      triggerDownload(blob, `${title}.${ext}`);
 
       setStatus('ready');
-      setStatusMsg(`✓ Converted ${pages.length} pages to HTML (${formatFileSize(blob.size)})`);
+      setStatusMsg(`✓ Converted ${pages.length} pages to ${ext.toUpperCase()} (${formatFileSize(blob.size)})`);
     } catch (err) {
       setStatus('error');
       setStatusMsg(`Conversion failed: ${err.message}`);
@@ -162,12 +174,15 @@ export default function PdfToHtml() {
       {!file ? (
         <div
           onClick={() => fileInputRef.current?.click()}
+          {...dropHandlers(handleSelectFile)}
           className="border-2 border-dashed border-slate-700/80 bg-slate-950/40 hover:border-slate-600 rounded-3xl p-10 text-center cursor-pointer transition"
         >
           <FileCode className="w-14 h-14 text-orange-400 mx-auto mb-3 animate-pulse" />
           <h3 className="text-lg font-bold text-slate-100">Drop PDF Document Here</h3>
           <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-            Extract headings, paragraphs, and formatted text into a responsive, clean HTML web page.
+            {formats.length > 1
+              ? 'Extract the text and headings into plain text, HTML, RTF or an OpenDocument file.'
+              : 'Extract headings, paragraphs, and formatted text into a responsive, clean HTML web page.'}
           </p>
 
           <button className="mt-5 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold shadow-lg shadow-orange-500/20 transition">
@@ -221,14 +236,28 @@ export default function PdfToHtml() {
               </div>
 
               <div>
-                <label className="text-slate-400 block mb-1">HTML Output Mode</label>
-                <select
-                  value={mode}
-                  onChange={(e) => setMode(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none"
-                >
-                  <option value="flow">Flowing Semantic HTML (Mobile & Web Friendly)</option>
-                </select>
+                <label className="text-slate-400 block mb-1">{formats.length > 1 ? 'Output format' : 'HTML Output Mode'}</label>
+                {formats.length > 1 ? (
+                  <select
+                    value={format}
+                    onChange={(e) => setFormat(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none"
+                  >
+                    {formats.map((f) => (
+                      <option key={f} value={f}>
+                        {EXPORTS[f].label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <select
+                    value={mode}
+                    onChange={(e) => setMode(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none"
+                  >
+                    <option value="flow">Flowing Semantic HTML (Mobile & Web Friendly)</option>
+                  </select>
+                )}
               </div>
             </div>
 
@@ -254,7 +283,7 @@ export default function PdfToHtml() {
                 className="w-full py-3.5 rounded-2xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-bold text-xs shadow-lg shadow-orange-500/20 transition flex items-center justify-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
-                {status === 'converting' ? 'Extracting & Converting...' : 'Convert PDF to HTML'}
+                {status === 'converting' ? 'Extracting & Converting...' : `Convert PDF to ${(EXPORTS[format]?.ext || 'html').toUpperCase()}`}
               </button>
             </div>
           </div>

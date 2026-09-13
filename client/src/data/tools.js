@@ -48,7 +48,7 @@ export const TOOLS = [
   t(17, 'PDF ↔ JPG', 'pdf', 3, 'Turn PDF pages into JPG images, or build a PDF from a set of JPGs.'),
   t(19, 'PDF Organizer', 'pdf', 3, 'Reorder, duplicate and manage the pages inside a document.'),
   t(21, 'PDF Protect', 'pdf', 3, 'Lock a PDF with a password and encryption.'),
-  t(23, 'PDF Unlock', 'pdf', 4, 'Remove restrictions from PDFs you are authorised to open.'),
+  t(23, 'PDF Unlock', 'pdf', 4, 'Remove the password and restrictions from a PDF you have the password for.'),
   t(25, 'PDF Crop', 'pdf', 3, 'Trim unnecessary margins and areas from PDF pages.'),
   t(27, 'PDF Rotate', 'pdf', 1, 'Rotate pages by 90°, 180° or 270°.'),
   t(29, 'PDF Flatten', 'pdf', 4, 'Flatten forms, annotations and layers into fixed page content.'),
@@ -56,23 +56,23 @@ export const TOOLS = [
   t(31, 'PDF Resize', 'pdf', 3, 'Change the page size and layout of a PDF.'),
   t(33, 'Extract Images from PDF', 'pdf', 3, 'Pull embedded images out of a PDF as usable original files.'),
   t(35, 'PDF → PNG, WebP, TIFF, BMP, GIF', 'pdf', 4, 'Export PDF pages to a range of image formats.'),
-  t(37, 'PDF → TXT, HTML, RTF, ODT', 'pdf', 4, 'Convert PDF content into text, document and web formats.'),
+  t(37, 'PDF → TXT, HTML, RTF, ODT', 'pdf', 4, 'Extract PDF text and headings into a TXT, HTML, RTF or ODT document.'),
   t(52, 'PDF → PSD, EPS, PS', 'pdf', 5, 'Export PDF content to professional graphics and print formats.'),
-  t(54, 'PDF → PowerPoint', 'pdf', 5, 'Convert PDF pages and content into an editable PPT or PPTX deck.'),
-  t(56, 'PDF → eBook', 'pdf', 4, 'Convert a PDF into Kindle and other eBook formats such as AZW3 and MOBI.'),
-  t(58, 'PDF → Spreadsheet Suite', 'pdf', 5, 'Extract tables and structured PDF data into spreadsheet formats.'),
+  t(54, 'PDF → PowerPoint', 'pdf', 5, 'Turn every PDF page into a slide in a PowerPoint (PPTX) deck.'),
+  t(56, 'PDF → eBook', 'pdf', 4, 'Convert a PDF into an EPUB, FB2, Markdown or HTML e-book, ready for Send to Kindle.'),
+  t(58, 'PDF → Spreadsheet Suite', 'pdf', 5, 'Extract PDF tables into XLSX, XLS, ODS, CSV, TSV or an HTML table.'),
   t(61, 'PDF → HTML', 'pdf', 4, 'Convert PDF content into a web-compatible HTML representation.'),
 
   // -------------------------------------------------------------- Image
-  t(39, 'Image Compressor', 'image', 2, 'Reduce the file size of JPG, PNG and WebP images.'),
+  t(39, 'Image Compressor', 'image', 2, 'Reduce the file size of JPG and WebP images with a quality slider.'),
   t(41, 'Image Resizer', 'image', 2, 'Change the width, height and dimensions of an image.'),
   t(43, 'Image Cropper', 'image', 1, 'Crop an image down to the portion you actually want.'),
-  t(45, 'Image Converter', 'image', 3, 'Convert between JPG, PNG, WebP, BMP, TIFF and more.'),
+  t(45, 'Image Converter', 'image', 3, 'Convert JPG, PNG, WebP, GIF, BMP and SVG images to PNG, JPG, WebP, GIF or PDF.'),
   t(47, 'JPEG Compressor', 'image', 2, 'Optimise and compress JPEG images specifically.'),
   t(49, 'PNG Compressor', 'image', 2, 'Shrink PNG files while keeping transparency intact.'),
   t(51, 'WebP ↔ PNG', 'image', 1, 'Convert between WebP and PNG in either direction.'),
   t(53, 'Image Enlarger', 'image', 4, 'Upscale a small or low-resolution image, optionally with AI enhancement.'),
-  t(55, 'Rotate & Flip Image', 'image', 1, 'Rotate an image, or flip it horizontally or vertically.'),
+  t(55, 'Rotate & Flip Image', 'image', 1, 'Rotate an image by 90° steps or any angle, or flip it horizontally or vertically.'),
 
   // ---------------------------------------------------------- Video & GIF
   t(2, 'Video Compressor', 'video', 4, 'Compress MP4, MOV and similar video into a smaller file size.'),
@@ -89,21 +89,21 @@ export const TOOLS = [
   t(18, 'Audio Converter', 'audio', 3, 'Convert between MP3, WAV, AAC, OGG, FLAC and others.'),
 
   // --------------------------------------------------------- Converters
-  t(26, 'Archive Converter', 'convert', 4, 'Convert ZIP, TAR, 7Z and other archives between formats.'),
-  t(28, 'Create Archive', 'convert', 2, 'Package files and folders into a ZIP, 7Z or TAR archive.'),
-  t(30, 'Extract Archive', 'convert', 2, 'Pull files out of a ZIP, 7Z or TAR archive.'),
-  t(32, 'eBook Converter', 'convert', 4, 'Convert between EPUB, MOBI, AZW3 and other eBook formats.'),
+  t(26, 'Archive Converter', 'convert', 4, 'Convert between ZIP, TAR and TAR.GZ archives.'),
+  t(28, 'Create Archive', 'convert', 2, 'Package files and whole folders into a ZIP archive.'),
+  t(30, 'Extract Archive', 'convert', 2, 'Pull files out of a ZIP, TAR or TAR.GZ archive.'),
+  t(32, 'eBook Converter', 'convert', 4, 'Build an EPUB from text, Markdown or HTML, or unpack an EPUB to HTML or text.'),
   t(34, 'Spreadsheet Converter', 'convert', 4, 'Convert between XLS, XLSX, CSV, ODS and similar formats.'),
-  t(36, 'Presentation Converter', 'convert', 4, 'Convert between PPT, PPTX, ODP and other presentation formats.'),
-  t(38, 'CAD Converter', 'convert', 5, 'Convert CAD drawings into supported CAD and vector formats.'),
-  t(40, 'Vector Converter', 'convert', 4, 'Convert between SVG, EPS, AI and other vector formats.'),
-  t(42, 'Font Converter', 'convert', 4, 'Convert between TTF, OTF, WOFF and WOFF2 font formats.'),
+  t(36, 'Presentation Converter', 'convert', 4, 'Turn a PPTX deck into a structured HTML, Markdown or text outline.'),
+  t(38, 'CAD Converter', 'convert', 5, 'Convert DXF drawings into SVG, PDF, PNG or a JSON entity list.'),
+  t(40, 'Vector Converter', 'convert', 4, 'Export SVG to PNG, JPG or WebP at 1×–4×, resize an SVG, or wrap a bitmap as SVG.'),
+  t(42, 'Font Converter', 'convert', 4, 'Convert between TTF, OTF and WOFF font formats.'),
   t(62, 'File Converter Hub', 'convert', 4, 'One interface for converting across many supported document and media formats.'),
 
   // ---------------------------------------------------------------- Web
-  t(22, 'Website PNG Screenshot', 'web', 4, 'Capture a full webpage from a URL as a PNG image.'),
-  t(24, 'Website JPG Screenshot', 'web', 4, 'Generate a screenshot of any website in JPG format.'),
-  t(60, 'Save Web as PDF', 'web', 4, 'Convert a webpage into a printable, downloadable PDF.'),
+  t(22, 'Website PNG Screenshot', 'web', 4, 'Capture a webpage from its URL as a PNG image at a chosen viewport size.'),
+  t(24, 'Website JPG Screenshot', 'web', 4, 'Capture a webpage from its URL as a JPG image at a chosen viewport size.'),
+  t(60, 'Save Web as PDF', 'web', 4, 'Turn a webpage into a text-searchable PDF from its URL, or typeset pasted text.'),
 
   // ---------------------------------------------------------- Utilities
   t(44, 'JSON Formatter', 'dev', 1, 'Turn messy or minified JSON into readable, properly indented output.'),
@@ -147,6 +147,7 @@ export const IMPLEMENTED = new Set([
   'pdf-organizer',
   'pdf-protect',
   'pdf-unlock',
+  'pdf-txt-html-rtf-odt',
   'pdf-crop',
   'pdf-rotate',
   'pdf-flatten',
@@ -162,6 +163,7 @@ export const IMPLEMENTED = new Set([
   'image-compressor',
   'image-resizer',
   'image-cropper',
+  'rotate-flip-image',
   'image-converter',
   'jpeg-compressor',
   'png-compressor',
@@ -199,17 +201,10 @@ export const IMPLEMENTED = new Set([
 ]);
 
 /*
- * Two slugs are deliberately NOT in the set above although they route to a
- * component and were previously listed. Each is a URL whose name promises a
- * tool the routed component does not contain, which is worse than a
- * coming-soon page: a visitor searching "unlock pdf" who lands on a tool that
- * LOCKS PDFs has been misled, and a search engine that indexed it has been
- * fed a false page. They come back the moment a real component exists.
- *
- *   rotate-flip-image     -> ImageCropper       no rotate or flip code at all
- *   pdf-txt-html-rtf-odt  -> PdfToHtml          writes HTML only
- *
- * (pdf-unlock was on this list until it got a real component, PdfUnlock.)
+ * Every catalogue slug now has real code behind it. When a new tool is added
+ * to the catalogue before its component exists, leave it out of the set above
+ * until the component lands; the page then shows a coming-soon state and stays
+ * out of the sitemap instead of promising a tool that is not there.
  */
 
 /** Is there real code behind this slug, or only a catalogue entry? */

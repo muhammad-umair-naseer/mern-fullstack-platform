@@ -225,12 +225,15 @@ export default function PdfToEbookSeoArticle() {
           ))}
         </div>
         <p>
-          The tool takes one PDF at a time, chosen by clicking the panel rather
-          than dragging a file onto it. A password-protected or encrypted PDF
+          The tool takes one PDF at a time, chosen by clicking the panel or
+          dragging a file onto it. A password-protected or encrypted PDF
           will not open here at all: it fails at the loading step with a
-          &ldquo;Failed to load PDF&rdquo; message. Remove the password in the
-          program that applied it, save an unprotected copy, and choose that
-          copy instead. Since <strong>how to convert PDF to EPUB</strong> is
+          &ldquo;Failed to load PDF&rdquo; message. Take the password off with
+          the{' '}
+          <Link to="/tools/pdf-unlock" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF unlocker
+          </Link>{' '}
+          and choose that copy instead. Since <strong>how to convert PDF to EPUB</strong> is
           three clicks, step two is where your attention should go.
         </p>
       </section>

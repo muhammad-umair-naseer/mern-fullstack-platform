@@ -377,11 +377,15 @@ export default function PdfSpreadsheetSuiteSeoArticle() {
           </li>
         </ul>
         <p>
-          If a system insists on CSV or ODS, run the tidied .xlsx through the{' '}
+          If a system insists on CSV, TSV, ODS, the older .xls or an HTML table,
+          pick that in the <strong>Output format</strong> box before you
+          convert. CSV, TSV and HTML hold one sheet each, so with several pages
+          you get a zip with one file per sheet, named after its tab. Already
+          have the .xlsx and want to reshape it later? The{' '}
           <Link to="/tools/spreadsheet-converter" className="text-orange-600 font-semibold underline hover:text-orange-700">
             spreadsheet converter
-          </Link>
-          . CSV holds one sheet, so export the summary sheet.
+          </Link>{' '}
+          does that.
         </p>
       </section>
 
@@ -420,7 +424,11 @@ export default function PdfSpreadsheetSuiteSeoArticle() {
           </li>
           <li>
             <strong>Password-protected files</strong> cannot be read. Remove the
-            password in the app that set it first.
+            password with the{' '}
+            <Link to="/tools/pdf-unlock" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF unlocker
+          </Link>{' '}
+            first.
           </li>
           <li>
             <strong>One continuous sheet.</strong> Tab-per-page is the only

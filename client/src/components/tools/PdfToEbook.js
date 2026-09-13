@@ -3,6 +3,7 @@ import { Upload, BookOpen, Download, RefreshCw, AlertCircle, CheckCircle2, Eye }
 import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 import { validateFile } from '../../lib/fileValidation';
+import { dropHandlers } from '../../lib/dropzone';
 
 if (pdfjsLib.GlobalWorkerOptions) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
@@ -329,6 +330,7 @@ p { text-indent: 1.5em; margin: 0.4em 0; text-align: justify; }`
       {/* Upload area */}
       <div
         onClick={() => fileInputRef.current?.click()}
+        {...dropHandlers((f) => handleFileChange({ target: { files: [f], value: "" } }))}
         className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
           file ? 'border-amber-500/50 bg-amber-950/10' : 'border-slate-700 hover:border-amber-500/50 bg-slate-900/40'
         }`}
@@ -375,7 +377,7 @@ p { text-indent: 1.5em; margin: 0.4em 0; text-align: justify; }`
                 className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500"
               >
                 <option value="epub">EPUB 3.0 (Standard e-Reader format)</option>
-                <option value="mobi-html">Kindle MOBI / HTML (Amazon Kindle format)</option>
+                <option value="mobi-html">HTML (.html) — accepted by Send to Kindle</option>
                 <option value="fb2">FB2 (FictionBook 2.0 format)</option>
                 <option value="md">Markdown (.md formatted)</option>
                 <option value="txt">Plain Text (.txt)</option>

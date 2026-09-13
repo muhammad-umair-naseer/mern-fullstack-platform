@@ -323,20 +323,19 @@ export default function ExtractArchiveSeoArticle() {
             field; ask the sender for an unprotected copy.
           </li>
           <li>
-            <strong>TAR, TAR.GZ and 7Z stop with an error.</strong> The picker
-            lets you choose them, but only ZIP is unpacked, so they end at
-            &ldquo;Failed to unpack archive&rdquo;. For TAR and TAR.GZ, run the
-            file through our{' '}
+            <strong>TAR and TAR.GZ open the same way as ZIP.</strong> A tarball
+            is listed with its folder paths intact and each file downloads
+            individually or into a chosen folder, gzip and all. Want it as a
+            ZIP for someone else? The{' '}
             <Link to="/tools/archive-converter" className="text-orange-600 font-semibold underline hover:text-orange-700">
               archive converter
             </Link>{' '}
-            to turn it into a ZIP first, then bring it back here. 7Z has no
-            route on this site yet.
+            repacks it.
           </li>
           <li>
-            <strong>RAR, ISO, DMG, CAB and self-extracting EXE files are
-            refused</strong> at the door with a message asking for a valid
-            archive.
+            <strong>7Z, RAR, ISO, DMG, CAB and self-extracting EXE files are
+            refused</strong> at the door with a message saying which formats
+            are accepted, rather than failing halfway through.
           </li>
           <li>
             <strong>Split archives</strong> (<code>.z01</code>,{' '}
@@ -423,7 +422,7 @@ export default function ExtractArchiveSeoArticle() {
             ['Contents first, extraction second', 'You see every path and size before anything is decompressed, so a suspicious attachment can be inspected and closed without a single file being written.'],
             ['A real folder, not a pile of downloads', 'On Chrome, Edge and ChromeOS, Extract All writes into a folder you choose with subfolders preserved, exactly like a desktop extractor.'],
             ['Your files stay private', 'Nothing you open is stored on our servers, retained after your session, or used for training or analytics.'],
-            ['Honest about its limits', 'ZIP only, no password unlock, and a clear note on which platforms fall back to per-file downloads. You will not find that candour on most extraction pages.'],
+            ['Honest about its limits', 'ZIP, TAR and TAR.GZ; no password unlock, and a clear note on which platforms fall back to per-file downloads. You will not find that candour on most extraction pages.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -479,8 +478,8 @@ export default function ExtractArchiveSeoArticle() {
               'No. Nothing in the tool refuses an archive for being large, so a ZIP that another page turned away for its size is not rejected here. A very large extraction simply takes longer than a small one, and the page may feel unresponsive until it finishes.',
             ],
             [
-              'Why did my .tar.gz or .7z file fail with "Failed to unpack archive"?',
-              'Only ZIP archives are unpacked here, even though the file picker lets you select other extensions. For TAR and TAR.GZ, convert the file to ZIP with our archive converter first and then open it on this page. There is no 7Z route on this site.',
+              'Can it open a .tar.gz or a .7z file?',
+              'TAR and TAR.GZ, yes: a tarball is listed and extracted exactly like a ZIP, gzip compression included. 7Z is not accepted — the picker refuses it with a message naming the formats that work — and neither are RAR, ISO or DMG. If you have a 7Z you need to open, extract it once in a desktop tool and re-pack as ZIP.',
             ],
             [
               'Can I unzip a file on my iPhone without an app?',

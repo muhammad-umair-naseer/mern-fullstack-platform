@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Video, RefreshCw, Download, AlertCircle, Check } from 'lucide-react';
 import { runFFmpegJob } from '../../lib/ffmpegEngine';
 import { formatFileSize } from '../../lib/fileValidation';
+import { dropHandlers } from '../../lib/dropzone';
 
 const VIDEO_FORMATS = [
   { id: 'mp4', label: 'MP4 (H.264 / AAC - Universal)', ext: 'mp4', mime: 'video/mp4' },
@@ -123,6 +124,7 @@ export default function VideoConverter() {
       {!file ? (
         <div
           onClick={() => fileInputRef.current?.click()}
+          {...dropHandlers(handleSelectFile)}
           className="border-2 border-dashed border-slate-700/80 bg-slate-950/40 hover:border-slate-600 rounded-3xl p-10 text-center cursor-pointer transition"
         >
           <Video className="w-14 h-14 text-orange-400 mx-auto mb-3 animate-pulse" />

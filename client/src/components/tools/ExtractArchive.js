@@ -3,6 +3,7 @@ import { Archive, Download, File, Folder, FolderArchive, RefreshCw, AlertCircle}
 import { loadZipLib } from '../../lib/dynamicVendor';
 import { validateArchiveFile, formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
+import { tarEntries } from '../../lib/tar';
 
 export default function ExtractArchive() {
   const [file, setFile] = useState(null);
@@ -28,11 +29,15 @@ export default function ExtractArchive() {
     }
 
     try {
-      const zip = await loadZipLib();
-      zip.configure({ useWebWorkers: false });
-
-      const reader = new zip.ZipReader(new zip.BlobReader(selectedFile));
-      const list = await reader.getEntries();
+      let list;
+      if (val.isTar || val.isGz) {
+        list = await tarEntries(selectedFile);
+      } else {
+        const zip = await loadZipLib();
+        zip.configure({ useWebWorkers: false });
+        const reader = new zip.ZipReader(new zip.BlobReader(selectedFile));
+        list = await reader.getEntries();
+      }
 
       if (!list || !list.length) {
         setStatus('error');
@@ -145,7 +150,7 @@ export default function ExtractArchive() {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".zip,.tar,.gz,.tgz,.7z"
+            accept=".zip,.tar,.gz,.tgz"
             onChange={(e) => e.target.files?.[0] && handleProcessArchive(e.target.files[0])}
             className="hidden"
           />

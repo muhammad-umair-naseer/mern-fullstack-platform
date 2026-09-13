@@ -5,6 +5,7 @@ import { runFfmpegCommand } from '../../lib/ffmpegEngine';
 import { loadVendorScript } from '../../lib/dynamicVendor';
 import { jsPDF } from 'jspdf';
 import * as pdfjsLib from 'pdfjs-dist';
+import { dropHandlers } from '../../lib/dropzone';
 
 if (pdfjsLib.GlobalWorkerOptions) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
@@ -310,6 +311,7 @@ export default function ConverterHub() {
       {/* Upload Zone */}
       <div
         onClick={() => fileInputRef.current?.click()}
+        {...dropHandlers((f) => handleFileChange({ target: { files: [f], value: "" } }))}
         className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
           file ? 'border-indigo-500/50 bg-indigo-950/10' : 'border-slate-700 hover:border-indigo-500/50 bg-slate-900/40'
         }`}

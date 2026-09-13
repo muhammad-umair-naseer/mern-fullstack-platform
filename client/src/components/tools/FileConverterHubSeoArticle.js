@@ -482,8 +482,7 @@ export default function FileConverterHubSeoArticle() {
           </li>
           <li>
             <strong>One file at a time.</strong> No batch, no zip of results.
-            Click the panel to choose a file; dragging one onto it is not
-            supported.
+            Click the panel to choose a file, or drag one onto it.
           </li>
           <li>
             <strong>No password-protected PDFs.</strong> Unlock the file first.

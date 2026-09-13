@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Shapes, Download, AlertCircle, Check} from 'lucide-react';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
+import { dropHandlers } from '../../lib/dropzone';
 
 const UNIT = { px: 1, pt: 96 / 72, pc: 16, mm: 96 / 25.4, cm: 96 / 2.54, in: 96, '': 1 };
 
@@ -200,6 +201,7 @@ export default function VectorConverter() {
       {!file ? (
         <div
           onClick={() => fileInputRef.current?.click()}
+          {...dropHandlers(handleSelectFile)}
           className="border-2 border-dashed border-slate-700/80 bg-slate-950/40 hover:border-slate-600 rounded-3xl p-10 text-center cursor-pointer transition"
         >
           <Shapes className="w-14 h-14 text-orange-400 mx-auto mb-3 animate-pulse" />

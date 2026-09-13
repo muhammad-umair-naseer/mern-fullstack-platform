@@ -1280,8 +1280,8 @@ const TOOL_FAQS = {
       a: "No. Nothing in the tool refuses an archive for being large, so a ZIP that another page turned away for its size is not rejected here. A very large extraction simply takes longer than a small one, and the page may feel unresponsive until it finishes.",
     },
     {
-      q: "Why did my .tar.gz or .7z file fail with \"Failed to unpack archive\"?",
-      a: "Only ZIP archives are unpacked here, even though the file picker lets you select other extensions. For TAR and TAR.GZ, convert the file to ZIP with our archive converter first and then open it on this page. There is no 7Z route on this site.",
+      q: "Can it open a .tar.gz or a .7z file?",
+      a: "TAR and TAR.GZ, yes: a tarball is listed and extracted exactly like a ZIP, gzip compression included. 7Z is not accepted — the picker refuses it with a message naming the formats that work — and neither are RAR, ISO or DMG. If you have a 7Z you need to open, extract it once in a desktop tool and re-pack as ZIP.",
     },
     {
       q: "Can I unzip a file on my iPhone without an app?",
@@ -1540,32 +1540,36 @@ const TOOL_FAQS = {
   ],
   'save-web-as-pdf': [
     {
-      q: "How do I save a webpage as a PDF for free without an account?",
-      a: "Copy the article text, clear the sample text out of the content box in the composer at the top of this page, and paste yours in its place. Add a title and the source URL, choose A4 or Letter, and press Download Printable PDF. There is no sign-up, no email verification and no watermark on the result. It is free every time, not free for the first three files.",
+      q: "How do I save a webpage as a PDF for free?",
+      a: "Paste the page’s address into the From a URL box at the top of this page, choose A4 or Letter and portrait or landscape, and press Save Webpage as PDF. The file downloads a few seconds later, named after the site and the page. There is no account, no watermark and no monthly limit on pages.",
     },
     {
-      q: "Can I just paste a link and get the whole page?",
-      a: "No — and it is better to know that now. The composer builds your PDF from the article text you paste in. The source URL you enter is printed on the document as a reference line rather than fetched. That means you get the words, cleanly typeset and free of adverts and navigation, but not a picture of the site.",
+      q: "Is the PDF a screenshot or real text?",
+      a: "Real text. The page is laid out for print, so the words are searchable and selectable, links stay clickable, and images and backgrounds are kept. A screenshot would give you none of that.",
     },
     {
-      q: "Will the images from the article be included?",
-      a: "No. The output is typeset text with a title, subtitle, citation line and page numbers. If a chart or photograph matters, save it from the page yourself and tidy it with our image cropper or image resizer, then either keep it beside the archive as an image file or take the extra step of turning it into a PDF with the PDF and JPG converter in its JPG-to-PDF mode. Only once it is a PDF can the merger add it to your archive as extra pages — the merger will not accept an image file directly.",
+      q: "Can it save a page that needs a login, or a paywalled article?",
+      a: "No. The capture visits the address as a first-time visitor, with none of your logins, so it sees what a stranger sees. For a page only you can open, switch to From text, copy the content across, and download a typeset PDF of it instead.",
     },
     {
-      q: "Can anyone edit the PDF I create here?",
-      a: "The file is an ordinary PDF, so yes, someone with editing software can change it. Nothing here encrypts, signs or locks the document. What it does give you is a fixed, dated record of the text as you saved it. If you need the file locked as well, add a password with our PDF protect tool, or fix its fields and annotations in place with the PDF flatten tool.",
+      q: "Why did I get a message about a daily allowance?",
+      a: "URL captures carry a fair-use daily allowance per connection. It is more than a person needs in a day and less than a script would want. It resets daily; in the meantime the From text mode has no limit at all.",
     },
     {
-      q: "Why does my printed web page cut off text or include the menus?",
-      a: "Because a print dialogue reproduces the page as the site built it, adverts, sidebars and all, and the site rarely defines where a page should break. Pasting the article body into a composer sidesteps both problems: you choose what goes in, and the text is repaginated properly with numbered pages.",
+      q: "Will the images be included?",
+      a: "From a URL, yes — images and backgrounds are part of the capture. From text, no: that mode typesets words only. If a picture matters there, save it, turn it into a page with the JPG to PDF converter, and join the two with the PDF merger.",
     },
     {
-      q: "Is there a limit on how much text I can convert to PDF?",
-      a: "There is no imposed cap and no daily limit on how many documents you build. Longer text simply produces more pages, and the footer count updates to match, so a fifty-page archive numbers itself correctly without any extra step.",
+      q: "Can I edit the PDF afterwards?",
+      a: "Anyone can open, print and copy from it; there are no restrictions on the file. To change the words, run it through the PDF to Word converter. To keep it from being changed, put a password and permissions on it with the PDF protect tool.",
     },
     {
-      q: "Is what I paste kept anywhere?",
-      a: "No. Nothing you paste is stored on our servers, nothing is retained once your session ends, and nothing is used for training or analytics. No file is kept, queued or logged.",
+      q: "Is the address or the text I paste kept anywhere?",
+      a: "Nothing is stored on our servers after your download. The address is the only thing a URL capture needs, and nothing you paste in the text mode is retained or used for training or analytics.",
+    },
+    {
+      q: "Does it work on a phone?",
+      a: "Yes, and it is one of the better reasons to use it there. Paste the address, press the button, and the PDF lands in your downloads without hunting through the share sheet for a print option.",
     },
   ],
   'json-formatter': [
@@ -1764,6 +1768,74 @@ const TOOL_FAQS = {
     {
       q: "Why does it say my PDF is not password-protected?",
       a: "Because the file has no encryption on it — it already opens without a password. If a reader still refuses to show it, the block is coming from somewhere else: a viewer app with its own lock, a download that was actually a login page, or a document issued through a rights-management platform, which is not a password and is reported as such.",
+    },
+  ],
+  'rotate-flip-image': [
+    {
+      q: "How do I rotate an image online for free?",
+      a: "Drop the image on the panel at the top of this page, press 90° left or 90° right until it is the right way up (or drag the slider for a custom angle), and download. There is no account, no watermark and no limit on how many pictures you turn.",
+    },
+    {
+      q: "How do I flip or mirror an image?",
+      a: "Add the image and press Horizontal to swap left and right, or Vertical to swap top and bottom. Both can be on at once, and both combine with rotation. A horizontal flip is what un-mirrors a front-camera selfie and what you need before printing an iron-on transfer.",
+    },
+    {
+      q: "Does rotating lose quality?",
+      a: "A 90°, 180° or 270° turn loses nothing: pixels move, none are blended. PNG and WebP come back exactly as sharp; a JPEG is re-encoded once at high quality, which is invisible on a photo. A custom angle involves resampling, so keep it to the correction you need.",
+    },
+    {
+      q: "Why does a small angle make the image bigger and add empty corners?",
+      a: "A rectangle turned by a few degrees no longer fits its old frame. Rather than crop your picture without asking, the tool enlarges the canvas to fit the whole turned image and leaves the four corners to you: transparent for PNG and WebP, or filled with a colour you choose. Crop afterwards with the image cropper if you want a clean rectangle.",
+    },
+    {
+      q: "Why was my phone photo sideways in the first place?",
+      a: "Phones usually store the pixels as the sensor saw them and add an orientation note in the file’s metadata. Your phone honours the note; many websites and older programs ignore it and show the raw sideways pixels. Rotating here bakes the turn into the pixels themselves, so every reader shows it upright.",
+    },
+    {
+      q: "What format will I get back?",
+      a: "The one you gave: PNG stays PNG with transparency, JPEG stays JPEG, WebP stays WebP. GIF, BMP and SVG come back as PNG. The pixel size is swapped for quarter turns and otherwise enlarged to fit; it is never scaled down.",
+    },
+    {
+      q: "Can I rotate several images at once?",
+      a: "One at a time. Each picture is shown, turned and checked individually so a wrong direction is caught before the download rather than after it has been applied to twenty files.",
+    },
+    {
+      q: "Are my images kept anywhere?",
+      a: "No. Images are never stored on our servers, never queued or logged, and never retained after your session or used for training. The rotated copy is a new file; your original is left exactly as it was.",
+    },
+  ],
+  'pdf-txt-html-rtf-odt': [
+    {
+      q: "How do I convert a PDF to plain text for free?",
+      a: "Add the PDF to the tool at the top of this page, choose Plain text in the output box, and press Convert. A .txt file named after the PDF downloads, with a blank line before each heading and a page-break character between pages. No account, no watermark, no page limit.",
+    },
+    {
+      q: "What is the difference between RTF and ODT?",
+      a: "Both are editable word-processor documents with the same content. RTF is the older, universal format that every version of Word, WordPad and Pages opens; ODT is the native format of LibreOffice and OpenOffice, also opened by Word and Google Docs, and it carries real Heading 1 and Heading 2 styles. Pick RTF for maximum compatibility and ODT if you or your reader use LibreOffice.",
+    },
+    {
+      q: "Why is my output empty or almost empty?",
+      a: "The PDF has no text layer — it is a scan or a photograph of a document, so there are no characters to extract. Run it through the PDF OCR tool first to add a text layer, then export it here. The same applies when copy-and-paste from the PDF gives you gibberish.",
+    },
+    {
+      q: "Are headings kept?",
+      a: "Yes, by size: text at 18 pt or larger becomes a top heading and 14 pt or larger a subheading, in all four formats. A heading that is only bold at body size is treated as ordinary text.",
+    },
+    {
+      q: "Do images and tables come through?",
+      a: "No. This is a text export: the words and the heading structure travel; layout, images, fonts, colours and links stay behind. A table arrives as its cell text in reading order. For a spreadsheet with tables kept as tables, use the PDF spreadsheet suite.",
+    },
+    {
+      q: "Can I convert only some pages?",
+      a: "Yes. After adding the PDF, set the from and to page numbers before converting. Only that range is extracted, and the page breaks in the output match it.",
+    },
+    {
+      q: "Will accented or non-Latin text survive?",
+      a: "Yes. TXT, HTML and ODT are written as UTF-8, and RTF carries every non-ASCII character as the Unicode escape Word and LibreOffice expect, so Urdu, Arabic, Chinese or accented European text opens correctly.",
+    },
+    {
+      q: "Is my PDF kept anywhere?",
+      a: "No. Files are never stored on our servers, never queued or logged, and never retained after your session or used for training. The exported file is a new document; your PDF is left exactly as it was.",
     },
   ],
 };

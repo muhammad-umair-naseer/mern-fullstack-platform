@@ -75,6 +75,16 @@ const TOOL_SEO = {
     description:
       'Lock a PDF with a password so only the right person can open it. Free PDF encryption with no sign-up and no watermark.',
   },
+  'rotate-flip-image': {
+    title: 'Rotate & Flip Image Online Free – Any Angle',
+    description:
+      'Turn a picture by 90° or any angle and mirror it horizontally or vertically. Quarter turns are lossless, format is kept. Free, no sign-up.',
+  },
+  'pdf-txt-html-rtf-odt': {
+    title: 'PDF to TXT, HTML, RTF or ODT – Free Converter',
+    description:
+      'Extract the text and headings of a PDF into plain text, HTML, RTF or an OpenDocument file, with page breaks kept. Free, no sign-up, no watermark.',
+  },
   'pdf-unlock': {
     title: 'Unlock PDF – Remove Password Online Free',
     description:
@@ -146,9 +156,9 @@ const TOOL_SEO = {
       'Sample an exact colour from any image and copy it as HEX, RGB or HSL. Free colour picker, no account and no limits.',
   },
   'save-web-as-pdf': {
-    title: 'Save a Webpage as PDF Free — Printable Copy',
+    title: 'Save Webpage as PDF – URL to PDF, Free',
     description:
-      'Turn any webpage into a clean, printable PDF you can keep. Free web to PDF converter with no watermark and no sign-up.',
+      'Paste a URL and get the page as a text-searchable PDF with working links, or typeset pasted text. Free, no sign-up, no watermark.',
   },
   'archive-converter': {
     title: 'ZIP to TAR.GZ Converter - Free Online',
@@ -226,9 +236,9 @@ const TOOL_SEO = {
       'Convert PNG, JPG, WebP, BMP or SVG to PNG, JPG, WebP or a pixel-exact PDF with a quality slider. No signup, no watermark.',
   },
   'pdf-spreadsheet-suite': {
-    title: 'Convert Multiple PDF to Excel, One Workbook',
+    title: 'PDF to Excel, CSV, ODS – Multi-PDF Workbook',
     description:
-      'Queue any number of PDFs and download one .xlsx with a worksheet per page, named by source file. Free, no signup, no watermark.',
+      'Queue any number of PDFs and download one workbook with a sheet per page — as XLSX, XLS, ODS, CSV, TSV or HTML. Free, no sign-up.',
   },
   'colour-format-utilities': {
     title: 'Color Code Converter: HEX, RGB, HSL, CMYK',

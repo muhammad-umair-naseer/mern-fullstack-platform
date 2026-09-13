@@ -1,100 +1,68 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
+  AlertTriangle,
   ArrowRight,
   BookOpen,
   Check,
+  FileText,
   Globe,
   HelpCircle,
   Layers,
   Link2,
   Printer,
+  ShieldCheck,
   Sparkles,
-  Zap,
 } from 'lucide-react';
 
 /**
  * Long-form guide rendered under the Save Web as PDF tool.
  *
- * Same shape as PdfWordSeoArticle: H2 under the page's H1, anchored table of
- * contents, H3 sections with lucide icons, benefit grid, FAQ, closing links.
+ * The tool has two modes and the copy follows them. "From a URL" renders the
+ * live page through a capture service into a real, text-searchable PDF with
+ * working links, so "save webpage as pdf", "url to pdf" and "webpage to pdf"
+ * are the head terms and are promised plainly. "From text" typesets pasted
+ * content with jsPDF and is positioned for what the capture cannot reach:
+ * pages behind a login or paywall, emails, drafts.
  *
- * Decisions that shaped this copy, and that matter if anyone edits it later.
- *
- * First, and most important: the composer above does NOT fetch a URL. You give
- * it a title, a subtitle, an optional source URL that is recorded as a citation
- * line, and the page text itself. It then typesets that into an A4 or Letter
- * PDF with a divider rule, an archived timestamp and "Page N of M" footers.
- * So the two highest-volume phrases in this niche — "url to pdf" and "website
- * screenshot to pdf" — are DECLINED. We do not promise that you paste a link
- * and get the rendered site back. Section 3 answers the intent behind those
- * queries honestly instead: it explains why a text-first archive beats a
- * screenshot for reading, citing and printing, and tells the reader plainly
- * what they need to paste. Ranking for a promise we cannot keep produces
- * bounces and complaints; ranking for the honest answer produces neither.
- *
- * Second, "save webpage as pdf with images" and "convert html to pdf" are also
- * declined for the same reason — the output is typeset text, not a rendering
- * of markup, and it carries no embedded pictures. Where a reader wants pictures
- * we give them the route that actually works: /tools/pdf-jpg has a JPG-to-PDF
- * mode (convertJpgToPdf in lib/pdfJpg.js embeds JPG and PNG through pdf-lib),
- * and the resulting PDF is what /tools/pdf-merger will accept. The merger's own
- * picker is accept=".pdf,application/pdf", so never tell a reader to hand it an
- * image directly. Note also that the image picker's filter admits .webp but the
- * embed step handles JPG and PNG only — the copy names JPG and PNG.
- *
- * Third, the font used is a standard PDF base font, so section 4 sets
- * expectations about non-Latin scripts and about proportional spacing rather
- * than letting someone discover either in the output. Same principle: say it
- * before, not after.
- *
- * Fourth, this composer makes an ordinary PDF. Nothing here is encrypted,
- * signed or flattened, so no sentence in this article may imply the output
- * cannot be edited. Section 5 sends readers who want that to /tools/pdf-protect
- * and /tools/pdf-flatten explicitly.
- *
- * Privacy is sold strictly as an outcome — nothing stored, nothing retained,
- * nothing used for training. How that is achieved is deliberately absent, and
- * the linked course is described from its own summary field, never from
- * anything about how these tools are built.
+ * Stated limits are the real ones: a public address only; a fair-use daily
+ * capture allowance per connection (the tool says so when it is used up);
+ * pages are captured as they load, so infinite scroll stops where loading
+ * stopped; the text mode carries no pictures.
  */
 export default function SaveWebAsPdfSeoArticle() {
   return (
     <article className="mt-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-10 md:p-14 shadow-xl text-slate-800 dark:text-slate-200 prose prose-slate max-w-none">
-      {/* Header badge & meta */}
       <div className="flex flex-wrap items-center gap-3 not-prose mb-6">
         <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-500/10 text-orange-600 border border-orange-500/20">
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 11 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 9 min read
         </span>
       </div>
 
       <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight not-prose mb-4">
-        How to <span className="text-orange-600 dark:text-orange-400">Save a Webpage as a PDF</span>: The Complete Guide to Clean, Printable Web Archives
+        How to <span className="text-orange-600 dark:text-orange-400">Save a Webpage as a PDF</span>: From Its Address, or From Its Text
       </h2>
 
       <p className="lead text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal mb-8">
-        Articles vanish. Sites redesign, paywalls drop, links rot, and the
-        recipe or research paper you meant to come back to is a 404 by the time
-        you need it. The fix is to <strong>save a webpage as a PDF</strong> you
-        own outright. The trouble is that the usual print dialogue drags along
-        the navigation bar, the cookie banner and three adverts, then slices a
-        sentence in half at the page break. This guide covers how to build a{' '}
-        <strong>clean printable PDF</strong> of any article instead &mdash; one
-        with a real title, a cited source URL, an archive timestamp and proper
-        page numbers &mdash; using a free <strong>web page to PDF</strong>{' '}
-        composer with no account and no watermark.
+        Pages disappear. Prices change, terms get quietly rewritten, an article
+        moves behind a paywall a month after you read it, a listing is taken
+        down the day you need it. A PDF is the version that stays put. This
+        guide covers how to <strong>save a webpage as a PDF</strong> from
+        nothing but its address &mdash; layout, pictures and clickable links
+        included, with text you can still search &mdash; and how to use the
+        second mode, <strong>text to PDF</strong>, for pages the capture cannot
+        reach: a login-only account page, a paywalled article you have open,
+        an email you want to keep.
       </p>
 
-      {/* Featured WebP banner. Hides itself if the asset is missing rather than
-          shipping a broken image icon. */}
       <div className="my-8 not-prose">
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/save-web-as-pdf.webp"
-            alt="Save a webpage as a PDF online free - web article text turned into a clean printable PDF document with title, source URL and page numbers"
+            alt="Save a webpage as a PDF online free - a live web page captured from its URL into a text-searchable PDF with links, or pasted text typeset into a clean document"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"
@@ -105,14 +73,13 @@ export default function SaveWebAsPdfSeoArticle() {
           />
           <div className="p-4 bg-slate-900/90 border-t border-slate-800 text-center text-xs text-slate-400">
             <span>
-              From a cluttered web article to a typeset document: title,
-              subtitle, cited source, archive date and numbered pages.
+              Paste the address and get the page as a reader sees it; paste the
+              text and get it typeset. Either way, a PDF that stays put.
             </span>
           </div>
         </div>
       </div>
 
-      {/* Table of contents */}
       <nav className="my-10 p-6 sm:p-8 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 not-prose">
         <div className="flex items-center gap-2 mb-4 text-slate-900 dark:text-white font-bold text-lg">
           <Layers className="w-5 h-5 text-orange-500" />
@@ -120,20 +87,17 @@ export default function SaveWebAsPdfSeoArticle() {
         </div>
         <ul className="grid sm:grid-cols-2 gap-2 text-sm text-slate-700 dark:text-slate-300 font-medium">
           {[
-            ['#what-it-does', '1. What a Web-to-PDF Archive Actually Gives You'],
-            ['#how-to', '2. How to Save a Webpage as a PDF in Three Steps'],
-            ['#text-vs-screenshot', '3. Pasted Text vs. Screenshotting the Whole Page'],
-            ['#page-setup', '4. Paper Size, Orientation and What Sets the Look'],
-            ['#use-cases', '5. Six Jobs This Solves Better Than Printing'],
-            ['#after', '6. What to Do With the PDF Afterwards'],
+            ['#two-modes', '1. Two Ways In: From a URL, or From Text'],
+            ['#how-to-url', '2. How to Save a Webpage as PDF From Its URL'],
+            ['#what-you-get', '3. What the Captured PDF Contains'],
+            ['#reach', '4. What a Capture Can and Cannot Reach'],
+            ['#text-mode', '5. The Text Mode: Paste, Title, Typeset'],
+            ['#vs-print', '6. Why Not Just Print to PDF From the Print Menu?'],
             ['#why-cortexis', '7. Why Cortexis Is the Best Free Webpage to PDF Tool'],
             ['#faq', '8. Frequently Asked Questions (FAQ)'],
           ].map(([href, label]) => (
             <li key={href}>
-              <a
-                href={href}
-                className="hover:text-orange-600 dark:hover:text-orange-400 flex items-center gap-1.5 transition"
-              >
+              <a href={href} className="hover:text-orange-600 dark:hover:text-orange-400 flex items-center gap-1.5 transition">
                 <ArrowRight className="w-3.5 h-3.5 text-orange-500 shrink-0" />
                 {label}
               </a>
@@ -143,407 +107,248 @@ export default function SaveWebAsPdfSeoArticle() {
       </nav>
 
       {/* 1 */}
-      <section id="what-it-does" className="scroll-mt-24 space-y-4">
+      <section id="two-modes" className="scroll-mt-24 space-y-4">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Globe className="w-6 h-6 text-orange-500 shrink-0" />
-          1. What a Web-to-PDF Archive Actually Gives You
+          1. Two Ways In: From a URL, or From Text
         </h3>
         <p>
-          A web page is elastic. It reflows on a phone, swaps its advert every
-          few seconds, and depends on a stylesheet sitting on somebody else&rsquo;s
-          server. A PDF is the opposite: a fixed, self-contained description of
-          a finished page. The format is standardised as{' '}
-          <a
-            href="https://www.iso.org/standard/75839.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-orange-600 font-semibold underline hover:text-orange-700"
-          >
-            ISO 32000-2, the Portable Document Format specification
-          </a>
-          , and that fixedness is the entire point of an archive. What you save
-          today opens identically in five years on a machine that has never
-          heard of the site it came from, because the page description travels
-          inside the file rather than being fetched from anywhere.
+          The tool at the top of this page has two tabs, and choosing the right
+          one is most of the job.
         </p>
+        <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
+          <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <h4 className="font-bold text-slate-900 dark:text-white text-base mb-2 flex items-center gap-2">
+              <Link2 className="w-5 h-5 text-orange-500 shrink-0" /> From a URL
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Paste the address of any public page. It is rendered as a
+              reader sees it &mdash; layout, images, backgrounds &mdash; and
+              returned as a PDF whose text is real text: searchable,
+              selectable, with links that still click. This is the{' '}
+              <strong>URL to PDF</strong> most people are looking for.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <h4 className="font-bold text-slate-900 dark:text-white text-base mb-2 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-orange-500 shrink-0" /> From text
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Copy the words off a page you can see but the capture cannot
+              &mdash; behind a login, a paywall, inside an email &mdash; give
+              them a title and a source line, and get a clean typeset PDF with
+              page numbers and a timestamp. No pictures, no menus, no adverts:
+              the reading, and nothing else.
+            </p>
+          </div>
+        </div>
         <p>
-          The composer above produces a fixed-layout PDF of exactly that kind.
-          When you <strong>convert a web article to PDF</strong> here, the
-          output is not a raw text dump. It is typeset:
-        </p>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            <strong>A headline and subtitle.</strong> Your title is set large
-            and bold at the top, with a lighter subtitle underneath for the
-            topic, section or your own note about why you kept it.
-          </li>
-          <li>
-            <strong>A citation line.</strong> The optional source URL and an
-            automatic archive timestamp &mdash; the date and time you saved it
-            &mdash; sit together in small italic type under the heading, exactly
-            where a reference belongs.
-          </li>
-          <li>
-            <strong>Flowing, paginated body text.</strong> Paragraphs wrap to
-            the measure, break to a new page when they run out of room, and
-            never get sliced through the middle of a line.
-          </li>
-          <li>
-            <strong>Numbered pages.</strong> Every page carries a centred{' '}
-            <em>Page N of M</em> footer, so a printed stack stays in order and a
-            colleague can tell you which page they are querying.
-          </li>
-        </ul>
-        <p>
-          That combination &mdash; title, source, date, pagination &mdash; is
-          what separates a genuine <strong>web clipping to PDF</strong> from a
-          screenshot you will never be able to cite. The result is an ordinary,
-          openable PDF: any reader application will display it, any printer will
-          take it, and you can pass it on without asking the recipient to
-          install anything.
+          Rule of thumb: if the page opens for a stranger, use the URL. If it
+          only opens for you, use the text.
         </p>
       </section>
 
       {/* 2 */}
-      <section id="how-to" className="scroll-mt-24 space-y-4 mt-12">
+      <section id="how-to-url" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Zap className="w-6 h-6 text-orange-500 shrink-0" />
-          2. How to Save a Webpage as a PDF in Three Steps
+          <Sparkles className="w-6 h-6 text-orange-500 shrink-0" />
+          2. How to Save a Webpage as PDF From Its URL
         </h3>
+        <ol className="space-y-3">
+          <li>
+            <strong>Paste the address.</strong> Copy it from the address bar
+            and drop it into the box under <em>From a URL</em>. Missing the{' '}
+            <code>https://</code>? It is added for you.
+          </li>
+          <li>
+            <strong>Pick paper and orientation.</strong> A4 or US Letter,
+            portrait or landscape. Portrait A4 suits articles; landscape suits
+            dashboards, wide tables and anything designed for a monitor.
+          </li>
+          <li>
+            <strong>Press Save Webpage as PDF.</strong> A few seconds later the
+            file downloads, named after the site and the page, for example{' '}
+            <strong>example.com-pricing.pdf</strong>. Open it anywhere.
+          </li>
+        </ol>
         <p>
-          There is no sign-up, no email and no trial countdown. To{' '}
-          <strong>save a webpage as a PDF free</strong> with the composer above:
-        </p>
-        <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
-          {[
-            ['Clear the box, paste your text', 'On the page you want to keep, select the article body and copy it. Skip the menus, the advert blocks and the comment thread — take the words you actually want. The content box starts with sample text in it, so select everything already in the box, delete it, and paste your article in its place. Anything you leave behind is typeset into your archive along with your own words.'],
-            ['Label and cite it', 'The title and subtitle fields are pre-filled too, so type over them: a real headline, and a subtitle for the topic or your reason for keeping it. Drop the page address into the source URL field. That address is printed as a reference line beside an automatic archive date, so the document says where it came from and when.'],
-            ['Choose paper and download', 'Pick A4 or US Letter, portrait or landscape, then press Download Printable PDF. The file saves under a tidy filename built from your title — no watermark, no stamp, nothing appended.'],
-          ].map(([title, body], i) => (
-            <div
-              key={title}
-              className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex flex-col"
-            >
-              <span className="w-8 h-8 rounded-xl bg-orange-500 text-white font-extrabold flex items-center justify-center text-sm mb-4">
-                {i + 1}
-              </span>
-              <h4 className="font-bold text-slate-900 dark:text-white text-base mb-2">{title}</h4>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{body}</p>
-            </div>
-          ))}
-        </div>
-        <p>
-          The one thing the composer insists on is content. Leave the body box
-          empty and it will simply ask you to paste something in rather than
-          hand you a blank document. Everything else &mdash; subtitle, source
-          URL &mdash; is optional, and the fields you leave blank are quietly
-          omitted from the layout instead of leaving an awkward gap. Clear the
-          subtitle and no subtitle line is drawn; clear the URL and the citation
-          line carries the archive date alone.
-        </p>
-        <p>
-          It is worth saying that this doubles as a straightforward{' '}
-          <strong>text to PDF converter</strong>. Meeting notes, a chunk of chat
-          transcript, a policy you were sent as a wall of plain text, your own
-          draft &mdash; anything you can paste comes out as a properly
-          paginated, titled document.
+          That is the whole of <strong>how to convert a webpage to PDF</strong>{' '}
+          here. No account, no extension to add, no counter of pages used this
+          month. The same steps work to <strong>save a webpage as PDF on a
+          phone</strong>, where the share-to-print route is often the
+          clumsiest part of the day.
         </p>
       </section>
 
       {/* 3 */}
-      <section id="text-vs-screenshot" className="scroll-mt-24 space-y-4 mt-12">
+      <section id="what-you-get" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Link2 className="w-6 h-6 text-orange-500 shrink-0" />
-          3. Pasted Text vs. Screenshotting the Whole Page
+          <BookOpen className="w-6 h-6 text-orange-500 shrink-0" />
+          3. What the Captured PDF Contains
         </h3>
         <p>
-          Plenty of people arrive searching for a <strong>URL to PDF</strong>{' '}
-          converter &mdash; paste a link, get the whole site back, pictures,
-          styling and all. Being straight with you saves a wasted attempt: that
-          is not what this tool does, and the distinction is worth understanding
-          because the text-first approach is usually the better archive anyway.
+          A URL capture is not a screenshot glued into a PDF. The page is laid
+          out for print at the paper size you chose, with its backgrounds and
+          images kept and a modest margin on every side, and the result is a
+          proper document:
         </p>
-        <p>
-          This composer works from the words you give it. You supply the article
-          text and the address; it produces a typeset document. It does not go
-          and fetch the page, and it does not reproduce the site&rsquo;s layout,
-          photographs, embedded video or advertising. What you get is the
-          content, cleanly set, which is why a <strong>clean PDF of a web
-          article without ads</strong> is the realistic description of the
-          output rather than a facsimile of the site.
-        </p>
-        <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
-          <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/25">
-            <h4 className="font-bold text-slate-900 dark:text-white text-base mb-3 flex items-center gap-2">
-              <Check className="w-5 h-5 text-emerald-600 shrink-0" /> What the composer produces
-            </h4>
-            <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
-              <li>Selectable, searchable body text</li>
-              <li>Your own headline and subtitle</li>
-              <li>A cited source URL and archive timestamp</li>
-              <li>Automatic pagination with numbered pages</li>
-              <li>A4 or US Letter, portrait or landscape</li>
-            </ul>
-          </div>
-          <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/25">
-            <h4 className="font-bold text-slate-900 dark:text-white text-base mb-3 flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-amber-600 shrink-0" /> What it does not do
-            </h4>
-            <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
-              <li>Visit a link and pull the page down for you</li>
-              <li>Embed the article&rsquo;s photographs or charts</li>
-              <li>Reproduce the site&rsquo;s fonts, colours or columns</li>
-              <li>Keep clickable hyperlinks from the original</li>
-              <li>Capture video, comments or interactive widgets</li>
-            </ul>
-          </div>
-        </div>
-        <p>
-          For the jobs people actually have &mdash; reading later, printing,
-          quoting, filing, citing, keeping a copy before something disappears
-          &mdash; the words are the substance and the site chrome is noise. If
-          the pictures genuinely are the point, they have to be handled as
-          picture files in their own right: save the figure from the page
-          yourself, then tidy it with our{' '}
-          <Link to="/tools/image-cropper" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            image cropper
-          </Link>{' '}
-          or{' '}
-          <Link to="/tools/image-resizer" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            image resizer
-          </Link>{' '}
-          and keep it in the same folder as the archive.
-        </p>
-        <p>
-          If you would rather the figure travelled inside one file, there is a
-          route, and it takes one extra step that is easy to miss. Our{' '}
-          <Link to="/tools/pdf-jpg" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF and JPG converter
-          </Link>{' '}
-          runs in both directions: switch it to its JPG-to-PDF mode and it turns
-          your saved JPG or PNG files into a PDF, one image per page. Only then
-          can the{' '}
-          <Link to="/tools/pdf-merger" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF merger
-          </Link>{' '}
-          join that picture PDF to your text archive, because the merger takes
-          PDF files and nothing else &mdash; hand it a JPG directly and its file
-          picker will not accept it. Convert first, merge second, and the words
-          and the figures end up as a single document.
-        </p>
+        <ul className="space-y-2">
+          <li>
+            <strong>Real text.</strong> Search it, select it, copy a quotation
+            out of it. Screen readers can read it. Later, the{' '}
+            <Link to="/tools/pdf-word" className="text-orange-600 font-semibold underline hover:text-orange-700">
+              PDF to Word converter
+            </Link>{' '}
+            can turn it back into something editable.
+          </li>
+          <li>
+            <strong>Working links.</strong> Hyperlinks in the page stay
+            clickable in the PDF, which is what makes a saved reference page
+            useful rather than merely pretty.
+          </li>
+          <li>
+            <strong>The page as designed.</strong> Fonts, colours, images,
+            columns. Long pages simply run on across as many sheets as they
+            need.
+          </li>
+          <li>
+            <strong>A file that is yours.</strong> Nothing is stored on our
+            servers after your download; the address is the only thing the
+            capture needs, and nothing you paste in the text mode is retained.
+          </li>
+        </ul>
       </section>
 
       {/* 4 */}
-      <section id="page-setup" className="scroll-mt-24 space-y-4 mt-12">
+      <section id="reach" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Printer className="w-6 h-6 text-orange-500 shrink-0" />
-          4. Paper Size, Orientation and What Sets the Look
+          <AlertTriangle className="w-6 h-6 text-orange-500 shrink-0" />
+          4. What a Capture Can and Cannot Reach
         </h3>
         <p>
-          Two choices change the shape of the finished document, and both matter
-          more than people expect once a printer is involved.
+          The capture visits the address the way a first-time visitor would,
+          with none of your logins. So it reaches exactly what a stranger
+          reaches: public articles, documentation, product pages, listings,
+          government notices, blogs. It does not reach:
         </p>
-        <h4 className="font-bold text-slate-900 dark:text-white text-base">A4 or US Letter</h4>
+        <ul className="space-y-2">
+          <li>
+            <strong>Pages behind a login</strong> &mdash; your bank, a course
+            portal, an order history. Use the text mode for these.
+          </li>
+          <li>
+            <strong>Paywalled articles</strong>, which show the capture the
+            same teaser they show everyone else. If you have the article open,
+            copy its text across.
+          </li>
+          <li>
+            <strong>Pages that block automated visitors</strong> outright. You
+            get a clear message rather than a blank PDF.
+          </li>
+          <li>
+            <strong>Whatever has not loaded yet.</strong> An infinite-scroll
+            feed is captured down to where it stopped loading, not to the end
+            of time.
+          </li>
+        </ul>
         <p>
-          <strong>A4</strong> (210 &times; 297 mm) is the standard almost
-          everywhere outside North America; <strong>US Letter</strong> (8.5
-          &times; 11 in) is slightly wider and shorter. A4 belongs to the
-          international paper series defined in{' '}
+          For the public record of how a page changed over the years, the{' '}
           <a
-            href="https://www.iso.org/standard/36631.html"
+            href="https://web.archive.org/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-orange-600 font-semibold underline hover:text-orange-700"
           >
-            ISO 216
-          </a>
-          , the standard that fixes those millimetre dimensions and the halving
-          relationship between A3, A4 and A5; US Letter sits outside that series
-          and is sized in inches instead. Choose the one your printer is loaded
-          with. Getting it wrong is not fatal &mdash; the document still opens
-          fine &mdash; but a print driver asked to squeeze A4 onto Letter will
-          shrink everything by a few percent and leave an uneven margin. If you
-          are filing the PDF rather than printing it, either is fine, and A4 is
-          the safer default for anything you will email internationally.
+            Wayback Machine
+          </a>{' '}
+          remains the reference; a PDF is for the copy you need to hold, cite
+          and file yourself.
         </p>
-        <h4 className="font-bold text-slate-900 dark:text-white text-base">Portrait or landscape</h4>
         <p>
-          Portrait is right for nearly all prose. Reach for{' '}
-          <strong>landscape</strong> when your text contains long unbroken lines
-          &mdash; a list of URLs, or wide lines you would rather not see wrapped
-          &mdash; because a landscape page gives each line noticeably more room
-          before it breaks. That is the whole of what the choice changes: the
-          width of the measure, and therefore where the wrap falls. Note that
-          the document is set in a proportional font, so pasted code and columns
-          of figures will not keep their alignment in either orientation. If
-          exact columns matter, keep that material in a spreadsheet or a plain
-          text file rather than expecting the archive to hold its shape.
-        </p>
-        <h4 className="font-bold text-slate-900 dark:text-white text-base">What you do not need to configure</h4>
-        <p>
-          Everything else is decided for you, deliberately. Margins, type sizes,
-          line spacing, the accent rule above the title, the hairline divider
-          under the citation line and the footer position are all fixed so that
-          every document you produce looks like it came from the same shelf.
-          There are no sliders to get wrong and no settings to carry between
-          sessions, which is what makes a stack of these archives look
-          consistent months apart. One practical note on typography: the
-          composer sets text in a standard document font, which covers Latin
-          script, punctuation and common symbols. Extended scripts such as
-          Arabic, Hebrew, Chinese, Japanese, Korean and Devanagari are outside
-          that font&rsquo;s range, so paste Latin-script text for a faithful
-          result.
+          There is also a fair-use daily allowance of captures per connection.
+          It is generous for a person and tight for a script, and the tool
+          tells you plainly when it is used up rather than failing quietly.
+          The text mode has no such limit.
         </p>
       </section>
 
       {/* 5 */}
-      <section id="use-cases" className="scroll-mt-24 space-y-4 mt-12">
+      <section id="text-mode" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <BookOpen className="w-6 h-6 text-orange-500 shrink-0" />
-          5. Six Jobs This Solves Better Than Printing
+          <FileText className="w-6 h-6 text-orange-500 shrink-0" />
+          5. The Text Mode: Paste, Title, Typeset
         </h3>
         <p>
-          Most people find this page because a print dialogue let them down.
-          Here is where a purpose-built <strong>webpage to PDF</strong> archive
-          earns its place instead.
+          Switch to <em>From text</em> and the page becomes a small composer.
+          Give the document a title and a subtitle, paste the original address
+          into the source field so the PDF records where it came from, then
+          paste the body. Press the button and the text is set on A4 or Letter
+          with a rule under the heading, an archived-on timestamp, and{' '}
+          <em>Page N of M</em> on every sheet. Paragraph breaks are kept; the
+          menus, cookie banners and related-article widgets you did not paste
+          are, of course, absent.
         </p>
-        <div className="grid sm:grid-cols-2 gap-5 not-prose my-6">
-          {[
-            ['Research and citation', 'Keep the source URL and the date you retrieved it printed on the document itself. That is precisely the metadata a reference list asks for, and it is on the page rather than in a folder name you will rename.'],
-            ['Reading a long article on paper', 'A properly paginated, numbered document with generous line spacing is far kinder to read and annotate than a print-out interrupted by navigation and cookie notices.'],
-            ['Course notes and study packs', 'Paste a chapter, title it by week, and build a stack of consistently formatted handouts you can bind or file.'],
-            ['Records you may need later', 'Order confirmations, policy wording, terms you agreed to, a listing before it is taken down. Pasted, dated and filed as a fixed record of what the page said on the day you read it.'],
-            ['Sharing with someone who cannot open the link', 'Paywalled, regionally blocked, behind a login, or simply gone. A PDF of the text is readable by anybody you send it to.'],
-            ['Cleaning up messy pasted text', 'Anything that arrives as an unstructured wall of characters — an email chain, a transcript, a plain-text spec — becomes a titled, paginated document.'],
-          ].map(([title, body]) => (
-            <div
-              key={title}
-              className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
-            >
-              <h4 className="font-bold text-slate-900 dark:text-white text-base mb-1.5 flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                {title}
-              </h4>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{body}</p>
-            </div>
-          ))}
-        </div>
         <p>
-          A word on that fourth one, because it is the case people most often
-          overstate to themselves. What the composer hands you is a normal PDF:
-          fixed in layout, dated on its face, and stable to open years from now
-          &mdash; but not locked. It is not encrypted, it carries no signature,
-          and anyone who can open it can edit it with the right software, the
-          same as any other document you email. That is fine for the ordinary
-          job of remembering what a page said and when you read it. If the file
-          needs to resist tampering as well as record it, do that deliberately
-          as a second step: our{' '}
-          <Link to="/tools/pdf-protect" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF password protection tool
+          It is the right route for a <strong>paywalled article to PDF</strong>{' '}
+          you are entitled to read, for turning an email thread into something
+          filable, for course notes, and for the wall-of-text that arrives
+          when you copy from a chat window. It carries no pictures; if an image
+          matters, save it and use the{' '}
+          <Link to="/tools/pdf-jpg" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            JPG to PDF converter
           </Link>{' '}
-          encrypts the document behind a password you set, and our{' '}
-          <Link to="/tools/pdf-flatten" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF flatten tool
+          to make a page of it, then the{' '}
+          <Link to="/tools/pdf-merger" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF merger
           </Link>{' '}
-          fixes form fields and annotations into the page content so they can no
-          longer be filled in or moved. For anything with legal weight, neither
-          replaces a properly witnessed copy &mdash; treat the archive as your
-          own contemporaneous record, which is what it genuinely is.
+          to put the two together.
         </p>
       </section>
 
       {/* 6 */}
-      <section id="after" className="scroll-mt-24 space-y-4 mt-12">
+      <section id="vs-print" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Layers className="w-6 h-6 text-orange-500 shrink-0" />
-          6. What to Do With the PDF Afterwards
+          <Printer className="w-6 h-6 text-orange-500 shrink-0" />
+          6. Why Not Just Print to PDF From the Print Menu?
         </h3>
         <p>
-          One archived article is rarely the end of it. A saved clipping usually
-          wants to join something bigger, get smaller, or get locked, and the
-          rest of the toolset handles each of those on the same free terms.
+          The print dialogue can save any page to a PDF, and for a simple
+          article it is fine. The failures are familiar: text cut off at the right edge,
+          a cookie banner stamped across page one, the site&rsquo;s sticky
+          header repeated on every sheet, dark-mode pages printed as black
+          rectangles, and backgrounds dropped so that white text vanishes.
+          On a phone you have to find the share sheet, then the print
+          preview, then the tiny PDF option, every single time.
         </p>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            <strong>Build a dossier.</strong> Save six articles, then{' '}
-            <Link to="/tools/pdf-merger" className="text-orange-600 font-semibold underline hover:text-orange-700">
-              merge them into one PDF
-            </Link>{' '}
-            so an entire literature review or research folder travels as a
-            single file. If the running order comes out wrong, the{' '}
-            <Link to="/tools/pdf-organizer" className="text-orange-600 font-semibold underline hover:text-orange-700">
-              PDF organizer
-            </Link>{' '}
-            will reshuffle the pages.
-          </li>
-          <li>
-            <strong>Get it under an attachment limit.</strong> A long text
-            archive is small, but a merged dossier is not. The{' '}
-            <Link to="/tools/pdf-compressor" className="text-orange-600 font-semibold underline hover:text-orange-700">
-              PDF compressor
-            </Link>{' '}
-            shrinks it substantially before you attach it, and you can recompress
-            harder if it is still too big &mdash; it offers preset levels plus
-            manual quality and dimension controls, so you can trade image
-            fidelity for size until the file fits.
-          </li>
-          <li>
-            <strong>Keep it private.</strong> For anything with personal or
-            contractual detail in it, our{' '}
-            <Link to="/tools/pdf-protect" className="text-orange-600 font-semibold underline hover:text-orange-700">
-              PDF password protection tool
-            </Link>{' '}
-            adds a password before you send it on.
-          </li>
-          <li>
-            <strong>Edit or extract the text.</strong> Need to rework the
-            archive rather than just read it? Run it through the{' '}
-            <Link to="/tools/pdf-word" className="text-orange-600 font-semibold underline hover:text-orange-700">
-              PDF to Word converter
-            </Link>{' '}
-            and edit it as a document. And if you came here holding a{' '}
-            <em>scanned</em> page rather than web text, our{' '}
-            <Link to="/tools/pdf-ocr" className="text-orange-600 font-semibold underline hover:text-orange-700">
-              PDF OCR tool
-            </Link>{' '}
-            will lift real text out of it first, which you can then paste into
-            the composer above.
-          </li>
-          <li>
-            <strong>Point people back at the source.</strong> Turn the original
-            address into a scannable code with the{' '}
-            <Link to="/tools/qr-generator" className="text-orange-600 font-semibold underline hover:text-orange-700">
-              QR code generator
-            </Link>{' '}
-            for a printed handout.
-          </li>
-        </ul>
+        <p>
+          A capture from the address sidesteps most of that. Backgrounds are
+          printed, the page is fitted to the paper you asked for with real
+          margins, and the whole thing happens from one box you paste into.
+          When the print route is the one that mangles a page, this is the
+          quickest way to a copy that looks like the page did.
+        </p>
       </section>
 
       {/* 7 */}
       <section id="why-cortexis" className="scroll-mt-24 space-y-4 mt-12">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Sparkles className="w-6 h-6 text-orange-500 shrink-0" />
+          <ShieldCheck className="w-6 h-6 text-orange-500 shrink-0" />
           7. Why Cortexis Is the Best Free Webpage to PDF Tool
         </h3>
         <p>
-          Plenty of sites will <strong>convert text to PDF online</strong>. Most
-          of them make it deliberately irritating until you pay. Here is what is
-          different, stated plainly enough that you can check every line.
+          There are many <strong>webpage to PDF converters</strong>. Here is
+          what this one does differently, stated so you can check it.
         </p>
         <div className="grid sm:grid-cols-2 gap-5 not-prose my-6">
           {[
-            ['Genuinely free, no account', 'No sign-up, no email address, no card and no trial period. What you are using is the whole product, every time you come back.'],
-            ['No watermark on the output', 'The PDF comes out clean. Nothing is stamped across the text and nothing is appended to the final page advertising us.'],
-            ['Your documents stay private', 'Nothing you paste is stored on our servers, retained after your session, or used for training or analytics. No file is kept, queued or logged.'],
-            ['Built as a document, not a dump', 'Title, subtitle, cited source, archive timestamp, automatic pagination and numbered footers come as standard rather than as a paid extra.'],
-            ['No daily cap', 'Archive one article or forty in an afternoon. There is no counter quietly ticking down and no tier above this one to upsell you to.'],
-            ['An honest description of the result', 'We tell you what the composer produces and what it does not before you spend time on it, rather than after you have downloaded the wrong thing.'],
+            ['Genuinely free, no account', 'No sign-up, no email, no card, no monthly page counter. The tool on this page is the entire product.'],
+            ['A real PDF, not a picture', 'Text you can search and copy, links you can click, the page laid out for the paper you chose.'],
+            ['Two modes, honestly labelled', 'Public page? Paste the address. Private page? Paste the text. The tool never pretends it can log in as you.'],
+            ['Your material stays private', 'Nothing is stored on our servers after your download, and nothing you paste is retained or used for training.'],
+            ['Paper you actually print on', 'A4 and US Letter, portrait or landscape, with margins — not a 20,000-pixel-tall image pretending to be a document.'],
+            ['Clear when something is out of reach', 'A login wall, a blocked site or a used-up allowance produces a plain message, not a blank file.'],
           ].map(([title, body]) => (
-            <div
-              key={title}
-              className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
-            >
+            <div key={title} className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
               <h4 className="font-bold text-slate-900 dark:text-white text-base mb-1.5 flex items-center gap-2">
                 <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                 {title}
@@ -553,13 +358,16 @@ export default function SaveWebAsPdfSeoArticle() {
           ))}
         </div>
         <p>
-          It sits alongside a wider set of{' '}
+          It is one of a wider set of{' '}
           <Link to="/tools" className="text-orange-600 font-semibold underline hover:text-orange-700">
             free document tools
           </Link>{' '}
-          built on exactly the same terms, so the archive you make here can be
-          split, cropped, rotated or protected later without ever meeting a
-          paywall.
+          built on the same terms. Want just a picture of the page instead?
+          The{' '}
+          <Link to="/tools/website-png-screenshot" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            website screenshot tool
+          </Link>{' '}
+          captures it as a PNG at the viewport size you choose.
         </p>
       </section>
 
@@ -572,32 +380,36 @@ export default function SaveWebAsPdfSeoArticle() {
         <div className="space-y-6 mt-4">
           {[
             [
-              'How do I save a webpage as a PDF for free without an account?',
-              'Copy the article text, clear the sample text out of the content box in the composer at the top of this page, and paste yours in its place. Add a title and the source URL, choose A4 or Letter, and press Download Printable PDF. There is no sign-up, no email verification and no watermark on the result. It is free every time, not free for the first three files.',
+              'How do I save a webpage as a PDF for free?',
+              'Paste the page’s address into the From a URL box at the top of this page, choose A4 or Letter and portrait or landscape, and press Save Webpage as PDF. The file downloads a few seconds later, named after the site and the page. There is no account, no watermark and no monthly limit on pages.',
             ],
             [
-              'Can I just paste a link and get the whole page?',
-              'No — and it is better to know that now. The composer builds your PDF from the article text you paste in. The source URL you enter is printed on the document as a reference line rather than fetched. That means you get the words, cleanly typeset and free of adverts and navigation, but not a picture of the site.',
+              'Is the PDF a screenshot or real text?',
+              'Real text. The page is laid out for print, so the words are searchable and selectable, links stay clickable, and images and backgrounds are kept. A screenshot would give you none of that.',
             ],
             [
-              'Will the images from the article be included?',
-              'No. The output is typeset text with a title, subtitle, citation line and page numbers. If a chart or photograph matters, save it from the page yourself and tidy it with our image cropper or image resizer, then either keep it beside the archive as an image file or take the extra step of turning it into a PDF with the PDF and JPG converter in its JPG-to-PDF mode. Only once it is a PDF can the merger add it to your archive as extra pages — the merger will not accept an image file directly.',
+              'Can it save a page that needs a login, or a paywalled article?',
+              'No. The capture visits the address as a first-time visitor, with none of your logins, so it sees what a stranger sees. For a page only you can open, switch to From text, copy the content across, and download a typeset PDF of it instead.',
             ],
             [
-              'Can anyone edit the PDF I create here?',
-              'The file is an ordinary PDF, so yes, someone with editing software can change it. Nothing here encrypts, signs or locks the document. What it does give you is a fixed, dated record of the text as you saved it. If you need the file locked as well, add a password with our PDF protect tool, or fix its fields and annotations in place with the PDF flatten tool.',
+              'Why did I get a message about a daily allowance?',
+              'URL captures carry a fair-use daily allowance per connection. It is more than a person needs in a day and less than a script would want. It resets daily; in the meantime the From text mode has no limit at all.',
             ],
             [
-              'Why does my printed web page cut off text or include the menus?',
-              'Because a print dialogue reproduces the page as the site built it, adverts, sidebars and all, and the site rarely defines where a page should break. Pasting the article body into a composer sidesteps both problems: you choose what goes in, and the text is repaginated properly with numbered pages.',
+              'Will the images be included?',
+              'From a URL, yes — images and backgrounds are part of the capture. From text, no: that mode typesets words only. If a picture matters there, save it, turn it into a page with the JPG to PDF converter, and join the two with the PDF merger.',
             ],
             [
-              'Is there a limit on how much text I can convert to PDF?',
-              'There is no imposed cap and no daily limit on how many documents you build. Longer text simply produces more pages, and the footer count updates to match, so a fifty-page archive numbers itself correctly without any extra step.',
+              'Can I edit the PDF afterwards?',
+              'Anyone can open, print and copy from it; there are no restrictions on the file. To change the words, run it through the PDF to Word converter. To keep it from being changed, put a password and permissions on it with the PDF protect tool.',
             ],
             [
-              'Is what I paste kept anywhere?',
-              'No. Nothing you paste is stored on our servers, nothing is retained once your session ends, and nothing is used for training or analytics. No file is kept, queued or logged.',
+              'Is the address or the text I paste kept anywhere?',
+              'Nothing is stored on our servers after your download. The address is the only thing a URL capture needs, and nothing you paste in the text mode is retained or used for training or analytics.',
+            ],
+            [
+              'Does it work on a phone?',
+              'Yes, and it is one of the better reasons to use it there. Paste the address, press the button, and the PDF lands in your downloads without hunting through the share sheet for a print option.',
             ],
           ].map(([q, a]) => (
             <div key={q}>
@@ -610,28 +422,24 @@ export default function SaveWebAsPdfSeoArticle() {
 
       <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700">
         <p className="text-slate-600 dark:text-slate-300">
-          Once your archive exists, the{' '}
-          <Link to="/tools/pdf-splitter" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF splitter
-          </Link>{' '}
-          will pull out just the section you want to quote, the{' '}
-          <Link to="/tools/pdf-crop" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF crop tool
-          </Link>{' '}
-          tightens the margins for a reading device, the{' '}
-          <Link to="/tools/pdf-rotate" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF rotate tool
-          </Link>{' '}
-          fixes a landscape page that ended up sideways, and the{' '}
-          <Link to="/tools/pdf-jpg" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            PDF to JPG converter
-          </Link>{' '}
-          turns a page into an image for a slide. If you would rather understand
-          how documents are built than simply build them, our free{' '}
+          Saved the page? Keep a whole research trail in one file with the{' '}
+          <Link to="/tools/pdf-merger" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF merger
+          </Link>
+          , shrink an image-heavy capture with the{' '}
+          <Link to="/tools/pdf-compressor" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF compressor
+          </Link>
+          , or lock a sensitive one with the{' '}
+          <Link to="/tools/pdf-protect" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            PDF password protector
+          </Link>
+          . And if you would rather understand how pages are rendered than
+          only capture them, our free{' '}
           <Link to="/learn/full-stack-web" className="text-orange-600 font-semibold underline hover:text-orange-700">
             full-stack web development course
           </Link>{' '}
-          takes you from raw HTML to a deployed application.
+          starts from exactly that.
         </p>
       </div>
     </article>
