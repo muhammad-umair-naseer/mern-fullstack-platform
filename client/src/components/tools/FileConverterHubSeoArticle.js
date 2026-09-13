@@ -30,12 +30,10 @@ import {
  * take the document path); a true animated GIF from a still image; batch or
  * drag-and-drop; password-protected PDFs.
  *
- * Keywords declined outright because they describe the mechanism rather than
- * the outcome: "browser based file converter", "ffmpeg wasm converter online",
- * "excel first sheet to json no server", and the verify-it-yourself step the
- * research suggested for "how to check if a converter uploads my file". That
- * last question is still answered, as a retention-policy question, in
- * section 7 and the FAQ.
+ * Keywords that describe the mechanism rather than the outcome were declined
+ * outright, along with the verify-it-yourself step the research suggested for
+ * "how to check if a converter uploads my file". That last question is still
+ * answered, as a retention-policy question, in section 7 and the FAQ.
  */
 export default function FileConverterHubSeoArticle() {
   return (
@@ -131,12 +129,24 @@ export default function FileConverterHubSeoArticle() {
           This hub takes a middle path: five categories, each handled properly,
           with the limits written down. When you choose a file, the tool reads
           its extension and sorts it into one of five groups, and each group
-          unlocks its own set of output buttons.
+          unlocks its own set of output buttons. The extension is the same signal
+          every operating system and the{' '}
+          <a
+            href="https://www.iana.org/assignments/media-types/media-types.xhtml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-orange-600 font-semibold underline hover:text-orange-700"
+          >
+            IANA media type registry
+          </a>{' '}
+          use to decide what a file is, which is why a wrong extension is the
+          most common reason a conversion refuses to start.
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
             <strong>Images</strong> (PNG, JPG, WebP, GIF, BMP, SVG) can become
-            PNG, JPG, WebP or a single-page PDF.
+            PNG, JPG, WebP or a single-page PDF. A GIF button is also shown,
+            but it saves a still image, not an animation.
           </li>
           <li>
             <strong>Audio</strong> (MP3, WAV, AAC, OGG, FLAC, M4A) can become
@@ -208,8 +218,8 @@ export default function FileConverterHubSeoArticle() {
         </h3>
         <p>
           Pick any PNG, JPG, WebP, GIF, BMP or SVG and a preview appears
-          immediately. The output choices are PNG, JPG, WebP and PDF, and the
-          most useful thing here is the quality control.
+          immediately. The output choices are PNG, JPG, WebP, GIF and PDF,
+          and the most useful thing here is the quality control.
         </p>
         <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -232,14 +242,19 @@ export default function FileConverterHubSeoArticle() {
               The PDF option builds a one-page document sized to the image
               itself, landscape or portrait chosen automatically. No A4
               fitting and no margins. For uniform paper afterwards, run it
-              through the PDF page resizer.
+              through the{' '}
+              <Link to="/tools/pdf-resize" className="text-orange-600 font-semibold underline hover:text-orange-700">
+                PDF page resizer
+              </Link>
+              .
             </p>
           </div>
         </div>
         <p>
-          Two things to know. The GIF output button saves a single still frame,
-          not an animation, so if you want a real animated GIF from a set of
-          images use the{' '}
+          Two things to know. The GIF output button saves a single still
+          image under a .gif name; it is not an animation and it is not a true
+          GIF encoding, so some programs may not open it. If you want a real
+          animated GIF from a set of images use the{' '}
           <Link to="/tools/gif-maker" className="text-orange-600 font-semibold underline hover:text-orange-700">
             GIF maker
           </Link>
@@ -262,10 +277,9 @@ export default function FileConverterHubSeoArticle() {
           4. Audio and Video: MP3, WAV, MP4, WebM and GIF
         </h3>
         <p>
-          Audio and video share a media engine and both show a live percentage
-          as encoding runs. The first media job in a session takes a moment
-          longer to begin while that engine initialises; later jobs start
-          straight away.
+          Audio and video both show a live percentage as the conversion runs.
+          The first audio or video job in a session can take a moment longer
+          to begin; later jobs start straight away.
         </p>
         <h4 className="font-bold text-slate-900 dark:text-white text-base">
           Audio: MP3, WAV, AAC and OGG
@@ -330,18 +344,8 @@ export default function FileConverterHubSeoArticle() {
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
-            <strong>CSV</strong> writes comma-separated rows in the form
-            described by{' '}
-            <a
-              href="https://www.rfc-editor.org/rfc/rfc4180"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-orange-600 font-semibold underline hover:text-orange-700"
-            >
-              IETF RFC 4180
-            </a>
-            , which every database importer and every spreadsheet program
-            understands.
+            <strong>CSV</strong> writes plain comma-separated rows, the form
+            that database importers and spreadsheet programs expect.
           </li>
           <li>
             <strong>JSON</strong> writes an array of objects, one per row, with
@@ -379,17 +383,9 @@ export default function FileConverterHubSeoArticle() {
         </h3>
         <p>
           PDF is the most carefully handled source on the page. The file is
-          checked for a real PDF signature first, as defined in{' '}
-          <a
-            href="https://www.iso.org/standard/75839.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-orange-600 font-semibold underline hover:text-orange-700"
-          >
-            ISO 32000-2
-          </a>
-          , and a disguised or corrupted file is refused with a clear message
-          rather than a vague failure. From a valid PDF you can:
+          checked for a real PDF header first, and a disguised or corrupted
+          file is refused with a clear message rather than a vague failure.
+          From a valid PDF you can:
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
@@ -421,8 +417,10 @@ export default function FileConverterHubSeoArticle() {
           <Link to="/tools/pdf-jpg" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF to JPG tool
           </Link>{' '}
-          does the whole document. The PDF and Markdown buttons are not
-          available for a PDF source, and for an editable document the{' '}
+          does the whole document. The PDF and Markdown buttons still appear
+          for a PDF source, but neither works: pressing Convert with one of
+          them selected ends in a &ldquo;Conversion failed&rdquo; message. For
+          an editable document the{' '}
           <Link to="/tools/pdf-word" className="text-orange-600 font-semibold underline hover:text-orange-700">
             PDF to Word converter
           </Link>{' '}

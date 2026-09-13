@@ -156,7 +156,7 @@ export default function FileRenamerSeoArticle() {
           2. How to Bulk Rename Files Online in Four Steps
         </h3>
         <p>
-          No account, no email, no watermark, no file cap. To <strong>batch rename files</strong> with the tool above:
+          No account, no email and no cap on the number of files. To <strong>batch rename files</strong> with the tool above:
         </p>
         <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
           {[
@@ -242,8 +242,8 @@ export default function FileRenamerSeoArticle() {
           and it lands before the extension. <strong>Change Extension</strong>{' '}
           swaps the part after the dot, which is how you{' '}
           <strong>change the file extension of multiple files at once</strong>:
-          .jpeg to .jpg, .txt to .md. If a rule chain would leave a name empty,
-          the original is kept.
+          .jpeg to .jpg, .txt to .md. If the rules would leave nothing at all,
+          the original name is kept.
         </p>
       </section>
 
@@ -268,7 +268,7 @@ export default function FileRenamerSeoArticle() {
           allows a small set of characters unencoded; everything else must be
           percent-encoded, which is why &ldquo;Hero Banner.png&rdquo; becomes
           &ldquo;Hero%20Banner.png&rdquo; in one place and a broken link in
-          another. Most web servers also treat Hero.png and hero.png as different
+          another. Many web servers also treat Hero.png and hero.png as different
           files.
         </p>
         <p>
@@ -285,7 +285,7 @@ export default function FileRenamerSeoArticle() {
           <strong>make all file names lowercase at once</strong> and keep the
           punctuation, choose lowercase; to{' '}
           <strong>rename files to Title Case in bulk</strong>, every word gets a
-          capital first letter.
+          capital first letter and the rest is lowercased.
         </p>
         <p>
           A full recipe to <strong>rename files for web upload with no spaces and lowercase</strong>{' '}
@@ -339,8 +339,8 @@ export default function FileRenamerSeoArticle() {
         </h3>
         <p>
           People look for a{' '}
-          <strong>batch file renamer with no download and no signup</strong>{' '}
-          because the desktop option is unavailable.
+          <strong>batch file renamer with no signup</strong> because the desktop
+          option is unavailable to them.
         </p>
         <ul className="list-disc pl-6 space-y-2">
           <li>
@@ -354,13 +354,14 @@ export default function FileRenamerSeoArticle() {
             Files can unpack the ZIP.
           </li>
           <li>
-            <strong>You cannot install a bulk rename utility on a work computer.</strong>{' '}
-            No admin rights, a locked software policy. A web page needs neither,
-            and nothing about your files is stored or retained afterwards.
+            <strong>You cannot add renaming software to a work computer.</strong>{' '}
+            No admin rights, a locked software policy. Open this page instead;
+            nothing about your files is stored or retained afterwards.
           </li>
           <li>
-            <strong>Bulk rename files on a Mac without Automator.</strong> Finder
-            can add and replace text but has no case modes and no de-duplication.
+            <strong>Bulk rename files on a Mac without writing a workflow.</strong>{' '}
+            Finder can add and replace text but offers no kebab-case, snake_case
+            or lowercase mode.
           </li>
         </ul>
         <p>
@@ -399,6 +400,16 @@ export default function FileRenamerSeoArticle() {
           </li>
           <li>
             <strong>No folders.</strong> Every file lands in the root of the ZIP.
+          </li>
+          <li>
+            <strong>No per-file edits.</strong> One rule set applies to the whole
+            batch; a single output name cannot be hand-typed in the preview, and
+            there are no saved presets or undo history.
+          </li>
+          <li>
+            <strong>No stated size cap, but no guarantee either.</strong> A very
+            large batch may fail with an &ldquo;Export error&rdquo; message; if
+            that happens, split it into smaller batches.
           </li>
           <li>
             <strong>No metadata.</strong> Dates taken, ID3 tags and dimensions
@@ -482,7 +493,7 @@ export default function FileRenamerSeoArticle() {
           {[
             [
               'How do I rename multiple files at once without installing software?',
-              'Add the files to the panel at the top of this page, set your rules, check the preview and download the ZIP. There is no account and no setup step. It is the simplest way to bulk rename files online when desktop software is out of reach.',
+              'Add the files to the panel at the top of this page, set your rules, check the preview and download the ZIP. There is no account to create. It is the simplest way to bulk rename files online when desktop software is out of reach.',
             ],
             [
               'Why do I get a ZIP instead of my files being renamed in place?',

@@ -32,11 +32,13 @@ import {
  * so the mobile paragraph warns that sites which detect the device rather
  * than the width may still serve their desktop layout.
  *
- * Declined outright: "without watermark" is promised only for HTML mode,
- * where the image is built entirely from the pasted snippet. URL captures of
- * pages behind logins, cookie walls or bot blocks are not promised at all;
- * that reader is routed to HTML mode. PNG, PDF, batch, API and uploading an
- * existing image are each sent to the tool that does them.
+ * Declined outright: "without watermark" and "no capture limit" are promised
+ * only for HTML mode, where the image is built entirely from the pasted
+ * snippet. URL captures come from an outside capture service whose output,
+ * marks and limits the code does not control, so the article says so. URL
+ * captures of pages behind logins, cookie walls or bot blocks are not promised
+ * at all; that reader is routed to HTML mode. PNG, PDF, batch, API and
+ * uploading an existing image are each sent to the tool that does them.
  *
  * The word "browser" appears in this file only as the name of the painted
  * window frame ("Add Clean Browser Window Frame" is the checkbox label). It
@@ -159,8 +161,8 @@ export default function WebsiteScreenshotJpgSeoArticle() {
         </h3>
         <p>
           This is a <strong>website screenshot generator with no signup</strong>:
-          no account, no email, no counter that locks you out after a few
-          captures. To turn a <strong>webpage to JPG</strong> with the tool above:
+          no account and no email step. To turn a <strong>webpage to JPG</strong>{' '}
+          with the tool above:
         </p>
         <div className="grid md:grid-cols-3 gap-6 not-prose my-6">
           {[
@@ -240,6 +242,12 @@ export default function WebsiteScreenshotJpgSeoArticle() {
           layout; one that detects the device instead may still serve its
           desktop version squeezed narrow, and there is no setting to change that.
         </p>
+        <p>
+          One more thing to know: if the first attempt at a URL capture fails,
+          a second attempt is made that does not honour the chosen preset, so
+          the image can come back at a different size. The result card always
+          reports the real pixel dimensions, so check it before you download.
+        </p>
       </section>
 
       {/* 4 */}
@@ -250,17 +258,18 @@ export default function WebsiteScreenshotJpgSeoArticle() {
         </h3>
         <p>
           The usual answer to <strong>how to show my website in portfolio with browser window</strong>{' '}
-          is a mockup generator: screenshot, upload elsewhere, drag into a frame
+          is a mockup generator: screenshot, open it in another app, drag into a frame
           template, export again. Here the frame is painted on at the moment of
           capture, so that step disappears.
         </p>
         <p>
           With <strong>Add Clean Browser Window Frame</strong> ticked, a 42-pixel
           dark title bar is added above the capture: three traffic-light dots,
-          a rounded address pill, and the address you entered with a lock symbol
-          in front. The result is a{' '}
-          <strong>website screenshot with a mac browser frame</strong>, made
-          online. Untick the box for the bare capture.
+          a rounded address pill, and the address you entered (with https://
+          added if you left it off) behind a lock symbol. The result is a{' '}
+          <strong>website screenshot with a mac-style window frame</strong>, made
+          online. The frame text cannot be edited; untick the box for the bare
+          capture.
         </p>
         <p>
           That makes it a good fit for a{' '}
@@ -419,12 +428,20 @@ export default function WebsiteScreenshotJpgSeoArticle() {
             <strong>Batches, scheduled captures or an API.</strong> One address,
             one capture, one download.
           </li>
+          <li>
+            <strong>Private URL captures.</strong> The address you enter in URL
+            mode is handed to an outside capture service to produce the image,
+            so use it for public pages only. Pasted HTML is the mode to use for
+            anything you would not want to share.
+          </li>
         </ul>
         <p>
           On a <strong>screenshot website JPG without watermark</strong>:
-          Cortexis never stamps a logo on anything you download. In HTML mode
-          the image is built entirely from your snippet. In URL mode the only
-          thing added is the window frame, and you can switch that off.
+          Cortexis itself adds nothing to the image except the optional window
+          frame. In HTML mode the picture is built entirely from your snippet,
+          so it is free of any marks. URL captures are produced by an outside
+          capture service whose output, marks and usage limits Cortexis does
+          not control, so that is the one promise we make only for HTML mode.
         </p>
       </section>
 
@@ -436,12 +453,12 @@ export default function WebsiteScreenshotJpgSeoArticle() {
         </h3>
         <div className="grid sm:grid-cols-2 gap-5 not-prose my-6">
           {[
-            ['Free with no signup', 'No account, no email, no daily counter. An online website screenshot JPEG free on every capture, not just the first few.'],
+            ['Free with no signup', 'No account and no email step. An online website screenshot JPEG free, with the download link on the page the moment the capture finishes.'],
             ['Frame painted at capture time', 'The dark window bar with the address is part of the image the moment it is made. No mockup tool, no second export.'],
             ['Five real viewports', 'Full HD, laptop, tablet, phone and 1280x800, each giving a different layout of the same page.'],
             ['Quality slider with a live KB readout', 'Set JPEG quality from 30% to 100% and see the real file size before you download.'],
             ['HTML snippets welcome', 'Paste markup and styling and get a double-density image of the rendered result, with nothing retained.'],
-            ['Nothing stored', 'Captures and pasted snippets are never stored on our servers, never retained after your session and never used for analytics or training.'],
+            ['Nothing stored', 'Captures and pasted snippets are never stored on our servers, never retained after your session and never used for training.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -469,8 +486,8 @@ export default function WebsiteScreenshotJpgSeoArticle() {
             compressed further
           </Link>{' '}
           or{' '}
-          <Link to="/tools/webp-png" className="text-orange-600 font-semibold underline hover:text-orange-700">
-            converted for the web
+          <Link to="/tools/image-converter" className="text-orange-600 font-semibold underline hover:text-orange-700">
+            converted to another format
           </Link>
           .
         </p>
@@ -486,7 +503,7 @@ export default function WebsiteScreenshotJpgSeoArticle() {
           {[
             [
               'How do I take a website screenshot as a JPG without signing up?',
-              'Type the address into the Capture Live URL box above, pick a preset and press Capture JPG Screenshot. A website screenshot JPG appears with a Download JPG button. There is no account, no email step and no capture limit.',
+              'Type the address into the Capture Live URL box above, pick a preset and press Capture JPG Screenshot. A website screenshot JPG appears with a Download JPG button. There is no account and no email step. URL captures rely on an outside capture service, so if one fails, wait a moment and try again or switch to HTML mode.',
             ],
             [
               'Can I get a screenshot of a website without opening it myself?',
@@ -502,7 +519,7 @@ export default function WebsiteScreenshotJpgSeoArticle() {
             ],
             [
               'Why does my screenshot look blurry after I share it?',
-              'The app you shared it through recompressed it. Send a JPG already at the size you need, at 85% quality or higher, so there is less for the receiving app to shrink. Keep small text above 60%.',
+              'The app you shared it through recompressed it. Send a JPG already at the size you need, at 85% quality or higher, so there is less for the receiving app to shrink.',
             ],
             [
               'Can I screenshot a website in mobile view online?',

@@ -196,9 +196,9 @@ const TOOL_SEO = {
       'Turn JPG, PNG or WebP photos into one animated GIF with exact size, colour and delay control. Free, no watermark, no sign-up.',
   },
   'base64-encoder-decoder': {
-    title: 'Base64 Encoder Decoder – Free Online Tool',
+    title: 'Base64 Encoder Decoder – Free, Any Format',
     description:
-      'Decode Base64 as you copied it, quotes, line breaks and data: prefixes included, or encode text and files to Base64 and data URIs for free.',
+      'Decode messy Base64 as pasted: quotes, line breaks, data URIs, URL-safe, no padding. Encode UTF-8 text or any file to Base64 or a data URI.',
   },
   'jpeg-compressor': {
     title: 'Compress JPEG Online Free, No Resizing',
@@ -228,7 +228,7 @@ const TOOL_SEO = {
   'colour-format-utilities': {
     title: 'Color Code Converter: HEX, RGB, HSL, CMYK',
     description:
-      'Convert one colour to HEX, RGB, HSL and CMYK, make tints and shades, and find the version that passes WCAG AA or AAA. Free, no signup.',
+      'Paste one colour, get HEX, RGB, RGBA, HSL and CMYK, click lighter or darker shades, and see which one passes WCAG AA and AAA. Free, no signup.',
   },
   'pdf-powerpoint': {
     title: 'PDF to PowerPoint Converter, Free Online',
@@ -248,77 +248,77 @@ const TOOL_SEO = {
   'file-renamer': {
     title: 'Bulk Rename Files Online, Free',
     description:
-      'Rename a whole batch of files at once with live preview, kebab-case, numbering and duplicate-safe output in a ZIP. Originals untouched.',
+      'Bulk rename files online: find and replace, kebab-case, prefix, suffix and 01/02 numbering with a live preview. Originals untouched, ZIP out.',
   },
   'website-jpg-screenshot': {
-    title: 'Website Screenshot JPG: Free Online Capture',
+    title: 'Website Screenshot JPG: Free URL to JPG',
     description:
-      'Capture any web page as a framed JPG at desktop, laptop, tablet or phone width, with the file size shown before you download.',
+      'Capture any web page as a JPG at desktop, tablet or phone width, add a window frame and set quality before you download. Free, no signup.',
   },
   'json-formatter': {
     title: 'JSON Formatter: Validate, Minify, Sort',
     description:
-      'Paste JSON and get a formatted result plus an error that names what was expected at a line and column. Free, no sign-up, nothing stored.',
+      'Format, validate and minify JSON free. Errors name what was expected at a line and column, not a character offset.',
   },
   'website-png-screenshot': {
     title: 'Website Screenshot PNG – Free, Framed',
     description:
-      'Capture any URL as a lossless PNG at 1920x1080, 1366x768, 768x1024 or 390x844 with a clean window frame, or render HTML to a transparent 3x image.',
+      'Capture any public URL as a lossless PNG at 1920x1080, 1366x768, 768x1024 or 390x844 with a clean window frame, or render HTML to a transparent PNG.',
   },
   'file-converter-hub': {
     title: 'Free Online File Converter for Any File',
     description:
-      'Convert images, audio, video, spreadsheets and PDFs on one page. No signup, no size cap, no watermark, and files are never stored.',
+      'Convert images, audio, video, Excel and PDFs on one page. No signup, no size cap, no watermark, files never stored.',
   },
   'spreadsheet-converter': {
     title: 'Spreadsheet Converter: XLSX, CSV, ODS, JSON',
     description:
-      'Convert XLSX, XLS, CSV, TSV or ODS to CSV, JSON, HTML, XLSX or ODS and pick exactly which sheet you export. Free, no signup, no size cap.',
+      'Convert XLSX, XLS, CSV, TSV or ODS to CSV, JSON, HTML, XLSX or ODS. Pick the exact sheet, preview it, download free with no signup.',
   },
   'vector-converter': {
     title: 'SVG to PNG Converter – Free, 1x to 4x',
     description:
-      'Turn any SVG into a sharp PNG, JPG or WebP at the exact pixel size you see before you click. No signup, no watermark.',
+      'Convert SVG to PNG, JPG or WebP at 1x–4x with transparency kept, see the exact pixel size first, and pick the JPG background colour.',
   },
   'cad-converter': {
-    title: 'DXF to SVG Converter, Free, No Signup',
+    title: 'DXF to SVG Converter, Free, Preview First',
     description:
-      'Preview your DXF and count its entities before converting to SVG, PNG, PDF or JSON. Free, no account, files never stored.',
+      'Convert DXF to SVG, PNG, PDF or JSON free with no signup. See the drawing and its entity count before you convert, so nothing goes missing unnoticed.',
   },
   'font-converter': {
     title: 'WOFF to TTF Converter Free Online',
     description:
-      'Unwrap a WOFF into the installable TTF or OTF it came from, or wrap a desktop font for the web. Free, no signup, no watermark.',
+      'Unwrap a WOFF to the original TTF or OTF, or wrap a desktop font as WOFF, with every table intact. No account, no watermark, no daily cap.',
   },
   'presentation-converter': {
     title: 'PPTX to Markdown, HTML or Text Converter',
     description:
-      'Pull every slide title, bullet and speaker note out of a PowerPoint deck as Markdown, HTML or plain text. Free, no sign-up, no watermark.',
+      'Turn a PowerPoint deck into a Markdown, HTML or text outline with titles, nested bullets and speaker notes kept together. Free, no sign-up.',
   },
   'extract-archive': {
-    title: 'Unzip Files Online Free, Straight Into a Folder',
+    title: 'Unzip Files Online Straight Into a Folder',
     description:
-      'See every file inside a ZIP before extracting, download just one, or extract all into a real folder with subfolders kept. Free, no signup.',
+      'Unzip files online free: see every file and size first, download one entry, or extract the whole ZIP into a folder with subfolders intact.',
   },
   'create-archive': {
-    title: 'Create ZIP File Online Free – Level 0 to 9',
+    title: 'Create ZIP File Online Free, No Signup',
     description:
-      'Bundle files or a whole folder into one ZIP, keep sub-folders intact, and pick store-only for photos and video so it finishes fast.',
+      'Bundle files or a whole folder into one ZIP with a 0-9 compression level and store-only mode. Free, no account, folder structure kept.',
   },
   'ebook-converter': {
-    title: 'Markdown to EPUB Converter Free Online',
+    title: 'Markdown to EPUB Converter With Real Chapters',
     description:
-      'Turn Markdown, TXT or HTML into an EPUB with real chapters and a working table of contents, or extract any EPUB to text or HTML.',
+      'Turn Markdown, TXT or HTML into an EPUB 3 whose headings become chapters, or extract any EPUB to one HTML page or plain text. Free, no signup.',
   },
   'audio-converter': {
     title: 'Online Audio Converter: MP3, WAV, FLAC, Opus',
     description:
-      'Convert audio to MP3, WAV, OGG, Opus, FLAC or M4A free, with the bitrate you choose and no sign-up, watermark or limits. Files are never stored.',
+      'Convert MP3, WAV, OGG, Opus, FLAC and M4A free with a bitrate you choose. No sign-up, no watermark, recordings never stored.',
   },
   'wav-compressor': {
-    title: 'WAV Compressor – Reduce WAV File Size Free',
+    title: 'WAV Compressor - Shrink WAV, Keep It WAV',
     description:
-      'Shrink any WAV by exactly 50%, 75% or 87.5% and keep it a WAV. Free, no signup, no watermark, and you know the file size before you download.',
+      'Free WAV compressor that reduces WAV file size by sample rate, mono mix and bit depth, tells you the exact saving, and keeps the output a WAV.',
   },
 };
 

@@ -34,32 +34,6 @@ const TOOL_FAQS = {
       a: "No. There are zero daily caps, zero document limits, and no hidden subscriptions. You can compress as many PDF documents as you need, completely free of charge.",
     },
   ],
-  'pdf-word': [
-    {
-      q: "How do I convert a PDF to Word for free without an account?",
-      a: "Open the converter at the top of this page, select your PDF, and download the .docx. There is no sign-up step, no email verification and no watermark on the result. It is free every time, not free for the first three files.",
-    },
-    {
-      q: "Will my formatting be preserved when I convert PDF to Word?",
-      a: "Text, reading order, paragraph breaks and page breaks convert reliably. Images, true table grids and multi-column layouts usually need adjusting in Word afterwards. That is a limit of how the two formats describe a document, not of any one converter, and anybody promising a pixel-perfect result is overselling it.",
-    },
-    {
-      q: "Why is my converted Word document empty?",
-      a: "Almost certainly because the PDF is a scan. It contains pictures of text rather than text itself, so there is nothing to extract. Run it through our free PDF OCR tool first to create a real text layer, then convert it here.",
-    },
-    {
-      q: "Is there a file size limit for PDF to Word conversion?",
-      a: "No. There is no size cap and no daily limit on how many documents you convert. Very large files simply take longer to process, and a desktop will get through them faster than a phone.",
-    },
-    {
-      q: "Are my documents safe when I convert them?",
-      a: "Your files are not stored on our servers, not retained after your session, and never used for training or analytics. Nothing you convert is kept.",
-    },
-    {
-      q: "Can I convert a Word document back into a PDF?",
-      a: "Yes. Drop a .docx into the same tool and it produces a PDF with your layout reproduced exactly as it appears. If you need the text in that PDF to be searchable afterwards, run it through the OCR tool.",
-    },
-  ],
   'pdf-merger': [
     {
       q: "How do I merge PDF files for free without an account?",
@@ -88,6 +62,32 @@ const TOOL_FAQS = {
     {
       q: "Are my files safe when I merge them?",
       a: "Your documents are never stored on our servers, never retained after your session, and never used for training or analytics. No file is kept, queued or logged.",
+    },
+  ],
+  'pdf-word': [
+    {
+      q: "How do I convert a PDF to Word for free without an account?",
+      a: "Open the converter at the top of this page, select your PDF, and download the .docx. There is no sign-up step, no email verification and no watermark on the result. It is free every time, not free for the first three files.",
+    },
+    {
+      q: "Will my formatting be preserved when I convert PDF to Word?",
+      a: "Text, reading order, paragraph breaks and page breaks convert reliably. Images, true table grids and multi-column layouts usually need adjusting in Word afterwards. That is a limit of how the two formats describe a document, not of any one converter, and anybody promising a pixel-perfect result is overselling it.",
+    },
+    {
+      q: "Why is my converted Word document empty?",
+      a: "Almost certainly because the PDF is a scan. It contains pictures of text rather than text itself, so there is nothing to extract. Run it through our free PDF OCR tool first to create a real text layer, then convert it here.",
+    },
+    {
+      q: "Is there a file size limit for PDF to Word conversion?",
+      a: "No. There is no size cap and no daily limit on how many documents you convert. Very large files simply take longer to process, and a desktop will get through them faster than a phone.",
+    },
+    {
+      q: "Are my documents safe when I convert them?",
+      a: "Your files are not stored on our servers, not retained after your session, and never used for training or analytics. Nothing you convert is kept.",
+    },
+    {
+      q: "Can I convert a Word document back into a PDF?",
+      a: "Yes. Drop a .docx into the same tool and it produces a PDF with your layout reproduced exactly as it appears. If you need the text in that PDF to be searchable afterwards, run it through the OCR tool.",
     },
   ],
   'pdf-splitter': [
@@ -548,60 +548,176 @@ const TOOL_FAQS = {
       a: "Your documents are never stored on our servers, never retained after your session, and never used for training or analytics. Nothing you convert is kept, queued or logged.",
     },
   ],
-  'png-compressor': [
+  'pdf-psd-eps-ps': [
     {
-      q: "How do I compress a PNG for free without losing quality?",
-      a: "Add your image to the compressor at the top of this page and choose the Lossless mode. Every pixel is preserved exactly, so the picture is identical to the one you started with. The savings are more modest than the other two modes, and if a rewrite would produce a larger file you simply keep your original size — you never end up worse off.",
+      q: "How do I convert PDF to PSD without Photoshop?",
+      a: "Click the panel at the top of this page, choose your PDF, set Target Format to PSD, pick a DPI and press Export. You get a Photoshop document with the page as a flat background image, with no sign-up and no watermark. Set the resolution in Image Size without resampling, because the file carries pixels but no ppi tag.",
     },
     {
-      q: "Will compressing a PNG remove the transparent background?",
-      a: "No. A PNG goes in and a PNG comes out, and the transparency of every pixel is carried through in all three modes. Only colour information is simplified, so cut-outs, soft shadows and fully clear backgrounds all survive intact.",
+      q: "Will the PSD have layers I can edit?",
+      a: "No. A PDF does not contain Photoshop layers, so no converter can produce them; the export is one flattened image. For the text, use PDF to Word. For the photographs, use extract images from PDF. For the vector shapes, open the PDF in Illustrator, which keeps its paths.",
     },
     {
-      q: "Can I compress a PNG to an exact file size like 100KB?",
-      a: "Not directly — there is no target-size field, only three modes. In practice, compress on Balanced, check the size shown on the download button, and step up to Maximum Shrink if you are still over. If it will not come down far enough, the image is simply too many pixels wide: resize it first, then compress the smaller version.",
+      q: "Why does my EPS place at four times the page size in Illustrator?",
+      a: "Because the bounding box is written in pixels and PostScript reads pixels as points, so a 300 DPI export is 4.17 times larger than the page. Scale it to 24% after placing; 48% for 150 DPI, 12% for 600. Only the nominal size changes.",
     },
     {
-      q: "Is there a file size limit or a daily limit?",
-      a: "There is no size cap and no daily quota. Compress one image or forty. A very large image takes a little longer to work through than a small one, which is the only practical difference.",
+      q: "Why does the EPS show as a grey box in Word?",
+      a: "The EPS has no embedded preview thumbnail, and applications that cannot interpret PostScript rely on one. The file is fine and images correctly in Illustrator, Photoshop or any PostScript-aware viewer. For a picture you can see inside a Word document, export the page as PNG or JPG instead.",
     },
     {
-      q: "Can I compress several PNG files at once?",
-      a: "Not in one pass — the tool takes one image at a time so that you always see the exact before and after size for that file. Use the Change PNG button to move straight on to the next one; there is nothing to reload and no counter running down.",
+      q: "Can I convert PDF to PS for a printer that only accepts PostScript?",
+      a: "Yes, with one caution. The PS file does not declare a page size, so a printer that images it as-is will print a 150 DPI page more than twice too large and clip it. Export at 72 DPI if the file goes straight to the printer, or at 300 DPI if it passes through a viewer or RIP that can fit the page to the paper.",
     },
     {
-      q: "Are my images safe when I compress them?",
-      a: "Your files are never stored on our servers, never retained after your session, and never used for training or analytics. Nothing you compress is kept, queued or logged.",
+      q: "Is there a file size limit, and can I convert a whole document?",
+      a: "No file size limit, no page cap and no daily quota. Choose All Pages with PSD or EPS for a ZIP with one file per page, or PS for a single multi-page PostScript document. At 600 DPI on a long document the export itself can become too large to finish, so test one page first.",
     },
   ],
-  'qr-generator': [
+  'pdf-powerpoint': [
     {
-      q: "Is this QR code generator really free, and do the codes expire?",
-      a: "Yes to the first and no to the second. There is no account, no trial and no payment step. Your content is encoded directly into the pattern rather than pointing at a redirect we control, so a code you print today keeps working.",
+      q: "Is this a pdf to powerpoint free online tool with no sign up?",
+      a: "Yes. Choose your PDF in the panel at the top of this page, pick a ratio and a quality, and download the .pptx. There is no account, no email step, no watermark and no daily limit. It is free every time, not free for the first few files.",
     },
     {
-      q: "How do I make a QR code for my Wi-Fi password?",
-      a: "Choose the Wi-Fi tab, type the network name exactly as it appears in the list of networks, enter the password, and pick WPA/WPA2/WPA3 unless your router is very old. Download the PNG and print it. Guests point a camera at it and the phone offers to join.",
+      q: "Can I edit the text after I convert PDF to PowerPoint?",
+      a: "No. Each slide is a single picture of the page, which is why the layout, fonts and tables come through exactly as designed. If you need live text to edit, convert the document with PDF to Word instead and copy what you need into PowerPoint.",
     },
     {
-      q: "Can I generate a batch of codes at once?",
-      a: "Not from a list, no. The panel above makes one code at a time from one form, so a set of asset tags or table numbers means filling the form and downloading once per code. Nothing limits how often you repeat that, and each download is named for the code type, so a run of a dozen takes a couple of minutes. For thousands, a developer scripting a QR library is the sane route.",
+      q: "Why does my portrait page look stretched on the slide?",
+      a: "Because the page picture is stretched to fill the whole slide rather than fitted inside it, and a portrait A4 or Letter page is a different shape from a 16:9 or 4:3 slide. Choose 4:3 for the closer fit, or export the pages with PDF to JPG and insert them onto slides yourself.",
     },
     {
-      q: "Can I add my logo to the middle of the QR code?",
-      a: "Not in this tool. It produces a clean, unadorned symbol in your chosen colours, which is the version most likely to scan first time on every phone. If you need a logo, open the downloaded SVG in a design program and add it there, small and clear of the three corner squares, then test before printing.",
+      q: "Which DPI should I choose: 150, 200 or 300?",
+      a: "150 DPI for a deck shown on a screen or emailed, 200 DPI for large displays or slides people will zoom into, and 300 DPI for anything that will be printed. Higher DPI means sharper small text and a larger file, because the slides are stored as lossless PNG.",
     },
     {
-      q: "Why will my QR code not scan?",
-      a: "Nearly always contrast, size or the margin. Keep the pattern much darker than the background, print it at least a couple of centimetres across, and never crop the clear border the download includes. Glossy or curved surfaces also scatter the pattern.",
+      q: "Can I convert only some pages of my PDF?",
+      a: "Not inside this tool; every page becomes a slide, in order. Use extract pages from PDF, the PDF splitter or the page remover first to make a shorter document, then convert that.",
     },
     {
-      q: "Can I change where the QR code points after I have printed it?",
-      a: "No, and neither can any static code: the destination is physically part of the pattern. If your link may change, encode an address you control and update the redirect at your end, or generate a fresh code here.",
+      q: "Does it work with scanned PDFs, and does it do OCR?",
+      a: "A scanned PDF converts like any other, one page per slide, and looks exactly as the scan looked. No OCR is run, so the text on the slides is not selectable or searchable; if the document needs a text layer, run it through PDF OCR separately.",
     },
     {
-      q: "Is it safe to put my phone number or Wi-Fi password in?",
-      a: "What you type is never stored on our servers, never retained after your visit and never used for analytics or training. Do remember that a printed code is readable by anyone who can see it, so treat one with the care you would give the printed details themselves.",
+      q: "Will the .pptx open in Google Slides or Keynote?",
+      a: "The file is written as a standard .pptx, the same type PowerPoint saves and the one Google Slides and Keynote import. Open the result and check the first slide before you rely on it, which is good practice with any converted deck.",
+    },
+  ],
+  'pdf-ebook': [
+    {
+      q: "How do I convert a PDF to EPUB for free with no signup?",
+      a: "Click the panel at the top of this page, choose your PDF, leave the format on EPUB 3.0 and convert. No account, no email step, no watermark, and free every time rather than for the first few files.",
+    },
+    {
+      q: "Why did my PDF to EPUB come out with blank pages and no text?",
+      a: "Almost always because the PDF is a scan with no text layer. If the Extracted Text Preview reads “No text extracted on this page”, run the PDF through our PDF OCR tool first.",
+    },
+    {
+      q: "Does this convert PDF to real Kindle MOBI or AZW3?",
+      a: "No. The Kindle option writes Kindle-source HTML with a page-break marker between pages, the kind of source file Amazon’s Kindle publishing tools take in, not a finished .mobi or .azw3. To simply read on a Kindle, choose EPUB, which Amazon’s Send to Kindle service supports.",
+    },
+    {
+      q: "Why are the images missing from my PDF to EPUB conversion?",
+      a: "Because this is a text-only converter: photographs, figures, diagrams, tables and the cover are not carried into any format. Pull the pictures out with our extract images from PDF tool, or keep the document as a PDF if layout matters.",
+    },
+    {
+      q: "Can I convert a PDF to FB2 for a PocketBook?",
+      a: "Yes. Choose FB2 (FictionBook 2.0). The output is genuine FictionBook XML with your title and author and one section per PDF page, which PocketBook devices and FB2 reading apps open as a book with a contents list.",
+    },
+    {
+      q: "Is there a file size or page limit for converting a large PDF to EPUB?",
+      a: "There is no artificial cap: no page count, no megabyte ceiling and no daily quota. The progress bar walks through every page, so a long document simply takes longer to finish.",
+    },
+    {
+      q: "Will the chapters in my EPUB match the chapters in the PDF?",
+      a: "No. The converter does not read bookmarks or detect headings, so “chapters” are PDF pages titled Page 1, Page 2 and so on. Split into Chapters by PDF Page puts each in the contents menu; Single Continuous Chapter gives one flowing file.",
+    },
+  ],
+  'pdf-spreadsheet-suite': [
+    {
+      q: "How do I convert multiple PDF to Excel at once for free?",
+      a: "Queue every PDF in the panel at the top of this page and click Convert to Excel. The batch becomes one .xlsx workbook with a worksheet for every page. No account, no email step, no watermark, no file cap.",
+    },
+    {
+      q: "Can I get a PDF to spreadsheet free online without signing up?",
+      a: "Yes. Nothing here asks for an email address or a login, and the download is the finished .xlsx with no watermark. It opens in Excel, Google Sheets, LibreOffice Calc and Numbers.",
+    },
+    {
+      q: "Excel’s Get Data from PDF only imports the first page. Does this fix it?",
+      a: "Excel’s own import treats each detected table as a separate query and it is easy to load only the first. This tool converts every page of every file with no selection step, so a twenty-page statement gives you twenty tabs.",
+    },
+    {
+      q: "How do I extract tables from a PDF to a spreadsheet without paid software?",
+      a: "Convert the PDF here. Each page’s text is placed on a grid by position, so a real table arrives with rows and columns intact; delete the header and footer rows once the file is open. No desktop PDF editor or subscription is involved.",
+    },
+    {
+      q: "Why are my numbers showing as text after PDF to Excel conversion?",
+      a: "Every cell is written as text so nothing is altered on the way through, so formulas ignore the values until you convert them. Select the column, run Data → Text to Columns and click Finish, or use =VALUE() on a single cell.",
+    },
+    {
+      q: "Can I convert a scanned PDF to Excel with this tool?",
+      a: "Not directly. A scanned page is a picture with no text to place in cells, so it comes through as one placeholder cell. Run the file through our PDF OCR tool first, then convert the OCR output here.",
+    },
+    {
+      q: "Is there a bulk PDF to XLSX option with no file limit?",
+      a: "This is it. No limit on files in the queue, no size limit per file and no daily quota. Just keep filenames short enough that 31-character tab names stay distinct, and do not queue the same file twice.",
+    },
+  ],
+  'pdf-html': [
+    {
+      q: "How do I convert a PDF to HTML for free without signing up?",
+      a: "Select your PDF in the panel at the top of this page, set a page range if you only need part of it, and press Convert. The HTML file downloads automatically and a preview appears underneath. There is no account, no email step and no watermark.",
+    },
+    {
+      q: "Why does my converted PDF to HTML look nothing like the original?",
+      a: "Because this PDF to HTML converter deliberately drops the layout and keeps the structure. You get headings, paragraphs and page sections that reflow to fit any screen, instead of a fixed-width copy of the page. If you need the page to look identical, use our PDF to JPG tool instead.",
+    },
+    {
+      q: "Why did my scanned PDF convert to an empty HTML page?",
+      a: "A scan is a picture of a page with no text underneath it, so there is nothing to extract and the section for that page comes out empty. Run the file through our PDF OCR tool first to add a text layer, then convert the result to HTML.",
+    },
+    {
+      q: "Can I convert only certain pages of a PDF to HTML?",
+      a: "Yes. Set the from and to page numbers before converting and only that span is read. A single page is fine. The output is still a complete HTML5 file with its own title and stylesheet.",
+    },
+    {
+      q: "Is the HTML file responsive on mobile?",
+      a: "Yes. The output is flowing text with a viewport tag and a reading column that adapts to the screen, so it reads on a phone without sideways scrolling or zooming. There is no absolute positioning anywhere in the file.",
+    },
+    {
+      q: "Does the converter keep images, tables and links?",
+      a: "No. The output is text only — no images, no graphics, no hyperlinks, and table cells are joined into lines of text. Use extract images from PDF for the pictures, PDF to Excel for tables, and add links by hand in the HTML.",
+    },
+    {
+      q: "Why is every line its own paragraph in the HTML?",
+      a: "A PDF records text one line at a time and never says where a paragraph ends, so each visual line is written as its own paragraph element. Joining them back together is a quick find-and-replace in any editor.",
+    },
+  ],
+  'image-compressor': [
+    {
+      q: "How do I compress an image online for free without signing up?",
+      a: "Click the panel at the top of this page, choose one image, pick JPG or WebP, set the quality slider and press convert. No account, no email step, no watermark. The result card shows the new size in KB and a download button, and it is free every time.",
+    },
+    {
+      q: "Why did my PNG not get any smaller?",
+      a: "Because you chose PNG as the output. PNG is lossless and this page saves it without optimisation, so it usually comes back the same size or bigger. To reduce image size from a PNG, choose JPG or WebP. If it must stay a PNG, use our PNG compressor.",
+    },
+    {
+      q: "Can I compress a JPG to exactly 100 KB?",
+      a: "Not by typing a target, because there is no target-size box. Choose JPG, run it at 80, read the KB in the result card, then lower the slider in steps until the figure is under 100 KB. Still over at 40%? The picture has too many pixels for that budget; the image resizer is the next step.",
+    },
+    {
+      q: "Does compressing an image remove EXIF data?",
+      a: "Here, yes, without exception. The output is a fresh file, so camera details, capture time, GPS location and colour profile are not carried across, and there is no option to keep them. Useful when sharing personal photos; if you need the metadata, keep the original.",
+    },
+    {
+      q: "Why did my transparent background turn black?",
+      a: "You chose JPG, which has no way to store transparency, so every see-through pixel is filled with black. Run the original again and choose WebP, which keeps the transparent areas and still produces a small file.",
+    },
+    {
+      q: "Can I compress several images at once?",
+      a: "No. This page handles one image per run and produces one download, with no multi-select and no zip. The upside is that every image gets its own quality decision and its own size readout.",
     },
   ],
   'image-resizer': [
@@ -660,6 +776,118 @@ const TOOL_FAQS = {
       a: "Your files are never stored on our servers, never kept after your session, and never used for training or analytics. The cropped copy that downloads also arrives without the original camera metadata, so the location and device details your phone recorded do not travel with the version you share.",
     },
   ],
+  'image-converter': [
+    {
+      q: "What is the best free image converter with no signup and no watermark?",
+      a: "The one at the top of this page: no account, no email, no stamp on the output. It reads PNG, JPG, WebP, GIF, BMP and SVG, writes PNG, JPG, WebP or PDF one picture at a time, and your files are never stored on our servers.",
+    },
+    {
+      q: "How do I convert WebP to JPG?",
+      a: "Choose the WebP file in the panel above, select JPG, leave the quality slider at 90% unless you need a smaller file, and press convert. If the WebP has transparent areas, choose PNG instead so they are preserved rather than filled with black.",
+    },
+    {
+      q: "I renamed a PNG to .jpg and the upload form still rejects it. Why?",
+      a: "Renaming changes the label, not the file. The form reads the actual bytes, sees a PNG and refuses it. Convert with JPG as the output and the file is genuinely re-encoded as a JPEG, which the form will accept.",
+    },
+    {
+      q: "Why does my transparent PNG have a black background after converting to JPG?",
+      a: "JPG cannot store transparency, so transparent pixels must become a colour, and the JPEG encoder makes them black. This tool has no fill-colour option. Convert to PNG or WebP to keep the transparency, or place the graphic on a white layer in an editor first.",
+    },
+    {
+      q: "Does converting PNG to JPG remove metadata?",
+      a: "Yes. The output is written from the pixels alone, so camera details, dates, GPS coordinates and colour profiles are not carried across in any direction. A privacy advantage when sharing, and a reason to keep the original.",
+    },
+    {
+      q: "Can I convert HEIC photos from my iPhone here?",
+      a: "No. HEIC is not among the formats this converter reads, so the conversion fails. Share the photo from the phone using its most-compatible option, or set the camera to capture JPG, then convert the result here.",
+    },
+  ],
+  'jpeg-compressor': [
+    {
+      q: "How do I compress a JPEG online for free without signing up?",
+      a: "Click the panel at the top of this page, choose your JPG, click the JPG output button, set the quality slider and press Convert. The result card shows the new size in KB and a Download button. There is no account, no email step and no watermark.",
+    },
+    {
+      q: "Why did the panel select PNG when I uploaded a JPG?",
+      a: "The converter pre-selects a format different from the one you started with, and for a .jpg that happens to be PNG. Click the JPG button yourself; the quality slider only appears once JPG or WebP is selected. Converting a JPG to PNG would make it larger, not smaller.",
+    },
+    {
+      q: "Can I compress a JPEG to an exact size, like 200 KB or under 1 MB?",
+      a: "Not in one click. There is a quality slider, not a target-size box, so you set a quality, read the KB on the result card and adjust. Start at 90 and step down until the number is under your limit. If even 40 is not enough, reduce the pixel dimensions with our image resizer first, then compress the smaller file at a higher quality.",
+    },
+    {
+      q: "Can I compress several JPG files at once?",
+      a: "No. This tool takes one image at a time, and each one needs the JPG button and the slider set before converting. There is no bulk mode here, so a folder of photos means repeating the steps for each file. The slider keeps the last value you set, which makes the repeats quick.",
+    },
+    {
+      q: "Does compressing a JPEG remove EXIF data?",
+      a: "Yes, always, with this tool. Camera details, timestamp, GPS location, colour profile and editing history are all dropped, and there is no setting to keep them. Orientation is applied so the picture stays upright. If you need the metadata preserved, this is not the right tool for that file.",
+    },
+    {
+      q: "Why did my transparent PNG turn black after converting to JPG?",
+      a: "JPEG cannot store transparency, so any see-through area is filled with black. If the transparent background matters, keep the file as PNG or WebP and shrink it with the PNG compressor instead of converting it.",
+    },
+    {
+      q: "Is this a JPEG compressor with no file size limit, and is the free JPEG compressor unlimited?",
+      a: "There is no daily quota, no per-file cap set by us, no account tier and no count limit. Extremely large images from high-megapixel cameras can occasionally fail to produce a result; if that happens, run the picture through the image resizer first and try again.",
+    },
+  ],
+  'png-compressor': [
+    {
+      q: "How do I compress a PNG for free without losing quality?",
+      a: "Add your image to the compressor at the top of this page and choose the Lossless mode. Every pixel is preserved exactly, so the picture is identical to the one you started with. The savings are more modest than the other two modes, and if a rewrite would produce a larger file you simply keep your original size — you never end up worse off.",
+    },
+    {
+      q: "Will compressing a PNG remove the transparent background?",
+      a: "No. A PNG goes in and a PNG comes out, and the transparency of every pixel is carried through in all three modes. Only colour information is simplified, so cut-outs, soft shadows and fully clear backgrounds all survive intact.",
+    },
+    {
+      q: "Can I compress a PNG to an exact file size like 100KB?",
+      a: "Not directly — there is no target-size field, only three modes. In practice, compress on Balanced, check the size shown on the download button, and step up to Maximum Shrink if you are still over. If it will not come down far enough, the image is simply too many pixels wide: resize it first, then compress the smaller version.",
+    },
+    {
+      q: "Is there a file size limit or a daily limit?",
+      a: "There is no size cap and no daily quota. Compress one image or forty. A very large image takes a little longer to work through than a small one, which is the only practical difference.",
+    },
+    {
+      q: "Can I compress several PNG files at once?",
+      a: "Not in one pass — the tool takes one image at a time so that you always see the exact before and after size for that file. Use the Change PNG button to move straight on to the next one; there is nothing to reload and no counter running down.",
+    },
+    {
+      q: "Are my images safe when I compress them?",
+      a: "Your files are never stored on our servers, never retained after your session, and never used for training or analytics. Nothing you compress is kept, queued or logged.",
+    },
+  ],
+  'webp-png': [
+    {
+      q: "How do I convert WebP to PNG for free without signing up?",
+      a: "Click the upload zone at the top of this page, pick your .webp file, and press Convert to PNG. PNG is chosen for you automatically. There is no account, no email step, no watermark and no limit on how many times you use it.",
+    },
+    {
+      q: "Why is my PNG so much bigger than the WebP I started with?",
+      a: "Because PNG is lossless and WebP usually is not. A lossy WebP stores a compact description of the image with fine detail already removed; a PNG has to record every remaining pixel exactly, which takes more bytes. That is correct behaviour, not a fault. If you needed a smaller file, run the PNG through our PNG compressor instead.",
+    },
+    {
+      q: "Does converting WebP to PNG lose quality?",
+      a: "No. The PNG step is lossless, so the PNG is an exact copy of the pixels in the WebP. What it cannot do is bring back detail the WebP encoder discarded before you got the file. Lossless conversion means no further loss, not quality restored.",
+    },
+    {
+      q: "Will the transparent background stay transparent?",
+      a: "Yes. The alpha channel is carried into the PNG, so logos, stickers and cut-outs keep their transparent areas. If a previous tool turned your background white, it flattened the image onto a page; this one does not.",
+    },
+    {
+      q: "Can I convert several WebP files at once?",
+      a: "Not on this page. It converts one file per run, and there is no zip download. For a handful of images, running it a few times is quick.",
+    },
+    {
+      q: "What happens to an animated WebP?",
+      a: "Only the first frame is converted, because PNG is a still image format. If the animation is what you need, use the GIF maker or the MP4 to GIF converter instead.",
+    },
+    {
+      q: "Can I convert WebP to PNG if I am not allowed to install software?",
+      a: "Yes. The tool needs no account, no plugin and no extra program: open the page, pick the file, download the PNG. That makes it a practical route on a locked-down office machine where you cannot add codecs or update Photoshop.",
+    },
+  ],
   'image-enlarger': [
     {
       q: "How do I enlarge an image without losing quality?",
@@ -686,30 +914,628 @@ const TOOL_FAQS = {
       a: "Your pictures are not stored on our servers, not retained after your session, and never used for training or analytics. Nothing you enlarge is kept, queued or logged.",
     },
   ],
-  'colour-picker': [
+  'video-compressor': [
     {
-      q: "How do I find the hex code of a colour in a picture?",
-      a: "Drop the picture into the image colour picker at the top of this page and click the colour you want. The HEX code appears immediately, alongside the matching RGB and HSL values, and one more click copies whichever you need to your clipboard. There is no sign-up and no limit on how many colours you sample.",
+      q: "How do I compress a video online for free without signing up?",
+      a: "Click the panel at the top of this page, choose your MP4, MOV, MKV, WebM or AVI, adjust the settings or leave the defaults, and press Compress Video. No account, no email step, no watermark. Play the preview, then download the MP4.",
     },
     {
-      q: "Is this colour picker free, and do I need an account?",
-      a: "It is free with no account, no email address and no usage cap. Pick one colour or two hundred. Nothing is watermarked, metered or held back for a paid tier, because there is no paid tier.",
+      q: "Can I compress a video from 100 MB to 10 MB?",
+      a: "Often, but there is no box to type the target into. Set width to 1280 or 640, CRF to 34 or higher, frame rate to 24 and audio to 64 kbps, then read the percentage the tool reports. Phone footage and screen recordings shrink a great deal; a clip that is already compact may not get there at any setting.",
     },
     {
-      q: "Can I pick a colour from a website or a video instead of a file?",
-      a: "Yes. Use the Pick Any Screen Colour button to open a full-screen eyedropper and click any pixel on your display, including a live page or a paused video. That screen-wide picker works in Chrome and Edge; in Safari or Firefox, take a screenshot and sample that image instead.",
+      q: "Is there a file size limit on this video compressor?",
+      a: "No cap is written into the tool and there is no daily quota, so it is a free video compressor with no file size limit in the ordinary sense. The honest caveat is that multi-gigabyte files and long 4K clips can fail partway or take a long time. Capping the width at 1280 helps those complete.",
     },
     {
-      q: "Why does the colour I picked look different from the original?",
-      a: "Usually JPEG compression or resizing. Both blend neighbouring pixels together, so a spot near an edge or in a gradient can read a few values off. Sample from the middle of a large flat area, and use the biggest, least-compressed version of the file you have. Photographs also carry the colour of the light they were shot under.",
+      q: "Will compressing lose quality?",
+      a: "Yes, some. Every run rebuilds the picture and sound, and there is no lossless option. CRF 20 keeps the most detail; 28 is a sensible middle; 36 is visibly softer but very small. You see the preview before you download, so nothing is lost that you did not choose to lose.",
     },
     {
-      q: "Does it give me CMYK or Pantone values for printing?",
-      a: "No. The tool outputs HEX, RGB and HSL only. CMYK and Pantone depend on ink, stock and a colour profile rather than on the pixel alone, so a screen-derived value would be a guess. For print work, take the HEX code to your printer and let them match it properly.",
+      q: "Does it convert MOV or MKV to MP4 as well as compressing?",
+      a: "Yes. Whatever container goes in, an H.264 MP4 with AAC audio comes out. That makes it a one-step fix for an iPhone MOV that will not send or an MKV recording that will not play on a phone. For a format other than MP4, run the result through the video converter afterwards.",
     },
     {
-      q: "Are my images kept when I use the colour picker?",
-      a: "No. Images are never stored on our servers, never retained after your session, and never used for training or analytics. Nothing you open here is logged or queued.",
+      q: "Can I compress MP4 without a watermark, free and unlimited?",
+      a: "No watermark, free, and no limit on how many files you run or how often. The only practical constraints are one file at a time and that very large files may not complete. There is no counter ticking down and no upgrade being held back.",
+    },
+    {
+      q: "Why did it say Re-encoded MP4 instead of showing a percentage?",
+      a: "Because the result was not smaller than the source, which happens when the original was already efficiently encoded at a similar resolution. Raise the CRF, lower the max width, or reduce the audio bitrate and run again. If it still does not shrink, the file was already as small as its content allows.",
+    },
+  ],
+  'mp4-gif': [
+    {
+      q: "How do I convert MP4 to GIF for free without signing up?",
+      a: "Select your video in the panel at the top of this page, set a start time and duration, choose a frame rate and width, and press convert. The GIF previews with its size and downloads named after your video. No account, no email step, no watermark, and free every time.",
+    },
+    {
+      q: "How do I make a GIF from a video that does not look grainy?",
+      a: "Start from the original video rather than an existing GIF, and use a converter that builds the palette from your clip instead of a generic one. The tool here does that on every run, with a fixed dithering pattern rather than a random one, so still backgrounds stay still instead of crawling with speckle.",
+    },
+    {
+      q: "Why does my GIF look choppy after conversion?",
+      a: "The frame rate is too low for the motion. 10 FPS suits slow interface recordings; a camera pan or fast action needs 15. Raise the frame rate and, if the file grows too much, shorten the clip to compensate.",
+    },
+    {
+      q: "My GIF is too big to send. What should I change?",
+      a: "Reduce the width first, then the duration, then the frame rate. There is no target-size setting, so check the size beside the preview and re-render a step smaller if you are over. If all you have is a finished GIF and no video, use our GIF compressor, because this tool only accepts video input.",
+    },
+    {
+      q: "Can I convert only part of a video to GIF?",
+      a: "Yes. Type the start time in seconds and the number of seconds to keep. For the first five seconds, leave start at 0 and set duration to 5. There is no visual trimmer, so find the timestamp in your player and adjust after watching the preview.",
+    },
+    {
+      q: "Can I convert MOV or WebM to GIF, not just MP4?",
+      a: "Yes. MP4, MOV, WebM, MKV and AVI are all accepted, so a Mac or iPhone screen recording and a WebM screen capture both work as they are.",
+    },
+  ],
+  'gif-maker': [
+    {
+      q: "How do I use a GIF maker from images without signing up or paying?",
+      a: "Add your pictures to the panel at the top of this page, check the frame order, set the delay and dimensions if you want to, press Generate and download animated.gif. There is no account, no email step, no watermark and no trial that runs out.",
+    },
+    {
+      q: "Why do my GIF frames jump around when the images are different sizes?",
+      a: "Because a GIF has one canvas and your images have several shapes, so each one is fitted differently. Pick Cover to fill the canvas and crop the edges, or Contain to keep every image whole with black bars, and avoid Stretch unless every image already has the same proportions. Cropping all the photos to one shape before adding them removes the problem entirely.",
+    },
+    {
+      q: "My GIF from images is too big. Which setting should I change?",
+      a: "Dimensions first: the first image sets the canvas, so a full-size photo makes a full-size GIF. Type a width of 480 to 800 and scale the height to match. Then drop Max Colors from 256 to 128. Then remove frames that are nearly identical to their neighbours. If it is still too large, run the result through our GIF compressor.",
+    },
+    {
+      q: "Why does my GIF from photos look grainy or banded?",
+      a: "A GIF frame can hold at most 256 colours and a photograph has millions, so gradients like skies and skin get stepped. Set Max Colors to 256 for photographs; 128 and 64 are for screenshots, illustrations and flat graphics where the smaller palette is not visible.",
+    },
+    {
+      q: "How do I make a GIF play only once instead of looping?",
+      a: "Untick Loop Animation Forever before you press Generate. The GIF then plays through its frames one time and stops on the last one. The setting is written into the file itself, so it behaves the same wherever it is opened. There is no option for a specific number of repeats — it is forever or once.",
+    },
+    {
+      q: "My GIF is too fast. How do I slow down the frames?",
+      a: "Raise the Frame Delay. It is in milliseconds and applies to every frame: 250 is four frames a second, 500 is two, 1000 holds each picture for a full second. The lowest value the tool writes is 20 ms. The delay is the same for all frames, so to hold one frame longer, add that image to the sequence more than once.",
+    },
+    {
+      q: "Can I make a GIF from a video or a YouTube link with this tool?",
+      a: "No. This tool builds from still image files — JPG, PNG, WebP, BMP and SVG. For a video clip, use our MP4 to GIF converter instead. It also does not add captions, stickers or effects, and it does not edit an existing animated GIF: a GIF you add contributes its first frame only.",
+    },
+  ],
+  'gif-compressor': [
+    {
+      q: "How do I reduce GIF size for Discord?",
+      a: "Drop the GIF in, set scale to around 60% and colours to 64, and press Compress. If the reported size is still over the cap for your account, lower the scale another step before you touch frame dropping, since softness is less noticeable in a chat window than choppy motion. There is no automatic target-size mode, so expect two or three runs.",
+    },
+    {
+      q: "Why did my GIF get bigger after compressing?",
+      a: "Because the original was already tightly optimised. Well-made GIFs store only the parts of each frame that changed; this tool writes each kept frame in full, so a file that relied on that trick can grow when nothing else is reduced. When that happens the status line says Re-encoded GIF rather than claiming a saving. Lower the scale or the colour count and it will come in under the original.",
+    },
+    {
+      q: "Why is my GIF choppy after compression, and how do I fix it?",
+      a: "Choppiness is the frame dropping control, almost without exception. Move it one step towards Keep all frames and take the bytes you need from scale or colours instead. The loop length is preserved when frames are dropped, so choppiness is the only cost; the animation is not being sped up.",
+    },
+    {
+      q: "Does this GIF compressor keep the animation the same length?",
+      a: "Yes. When a frame is dropped, its display time is added to the frame kept before it, so the total duration is unchanged at 1 in 2, 1 in 3 or 1 in 4. If you want it faster or slower, use the playback speed control, which applies in the same run. Speed alone does not reduce the file size.",
+    },
+    {
+      q: "Can I compress a GIF on a Mac without extra software?",
+      a: "Yes. Open this page on macOS, drop the GIF in and download the result. There is no image editor to buy and no platform-specific step; the process is identical on Windows and Linux. A very long, full-resolution recording is better trimmed at the source before you compress it.",
+    },
+    {
+      q: "Does it keep transparency?",
+      a: "No. Every frame is flattened onto a solid black background, so a transparent sticker-style GIF comes out with black behind it. Keep the original for anything that needs a see-through backdrop. Opaque GIFs, which is nearly every screen recording and reaction GIF, are unaffected.",
+    },
+    {
+      q: "Is it really a free GIF compressor with no watermark and no limits?",
+      a: "Yes. There is no account, no email, no watermark on the output and no daily quota. It handles one GIF per run, and you can run it as many times as you like. The download is a plain animated GIF named after your original with _compressed added.",
+    },
+  ],
+  'video-converter': [
+    {
+      q: "Is this video converter online free, or free for the first few files?",
+      a: "Free every time. There is no account, no email step, no daily quota and no paid tier with the real features behind it. Choose a file, pick a format, convert, download.",
+    },
+    {
+      q: "Does the converted video have a watermark?",
+      a: "No. Nothing is added to the picture at any stage. What you download is your video in the new format and nothing else.",
+    },
+    {
+      q: "Which format should I choose if I just want the video to play everywhere?",
+      a: "MP4. It comes out as H.264 video with AAC audio in yuv420p with faststart, which is the profile iPhones, Android phones, smart TVs, Windows, PowerPoint and every web player accept. Only choose MOV, MKV, WebM or AVI when something specifically asks for it.",
+    },
+    {
+      q: "Why does my video play sound but no picture, and will converting fix it?",
+      a: "The player understood the container and the audio but not the video codec or pixel format, which is common with 10-bit HEVC and 4:4:4 screen captures. Converting to MP4 here rewrites the video as 8-bit H.264 in yuv420p, which is exactly the fix.",
+    },
+    {
+      q: "Will converting lose quality?",
+      a: "Every conversion re-encodes the video at a fixed quality setting (CRF 23 for H.264), so it is not a bit-for-bit copy. For ordinary footage the difference is not visible, but keep your original if it is a master file, and do not convert the same clip repeatedly.",
+    },
+    {
+      q: "Is there a file size limit?",
+      a: "There is no cap or quota written into the tool, but it is built for ordinary clips rather than multi-gigabyte recordings, and a file of that size may not finish. Hundreds of megabytes is the comfortable range. Capping the resolution at 720p in the same pass makes the output considerably smaller.",
+    },
+    {
+      q: "Can I convert a video to MP3 or GIF with this tool?",
+      a: "Not here; this tool writes MP4, WebM, MKV, MOV and AVI only. Use our MP4 to MP3 tool to pull out the soundtrack and MP4 to GIF to make an animation. Both are free on the same terms.",
+    },
+  ],
+  'mp3-compressor': [
+    {
+      q: "How do I use an MP3 compressor without signing up?",
+      a: "Drop your file into the panel at the top of this page, choose a bitrate, and press Compress MP3. There is no account, no email step and no watermark. It is free every time, not free for the first three files.",
+    },
+    {
+      q: "Which setting actually makes the MP3 smaller?",
+      a: "Only the Target Bitrate dropdown. The output is written at a constant bitrate, so size is bitrate multiplied by duration. Mix to Mono and the sample rate change how good the file sounds at that bitrate, not how many megabytes it is.",
+    },
+    {
+      q: "Does compressing an MP3 reduce quality?",
+      a: "Yes, every time, because MP3 is lossy and re-saving discards a little more. The aim is to make the loss inaudible: 64 kbps mono for speech, 160 to 192 kbps stereo at 44,100 Hz for music. Always compress from your original rather than from an earlier compressed copy.",
+    },
+    {
+      q: "Why did my MP3 not get smaller after compressing?",
+      a: "Because it was already at or below the bitrate you chose. The status line will say \"Re-encoded MP3\" with the size instead of a percentage saved. Nothing lower than 64 kbps is offered, so if 64 kbps did not help, the file is already small and you need to split it or share a link instead.",
+    },
+    {
+      q: "What settings should I use for a voice recording or lecture?",
+      a: "64 kbps, tick Mix to Mono, and set the sample rate to 22,050 Hz. Speech has no stereo information and nothing above the range that 22,050 Hz keeps, so the low bitrate is spent entirely on the voice. A one-hour recording lands a little under 28 MB.",
+    },
+    {
+      q: "How do I compress an MP3 to under 25 MB for Gmail?",
+      a: "There is no target-size box, so use the per-minute figures: 64 kbps is about 0.46 MB per minute, 96 kbps about 0.69 and 128 kbps about 0.92. Divide 25 by your recording length in minutes and pick the highest bitrate whose per-minute figure fits under that number.",
+    },
+    {
+      q: "Can I compress a WAV, FLAC or M4A file here?",
+      a: "Yes. WAV, FLAC, OGG, M4A and AAC are all accepted and come out as MP3. If you need a different output format, such as OGG, Opus or M4A, use our audio converter instead; and for a WAV-centred workflow, the dedicated WAV compressor is the better fit.",
+    },
+  ],
+  'mp4-mp3': [
+    {
+      q: "How do I get just the audio from a video?",
+      a: "Pick the video in the panel at the top of this page, leave the bitrate at its default or lower it for speech, and press Extract MP3 Audio Track. The video stream is discarded and only the sound is kept, as an MP3 named after your file. Nothing to sign up for and no watermark.",
+    },
+    {
+      q: "Is there an MP4 to MP3 converter with no file size limit?",
+      a: "This one does not enforce a size cap or a paid tier for bigger files, which is what most people mean when a converter says the file is too large. Be aware that a very long, multi-gigabyte recording can still fail with an error rather than a polite size warning. If that happens, run the video through our video compressor first; the audio track survives and the smaller file goes through.",
+    },
+    {
+      q: "Which bitrate should I choose: 128, 192 or 320 kbps?",
+      a: "Use 128 or 160 kbps for anything that is mostly voice, such as lectures, meetings and interviews. Use 192 or 256 kbps for music. Reserve 320 kbps for a well-recorded master, because a bitrate can only preserve what the source already has, and the audio inside a phone or Zoom recording is usually far thinner than 320 kbps to begin with.",
+    },
+    {
+      q: "Can I convert MP4 to MP3 without installing software?",
+      a: "Yes. Open this page, choose the file, pick a bitrate, press the button and download the MP3. There is no account to make, and the steps are the same on a Chromebook as on any other computer.",
+    },
+    {
+      q: "My MP4 to MP3 converter is taking forever. What can I do?",
+      a: "On this page a progress bar starts counting the moment you press the button, so you can see the extraction moving rather than guessing. A long recording simply takes longer than a short clip. A lower bitrate produces a smaller MP3 to download at the end, and if the source itself is huge, shrinking it with our video compressor first shortens every later step.",
+    },
+    {
+      q: "Is converting MP4 to MP3 here private, with nothing kept on a server?",
+      a: "Your files are never stored on our servers. Nothing is retained after your session ends, and nothing you convert is used for training, analytics or anything else. That makes the page suitable for confidential meetings, client calls and medical or legal recordings.",
+    },
+    {
+      q: "Can I convert a YouTube link to MP3 with this tool?",
+      a: "No. The tool only works on a video file you already have; there is no box for a URL. If you own a recording that lives on a platform, download the original file from that platform first, then bring it here.",
+    },
+  ],
+  'mp3-mp4': [
+    {
+      q: "Is this MP3 to MP4 converter free, and does it add a watermark?",
+      a: "Free every time, with no account and no watermark. There is no premium version of the tool with more presets or a higher limit; the panel above is the whole thing.",
+    },
+    {
+      q: "Why can’t I upload an MP3 to YouTube directly?",
+      a: "YouTube only accepts video files, and an MP3 has no picture track, so the uploader rejects it with a format-not-supported message. Convert it to an MP4 with a cover image or a solid colour using the tool above and the same upload goes through.",
+    },
+    {
+      q: "Will my album cover be stretched or cropped?",
+      a: "Neither. The image is scaled to fit inside the frame with its proportions intact and centred, and any leftover space is filled with black bars. If you want no bars, crop the image to the same shape as the frame first, 16:9 for 720p and 1080p or 1:1 for the square preset.",
+    },
+    {
+      q: "Can I make a vertical video for Reels, TikTok or Shorts?",
+      a: "Not in a 9:16 frame; the tool offers 720p, 1080p and square 1:1 only. The square preset uploads to all three platforms and is the closest fit, but it will not fill a phone screen from top to bottom.",
+    },
+    {
+      q: "Does the audio quality change when I convert WAV or FLAC to MP4?",
+      a: "Yes. The audio inside the MP4 is always re-encoded to AAC at 128 kbps, so a lossless WAV or FLAC becomes lossy and a 320 kbps MP3 is reduced to 128 kbps. That is fine for publishing to YouTube or Instagram, which re-encode everything anyway, but keep your original master separately.",
+    },
+    {
+      q: "Is there a file size or length limit?",
+      a: "The tool enforces no file size cap and no duration cap. Long recordings and the 1080p preset take longer to render, so 720p is the quicker choice for an hour-long podcast, but there is no size at which the tool turns a file away.",
+    },
+    {
+      q: "Why is my converted video file so big, and how do I shrink it?",
+      a: "From this tool it should not be: a still image encoded with H.264 adds very little on top of the audio, so the MP4 is close to the size of a 128 kbps audio track of the same length. If a video editor gave you a huge file, converting here again from the original audio is the simplest fix, and our video compressor can reduce any MP4 further.",
+    },
+  ],
+  'wav-compressor': [
+    {
+      q: "How do I make a WAV file smaller without converting it to MP3?",
+      a: "Use the WAV compressor at the top of this page. Lower the sample rate, mix to mono, or drop to 8-bit — each halves the file from a CD-quality source, and the output is still a plain PCM WAV. For speech, 16,000 Hz mono 16-bit removes about 82% and stays perfectly intelligible.",
+    },
+    {
+      q: "Can I compress a WAV file without losing quality?",
+      a: "Not while it remains a WAV. A WAV stores every sample uncompressed, so the only way to shrink it is to keep fewer samples, fewer channels or fewer bits, and each of those is a permanent change. The trick is to remove what the content does not use: speech does not need stereo or anything above 8 kHz, so it can lose most of its size with no audible difference. If you need every sample kept, convert to FLAC with our audio converter instead.",
+    },
+    {
+      q: "Why is my three-minute WAV over 30 MB?",
+      a: "Because 44,100 samples a second, two channels, two bytes each is 176,400 bytes every second, which is about 10.6 MB a minute. At 48 kHz and 24-bit it is 17 MB a minute. The size is that multiplication and nothing else, which is also why halving any one of those numbers halves the file.",
+    },
+    {
+      q: "How do I convert a 24-bit or 32-bit float WAV to 16-bit?",
+      a: "Load the file, set the sample rate to match the source (44,100 Hz if it was 44,100), choose Keep Original Channels and leave 16-bit selected. Only the bit depth changes. A 24-bit file loses a third of its size and a 32-bit float file loses half, and the result is a standard 16-bit PCM WAV that every editor and device will open. Note that 48 kHz sources are resampled to 44,100 Hz, because that is the highest rate the tool writes.",
+    },
+    {
+      q: "Does the WAV compressor need an account, and is there a file limit?",
+      a: "No account, no email and no watermark. There is no daily quota and no cap on how many files you run. Files are handled one at a time, and a very large file simply takes longer than a short one.",
+    },
+    {
+      q: "Will it keep my metadata, cue points and loop markers?",
+      a: "No. The output is a clean canonical WAV containing only the format and audio data, so artist tags, broadcast-wave descriptions, cue markers and sampler loops are not carried through. Keep the original if a project depends on them.",
+    },
+    {
+      q: "Can it output MP3, FLAC or OGG instead?",
+      a: "No — this tool writes WAV only, which is the point of it. For a lossy or losslessly compressed format, use our audio converter, which handles MP3, OGG, Opus, M4A and FLAC, or the MP3 compressor if you already have an MP3.",
+    },
+  ],
+  'audio-converter': [
+    {
+      q: "Is it safe to upload audio to an online converter?",
+      a: "With this one, yes. Your recordings are never stored on our servers, nothing is retained after your session ends, and nothing you convert is used for training or analytics. There is no account, so there is no profile for a file to be attached to. Hold any online audio converter to that standard before handing it an interview or a meeting recording.",
+    },
+    {
+      q: "How do I convert M4A to MP3 for free without signing up?",
+      a: "Drop the M4A into the panel at the top of this page, leave the format on MP3, choose a bitrate (128 kbps for a voice memo, 320 for music) and press Convert Audio. Listen to the preview, then download. No account, no email, no watermark.",
+    },
+    {
+      q: "Which MP3 bitrate should I use for a voice recording?",
+      a: "Use 96 kbps if the priority is a small file, for example a lecture that has to go by email. Use 128 kbps for a podcast or interview people will hear on earbuds. Anything above 160 kbps is wasted on plain speech and only makes the file larger.",
+    },
+    {
+      q: "Why is there no bitrate option for OGG?",
+      a: "Because OGG Vorbis is written at a fixed quality level that lands around 128 kbps for typical stereo material, which suits nearly every use of the format. If you need a specific bitrate, pick MP3, Opus or M4A instead.",
+    },
+    {
+      q: "Can I convert a video file to audio here?",
+      a: "Yes. Any MP4, MOV, MKV or WebM is accepted, the picture is discarded and only the soundtrack is converted to whichever of the six formats you choose. If all you need is MP3, the dedicated MP4 to MP3 tool is a shorter path; use this page for WAV, FLAC, Opus, OGG or M4A.",
+    },
+    {
+      q: "Can I convert several audio files at once?",
+      a: "Not in a single run; this tool takes one file at a time and there is no batch mode or zip download. Your chosen format and bitrate stay selected between runs, so working through a folder is a matter of dropping each file in turn.",
+    },
+  ],
+  'archive-converter': [
+    {
+      q: "How do I use a zip to tar.gz converter without signing up?",
+      a: "Drop the ZIP into the panel at the top of this page, choose TAR.GZ from the dropdown, and press Convert & Download. There is no account, no email step and no quota. The file downloads under its original name with a .tar.gz extension.",
+    },
+    {
+      q: "Does converting tar.gz to zip lose file permissions?",
+      a: "Yes. ZIP output carries no Unix permission bits, so executable flags, ownership and modification times from the tarball are gone. Going the other way, TAR and TAR.GZ output gets standard file and folder modes with the conversion time as the timestamp. File contents and folder paths are unaffected. If a script must be executable after the trip, set that bit again on the receiving machine.",
+    },
+    {
+      q: "Why are empty folders missing after converting tar to zip?",
+      a: "ZIP output is written from file entries only, so a folder with nothing in it has nothing to write and disappears. Empty folders are kept when the target is TAR or TAR.GZ. If they matter, put a small placeholder file in each before archiving, the same trick version control users rely on.",
+    },
+    {
+      q: "Can't open a tar.gz file on Windows — do I really need an archive utility?",
+      a: "No. Convert the tar.gz to ZIP here and Windows Explorer opens it with a double-click, Extract All included. That is the practical route on a work PC where a third-party utility is not allowed. If you would rather keep the tarball as it is, an archive utility is the other option.",
+    },
+    {
+      q: "Can I convert a RAR or 7Z file with this tool?",
+      a: "Not here. Only ZIP, TAR, TAR.GZ and TGZ are read, and renaming a RAR to .zip does not change what is inside. Extract it with the utility that created it, then use our create archive tool to build a ZIP or tarball from the files.",
+    },
+    {
+      q: "Why did my .gz file fail to parse?",
+      a: "Because a bare .gz is a single compressed file, not an archive with entries inside. Only .tar.gz and .tgz are tarballs the converter can open. A file such as database.sql.gz needs a gzip utility, not a converter.",
+    },
+  ],
+  'create-archive': [
+    {
+      q: "How do I create a zip file online without signing up?",
+      a: "Use the panel at the top of this page: Add Files or Add Folder, name the archive, choose a compression level and press Create & Download ZIP Archive. There is no account, no email step and no watermark, and it is free every time rather than for the first few archives.",
+    },
+    {
+      q: "Why is my zip file not smaller than the files I put in?",
+      a: "Because those files were already compressed. JPG, PNG, MP4, MP3 and most PDFs had their redundancy removed by the program that made them, so ZIP compression finds almost nothing left to take out. To make photos or video genuinely smaller, run them through our image or video compressor first, then zip the results at level 0.",
+    },
+    {
+      q: "Does zipping photos reduce their quality?",
+      a: "No. ZIP is lossless at every level, including 9. Unzipping gives back every byte of every photo exactly as it went in. It also means zipping will not make photos smaller, for the reason above — but it will never make them worse.",
+    },
+    {
+      q: "What is the difference between compression level 0 and 9?",
+      a: "Level 0 stores files with no compression pass, which is fastest and right for media that is already compressed. Level 9 searches hardest for repetition and is worth the extra time on text, code, CSV, SVG and older Office documents. Level 6, the default, is a reasonable middle for a mixed batch.",
+    },
+    {
+      q: "How do I zip a whole folder and keep its sub-folders?",
+      a: "Use the Add Folder button rather than drag-and-drop. It reads every folder inside the one you pick and records each file with its full relative path, so the archive unzips into the same tree. Dropping a folder onto the panel does not walk its contents; the button does.",
+    },
+    {
+      q: "I got a \"File already exists\" error when creating the archive. What went wrong?",
+      a: "Two items in the queue have the same path, usually because the same file was added twice. The queue does not skip or rename duplicates, so the build stops. Remove the repeated row with the cross beside it and press Create again. If two different files share a name, rename one before adding it.",
+    },
+    {
+      q: "Can I add a password, or make a RAR or 7z instead of a ZIP?",
+      a: "Not with this tool. It writes standard ZIP archives only, with no password option. Our archive converter can turn the ZIP into TAR or TAR.GZ, but 7z and RAR are not produced here. To protect a sensitive PDF, apply a password to the document with our PDF protect tool before you zip it.",
+    },
+  ],
+  'extract-archive': [
+    {
+      q: "Can I unzip files online free without signing up?",
+      a: "Yes. Drop the ZIP into the panel at the top of this page and the contents appear at once. There is no account, no email step and no limit on how many archives you open. It is free every time, not free for a trial period.",
+    },
+    {
+      q: "Why does it say \"File contains encrypted entry\" when I click Download?",
+      a: "The archive is password-protected. Encrypted ZIPs still list correctly because the names and sizes are stored in the open, but the file data needs the password and this tool has no password field. Ask the sender for an unprotected copy, or open it on a desktop where you can type the password.",
+    },
+    {
+      q: "Does Extract All keep the folder structure?",
+      a: "On Chrome, Edge, Opera and ChromeOS on a desktop, yes: you choose a folder and every entry is written there with its subfolders recreated. On Firefox, Safari and any iPhone or iPad, there is no folder picker, so Extract All produces one download per file named by the file alone, and the folder paths are not kept.",
+    },
+    {
+      q: "Is there a file size limit for the free zip extractor?",
+      a: "No. Nothing in the tool refuses an archive for being large, so a ZIP that another page turned away for its size is not rejected here. A very large extraction simply takes longer than a small one, and the page may feel unresponsive until it finishes.",
+    },
+    {
+      q: "Why did my .tar.gz or .7z file fail with \"Failed to unpack archive\"?",
+      a: "Only ZIP archives are unpacked here, even though the file picker lets you select other extensions. For TAR and TAR.GZ, convert the file to ZIP with our archive converter first and then open it on this page. There is no 7Z route on this site.",
+    },
+    {
+      q: "Can I unzip a file on my iPhone without an app?",
+      a: "Yes, with one caveat. Open this page in Safari, drop in the ZIP, and use the Download button beside any file you need; it saves like any other download. Extract All on an iPhone becomes one download per file with folders flattened, so for a large archive the per-file route is the better one.",
+    },
+  ],
+  'ebook-converter': [
+    {
+      q: "Is this markdown to epub converter really free with no signup?",
+      a: "Yes. Choose a .md file, set the title and author, and download the EPUB. No account, no email step, no watermark, no size limit and no cap on how many times you use it.",
+    },
+    {
+      q: "Why does my EPUB table of contents show only one chapter?",
+      a: "Because no chapter boundaries were found. Chapters split on # and ## in Markdown, or h1 and h2 in HTML. In a .txt file a chapter title must sit alone between blank lines, be 80 characters or fewer, and not end in punctuation.",
+    },
+    {
+      q: "Can I create an EPUB from a text file with no headings at all?",
+      a: "You can, but the whole file becomes one chapter named after the book title. Add short unpunctuated title lines between blank lines wherever you want a break.",
+    },
+    {
+      q: "Will the EPUB work with Send to Kindle?",
+      a: "Send to Kindle accepts EPUB, and the package this tool writes follows the EPUB 3 specification: stored mimetype first, container file, package document, EPUB 3 nav and EPUB 2 NCX. Files rejected as \"not supported\" are usually missing one of those.",
+    },
+    {
+      q: "Can it convert PDF to EPUB, or make a MOBI or AZW3 file?",
+      a: "No. It accepts .md, .txt, .html, .htm and .epub, and writes EPUB, HTML or TXT. For a PDF, use our PDF to eBook tool. It also does not add a cover, package images, or set a metadata language other than English.",
+    },
+    {
+      q: "How do I extract text from an EPUB without a reader app?",
+      a: "Choose the .epub, pick Plain Text Document, and download the .txt. Chapters arrive in reading order with tags stripped. It cannot open a DRM-protected book.",
+    },
+    {
+      q: "Are my files stored anywhere?",
+      a: "No. Nothing you convert is stored on our servers, retained after your session, or used for training or analytics.",
+    },
+  ],
+  'spreadsheet-converter': [
+    {
+      q: "Is this spreadsheet converter really free with no signup?",
+      a: "Yes. No account, no email gate, no trial period, no watermark. It is free every time.",
+    },
+    {
+      q: "Why does Excel to CSV only save the first sheet?",
+      a: "A CSV can only hold one table, and Excel writes whichever sheet was active when you saved. Nothing was deleted; the other tabs were simply not written. Load the workbook here, pick each tab from the Sheet dropdown and convert.",
+    },
+    {
+      q: "How do I convert the second sheet of an XLSX to CSV online?",
+      a: "Load the file, choose the second sheet from the Sheet dropdown, and press Convert & Download with CSV selected. The preview shows that sheet before you download.",
+    },
+    {
+      q: "Why are my Excel dates showing as numbers in the JSON?",
+      a: "Excel stores dates as serial numbers counting days from 30 December 1899, and JSON output keeps the raw value, so 45123 is 16 July 2023. Add the serial as days to that date in your code, or format the column as text before converting. CSV and TSV carry the displayed text instead.",
+    },
+    {
+      q: "Will my formatting, charts and macros come through?",
+      a: "Cell values come through on every output, and formulas in XLSX output. Fonts, colours, borders, charts, pivot tables, comments and macros do not.",
+    },
+    {
+      q: "Is there a file size limit, and do you keep my spreadsheet?",
+      a: "No size cap is written into the tool and there is no daily quota. Your files are never stored on our servers, nothing is retained once your session ends, and nothing is used for analytics or training.",
+    },
+  ],
+  'presentation-converter': [
+    {
+      q: "How do I convert PPTX to Markdown for free?",
+      a: "Choose your .pptx in the panel at the top of this page, wait for the slide count and preview, select Markdown Outline (.md) from the dropdown and press download. No account, no email, no watermark, and it works the same on the hundredth deck as the first.",
+    },
+    {
+      q: "Can I read a PPTX without PowerPoint?",
+      a: "Yes. This page lets you read PPTX without PowerPoint or any Office licence. Load the .pptx and the preview shows every slide’s title, bullets and notes as a scrollable outline. Download the HTML version to keep a readable copy, or Markdown if you want to edit it.",
+    },
+    {
+      q: "Does PPTX to Markdown keep speaker notes?",
+      a: "Yes, in Markdown and HTML. Each slide’s notes are placed directly under that slide as a quoted “Notes:” line in Markdown or a highlighted block in HTML. The plain text (.txt) export does not include notes, so choose Markdown if you specifically need notes in a text file.",
+    },
+    {
+      q: "Why does PowerPoint’s outline export miss some of my text?",
+      a: "Outline View, RTF export and Create Handouts > Outline Only read only placeholder text — the title and body boxes that come with a layout. Text boxes you inserted yourself are not outline content to PowerPoint, so they are dropped. This tool reads every text shape on the slide, placeholder or not.",
+    },
+    {
+      q: "Can I convert PowerPoint to HTML without PowerPoint?",
+      a: "Yes. Choose Structured Web HTML and you get a single self-contained page with one card per slide, nested lists for the bullets and a speaker notes block. It is a text outline on one page, not a visual copy of the slides, so design and images are not included.",
+    },
+    {
+      q: "Does it convert PPTX to PPT, ODP or Keynote?",
+      a: "No. This tool extracts text; it does not convert between presentation formats or produce PDF, images or a new slideshow. For a different presentation file, use Save As in your presentation app. If you have a PDF and want an editable deck, use our PDF to PowerPoint tool.",
+    },
+    {
+      q: "Will tables and charts on my slides be included?",
+      a: "No. Only text inside ordinary text shapes and placeholders is read. Text in tables, charts, SmartArt and embedded objects is skipped, as is text that only exists inside an image. A slide that is entirely a table comes out as just its title.",
+    },
+  ],
+  'cad-converter': [
+    {
+      q: "Is this dxf to svg converter really free with no signup?",
+      a: "Yes. Choose a DXF, check the preview, press Convert and download the SVG. No account, no email step, no daily quota and no watermark.",
+    },
+    {
+      q: "Why is my DXF converted to SVG missing lines?",
+      a: "Because the missing parts were not LINE, CIRCLE, TEXT or MTEXT entities. Polylines, splines, hatches, dimensions and blocks are skipped, and arcs are previewed but not yet written to the SVG. Explode them into simple lines in your CAD program, export as ASCII DXF, and try again.",
+    },
+    {
+      q: "Why did I get a blank SVG, or just a square?",
+      a: "A plain square with a count of 4 entities means nothing recognisable was found: a binary DXF, an empty ENTITIES section, or only unsupported entity types. Re-export from your CAD program as ASCII DXF, which fixes the first cause outright.",
+    },
+    {
+      q: "Can I open a DXF file without AutoCAD?",
+      a: "Yes. Choose the file in the panel above and the drawing appears in the viewport, where you can zoom and switch the background without converting anything. This works on a Mac too, where the built-in Preview app cannot open DXF.",
+    },
+    {
+      q: "Is the DXF to PDF output a real vector PDF I can print to scale?",
+      a: "No. It is a printable snapshot of the viewport on a single landscape page, ideal for sending to someone without CAD, but it carries no paper size, plot scale or units and cannot be re-imported into CAD.",
+    },
+    {
+      q: "Can I convert a DWG file here?",
+      a: "No. DWG is rejected at the file picker, and nothing here converts into DWG or DXF either. Save the drawing as ASCII DXF from your CAD program first.",
+    },
+  ],
+  'vector-converter': [
+    {
+      q: "Is this SVG to PNG converter free, with no signup and no watermark?",
+      a: "Yes. Choose the file, pick a format and multiplier, and download. There is no account, no email step, no watermark and no daily limit.",
+    },
+    {
+      q: "Why is my SVG converted to PNG blurry or too small?",
+      a: "Because the PNG was made at the size the SVG declares, and that size is often small. Choose 2x, 3x or 4x in Export Scaling; the artwork is drawn larger rather than stretched.",
+    },
+    {
+      q: "Why does my SVG to PNG come out 300x150?",
+      a: "The SVG has no usable width, height or viewBox, so it falls back to the standard 300 by 150 default. Add a viewBox in your design tool, or export at 4x to get a 1200 by 600 PNG from the file as it is.",
+    },
+    {
+      q: "Why does the background turn black when I convert SVG to JPG?",
+      a: "JPEG cannot store transparency, so converters that do not fill the empty areas leave them black. This tool shows a Background Fill picker whenever JPG is selected, white by default, so the JPG comes out on any colour you choose.",
+    },
+    {
+      q: "Can I convert PNG to SVG with this tool?",
+      a: "Only as an embedded bitmap. The PNG is wrapped in an SVG container at its natural size; it is not traced into paths and the result is not editable vector art.",
+    },
+    {
+      q: "Can it convert EPS, AI or PDF to SVG or PNG?",
+      a: "No. SVG is the only vector input it reads. Use the PDF, PSD, EPS and PS tool for EPS and PostScript files and the CAD converter for CAD drawings.",
+    },
+  ],
+  'font-converter': [
+    {
+      q: "Is this WOFF to TTF converter really free, with no account?",
+      a: "Yes. Choose the file, press Convert, and the TTF or OTF downloads. There is no sign-up, no email step, no watermark and no limit on how many fonts you convert in a day.",
+    },
+    {
+      q: "Is WOFF to TTF lossless?",
+      a: "Yes. A WOFF 1.0 is the original font’s tables, each compressed separately. Unwrapping restores every table with its original checksum, so outlines, hinting, kerning and OpenType features are the same bytes the foundry shipped. Only the optional metadata block, which is not part of the font, is left behind.",
+    },
+    {
+      q: "Why did I get an .otf when I asked for a .ttf?",
+      a: "Because the font inside the WOFF has CFF outlines, which is what an .otf is. The output extension follows what the font really is, since naming a CFF font .ttf would only make installers reject it. The reverse is also true: a wrapped TrueType font always comes back as .ttf.",
+    },
+    {
+      q: "Why is my WOFF bigger than the TTF it came from?",
+      a: "Any table that would grow under compression is stored raw, and the WOFF directory is slightly longer per table than the TrueType one. A font whose tables were already tightly packed therefore comes out nearly the same size, occasionally a fraction larger. The file is still correct; there was simply nothing left to squeeze.",
+    },
+    {
+      q: "Can I convert WOFF2 to TTF here?",
+      a: "No. This tool reads and writes WOFF 1.0 only. It will recognise a WOFF2 file but cannot open it. If a website only served WOFF2, you will need a tool built for that format. EOT, SVG fonts and TrueType collections are outside its scope as well.",
+    },
+    {
+      q: "Does converting OTF to TTF keep the hinting and kerning?",
+      a: "No, and it is important to know that. TTF to OTF and OTF to TTF are rebuilt from parsed outlines rather than wrapped, so hinting instructions and kerning tables are not carried over. Use that path only when you specifically need a re-serialised file. The WOFF directions are the ones that are byte-exact.",
+    },
+    {
+      q: "Can I install the converted font on Windows or Mac straight away?",
+      a: "Yes. The downloaded .ttf or .otf is an ordinary desktop font. Double-click it and choose Install on Windows, or open it with Font Book on macOS. It then appears in Word, PowerPoint, Photoshop and Figma like any other font, provided the licence allows desktop use.",
+    },
+  ],
+  'file-converter-hub': [
+    {
+      q: "Is this really a free online file converter with no limit?",
+      a: "Yes. There is no account, no daily count, no file size cap and no watermark. The only practical ceiling is that a very large video takes longer and may need compressing first. Nothing is held back for a paid tier because there is no paid tier.",
+    },
+    {
+      q: "How do I check if a converter uploads or keeps my file?",
+      a: "Read its retention policy and see whether it says anything concrete. Ours does: your files are never stored on our servers, nothing is retained after your session, and nothing is used for training or analytics. A policy that only says \"secure\" without saying what happens to the file afterwards is not telling you much.",
+    },
+    {
+      q: "Is there one tool to convert images, audio, video and spreadsheets?",
+      a: "This is that tool, one file at a time. Choose an image and you get image outputs; choose a video and you get MP4, WebM, GIF and MP3; choose a workbook and you get CSV, JSON and HTML. Batch conversion of several files in one go is not supported.",
+    },
+    {
+      q: "Why did my CSV turn into a PDF instead of JSON?",
+      a: "CSV and JSON files are treated as documents on this page, and the only document output for them is a PDF. The spreadsheet path only starts from an XLSX or XLS workbook. For CSV to JSON, JSON to CSV or CSV to Excel, use our spreadsheet converter, which is built for exactly that.",
+    },
+    {
+      q: "How do I get the first page of a PDF as a PNG?",
+      a: "Choose the PDF, pick PNG or JPG, and press Convert. Page one is rendered and saved with _page1 in the filename. If you need every page as an image, use our PDF to JPG tool instead.",
+    },
+    {
+      q: "Why is my PDF to text output empty?",
+      a: "The PDF is a scan, so it holds pictures of pages rather than text. This tool copies the existing text layer only. Run the file through our PDF OCR tool first to add a text layer, then convert.",
+    },
+    {
+      q: "Does it convert Word, PowerPoint or EPUB files?",
+      a: "No. DOCX, DOC, PPTX, ODT, RTF, EPUB and MOBI are not accepted here, and choosing one will produce a PDF of its raw contents rather than the document you expect. Use our PDF to Word, presentation converter or ebook converter for those formats.",
+    },
+  ],
+  'website-png-screenshot': [
+    {
+      q: "How do I take a website screenshot PNG for free without signing up?",
+      a: "Paste the address into the Capture Live URL field above, pick a viewport preset, choose whether you want the window frame, and press Capture Lossless PNG. No account, no email step, no watermark, and free every time rather than for the first few captures.",
+    },
+    {
+      q: "Can I take a screenshot of a whole website, top to bottom?",
+      a: "Not with this tool. URL captures are cropped to the height of the preset you choose, so you get the top of the page as it fits that viewport. For a record of a page as a document, save web as PDF is the neighbouring option.",
+    },
+    {
+      q: "Why does my website screenshot look blurry?",
+      a: "Because it was captured at standard density and is viewed on a high-density display. In the HTML sandbox, set Render Resolution to 2x or 3x for two or three times the pixels. A live URL comes back at standard density whatever you select there, so choose the largest preset that suits the layout.",
+    },
+    {
+      q: "How do I screenshot a website in mobile view without a phone?",
+      a: "Choose the Mobile iPhone preset for 390x844, or iPad Tablet for 768x1024. Sites that pick their layout from the viewport width will show their phone or tablet layout; sites that decide from the device itself may still show the desktop version, because the preset changes the width only.",
+    },
+    {
+      q: "The cookie banner is covering the page. Can the tool remove it?",
+      a: "No. Consent popups are captured as they appear and there is no option to dismiss them. Crop the capture afterwards with the image cropper, or, if the page is yours, paste its markup into the HTML sandbox and leave the banner out.",
+    },
+    {
+      q: "Can I get a transparent background on a website screenshot?",
+      a: "In the HTML sandbox, yes: any area of your markup without a background is saved as transparent PNG. Live URL captures are always opaque, because a real page has a background of its own.",
+    },
+  ],
+  'website-jpg-screenshot': [
+    {
+      q: "How do I take a website screenshot as a JPG without signing up?",
+      a: "Type the address into the Capture Live URL box above, pick a preset and press Capture JPG Screenshot. A website screenshot JPG appears with a Download JPG button. There is no account and no email step. URL captures rely on an outside capture service, so if one fails, wait a moment and try again or switch to HTML mode.",
+    },
+    {
+      q: "Can I get a screenshot of a website without opening it myself?",
+      a: "Yes. Enter the address and the capture comes back as an image of what a first-time public visitor would see. Pages behind a login or that block automated visitors may not capture; use HTML mode for those.",
+    },
+    {
+      q: "Does this capture the full page or only the top?",
+      a: "Only the top. The capture is cut at the preset height, so you get the first screen a visitor sees, not a long scrolling image. To keep the whole page as a document, use the save web page as PDF tool.",
+    },
+    {
+      q: "Why is my website screenshot such a large file, and how do I make it smaller?",
+      a: "Large screenshots are usually PNGs or maximum-quality JPEGs at full HD width. Pick a smaller preset if width does not matter, lower the quality slider toward 70%, and read the KB figure on the result card before you download.",
+    },
+    {
+      q: "Why does my screenshot look blurry after I share it?",
+      a: "The app you shared it through recompressed it. Send a JPG already at the size you need, at 85% quality or higher, so there is less for the receiving app to shrink.",
+    },
+    {
+      q: "Can I screenshot a website in mobile view online?",
+      a: "Choose the Mobile iPhone preset for a 390x844 capture. Sites that adapt to width show their mobile layout; a site that detects the device instead may still show its desktop version, and there is no setting to override that.",
     },
   ],
   'save-web-as-pdf': [
@@ -740,6 +1566,170 @@ const TOOL_FAQS = {
     {
       q: "Is what I paste kept anywhere?",
       a: "No. Nothing you paste is stored on our servers, nothing is retained once your session ends, and nothing is used for training or analytics. No file is kept, queued or logged.",
+    },
+  ],
+  'json-formatter': [
+    {
+      q: "Is this JSON formatter free and does it need an account?",
+      a: "Yes and no, respectively. It is a free online JSON formatter with no sign-up, no email and no plan that unlocks the download.",
+    },
+    {
+      q: "Why does my JSON say \"unexpected token in JSON at position\" and how do I find that line?",
+      a: "The position is a character offset, which is useless without counting. Paste the same text into the tool above and the red banner reports a line and column instead, along with what the parser expected there.",
+    },
+    {
+      q: "Why are single quotes not valid in JSON?",
+      a: "Because the standard only defines double-quoted strings. Single quotes are legal in Python and in most languages' object literals, which is why text copied from code fails with \"Expected property name in double quotes\". Change the quotes at the source; the tool reports the fault but does not rewrite it.",
+    },
+    {
+      q: "Does a trailing comma break JSON?",
+      a: "Yes. A comma after the last property or array item is a JSON trailing comma error, even though most programming languages allow it. In an object it is reported as \"Expected property name in double quotes\" at the closing brace; in an array it is reported as an unexpected token at the closing bracket.",
+    },
+    {
+      q: "What does \"unexpected end of JSON input\" mean?",
+      a: "The text ended before every open bracket or brace was closed: a truncated response, a clipped log line, or a copy that missed its last line. Paste it into the tool and it reports where the text ran out, as \"Unexpected end of input\" if it stopped before a value or \"Expected ',' or '}'\" if it stopped after one. Either way the line and column point at the very end, and the bracket that never closed is somewhere above.",
+    },
+    {
+      q: "Can I format JSON with 4 spaces or tabs instead of 2?",
+      a: "Yes. The Indent selector offers 2 spaces, 4 spaces or Tab. Click Format to rewrite your input at that width, then Copy or Download.",
+    },
+    {
+      q: "Can it fix broken JSON, show a tree view or convert to CSV?",
+      a: "No. It validates strictly and reports the first error; it does not repair trailing commas, single quotes, comments or JSON5. Both panes are plain text with no tree view or syntax colouring, and there is no conversion to CSV, XML or YAML. If you want to download formatted JSON file output rather than copy it, the Download button writes the formatted text as formatted.json.",
+    },
+  ],
+  'base64-encoder-decoder': [
+    {
+      q: "Is this base64 encoder decoder really free with no sign-up?",
+      a: "Yes. Both directions, text and files, with no account, no email step and no cap on how often you use it. It is a free online base64 encoder every time, not free for the first few strings.",
+    },
+    {
+      q: "Why does my base64 string give an incorrect padding error?",
+      a: "Strict decoders insist the length be a multiple of four, even when only the trailing = signs are missing. Paste it here: if it decodes, the string was just unpadded, and appending = until the length divides by four fixes it in your code. If this page also refuses it, the string is truncated and padding cannot repair it.",
+    },
+    {
+      q: "Does it decode URL-safe Base64 and JWT segments?",
+      a: "Yes. Hyphen and underscore are accepted alongside the standard alphabet and missing padding is inferred, which covers base64url. Paste the middle segment of a JWT to read its claims as JSON. It decodes one segment at a time and does not verify signatures.",
+    },
+    {
+      q: "Can I turn a Base64 string back into an image or a PDF file?",
+      a: "Not on this page. The decoder shows the result as text, which suits tokens, JSON and configuration values but does not rebuild a binary file. Keep the string and supply it to the system that expects the file.",
+    },
+    {
+      q: "How do I convert an image or PDF to a Base64 data URI?",
+      a: "In encode mode, tick Data URI prefix, then click Upload File and choose the file. The output is the full data:type;base64, string with the type filled in. Leave the box unticked for the bare string most APIs want in a JSON field. The prefix applies to uploaded files only.",
+    },
+    {
+      q: "Why does the decoded output show question marks or boxes?",
+      a: "Because the bytes are not text: the string holds a binary file, the original was in a character set other than UTF-8, or the string was altered in the middle. Section 7 explains how to tell which. The tool decodes as UTF-8 only and offers no charset choice.",
+    },
+  ],
+  'file-renamer': [
+    {
+      q: "How do I rename multiple files at once without installing software?",
+      a: "Add the files to the panel at the top of this page, set your rules, check the preview and download the ZIP. There is no account to create. It is the simplest way to bulk rename files online when desktop software is out of reach.",
+    },
+    {
+      q: "Why do I get a ZIP instead of my files being renamed in place?",
+      a: "Because the tool never modifies your originals. It packs renamed copies into renamed_files.zip so a mistake is caught in the preview rather than in your folder. Extract the ZIP where you want the clean set.",
+    },
+    {
+      q: "Can I use wildcards or a regular expression in the Find box?",
+      a: "No. Find is plain text and case-sensitive, replacing every occurrence of exactly what you typed. Pattern matching needs a desktop renamer or a shell.",
+    },
+    {
+      q: "Can I choose where the numbering starts or how many digits it has?",
+      a: "Not at the moment. Sequential Numbering always starts at 01, steps by 1, pads to two digits and is added as a suffix with an underscore. Add the files in the order you want them numbered.",
+    },
+    {
+      q: "What happens if two files end up with the same new name?",
+      a: "The second gets -1 added before its extension, the third -2, and so on. The comparison ignores case, so Report.pdf and report.pdf clash. The adjusted names show in the preview, and no file is overwritten inside the ZIP.",
+    },
+    {
+      q: "Does changing the extension convert the file to that format?",
+      a: "No. Change Extension only renames the part after the dot; the contents are unchanged. Use it to tidy .JPEG and .jpeg into .jpg. To actually convert a file, use one of the converters on the tools page.",
+    },
+  ],
+  'colour-format-utilities': [
+    {
+      q: "Is this color code converter free, and do I need to sign up?",
+      a: "It is free and there is no account, email or trial. The five-format conversion, the tints and shades, and the WCAG contrast check are all available with nothing held back for a paid tier.",
+    },
+    {
+      q: "What is a 4.5:1 contrast ratio and is it enough?",
+      a: "It is the minimum contrast WCAG 2.1 requires between ordinary body text and its background to meet Level AA, the level most audits and regulations point at. The enhanced AAA level requires 7:1. The tool shows both cards, so you can see which level a pair meets.",
+    },
+    {
+      q: "Which shade of my color passes WCAG without changing the brand?",
+      a: "Enter your brand colour, set the background with the picker in the contrast panel, and click through the tints or shades in the swatch strip. Each click makes that swatch the active colour and updates the ratio and the AA and AAA cards, so you stop at the first one that turns green and copy its codes.",
+    },
+    {
+      q: "Why does rgba not work in a hex code?",
+      a: "A six-character hex has no room for opacity. Transparency belongs in the fourth value of rgba() or in an eight-character hex like #F97316CC. This tool reads both and shows the opacity in the RGBA row, but its HEX row is always the six-character form, so copy the RGBA when you need the transparency kept.",
+    },
+    {
+      q: "Can I use the CMYK value for a professional print job?",
+      a: "Use it as an estimate. The CMYK row is the standard mathematical conversion, not a colour-managed one, so a print shop working under an ICC profile may land on different percentages. Give them the hex as well and expect adjustment for the press.",
+    },
+    {
+      q: "Does the contrast checker cover large text and buttons?",
+      a: "It reports AA and AAA for normal-sized text only. WCAG allows a lower ratio for large headings and has a separate rule for icons and form borders, and neither is shown here, so check the criterion that applies to your element.",
+    },
+  ],
+  'colour-picker': [
+    {
+      q: "How do I find the hex code of a colour in a picture?",
+      a: "Drop the picture into the image colour picker at the top of this page and click the colour you want. The HEX code appears immediately, alongside the matching RGB and HSL values, and one more click copies whichever you need to your clipboard. There is no sign-up and no limit on how many colours you sample.",
+    },
+    {
+      q: "Is this colour picker free, and do I need an account?",
+      a: "It is free with no account, no email address and no usage cap. Pick one colour or two hundred. Nothing is watermarked, metered or held back for a paid tier, because there is no paid tier.",
+    },
+    {
+      q: "Can I pick a colour from a website or a video instead of a file?",
+      a: "Yes. Use the Pick Any Screen Colour button to open a full-screen eyedropper and click any pixel on your display, including a live page or a paused video. That screen-wide picker works in Chrome and Edge; in Safari or Firefox, take a screenshot and sample that image instead.",
+    },
+    {
+      q: "Why does the colour I picked look different from the original?",
+      a: "Usually JPEG compression or resizing. Both blend neighbouring pixels together, so a spot near an edge or in a gradient can read a few values off. Sample from the middle of a large flat area, and use the biggest, least-compressed version of the file you have. Photographs also carry the colour of the light they were shot under.",
+    },
+    {
+      q: "Does it give me CMYK or Pantone values for printing?",
+      a: "No. The tool outputs HEX, RGB and HSL only. CMYK and Pantone depend on ink, stock and a colour profile rather than on the pixel alone, so a screen-derived value would be a guess. For print work, take the HEX code to your printer and let them match it properly.",
+    },
+    {
+      q: "Are my images kept when I use the colour picker?",
+      a: "No. Images are never stored on our servers, never retained after your session, and never used for training or analytics. Nothing you open here is logged or queued.",
+    },
+  ],
+  'qr-generator': [
+    {
+      q: "Is this QR code generator really free, and do the codes expire?",
+      a: "Yes to the first and no to the second. There is no account, no trial and no payment step. Your content is encoded directly into the pattern rather than pointing at a redirect we control, so a code you print today keeps working.",
+    },
+    {
+      q: "How do I make a QR code for my Wi-Fi password?",
+      a: "Choose the Wi-Fi tab, type the network name exactly as it appears in the list of networks, enter the password, and pick WPA/WPA2/WPA3 unless your router is very old. Download the PNG and print it. Guests point a camera at it and the phone offers to join.",
+    },
+    {
+      q: "Can I generate a batch of codes at once?",
+      a: "Not from a list, no. The panel above makes one code at a time from one form, so a set of asset tags or table numbers means filling the form and downloading once per code. Nothing limits how often you repeat that, and each download is named for the code type, so a run of a dozen takes a couple of minutes. For thousands, a developer scripting a QR library is the sane route.",
+    },
+    {
+      q: "Can I add my logo to the middle of the QR code?",
+      a: "Not in this tool. It produces a clean, unadorned symbol in your chosen colours, which is the version most likely to scan first time on every phone. If you need a logo, open the downloaded SVG in a design program and add it there, small and clear of the three corner squares, then test before printing.",
+    },
+    {
+      q: "Why will my QR code not scan?",
+      a: "Nearly always contrast, size or the margin. Keep the pattern much darker than the background, print it at least a couple of centimetres across, and never crop the clear border the download includes. Glossy or curved surfaces also scatter the pattern.",
+    },
+    {
+      q: "Can I change where the QR code points after I have printed it?",
+      a: "No, and neither can any static code: the destination is physically part of the pattern. If your link may change, encode an address you control and update the redirect at your end, or generate a fresh code here.",
+    },
+    {
+      q: "Is it safe to put my phone number or Wi-Fi password in?",
+      a: "What you type is never stored on our servers, never retained after your visit and never used for analytics or training. Do remember that a printed code is readable by anyone who can see it, so treat one with the care you would give the printed details themselves.",
     },
   ],
 };

@@ -46,7 +46,7 @@ export default function Base64ToolSeoArticle() {
           Complete Master Guide
         </span>
         <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 9 min read
+          Published by Cortexis Solution Hub Pvt Ltd Document Research Lab • 7 min read
         </span>
       </div>
 
@@ -342,9 +342,10 @@ export default function Base64ToolSeoArticle() {
         </h3>
         <p>
           To <strong>convert a file to base64 online</strong>, stay in encode
-          mode and use the Upload File button under the input pane. Any single
+          mode and use the Upload File button in the corner of the input pane. Any single
           file of any type is accepted, and the full Base64 string fills the
-          output for you to copy or download as <code>yourfile.txt</code>.
+          output for you to copy or download as a <code>.txt</code> file named
+          after the original.
         </p>
         <p>
           Tick <em>Data URI prefix</em> before choosing the file and the output
@@ -371,7 +372,7 @@ export default function Base64ToolSeoArticle() {
           <Link to="/tools/image-compressor" className="text-orange-600 font-semibold underline hover:text-orange-700">
             image compressor
           </Link>{' '}
-          or convert it to WebP with the{' '}
+          or change its format with the{' '}
           <Link to="/tools/image-converter" className="text-orange-600 font-semibold underline hover:text-orange-700">
             image converter
           </Link>
@@ -417,7 +418,8 @@ export default function Base64ToolSeoArticle() {
             <strong>The string is corrupt in the middle.</strong> A character
             dropped or altered mid-string shifts everything after it, so
             readable text turns to noise at one point. Section 4 catches a
-            dropped character; a substitution slips through.
+            dropped character only when it leaves the length one short of a
+            group of four; a substitution slips through unnoticed.
           </li>
         </ul>
       </section>
@@ -435,7 +437,7 @@ export default function Base64ToolSeoArticle() {
             ['Tells padding from truncation', 'Unpadded strings decode silently. Only a string with bytes genuinely missing is refused, so the error means something.'],
             ['Correct UTF-8 both ways', 'Emoji and every non-Latin script encode and decode as the characters you started with.'],
             ['Files to data URIs in one click', 'Any single file becomes a Base64 string or a complete data: URI with the type filled in.'],
-            ['Nothing is kept', 'Whatever you paste or encode is never stored on our servers, never retained after your session, and never used for analytics or training.'],
+            ['Nothing is kept', 'Whatever you paste or encode is never stored on our servers, never retained after your session, and never used for training.'],
           ].map(([title, body]) => (
             <div
               key={title}
@@ -480,7 +482,7 @@ export default function Base64ToolSeoArticle() {
           {[
             [
               'Is this base64 encoder decoder really free with no sign-up?',
-              'Yes. Both directions, text and files, with no account, no email step and no usage limit. It is a free online base64 encoder every time, not free for the first few strings.',
+              'Yes. Both directions, text and files, with no account, no email step and no cap on how often you use it. It is a free online base64 encoder every time, not free for the first few strings.',
             ],
             [
               'Why does my base64 string give an incorrect padding error?',
