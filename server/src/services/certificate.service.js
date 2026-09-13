@@ -16,9 +16,9 @@ const makeCode = () =>
     .toUpperCase()}`;
 
 /** Issues a certificate if the learner does not already hold one for this course. */
-export const issueCertificate = ({ userId, courseId, score }) => {
+export const issueCertificate = async ({ userId, courseId, score }) => {
   const db = getDB();
-  const existing = db
+  const existing = await db
     .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
     .get(userId, courseId);
   if (existing) return existing;
@@ -26,11 +26,11 @@ export const issueCertificate = ({ userId, courseId, score }) => {
   const issuedAt = new Date().toISOString();
   let code = makeCode();
   // Astronomically unlikely, but a collision would be a 500 at the worst moment.
-  while (db.prepare('SELECT 1 FROM certificates WHERE code = ?').get(code)) code = makeCode();
+  while (await db.prepare('SELECT 1 FROM certificates WHERE code = ?').get(code)) code = makeCode();
 
-  db.prepare('INSERT INTO certificates (userId, courseId, code, score, issuedAt) VALUES (?, ?, ?, ?, ?)')
+  await db.prepare('INSERT INTO certificates (userId, courseId, code, score, issuedAt) VALUES (?, ?, ?, ?, ?)')
     .run(userId, courseId, code, score, issuedAt);
-  db.prepare('UPDATE enrollments SET completedAt = ? WHERE userId = ? AND courseId = ?')
+  await db.prepare('UPDATE enrollments SET completedAt = ? WHERE userId = ? AND courseId = ?')
     .run(issuedAt, userId, courseId);
 
   // Invalidate any negative cache or pre-warm if needed
@@ -46,8 +46,8 @@ export const findCertificateByCode = async (code) => {
 
   return await getOrSet(
     CACHE_KEYS.certificate(normalizedCode),
-    () => {
-      const row = getDB()
+    async () => {
+      const row = await getDB()
         .prepare(
           `SELECT cert.code, cert.score, cert.issuedAt,
                   u.name AS learnerName,
