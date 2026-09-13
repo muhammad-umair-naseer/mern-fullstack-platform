@@ -37,13 +37,13 @@ export const register = async (req, res) => {
 
     const db = getDB();
     const email = value.email;
-    const existing = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const existing = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
     if (existing) {
       // An unverified account is a half-finished signup, not a conflict — let
       // them resume rather than telling them the address is taken.
       if (!existing.emailVerified) {
-        const code = issueCode(db, existing);
+        const code = await issueCode(db, existing);
         queueVerificationEmail({ name: existing.name, email, code });
         return res.status(200).json({
           needsVerification: true,
@@ -57,15 +57,15 @@ export const register = async (req, res) => {
 
     const now = new Date().toISOString();
     const passwordHash = await bcrypt.hash(value.password, 10);
-    const { lastInsertRowid } = db
+    const { lastInsertRowid } = await db
       .prepare(
         `INSERT INTO users (name, email, passwordHash, emailVerified, createdAt, updatedAt)
          VALUES (?, ?, ?, 0, ?, ?)`
       )
       .run(value.name, email, passwordHash, now, now);
 
-    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(lastInsertRowid);
-    const code = issueCode(db, user);
+    const user = await db.prepare('SELECT * FROM users WHERE id = ?').get(lastInsertRowid);
+    const code = await issueCode(db, user);
     
     // Dispatch asynchronous jobs via BullMQ (with automatic retry & fallback)
     queueVerificationEmail({ name: user.name, email, code });
@@ -92,7 +92,7 @@ export const register = async (req, res) => {
 
 // -------------------------------------------------------------------- verify
 
-export const verify = (req, res) => {
+export const verify = async (req, res) => {
   try {
     const { error, value } = verifySchema.validate(req.body, { stripUnknown: true });
     if (error) {
@@ -100,7 +100,7 @@ export const verify = (req, res) => {
     }
 
     const db = getDB();
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(value.email);
+    const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(value.email);
     if (!user) return res.status(400).json({ message: 'Invalid or expired code' });
 
     if (user.emailVerified) {
@@ -122,7 +122,7 @@ export const verify = (req, res) => {
       supplied.length === actual.length && crypto.timingSafeEqual(supplied, actual);
 
     if (expired || !matches) {
-      db.prepare('UPDATE users SET verifyAttempts = verifyAttempts + 1 WHERE id = ?').run(user.id);
+      await db.prepare('UPDATE users SET verifyAttempts = verifyAttempts + 1 WHERE id = ?').run(user.id);
       return res.status(400).json({
         message: expired ? 'That code has expired — request a new one' : 'Invalid or expired code',
         needsResend: expired,
@@ -130,12 +130,12 @@ export const verify = (req, res) => {
     }
 
     const now = new Date().toISOString();
-    db.prepare(
+    await db.prepare(
       `UPDATE users SET emailVerified = 1, verifyCode = NULL, verifyExpires = NULL,
        verifyAttempts = 0, updatedAt = ? WHERE id = ?`
     ).run(now, user.id);
 
-    const verified = db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
+    const verified = await db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
     return res.json({ token: signToken(verified), user: publicUser(verified) });
   } catch (err) {
     console.error('Verify error:', err);
@@ -157,7 +157,7 @@ export const resend = async (req, res) => {
     if (error) return res.status(400).json({ message: 'A valid email is required' });
 
     const db = getDB();
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(value.email);
+    const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(value.email);
 
     // Always answer the same way, so this cannot be used to discover accounts.
     const generic = { message: 'If that account needs verifying, a new code is on its way' };
@@ -172,7 +172,7 @@ export const resend = async (req, res) => {
       }
     }
 
-    const code = issueCode(db, user);
+    const code = await issueCode(db, user);
     queueVerificationEmail({ name: user.name, email: user.email, code });
     return res.json({ ...generic, emailSent: smtpReady() });
   } catch (err) {
@@ -188,7 +188,7 @@ export const login = async (req, res) => {
     const { error, value } = loginSchema.validate(req.body, { stripUnknown: true });
     if (error) return res.status(400).json({ message: 'Email and password are required' });
 
-    const user = getDB().prepare('SELECT * FROM users WHERE email = ?').get(value.email);
+    const user = await getDB().prepare('SELECT * FROM users WHERE email = ?').get(value.email);
 
     // Identical response for unknown email and wrong password, so this endpoint
     // cannot be used to discover which addresses have accounts.

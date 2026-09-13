@@ -30,7 +30,7 @@ router.post('/apply', async (req, res) => {
 
 // GET /api/internships/applications (admin/listing)
 router.get('/applications', async (_req, res) => {
-const items = InternshipApplication.findAll();
+const items = await InternshipApplication.findAll();
 res.json({ data: items });
 });
 

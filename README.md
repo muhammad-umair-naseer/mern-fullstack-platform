@@ -1,7 +1,7 @@
 # Cortexis Solution Hub — Platform & Learning System
 
 A full-stack web platform with a self-serve online learning system: a React front end, a
-Node/Express API, and SQLite for storage. Learners sign up, work through course lessons,
+Node/Express API, and PostgreSQL for storage (SQLite for local development). Learners sign up, work through course lessons,
 take auto-graded quizzes, and earn a verifiable certificate — with no human involvement
 at any step.
 
@@ -27,7 +27,7 @@ at any step.
 | Layer | Technology |
 |---|---|
 | Frontend | React 19, React Router v7, Tailwind CSS, GSAP, react-markdown |
-| Backend | Node.js, Express 4, better-sqlite3, Joi, bcryptjs, jsonwebtoken, Nodemailer |
+| Backend | Node.js, Express 4, PostgreSQL (pg) / SQLite, Joi, bcryptjs, jsonwebtoken, Nodemailer |
 | Security | Helmet, CORS, express-rate-limit |
 
 ## Getting Started
@@ -50,6 +50,10 @@ Create `server/.env`:
 
 ```
 PORT=5000
+
+# Production: a PostgreSQL connection string. Leave empty locally and the
+# server uses the SQLite file below instead.
+DATABASE_URL=
 DATABASE_FILE=./data/cortexis.db
 
 # Required — long random string. Rotating it signs every learner out.
@@ -69,7 +73,7 @@ Generate a secret with:
 node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ```
 
-The SQLite file and its tables are created automatically on first run.
+Tables are created automatically on first run, on either database. Run `npm test --prefix server` to walk a learner from sign-up to certificate against a scratch database; set `DATABASE_URL` to run the same suite against Postgres.
 
 ## Project Structure
 
@@ -89,7 +93,7 @@ The SQLite file and its tables are created automatically on first run.
         │   ├── courses/         # One file per course — the entire catalogue
         │   ├── authoring.js     # course()/chapter()/lesson()/q() helpers
         │   ├── index.js         # Auto-discovers course files
-        │   └── seed.js          # Upserts content into SQLite on boot
+        │   └── seed.js          # Upserts content into the database on boot
         ├── middleware/auth.js   # requireAuth / optionalAuth
         ├── models/              # Table repositories
         ├── routes/              # contact, courses, internships, auth, learn

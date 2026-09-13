@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "node --test-force-exit --test test/*.test.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -21,6 +22,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.13",
+    "pg": "^8.23.0",
     "rate-limit-redis": "^4.3.1"
   },
   "devDependencies": {

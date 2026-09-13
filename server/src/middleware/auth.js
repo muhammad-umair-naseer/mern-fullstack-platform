@@ -19,13 +19,13 @@ const readToken = (req) => {
   return header.startsWith('Bearer ') ? header.slice(7).trim() : null;
 };
 
-export const requireAuth = (req, res, next) => {
+export const requireAuth = async (req, res, next) => {
   const token = readToken(req);
   if (!token) return res.status(401).json({ message: 'Sign in to continue' });
 
   try {
     const payload = jwt.verify(token, getSecret());
-    const user = getDB()
+    const user = await getDB()
       .prepare('SELECT id, name, email, emailVerified, createdAt FROM users WHERE id = ?')
       .get(payload.sub);
 
@@ -50,12 +50,12 @@ export const requireAuth = (req, res, next) => {
 };
 
 // For endpoints that work signed-out but return extra detail when signed in.
-export const optionalAuth = (req, _res, next) => {
+export const optionalAuth = async (req, _res, next) => {
   const token = readToken(req);
   if (token) {
     try {
       const payload = jwt.verify(token, getSecret());
-      const u = getDB()
+      const u = await getDB()
         .prepare('SELECT id, name, email, emailVerified, createdAt FROM users WHERE id = ?')
         .get(payload.sub);
       req.user = u && u.emailVerified ? u : null;

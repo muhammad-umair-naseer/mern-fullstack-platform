@@ -4,7 +4,7 @@ import { getDB } from '../setup/db.js';
  * Enrolment and progression rules.
  *
  * Everything about "what may this learner open next" lives here so the route
- * layer stays about HTTP. Kept synchronous to match better-sqlite3.
+ * layer stays about HTTP. Every helper is async because the database is.
  */
 
 export const PASS_MARK = 0.7;
@@ -17,24 +17,23 @@ export const enrollmentFor = (userId, courseId) =>
     .get(userId, courseId);
 
 // Lesson ids the learner has finished, for one course.
-export const completedLessonIds = (userId, courseId) =>
-  getDB()
+export const completedLessonIds = async (userId, courseId) =>
+  (await getDB()
     .prepare(
       `SELECT lp.lessonId AS id FROM lesson_progress lp
        JOIN lessons l ON l.id = lp.lessonId
        JOIN chapters ch ON ch.id = l.chapterId
        WHERE lp.userId = ? AND ch.courseId = ?`
     )
-    .all(userId, courseId)
-    .map((r) => r.id);
+    .all(userId, courseId)).map((r) => r.id);
 
-export const lessonCountFor = (courseId) =>
-  getDB()
+export const lessonCountFor = async (courseId) =>
+  (await getDB()
     .prepare(
       `SELECT COUNT(*) AS n FROM lessons l
        JOIN chapters ch ON ch.id = l.chapterId WHERE ch.courseId = ?`
     )
-    .get(courseId).n;
+    .get(courseId)).n;
 
 // ---------------------------------------------------------------- progression
 
@@ -46,41 +45,38 @@ export const lessonCountFor = (courseId) =>
 //   lesson P         open when every earlier lesson in that chapter is complete
 //   chapter quiz     open when every lesson in that chapter is complete
 //   final exam       open when every lesson is complete AND every chapter quiz passed
-export const computeGates = (userId, course) => {
+export const computeGates = async (userId, course) => {
   const db = getDB();
-  const chapters = db
+  const chapters = await db
     .prepare('SELECT * FROM chapters WHERE courseId = ? ORDER BY position')
     .all(course.id);
 
-  const done = new Set(completedLessonIds(userId, course.id));
+  const done = new Set(await completedLessonIds(userId, course.id));
   const passedTopics = new Set(
-    getDB()
+    (await getDB()
       .prepare(
         `SELECT DISTINCT lessonId FROM quiz_attempts
          WHERE userId = ? AND courseId = ? AND lessonId IS NOT NULL AND passed = 1`
       )
-      .all(userId, course.id)
-      .map((r) => r.lessonId)
+      .all(userId, course.id)).map((r) => r.lessonId)
   );
 
   const topicQuestionCount = new Map(
-    getDB()
+    (await getDB()
       .prepare(
         `SELECT lessonId, COUNT(*) AS n FROM quiz_questions
          WHERE courseId = ? AND lessonId IS NOT NULL GROUP BY lessonId`
       )
-      .all(course.id)
-      .map((r) => [r.lessonId, r.n])
+      .all(course.id)).map((r) => [r.lessonId, r.n])
   );
 
   const passedChapters = new Set(
-    db
+    (await db
       .prepare(
         `SELECT DISTINCT chapterId FROM quiz_attempts
          WHERE userId = ? AND courseId = ? AND chapterId IS NOT NULL AND passed = 1`
       )
-      .all(userId, course.id)
-      .map((r) => r.chapterId)
+      .all(userId, course.id)).map((r) => r.chapterId)
   );
 
   const lessons = {};   // lessonId  -> { unlocked, reason }
@@ -93,25 +89,23 @@ export const computeGates = (userId, course) => {
   let allQuizzesPassed = true;
 
   const lessonsByChapter = new Map();
-  db.prepare(
+  (await db.prepare(
     `SELECT l.id, l.position, l.chapterId FROM lessons l
      JOIN chapters ch ON ch.id = l.chapterId
      WHERE ch.courseId = ? ORDER BY ch.position, l.position`
   )
-    .all(course.id)
-    .forEach(({ chapterId, ...lesson }) => {
+    .all(course.id)).forEach(({ chapterId, ...lesson }) => {
       if (!lessonsByChapter.has(chapterId)) lessonsByChapter.set(chapterId, []);
       lessonsByChapter.get(chapterId).push(lesson);
     });
 
   const questionCountByChapter = new Map(
-    db
+    (await db
       .prepare(
         `SELECT chapterId, COUNT(*) AS n FROM quiz_questions
          WHERE courseId = ? AND chapterId IS NOT NULL GROUP BY chapterId`
       )
-      .all(course.id)
-      .map((r) => [r.chapterId, r.n])
+      .all(course.id)).map((r) => [r.chapterId, r.n])
   );
 
   for (const ch of chapters) {
