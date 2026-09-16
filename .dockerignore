@@ -2,9 +2,7 @@ node_modules/
 client/node_modules/
 server/node_modules/
 client/build/
-server/data/*.db*
-server/data/*.db-wal
-server/data/*.db-shm
+server/data/
 .env
 .env.*
 server/.env
@@ -19,3 +17,26 @@ server/.env.*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Exclude standalone tool archives, test files and dumps
+*.pdf
+*.zip
+extracted_tools/
+brand-source/
+Image Color Picker/
+image-enlarger/
+image-resizer/
+local-image-compressor/
+local-image-compressor-main/
+local-pdf-image-tools-main/
+png-compressor/
+qr-generator/
+tool1-client/
+tool2-compressor/
+tool3-merger/
+tool4-splitter/
+tool7-crop/
+tool8-resize/
+*.html
+!client/public/index.html
+
