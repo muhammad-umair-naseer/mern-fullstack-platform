@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { getDB } from '../setup/db.js';
 import { loadCourses } from './index.js';
 import { invalidateCourseCache } from '../services/cache.service.js';
@@ -68,13 +69,35 @@ const shuffleQuiz = (questions) => {
 // Chapters and lessons are upserted on their (parent, position) unique keys
 // rather than wiped and reinserted, so their ids stay stable across restarts —
 // which is what keeps a learner's lesson_progress pointing at the right rows.
+//
+// The whole run is skipped when the content has not changed since the last
+// boot: the seed is thousands of statements, and against a remote Postgres
+// that is minutes of round trips for nothing. Bump SEED_VERSION when the
+// seeding logic itself changes (e.g. the option shuffle), since the content
+// hash cannot see that.
+const SEED_VERSION = 1;
+const FINGERPRINT_KEY = 'courses:fingerprint';
+
 export const seedCourses = async () => {
   const db = getDB();
   const courses = await loadCourses();
   if (!courses.length) return { courses: 0, lessons: 0 };
 
+  const lessonTotal = courses.reduce(
+    (n, c) => n + c.chapters.reduce((m, ch) => m + ch.lessons.length, 0),
+    0
+  );
+  const fingerprint = crypto
+    .createHash('sha256')
+    .update(String(SEED_VERSION))
+    .update(JSON.stringify(courses))
+    .digest('hex');
+  const stored = await db.prepare('SELECT value FROM meta WHERE key = ?').get(FINGERPRINT_KEY);
+  if (stored?.value === fingerprint) {
+    return { courses: courses.length, lessons: lessonTotal, skipped: true };
+  }
+
   const now = new Date().toISOString();
-  let lessonTotal = 0;
 
   const upsertCourse = db.prepare(`
     INSERT INTO courses (slug, title, category, level, duration, hours, summary, description, coverKey, accent, sortOrder, createdAt, updatedAt)
@@ -101,6 +124,7 @@ export const seedCourses = async () => {
     ON CONFLICT(chapterId, position) DO UPDATE SET
       title=excluded.title, minutes=excluded.minutes, body=excluded.body
   `);
+  const lessonIdAt = db.prepare('SELECT id FROM lessons WHERE chapterId = ? AND position = ?');
   const pruneLessons = db.prepare('DELETE FROM lessons WHERE chapterId = ? AND position > ?');
 
   // Questions carry no natural key, and quiz_attempts stores only the score,
@@ -110,10 +134,26 @@ export const seedCourses = async () => {
     INSERT INTO quiz_questions (courseId, chapterId, lessonId, position, prompt, options, answerIndex, explanation)
     VALUES (@courseId, @chapterId, @lessonId, @position, @prompt, @options, @answerIndex, @explanation)
   `);
+  const question = (courseId, chapterId, lessonId, shuffled, qi) =>
+    insertQuestion.run({
+      courseId,
+      chapterId,
+      lessonId,
+      position: qi + 1,
+      prompt: shuffled.prompt,
+      options: JSON.stringify(shuffled.options),
+      answerIndex: shuffled.answerIndex,
+      explanation: shuffled.explanation ?? null,
+    });
 
-  const run = db.transaction(() => {
-    courses.forEach((c, index) => {
-      upsertCourse.run({
+  const rememberFingerprint = db.prepare(`
+    INSERT INTO meta (key, value) VALUES (?, ?)
+    ON CONFLICT(key) DO UPDATE SET value=excluded.value
+  `);
+
+  const run = db.transaction(async () => {
+    for (const [index, c] of courses.entries()) {
+      await upsertCourse.run({
         slug: c.slug,
         title: c.title,
         category: c.category,
@@ -127,76 +167,50 @@ export const seedCourses = async () => {
         sortOrder: c.sortOrder ?? index,
         now,
       });
-      const courseId = courseIdBySlug.get(c.slug).id;
-      clearQuestions.run(courseId);
+      const courseId = (await courseIdBySlug.get(c.slug)).id;
+      await clearQuestions.run(courseId);
 
-      c.chapters.forEach((ch, ci) => {
+      for (const [ci, ch] of c.chapters.entries()) {
         const position = ci + 1;
-        upsertChapter.run({ courseId, position, title: ch.title, summary: ch.summary ?? null });
-        const chapterId = chapterIdAt.get(courseId, position).id;
+        await upsertChapter.run({ courseId, position, title: ch.title, summary: ch.summary ?? null });
+        const chapterId = (await chapterIdAt.get(courseId, position)).id;
 
-        const lessonIdAt = db.prepare('SELECT id FROM lessons WHERE chapterId = ? AND position = ?');
-
-        ch.lessons.forEach((l, li) => {
-          upsertLesson.run({
+        for (const [li, l] of ch.lessons.entries()) {
+          await upsertLesson.run({
             chapterId,
             position: li + 1,
             title: l.title,
             minutes: l.minutes ?? 10,
             body: l.body,
           });
-          lessonTotal++;
 
           // The topic's own quiz. Questions are replaced wholesale per course
           // above, so these only ever need inserting.
-          const lessonId = lessonIdAt.get(chapterId, li + 1).id;
-          shuffleQuiz((l.quiz ?? [])).forEach((shuffled, qi) => {
-            insertQuestion.run({
-              courseId,
-              chapterId: null,
-              lessonId,
-              position: qi + 1,
-              prompt: shuffled.prompt,
-              options: JSON.stringify(shuffled.options),
-              answerIndex: shuffled.answerIndex,
-              explanation: shuffled.explanation ?? null,
-            });
-          });
-        });
-        pruneLessons.run(chapterId, ch.lessons.length);
+          const lessonId = (await lessonIdAt.get(chapterId, li + 1)).id;
+          const topicQuiz = shuffleQuiz(l.quiz ?? []);
+          for (const [qi, shuffled] of topicQuiz.entries()) {
+            await question(courseId, null, lessonId, shuffled, qi);
+          }
+        }
+        await pruneLessons.run(chapterId, ch.lessons.length);
 
-        shuffleQuiz((ch.quiz ?? [])).forEach((shuffled, qi) => {
-          insertQuestion.run({
-            courseId,
-            chapterId,
-            lessonId: null,
-            position: qi + 1,
-            prompt: shuffled.prompt,
-            options: JSON.stringify(shuffled.options),
-            answerIndex: shuffled.answerIndex,
-            explanation: shuffled.explanation ?? null,
-          });
-        });
-      });
-      pruneChapters.run(courseId, c.chapters.length);
+        const chapterQuiz = shuffleQuiz(ch.quiz ?? []);
+        for (const [qi, shuffled] of chapterQuiz.entries()) {
+          await question(courseId, chapterId, null, shuffled, qi);
+        }
+      }
+      await pruneChapters.run(courseId, c.chapters.length);
 
       // chapterId NULL marks a final-exam question.
-      shuffleQuiz((c.final ?? [])).forEach((shuffled, qi) => {
-        insertQuestion.run({
-          courseId,
-          chapterId: null,
-          lessonId: null,
-          position: qi + 1,
-          prompt: shuffled.prompt,
-          options: JSON.stringify(shuffled.options),
-          answerIndex: shuffled.answerIndex,
-          explanation: shuffled.explanation ?? null,
-        });
-      });
-    });
+      const finalExam = shuffleQuiz(c.final ?? []);
+      for (const [qi, shuffled] of finalExam.entries()) {
+        await question(courseId, null, null, shuffled, qi);
+      }
+    }
+    await rememberFingerprint.run(FINGERPRINT_KEY, fingerprint);
   });
 
-  run();
+  await run();
   await invalidateCourseCache().catch((err) =>
     console.warn('Cache invalidation notice after seed:', err.message)
   );

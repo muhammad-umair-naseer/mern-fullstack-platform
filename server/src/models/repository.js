@@ -26,31 +26,31 @@ export const createRepository = (table, fields) => {
     `VALUES (${[...names, 'createdAt', 'updatedAt'].map((n) => `@${n}`).join(', ')})`;
 
   return {
-    create(value) {
+    async create(value) {
       const db = getDB();
       const now = new Date().toISOString();
       const params = { createdAt: now, updatedAt: now };
       for (const field of fields) params[field.name] = cast(field, value[field.name]);
 
-      const { lastInsertRowid } = db.prepare(insertSQL).run(params);
+      const { lastInsertRowid } = await db.prepare(insertSQL).run(params);
       return this.findById(lastInsertRowid);
     },
 
-    findById(id) {
-      const row = getDB().prepare(`SELECT * FROM ${table} WHERE id = ?`).get(id);
+    async findById(id) {
+      const row = await getDB().prepare(`SELECT * FROM ${table} WHERE id = ?`).get(id);
       return revive(fields, row);
     },
 
     // Newest first, matching the old `.sort({ createdAt: -1 })`.
-    findAll() {
-      const rows = getDB()
+    async findAll() {
+      const rows = await getDB()
         .prepare(`SELECT * FROM ${table} ORDER BY createdAt DESC, id DESC`)
         .all();
       return rows.map((row) => revive(fields, row));
     },
 
-    count() {
-      return getDB().prepare(`SELECT COUNT(*) AS n FROM ${table}`).get().n;
+    async count() {
+      return (await getDB().prepare(`SELECT COUNT(*) AS n FROM ${table}`).get()).n;
     },
   };
 };

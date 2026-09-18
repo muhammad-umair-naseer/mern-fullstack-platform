@@ -27,11 +27,7 @@ COPY server/ ./
 # Copy compiled frontend from client-builder stage
 COPY --from=client-builder /app/client/build /app/client/build
 
-# Ensure database directory exists
-RUN mkdir -p /app/server/data
-
 EXPOSE 5000
 
-VOLUME ["/app/server/data"]
-
 CMD ["node", "src/server.js"]
+

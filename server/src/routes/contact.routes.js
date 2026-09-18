@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
 
 // GET /api/contact/messages (admin/listing)
 router.get('/messages', async (_req, res) => {
-const items = ContactMessage.findAll();
+const items = await ContactMessage.findAll();
 res.json({ data: items });
 });
 

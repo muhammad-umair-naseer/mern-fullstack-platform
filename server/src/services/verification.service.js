@@ -24,10 +24,10 @@ export const publicUser = (u) => ({
 // crypto.randomInt is uniform; Math.random is not, and this gates account access.
 export const makeCode = () => String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
 
-export const issueCode = (db, user) => {
+export const issueCode = async (db, user) => {
   const code = makeCode();
   const now = new Date();
-  db.prepare(
+  await db.prepare(
     `UPDATE users SET verifyCode = ?, verifyExpires = ?, verifySentAt = ?, verifyAttempts = 0, updatedAt = ?
      WHERE id = ?`
   ).run(
@@ -42,6 +42,6 @@ export const issueCode = (db, user) => {
 
 /** Issues a fresh code and emails it. Returns whether delivery succeeded. */
 export const issueAndSend = async (db, user) => {
-  const code = issueCode(db, user);
+  const code = await issueCode(db, user);
   return sendVerificationCode({ name: user.name, email: user.email, code });
 };

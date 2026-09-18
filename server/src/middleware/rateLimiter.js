@@ -11,15 +11,17 @@ export const createLimiter = ({ windowMs, max, prefix, message }) => {
   const fullPrefix = `cortexis:${env}:ratelimit:${prefix}:`;
 
   const store = new RedisStore({
-    sendCommand: (...args) => {
+    sendCommand: async (...args) => {
       const client = getRedisClient();
-      if (!client) {
+      if (!client || !isRedisReady()) {
+        if (args[0] === 'SCRIPT') return 'dummy-sha';
         throw new Error('Redis client unavailable');
       }
       return client.call(...args);
     },
     prefix: fullPrefix,
   });
+
 
   return rateLimit({
     windowMs,

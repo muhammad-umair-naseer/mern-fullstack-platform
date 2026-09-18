@@ -10,7 +10,7 @@ services:
     environment:
       - PORT=5000
       - NODE_ENV=production
-      - DATABASE_FILE=./data/cortexis.db
+      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:-cortexis_secure_pg_pass}@postgres:5432/cortexis
       - JWT_SECRET=${JWT_SECRET:-4bb1ae5e13ae44801f68672156c361ef8ff62f7a4161bcbeaeb5157e8f247e5f9356157502a692abe4ba493ff8de6d98}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -21,13 +21,32 @@ services:
       - SMTP_PASS=${SMTP_PASS:-}
       - CONTACT_TO=${CONTACT_TO:-}
       - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
-    volumes:
-      - cortexis_db_data:/app/server/data
     networks:
       - cortexis_internal
     depends_on:
+      postgres:
+        condition: service_healthy
       redis:
         condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: cortexis-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=cortexis
+      - POSTGRES_USER=cortexis
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cortexis_secure_pg_pass}
+    # Security: No public ports exposed to host. Only accessible within the internal docker network.
+    volumes:
+      - cortexis_pg_data:/var/lib/postgresql/data
+    networks:
+      - cortexis_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cortexis -d cortexis"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -50,8 +69,9 @@ networks:
     driver: bridge
 
 volumes:
-  cortexis_db_data:
+  cortexis_pg_data:
     driver: local
   cortexis_redis_data:
     driver: local
+
 

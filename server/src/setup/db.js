@@ -1,94 +1,174 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { DatabaseSync } from 'node:sqlite';
+import pg from 'pg';
+import { AsyncLocalStorage } from 'node:async_hooks';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const SERVER_ROOT = path.resolve(__dirname, '../..');
+/**
+ * Pure PostgreSQL Database Layer for Cortexis
+ *
+ * Exposes a standardized async query interface:
+ *   - prepare(sql).get(...args)
+ *   - prepare(sql).all(...args)
+ *   - prepare(sql).run(...args) -> { changes, lastInsertRowid }
+ *   - exec(sql)
+ *   - transaction(async () => { ... })
+ *
+ * Query translation handles:
+ *   ?          → $1, $2 ...
+ *   @name      → $1 (looked up on object argument)
+ *   camelCase  → "camelCase" (preserves exact case in PostgreSQL)
+ *   INSERT ... → ... RETURNING * (so run() reports lastInsertRowid)
+ */
 
-class DatabaseWrapper {
-  constructor(file) {
-    this.raw = new DatabaseSync(file);
+const CAMEL = /\b([a-z]+(?:[A-Z][A-Za-z0-9]*)+)\b/g;
+
+export const toPostgres = (sql) => {
+  const names = [];
+  let n = 0;
+  const translated = sql
+    .replace(/@([A-Za-z_][A-Za-z0-9_]*)/g, (_, name) => {
+      names.push(name);
+      return `$${++n}`;
+    })
+    .replace(/\?/g, () => `$${++n}`)
+    .replace(CAMEL, '"$1"')
+    .replace(/INTEGER PRIMARY KEY AUTOINCREMENT/gi, 'BIGSERIAL PRIMARY KEY')
+    .replace(/SERIAL PRIMARY KEY/gi, 'BIGSERIAL PRIMARY KEY')
+    .replace(/ COLLATE NOCASE/gi, '');
+  const isInsert = /^\s*INSERT\b/i.test(translated) && !/\bRETURNING\b/i.test(translated);
+  return { text: isInsert ? `${translated.trim()} RETURNING *` : translated, names };
+};
+
+class PostgresDatabase {
+  constructor(url) {
+    this.pool = null;
+    this.url = url;
+    this.scope = new AsyncLocalStorage();
   }
 
-  pragma(statement) {
-    return this.raw.exec(`PRAGMA ${statement}`);
+  async open() {
+    // Parse PostgreSQL int8 (bigint / BIGSERIAL) as numbers for safe JS arithmetic
+    pg.types.setTypeParser(20, (val) => (val === null ? null : parseInt(val, 10)));
+
+    this.pool = new pg.Pool({
+      connectionString: this.url,
+      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
+      max: Number(process.env.DATABASE_POOL_MAX || 20),
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+    });
+
+    // Test connection
+    const client = await this.pool.connect();
+    try {
+      await client.query('SELECT 1');
+    } finally {
+      client.release();
+    }
   }
+
+  pragma() {} // No-op for PostgreSQL
 
   exec(sql) {
-    return this.raw.exec(sql);
+    return (this.scope.getStore() ?? this.pool).query(toPostgres(sql).text);
   }
 
   prepare(sql) {
-    return this.raw.prepare(sql);
+    const { text, names } = toPostgres(sql);
+    const query = (args) => {
+      const values =
+        names.length && args.length === 1 && args[0] && typeof args[0] === 'object'
+          ? names.map((name) => args[0][name] ?? null)
+          : args;
+      return (this.scope.getStore() ?? this.pool).query(text, values);
+    };
+
+    return {
+      get: async (...args) => (await query(args)).rows[0],
+      all: async (...args) => (await query(args)).rows,
+      run: async (...args) => {
+        const { rowCount, rows } = await query(args);
+        return { changes: rowCount, lastInsertRowid: rows[0]?.id };
+      },
+    };
   }
 
   transaction(fn) {
-    return (...args) => {
-      this.raw.exec('BEGIN');
+    return async (...args) => {
+      const client = await this.pool.connect();
       try {
-        const res = fn(...args);
-        this.raw.exec('COMMIT');
+        await client.query('BEGIN');
+        const res = await this.scope.run(client, () => fn(...args));
+        await client.query('COMMIT');
         return res;
       } catch (e) {
-        this.raw.exec('ROLLBACK');
+        await client.query('ROLLBACK').catch(() => {});
         throw e;
+      } finally {
+        client.release();
       }
     };
+  }
+
+  close() {
+    return this.pool?.end();
   }
 }
 
 let db;
 
-// Column sets are shared with the models so the schema and the insert
-// statements can never drift apart.
 export const TABLES = {
+  meta: `
+    CREATE TABLE IF NOT EXISTS meta (
+      key   TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+  `,
   contact_messages: `
     CREATE TABLE IF NOT EXISTS contact_messages (
-      id        INTEGER PRIMARY KEY AUTOINCREMENT,
+      id        BIGSERIAL PRIMARY KEY,
       name      TEXT    NOT NULL,
       email     TEXT    NOT NULL,
       phone     TEXT,
       subject   TEXT,
       message   TEXT    NOT NULL,
       handled   INTEGER NOT NULL DEFAULT 0,
-      createdAt TEXT    NOT NULL,
-      updatedAt TEXT    NOT NULL
+      createdAt TIMESTAMPTZ NOT NULL,
+      updatedAt TIMESTAMPTZ NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_contact_created ON contact_messages (createdAt DESC);
   `,
   internship_applications: `
     CREATE TABLE IF NOT EXISTS internship_applications (
-      id              INTEGER PRIMARY KEY AUTOINCREMENT,
+      id              BIGSERIAL PRIMARY KEY,
       name            TEXT NOT NULL,
       email           TEXT NOT NULL,
       phone           TEXT,
       internshipTitle TEXT NOT NULL,
       resumeLink      TEXT,
       coverLetter     TEXT,
-      createdAt       TEXT NOT NULL,
-      updatedAt       TEXT NOT NULL
+      createdAt       TIMESTAMPTZ NOT NULL,
+      updatedAt       TIMESTAMPTZ NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_internship_email_title ON internship_applications (email, internshipTitle);
   `,
   users: `
     CREATE TABLE IF NOT EXISTS users (
-      id           INTEGER PRIMARY KEY AUTOINCREMENT,
-      name         TEXT NOT NULL,
-      email        TEXT NOT NULL UNIQUE COLLATE NOCASE,
-      passwordHash TEXT NOT NULL,
-      emailVerified INTEGER NOT NULL DEFAULT 0,
-      verifyCode    TEXT,
-      verifyExpires TEXT,
-      verifySentAt  TEXT,
+      id             BIGSERIAL PRIMARY KEY,
+      name           TEXT NOT NULL,
+      email          TEXT NOT NULL UNIQUE,
+      passwordHash   TEXT NOT NULL,
+      emailVerified  INTEGER NOT NULL DEFAULT 0,
+      verifyCode     TEXT,
+      verifyExpires  TEXT,
+      verifySentAt   TEXT,
       verifyAttempts INTEGER NOT NULL DEFAULT 0,
-      createdAt    TEXT NOT NULL,
-      updatedAt    TEXT NOT NULL
+      createdAt      TIMESTAMPTZ NOT NULL,
+      updatedAt      TIMESTAMPTZ NOT NULL
     );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_lower ON users (LOWER(email));
   `,
   courses: `
     CREATE TABLE IF NOT EXISTS courses (
-      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      id          BIGSERIAL PRIMARY KEY,
       slug        TEXT NOT NULL UNIQUE,
       title       TEXT NOT NULL,
       category    TEXT NOT NULL,
@@ -100,37 +180,41 @@ export const TABLES = {
       coverKey    TEXT,
       accent      TEXT,
       sortOrder   INTEGER NOT NULL DEFAULT 0,
-      createdAt   TEXT NOT NULL,
-      updatedAt   TEXT NOT NULL
+      createdAt   TIMESTAMPTZ NOT NULL,
+      updatedAt   TIMESTAMPTZ NOT NULL
     );
+    CREATE INDEX IF NOT EXISTS idx_courses_category ON courses (category);
+    CREATE INDEX IF NOT EXISTS idx_courses_sort ON courses (sortOrder);
   `,
   chapters: `
     CREATE TABLE IF NOT EXISTS chapters (
-      id       INTEGER PRIMARY KEY AUTOINCREMENT,
-      courseId INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      id       BIGSERIAL PRIMARY KEY,
+      courseId BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
       position INTEGER NOT NULL,
       title    TEXT NOT NULL,
       summary  TEXT,
       UNIQUE (courseId, position)
     );
+    CREATE INDEX IF NOT EXISTS idx_chapters_courseId ON chapters (courseId);
   `,
   lessons: `
     CREATE TABLE IF NOT EXISTS lessons (
-      id        INTEGER PRIMARY KEY AUTOINCREMENT,
-      chapterId INTEGER NOT NULL REFERENCES chapters(id) ON DELETE CASCADE,
+      id        BIGSERIAL PRIMARY KEY,
+      chapterId BIGINT NOT NULL REFERENCES chapters(id) ON DELETE CASCADE,
       position  INTEGER NOT NULL,
       title     TEXT NOT NULL,
       minutes   INTEGER NOT NULL DEFAULT 10,
       body      TEXT NOT NULL,
       UNIQUE (chapterId, position)
     );
+    CREATE INDEX IF NOT EXISTS idx_lessons_chapterId ON lessons (chapterId);
   `,
   quiz_questions: `
     CREATE TABLE IF NOT EXISTS quiz_questions (
-      id          INTEGER PRIMARY KEY AUTOINCREMENT,
-      courseId    INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
-      chapterId   INTEGER REFERENCES chapters(id) ON DELETE CASCADE,
-      lessonId    INTEGER REFERENCES lessons(id) ON DELETE CASCADE,
+      id          BIGSERIAL PRIMARY KEY,
+      courseId    BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      chapterId   BIGINT REFERENCES chapters(id) ON DELETE CASCADE,
+      lessonId    BIGINT REFERENCES lessons(id) ON DELETE CASCADE,
       position    INTEGER NOT NULL,
       prompt      TEXT NOT NULL,
       options     TEXT NOT NULL,
@@ -139,110 +223,105 @@ export const TABLES = {
     );
     CREATE INDEX IF NOT EXISTS idx_q_chapter ON quiz_questions (chapterId, position);
     CREATE INDEX IF NOT EXISTS idx_q_final ON quiz_questions (courseId, chapterId, position);
+    CREATE INDEX IF NOT EXISTS idx_q_lesson ON quiz_questions (lessonId, position);
   `,
   enrollments: `
     CREATE TABLE IF NOT EXISTS enrollments (
-      id          INTEGER PRIMARY KEY AUTOINCREMENT,
-      userId      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      courseId    INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
-      enrolledAt  TEXT NOT NULL,
-      completedAt TEXT,
+      id          BIGSERIAL PRIMARY KEY,
+      userId      BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      courseId    BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      enrolledAt  TIMESTAMPTZ NOT NULL,
+      completedAt TIMESTAMPTZ,
       UNIQUE (userId, courseId)
     );
+    CREATE INDEX IF NOT EXISTS idx_enrollments_user ON enrollments (userId);
+    CREATE INDEX IF NOT EXISTS idx_enrollments_course ON enrollments (courseId);
   `,
   lesson_progress: `
     CREATE TABLE IF NOT EXISTS lesson_progress (
-      id          INTEGER PRIMARY KEY AUTOINCREMENT,
-      userId      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      lessonId    INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
-      completedAt TEXT NOT NULL,
+      id          BIGSERIAL PRIMARY KEY,
+      userId      BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      lessonId    BIGINT NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+      completedAt TIMESTAMPTZ NOT NULL,
       UNIQUE (userId, lessonId)
     );
+    CREATE INDEX IF NOT EXISTS idx_progress_user ON lesson_progress (userId);
+    CREATE INDEX IF NOT EXISTS idx_progress_user_lesson ON lesson_progress (userId, lessonId);
   `,
   quiz_attempts: `
     CREATE TABLE IF NOT EXISTS quiz_attempts (
-      id        INTEGER PRIMARY KEY AUTOINCREMENT,
-      userId    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      courseId  INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
-      chapterId INTEGER REFERENCES chapters(id) ON DELETE CASCADE,
-      lessonId  INTEGER REFERENCES lessons(id) ON DELETE CASCADE,
+      id        BIGSERIAL PRIMARY KEY,
+      userId    BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      courseId  BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      chapterId BIGINT REFERENCES chapters(id) ON DELETE CASCADE,
+      lessonId  BIGINT REFERENCES lessons(id) ON DELETE CASCADE,
       score     INTEGER NOT NULL,
       total     INTEGER NOT NULL,
       passed    INTEGER NOT NULL,
-      createdAt TEXT NOT NULL
+      createdAt TIMESTAMPTZ NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_attempt_user ON quiz_attempts (userId, courseId);
+    CREATE INDEX IF NOT EXISTS idx_attempt_created ON quiz_attempts (createdAt DESC);
   `,
   certificates: `
     CREATE TABLE IF NOT EXISTS certificates (
-      id       INTEGER PRIMARY KEY AUTOINCREMENT,
-      userId   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      courseId INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      id       BIGSERIAL PRIMARY KEY,
+      userId   BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      courseId BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
       code     TEXT NOT NULL UNIQUE,
       score    INTEGER NOT NULL,
-      issuedAt TEXT NOT NULL,
+      issuedAt TIMESTAMPTZ NOT NULL,
       UNIQUE (userId, courseId)
     );
+    CREATE INDEX IF NOT EXISTS idx_certificates_code ON certificates (code);
   `,
 };
 
 export const connectDB = async () => {
-  const file = path.resolve(SERVER_ROOT, process.env.DATABASE_FILE || 'data/cortexis.db');
-  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const url =
+    process.env.DATABASE_URL ||
+    'postgresql://postgres:postgres@localhost:5432/cortexis_db';
 
-  db = new DatabaseWrapper(file);
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
-  for (const ddl of Object.values(TABLES)) db.exec(ddl);
-  migrate(db);
+  db = new PostgresDatabase(url);
+  await db.open();
 
-  console.log(`📦 Connected to SQLite at ${path.relative(SERVER_ROOT, file)}`);
+  for (const ddl of Object.values(TABLES)) {
+    await db.exec(ddl);
+  }
+
+  // Non-blocking additive migrations if needed
+  await migrate(db);
+
+  console.log(`📦 Connected to PostgreSQL at ${new URL(url).host}`);
   return db;
 };
 
-// Additive migrations for databases created before a column existed. SQLite
-// has no "ADD COLUMN IF NOT EXISTS", so check the table info first.
-const migrate = (db) => {
-  // Topic-level quizzes: questions and attempts both gained a lessonId.
-  const qCols = db.prepare('PRAGMA table_info(quiz_questions)').all().map((c) => c.name);
-  if (!qCols.includes('lessonId')) {
-    db.exec('ALTER TABLE quiz_questions ADD COLUMN lessonId INTEGER REFERENCES lessons(id) ON DELETE CASCADE');
-    console.log('🔁 quiz_questions.lessonId added');
-  }
-  // Created here rather than in the DDL block, which runs before migrations and
-  // therefore cannot reference a column the migration is about to add.
-  db.exec('CREATE INDEX IF NOT EXISTS idx_q_lesson ON quiz_questions (lessonId, position)');
-  const aCols = db.prepare('PRAGMA table_info(quiz_attempts)').all().map((c) => c.name);
-  if (!aCols.includes('lessonId')) {
-    db.exec('ALTER TABLE quiz_attempts ADD COLUMN lessonId INTEGER REFERENCES lessons(id) ON DELETE CASCADE');
-    console.log('🔁 quiz_attempts.lessonId added');
-  }
-
-  const columns = db.prepare('PRAGMA table_info(users)').all().map((c) => c.name);
+const migrate = async (database) => {
   const additions = [
-    ['emailVerified', 'INTEGER NOT NULL DEFAULT 0'],
-    ['verifyCode', 'TEXT'],
-    ['verifyExpires', 'TEXT'],
-    ['verifySentAt', 'TEXT'],
-    ['verifyAttempts', 'INTEGER NOT NULL DEFAULT 0'],
+    ['quiz_questions', 'lessonId', 'BIGINT REFERENCES lessons(id) ON DELETE CASCADE'],
+    ['quiz_attempts', 'lessonId', 'BIGINT REFERENCES lessons(id) ON DELETE CASCADE'],
+    ['users', 'emailVerified', 'INTEGER NOT NULL DEFAULT 0'],
+    ['users', 'verifyCode', 'TEXT'],
+    ['users', 'verifyExpires', 'TEXT'],
+    ['users', 'verifySentAt', 'TEXT'],
+    ['users', 'verifyAttempts', 'INTEGER NOT NULL DEFAULT 0'],
   ];
 
-  let added = 0;
-  for (const [name, type] of additions) {
-    if (!columns.includes(name)) {
-      db.exec(`ALTER TABLE users ADD COLUMN ${name} ${type}`);
-      added++;
-    }
+  for (const [table, name, type] of additions) {
+    await database.exec(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${name} ${type}`);
   }
 
-  if (added && columns.length) {
-    // Accounts that predate verification keep working; only new signups are gated.
-    const { changes } = db.prepare('UPDATE users SET emailVerified = 1 WHERE emailVerified = 0').run();
-    if (changes) console.log(`🔁 Marked ${changes} pre-existing account(s) as verified`);
-  }
+  await database.exec('CREATE INDEX IF NOT EXISTS idx_q_lesson ON quiz_questions (lessonId, position)');
 };
 
 export const getDB = () => {
   if (!db) throw new Error('Database not initialised — call connectDB() first');
   return db;
+};
+
+export const dbEngine = () => 'postgres';
+
+export const closeDB = async () => {
+  await db?.close();
+  db = undefined;
 };

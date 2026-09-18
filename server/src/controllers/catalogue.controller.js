@@ -16,7 +16,7 @@ export const listCourses = async (_req, res) => {
   try {
     const { data, cached } = await getOrSet(
       CACHE_KEYS.courseList(),
-      () => {
+      async () => {
         return getDB()
           .prepare(
             `SELECT c.*,
@@ -46,35 +46,33 @@ export const getCourseOutline = async (req, res) => {
     // 1. Fetch or compute the public, non-user-specific course outline
     const { data: publicOutline, cached } = await getOrSet(
       CACHE_KEYS.courseOutline(slug),
-      () => {
+      async () => {
         const db = getDB();
-        const course = courseBySlug(slug);
+        const course = await courseBySlug(slug);
         if (!course) return null;
 
-        const chapterRows = db
+        const chapterRows = await db
           .prepare('SELECT * FROM chapters WHERE courseId = ? ORDER BY position')
           .all(course.id);
 
         const lessonsByChapter = new Map();
-        db.prepare(
+        (await db.prepare(
           `SELECT l.id, l.position, l.title, l.minutes, l.chapterId
            FROM lessons l JOIN chapters ch ON ch.id = l.chapterId
            WHERE ch.courseId = ? ORDER BY ch.position, l.position`
         )
-          .all(course.id)
-          .forEach(({ chapterId, ...lesson }) => {
+          .all(course.id)).forEach(({ chapterId, ...lesson }) => {
             if (!lessonsByChapter.has(chapterId)) lessonsByChapter.set(chapterId, []);
             lessonsByChapter.get(chapterId).push(lesson);
           });
 
         const quizCountByChapter = new Map(
-          db
+          (await db
             .prepare(
               `SELECT chapterId, COUNT(*) AS n FROM quiz_questions
                WHERE courseId = ? AND chapterId IS NOT NULL GROUP BY chapterId`
             )
-            .all(course.id)
-            .map((r) => [r.chapterId, r.n])
+            .all(course.id)).map((r) => [r.chapterId, r.n])
         );
 
         const chapters = chapterRows.map((ch) => ({
@@ -83,14 +81,16 @@ export const getCourseOutline = async (req, res) => {
           quizCount: quizCountByChapter.get(ch.id) ?? 0,
         }));
 
-        const finalCount = db
-          .prepare(
-            'SELECT COUNT(*) AS n FROM quiz_questions WHERE courseId = ? AND chapterId IS NULL AND lessonId IS NULL'
-          )
-          .get(course.id).n;
+        const finalCount = (
+          await db
+            .prepare(
+              'SELECT COUNT(*) AS n FROM quiz_questions WHERE courseId = ? AND chapterId IS NULL AND lessonId IS NULL'
+            )
+            .get(course.id)
+        ).n;
 
         // Courses to link on to from the bottom of this one
-        const pool = db
+        const pool = await db
           .prepare(
             `SELECT slug, title, summary, level, category, duration
              FROM courses WHERE id != ? ORDER BY title`
@@ -115,30 +115,31 @@ export const getCourseOutline = async (req, res) => {
     let progress = null;
     if (req.user) {
       const db = getDB();
-      const enrollment = enrollmentFor(req.user.id, publicOutline.id);
-      const gates = computeGates(req.user.id, publicOutline);
+      const enrollment = await enrollmentFor(req.user.id, publicOutline.id);
+      const gates = await computeGates(req.user.id, publicOutline);
       const completed = finishedLessonIds(gates);
-      const total = lessonCountFor(publicOutline.id);
+      const total = await lessonCountFor(publicOutline.id);
       progress = {
         enrolled: Boolean(enrollment),
         enrolledAt: enrollment?.enrolledAt ?? null,
         completedLessonIds: completed,
-        readLessonIds: completedLessonIds(req.user.id, publicOutline.id),
+        readLessonIds: await completedLessonIds(req.user.id, publicOutline.id),
         completed: completed.length,
         total,
         percent: total ? Math.round((completed.length / total) * 100) : 0,
         allLessonsDone: total > 0 && completed.length >= total,
         gates,
-        certificate: db
-          .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
-          .get(req.user.id, publicOutline.id) ?? null,
+        certificate:
+          (await db
+            .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
+            .get(req.user.id, publicOutline.id)) ?? null,
         bestFinalScore:
-          db
+          (await db
             .prepare(
               `SELECT MAX(score) AS best FROM quiz_attempts
                WHERE userId = ? AND courseId = ? AND chapterId IS NULL AND lessonId IS NULL`
             )
-            .get(req.user.id, publicOutline.id).best ?? null,
+            .get(req.user.id, publicOutline.id)).best ?? null,
       };
     }
 
@@ -151,15 +152,15 @@ export const getCourseOutline = async (req, res) => {
 };
 
 // POST /api/learn/courses/:slug/enroll
-export const enroll = (req, res) => {
-  const course = courseBySlug(req.params.slug);
+export const enroll = async (req, res) => {
+  const course = await courseBySlug(req.params.slug);
   if (!course) return res.status(404).json({ message: 'Course not found' });
 
-  const existing = enrollmentFor(req.user.id, course.id);
+  const existing = await enrollmentFor(req.user.id, course.id);
   if (existing) return res.json({ message: 'Already enrolled', data: existing });
 
   const now = new Date().toISOString();
-  getDB()
+  await getDB()
     .prepare('INSERT INTO enrollments (userId, courseId, enrolledAt) VALUES (?, ?, ?)')
     .run(req.user.id, course.id, now);
 
@@ -167,9 +168,9 @@ export const enroll = (req, res) => {
 };
 
 // GET /api/learn/my — dashboard
-export const myCourses = (req, res) => {
+export const myCourses = async (req, res) => {
   const db = getDB();
-  const rows = db
+  const rows = await db
     .prepare(
       `SELECT c.*, e.enrolledAt, e.completedAt
        FROM enrollments e JOIN courses c ON c.id = e.courseId
@@ -177,20 +178,21 @@ export const myCourses = (req, res) => {
     )
     .all(req.user.id);
 
-  const data = rows.map((course) => {
-    const total = lessonCountFor(course.id);
-    const completed = finishedLessonIds(computeGates(req.user.id, course)).length;
-    return {
+  const data = [];
+  for (const course of rows) {
+    const total = await lessonCountFor(course.id);
+    const completed = finishedLessonIds(await computeGates(req.user.id, course)).length;
+    data.push({
       ...course,
       total,
       completed,
       percent: total ? Math.round((completed / total) * 100) : 0,
       certificate:
-        db
+        (await db
           .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
-          .get(req.user.id, course.id) ?? null,
-    };
-  });
+          .get(req.user.id, course.id)) ?? null,
+    });
+  }
 
   res.json({ data });
 };
