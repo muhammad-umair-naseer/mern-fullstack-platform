@@ -32,7 +32,7 @@ at any step.
 
 ## Quick Start with Docker (No Local Dependencies Required)
 
-Anyone can clone and run the full stack (Frontend, Backend API, PostgreSQL, Redis) with **zero local dependencies** installed (no Node.js, npm, or database setup needed):
+Anyone can clone and run the full stack (Frontend, Backend API, PostgreSQL, Redis, Gotcha Rush, and TypeDash) with **zero local dependencies** installed (no Node.js, npm, or database setup needed):
 
 ```bash
 # 1. Clone the repository
@@ -45,7 +45,14 @@ docker compose up --build
 
 Once started, open:
 * **Web Application & 109 Tools:** `http://localhost:5000`
+* **Playground & Games Arena:** `http://localhost:5000/games`
+* **Gotcha Rush (Live Code Quiz Battle):** `http://localhost:3001`
+* **TypeDash (Live Multiplayer Typing Race):** `http://localhost:4001`
 * **API Endpoints:** `http://localhost:5000/api`
+
+### Included Multiplayer Games & Playground
+* **Gotcha Rush (`/games/gotcha-rush` or `:3001`):** Real-time multiplayer "predict the output" quiz featuring tricky JavaScript & Python snippets, combo streaks, 50-50 lifelines, Solo Rush mode, and live WebSocket match lobbies.
+* **TypeDash (`/games/typedash` or `:4001`):** High-speed multiplayer typing sprint with real-time peer tracks, ghost replays of previous winners, 7+ programming & natural language passage catalogs, daily challenges, and seasons.
 
 ---
 

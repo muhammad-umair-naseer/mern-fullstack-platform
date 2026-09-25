@@ -1,0 +1,2173 @@
+{
+ "generatedAt": "2026-09-24T09:25:37.739Z",
+ "runner": "local",
+ "runtimes": {
+  "js": "v22.22.2",
+  "py": "3.12.3"
+ },
+ "puzzles": [
+  {
+   "id": "js-010-plus-minus",
+   "lang": "js",
+   "file": "js/010-plus-minus.js",
+   "code": "console.log(\"1\" + 1);\nconsole.log(\"1\" - 1);\n",
+   "hash": "cfa1834cdf8e1282",
+   "title": "Plus and minus",
+   "difficulty": 1,
+   "tags": [
+    "coercion",
+    "operators"
+   ],
+   "distractors": [
+    "2\n0",
+    "11\n11",
+    "2\n11"
+   ],
+   "explain": "+ with a string on either side means concatenation, so \"1\" + 1 is \"11\". There is no string version of -, so \"1\" - 1 coerces both sides to numbers and gives 0.",
+   "output": [
+    "11",
+    "0"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-015-typeof-trio",
+   "lang": "js",
+   "file": "js/015-typeof-trio.js",
+   "code": "console.log(typeof null);\nconsole.log(typeof undefined);\nconsole.log(typeof NaN);\n",
+   "hash": "f2db2a679d5e1420",
+   "title": "What type is that?",
+   "difficulty": 1,
+   "tags": [
+    "typeof",
+    "types"
+   ],
+   "distractors": [
+    "null\nundefined\nNaN",
+    "object\nobject\nnumber",
+    "null\nundefined\nnumber"
+   ],
+   "explain": "typeof null is \"object\" — a bug from the first JavaScript engine that can never be fixed without breaking the web. NaN is \"not a number\" by name, but its type is number.",
+   "output": [
+    "object",
+    "undefined",
+    "number"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-020-float-sum",
+   "lang": "js",
+   "file": "js/020-float-sum.js",
+   "code": "console.log(0.1 + 0.2 === 0.3);\nconsole.log((0.1 + 0.2).toFixed(2));\n",
+   "hash": "4b6c36a770d25aa0",
+   "title": "Point one plus point two",
+   "difficulty": 1,
+   "tags": [
+    "floats"
+   ],
+   "distractors": [
+    "true\n0.30",
+    "false\n0.3",
+    "true\n0.3"
+   ],
+   "explain": "0.1 and 0.2 cannot be stored exactly in binary floating point, so their sum is 0.30000000000000004, which is not === 0.3. toFixed(2) rounds for display and keeps the trailing zero because it returns a string.",
+   "output": [
+    "false",
+    "0.30"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "js-025-default-sort",
+   "lang": "js",
+   "file": "js/025-default-sort.js",
+   "code": "const a = [10, 9, 1];\nconsole.log(a.sort().join(\",\"));\nconsole.log(a.sort((x, y) => x - y).join(\",\"));\n",
+   "hash": "5b8bb46f26ba2428",
+   "title": "The default sort",
+   "difficulty": 2,
+   "tags": [
+    "arrays",
+    "sort"
+   ],
+   "distractors": [
+    "1,9,10\n1,9,10",
+    "10,9,1\n1,9,10",
+    "1,10,9\n10,9,1"
+   ],
+   "explain": "Array.prototype.sort with no comparator converts every element to a string and sorts by UTF-16 code units, so \"10\" comes before \"9\". A numeric comparator fixes it.",
+   "output": [
+    "1,10,9",
+    "1,9,10"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-030-array-holes",
+   "lang": "js",
+   "file": "js/030-array-holes.js",
+   "code": "const a = [1, 2, 3];\na[5] = 6;\nconsole.log(a.length);\nconsole.log(a[4]);\nconsole.log(JSON.stringify(a));\n",
+   "hash": "9bb71864c90cd9c8",
+   "title": "Holes in the array",
+   "difficulty": 2,
+   "tags": [
+    "arrays",
+    "sparse"
+   ],
+   "distractors": [
+    "4\nundefined\n[1,2,3,6]",
+    "6\n6\n[1,2,3,null,null,6]",
+    "6\nundefined\n[1,2,3,undefined,undefined,6]"
+   ],
+   "explain": "Assigning to index 5 grows the array to length 6 and leaves indices 3 and 4 as empty slots. Reading a hole gives undefined, and JSON.stringify writes holes as null.",
+   "output": [
+    "6",
+    "undefined",
+    "[1,2,3,null,null,6]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 24
+  },
+  {
+   "id": "js-035-var-hoisting",
+   "lang": "js",
+   "file": "js/035-var-hoisting.js",
+   "code": "console.log(x);\nvar x = 5;\nconsole.log(x);\n",
+   "hash": "5186df9b7a40949e",
+   "title": "Hoisted",
+   "difficulty": 2,
+   "tags": [
+    "hoisting",
+    "var"
+   ],
+   "distractors": [
+    "ReferenceError",
+    "5\n5",
+    "null\n5"
+   ],
+   "explain": "var declarations are hoisted to the top of their function with the value undefined; only the assignment stays where it is. A let or const here would throw a ReferenceError instead (the temporal dead zone).",
+   "output": [
+    "undefined",
+    "5"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-040-loop-closures",
+   "lang": "js",
+   "file": "js/040-loop-closures.js",
+   "code": "for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));\nfor (let j = 0; j < 3; j++) setTimeout(() => console.log(j));\n",
+   "hash": "912c10cad32d7bc2",
+   "title": "Closures in a loop",
+   "difficulty": 2,
+   "tags": [
+    "closures",
+    "scope",
+    "event loop"
+   ],
+   "distractors": [
+    "0\n1\n2\n0\n1\n2",
+    "3\n3\n3\n3\n3\n3",
+    "0\n1\n2\n3\n3\n3"
+   ],
+   "explain": "All six callbacks run after the loops finish. The var loop shares one i, which is 3 by then. let creates a fresh binding per iteration, so those callbacks remember 0, 1 and 2. Timers fire in the order they were scheduled.",
+   "output": [
+    "3",
+    "3",
+    "3",
+    "0",
+    "1",
+    "2"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-045-microtasks",
+   "lang": "js",
+   "file": "js/045-microtasks.js",
+   "code": "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);\n",
+   "hash": "de4a6e620b4c3e73",
+   "title": "Timers versus promises",
+   "difficulty": 3,
+   "tags": [
+    "event loop",
+    "promises"
+   ],
+   "distractors": [
+    "1\n2\n3\n4",
+    "1\n4\n2\n3",
+    "1\n3\n4\n2"
+   ],
+   "explain": "Synchronous code runs first (1, 4). Promise callbacks are microtasks and run as soon as the current script finishes (3). setTimeout callbacks are macrotasks and run on a later turn of the event loop (2), even with a 0 ms delay.",
+   "output": [
+    "1",
+    "4",
+    "3",
+    "2"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-050-string-math",
+   "lang": "js",
+   "file": "js/050-string-math.js",
+   "code": "console.log(\"3\" * \"4\");\nconsole.log(\"3\" + \"4\");\nconsole.log(\"10\" / \"2\");\n",
+   "hash": "b30ce08313be6f0a",
+   "title": "Strings doing math",
+   "difficulty": 1,
+   "tags": [
+    "coercion",
+    "operators"
+   ],
+   "distractors": [
+    "NaN\n34\nNaN",
+    "12\n7\n5",
+    "12\n34\nNaN"
+   ],
+   "explain": "*, / and - only exist for numbers, so string operands are converted: \"3\" * \"4\" is 12 and \"10\" / \"2\" is 5. + prefers concatenation whenever a string is involved, giving \"34\".",
+   "output": [
+    "12",
+    "34",
+    "5"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "js-055-nan-identity",
+   "lang": "js",
+   "file": "js/055-nan-identity.js",
+   "code": "console.log(NaN === NaN);\nconsole.log(Number.isNaN(\"x\"));\nconsole.log(isNaN(\"x\"));\nconsole.log([NaN].includes(NaN));\nconsole.log([NaN].indexOf(NaN));\n",
+   "hash": "4f853c97f8bdae80",
+   "title": "Nothing equals NaN",
+   "difficulty": 2,
+   "tags": [
+    "NaN",
+    "equality",
+    "arrays"
+   ],
+   "distractors": [
+    "true\ntrue\ntrue\ntrue\n0",
+    "false\ntrue\ntrue\ntrue\n-1",
+    "false\nfalse\nfalse\nfalse\n-1"
+   ],
+   "explain": "NaN is the only value not equal to itself. Number.isNaN checks for the actual NaN value (\"x\" is a string, so false), while the global isNaN coerces first (\"x\" becomes NaN, so true). includes uses SameValueZero, which finds NaN; indexOf uses ===, which never does.",
+   "output": [
+    "false",
+    "false",
+    "true",
+    "true",
+    "-1"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-060-parseint-map",
+   "lang": "js",
+   "file": "js/060-parseint-map.js",
+   "code": "const r = [\"10\", \"10\", \"10\"].map(parseInt);\nconsole.log(r.join(\",\"));\n",
+   "hash": "8e37b40080d43d2e",
+   "title": "map(parseInt)",
+   "difficulty": 3,
+   "tags": [
+    "parseInt",
+    "callbacks",
+    "arrays"
+   ],
+   "distractors": [
+    "10,10,10",
+    "10,NaN,NaN",
+    "10,2,2"
+   ],
+   "explain": "map calls the callback with (value, index, array), and parseInt takes (string, radix). So it runs parseInt(\"10\", 0) → 10, parseInt(\"10\", 1) → NaN (radix 1 is invalid), parseInt(\"10\", 2) → 2 (binary).",
+   "output": [
+    "10,NaN,2"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 24
+  },
+  {
+   "id": "js-065-truthiness",
+   "lang": "js",
+   "file": "js/065-truthiness.js",
+   "code": "console.log(!!\"\");\nconsole.log(!![]);\nconsole.log(!!{});\nconsole.log(!!\"0\");\nconsole.log(!!0);\n",
+   "hash": "636481df71cad2e0",
+   "title": "Truthy or falsy",
+   "difficulty": 2,
+   "tags": [
+    "truthiness",
+    "coercion"
+   ],
+   "distractors": [
+    "false\nfalse\ntrue\nfalse\nfalse",
+    "false\ntrue\ntrue\nfalse\nfalse",
+    "true\ntrue\ntrue\ntrue\nfalse"
+   ],
+   "explain": "Only six values are falsy: false, 0, \"\", null, undefined and NaN (plus 0n). Every object is truthy, including an empty array and an empty object. \"0\" is a non-empty string, so it is truthy.",
+   "output": [
+    "false",
+    "true",
+    "true",
+    "true",
+    "false"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 29
+  },
+  {
+   "id": "js-070-loose-equality",
+   "lang": "js",
+   "file": "js/070-loose-equality.js",
+   "code": "console.log([] == false);\nconsole.log(\"\" == 0);\nconsole.log(null == undefined);\nconsole.log(null == 0);\nconsole.log(\"0\" == false);\n",
+   "hash": "c87ad7d4387e7150",
+   "title": "Double equals",
+   "difficulty": 3,
+   "tags": [
+    "equality",
+    "coercion"
+   ],
+   "distractors": [
+    "false\ntrue\ntrue\ntrue\ntrue",
+    "true\ntrue\nfalse\nfalse\ntrue",
+    "true\nfalse\ntrue\nfalse\nfalse"
+   ],
+   "explain": "== converts operands step by step. [] becomes \"\" then 0, and false becomes 0, so [] == false. \"\" == 0 because \"\" converts to 0. null == undefined is a special case that is true, but null only loosely equals undefined — it never converts to a number, so null == 0 is false. \"0\" becomes 0 and false becomes 0, so that one is true.",
+   "output": [
+    "true",
+    "true",
+    "true",
+    "false",
+    "true"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-075-detached-method",
+   "lang": "js",
+   "file": "js/075-detached-method.js",
+   "code": "class Counter {\n  constructor() { this.n = 1; }\n  inc() { return ++this.n; }\n}\nconst c = new Counter();\nconst f = c.inc;\ntry {\n  console.log(f());\n} catch (e) {\n  console.log(e.constructor.name);\n}\n",
+   "hash": "7cc5387bcf624c98",
+   "title": "Detached method",
+   "difficulty": 3,
+   "tags": [
+    "this",
+    "classes"
+   ],
+   "distractors": [
+    "2",
+    "undefined",
+    "NaN"
+   ],
+   "explain": "Calling f() with no receiver leaves this undefined (class bodies are always strict mode), so this.n throws a TypeError. Binding the method or calling it as c.inc() would give 2.",
+   "output": [
+    "TypeError"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "js-080-string-immutable",
+   "lang": "js",
+   "file": "js/080-string-immutable.js",
+   "code": "let s = \"abc\";\ns[0] = \"z\";\ns.toUpperCase();\nconsole.log(s);\n",
+   "hash": "5acf340495388eb2",
+   "title": "Strings never change",
+   "difficulty": 2,
+   "tags": [
+    "strings",
+    "immutability"
+   ],
+   "distractors": [
+    "zbc",
+    "ZBC",
+    "ABC"
+   ],
+   "explain": "Strings are immutable. Assigning to s[0] silently does nothing in sloppy mode, and toUpperCase returns a new string that is thrown away here. The original \"abc\" is untouched.",
+   "output": [
+    "abc"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-085-length-assignment",
+   "lang": "js",
+   "file": "js/085-length-assignment.js",
+   "code": "const a = [1, 2, 3, 4];\na.length = 2;\nconsole.log(a.join());\na.length = 4;\nconsole.log(a.length, a[3]);\n",
+   "hash": "7407a6d269480e0e",
+   "title": "Writing to length",
+   "difficulty": 2,
+   "tags": [
+    "arrays",
+    "length"
+   ],
+   "distractors": [
+    "1,2,3,4\n4 4",
+    "1,2\n2 undefined",
+    "1,2\n4 3"
+   ],
+   "explain": "Setting length smaller truncates the array and discards the elements. Growing it again does not bring them back; the new slots are empty and read as undefined.",
+   "output": [
+    "1,2",
+    "4 undefined"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-090-key-order",
+   "lang": "js",
+   "file": "js/090-key-order.js",
+   "code": "const o = { b: 1, 2: \"x\", a: 2, 1: \"y\" };\nconsole.log(Object.keys(o).join());\n",
+   "hash": "0b8614b8822fbd12",
+   "title": "Key order",
+   "difficulty": 3,
+   "tags": [
+    "objects",
+    "keys"
+   ],
+   "distractors": [
+    "b,2,a,1",
+    "1,2,a,b",
+    "a,b,1,2"
+   ],
+   "explain": "Object.keys lists integer-like keys first in ascending numeric order, then string keys in insertion order. So 1 and 2 jump to the front even though they were added last.",
+   "output": [
+    "1,2,b,a"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-095-pre-post-increment",
+   "lang": "js",
+   "file": "js/095-pre-post-increment.js",
+   "code": "let a = 1;\nconst b = a++ + ++a;\nconsole.log(a, b);\n",
+   "hash": "5cfd92d4b95e767a",
+   "title": "++ before and after",
+   "difficulty": 2,
+   "tags": [
+    "operators"
+   ],
+   "distractors": [
+    "3 3",
+    "2 3",
+    "3 5"
+   ],
+   "explain": "a++ evaluates to the old value (1) and then bumps a to 2. ++a bumps first, to 3, and evaluates to 3. So b is 1 + 3 = 4 and a ends at 3.",
+   "output": [
+    "3 4"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "js-100-switch-fallthrough",
+   "lang": "js",
+   "file": "js/100-switch-fallthrough.js",
+   "code": "switch (2) {\n  case 1: console.log(\"one\");\n  case 2: console.log(\"two\");\n  case 3: console.log(\"three\"); break;\n  default: console.log(\"other\");\n}\n",
+   "hash": "2455a25e61bf1fd9",
+   "title": "Fall through",
+   "difficulty": 1,
+   "tags": [
+    "switch",
+    "control flow"
+   ],
+   "distractors": [
+    "two",
+    "two\nthree\nother",
+    "one\ntwo\nthree"
+   ],
+   "explain": "Without a break, execution falls from the matching case straight into the next ones. It starts at case 2, prints \"two\", continues into case 3, prints \"three\", and only then hits a break.",
+   "output": [
+    "two",
+    "three"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 24
+  },
+  {
+   "id": "js-105-const-object",
+   "lang": "js",
+   "file": "js/105-const-object.js",
+   "code": "const o = { a: 1 };\no.a = 2;\no.b = 3;\nconsole.log(JSON.stringify(o));\ntry {\n  o = {};\n} catch (e) {\n  console.log(e.constructor.name);\n}\n",
+   "hash": "c49b7d7163bbfa8e",
+   "title": "const is not frozen",
+   "difficulty": 1,
+   "tags": [
+    "const",
+    "objects"
+   ],
+   "distractors": [
+    "TypeError\nTypeError",
+    "{\"a\":2,\"b\":3}\n{}",
+    "{\"a\":1}\nTypeError"
+   ],
+   "explain": "const prevents rebinding the variable, not mutating the value it points to. Changing and adding properties is fine; assigning a new object to o is what throws.",
+   "output": [
+    "{\"a\":2,\"b\":3}",
+    "TypeError"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-110-default-params",
+   "lang": "js",
+   "file": "js/110-default-params.js",
+   "code": "function f(a = 5, b = a * 2) {\n  return a + b;\n}\nconsole.log(f(), f(undefined, 1), f(null));\n",
+   "hash": "806bf262baea4e0d",
+   "title": "Defaults and null",
+   "difficulty": 2,
+   "tags": [
+    "functions",
+    "defaults",
+    "null"
+   ],
+   "distractors": [
+    "15 6 15",
+    "15 3 0",
+    "15 6 NaN"
+   ],
+   "explain": "Default parameters only kick in for undefined, not for null. f() gives a = 5, b = 10. f(undefined, 1) gives a = 5, b = 1. f(null) keeps a = null, so b = null * 2 = 0 and the sum null + 0 is 0.",
+   "output": [
+    "15 6 0"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "js-115-tostring-radix",
+   "lang": "js",
+   "file": "js/115-tostring-radix.js",
+   "code": "console.log((25).toString(2));\nconsole.log((255).toString(16));\nconsole.log((0.5).toString(2));\n",
+   "hash": "87fa515670911998",
+   "title": "Numbers in other bases",
+   "difficulty": 3,
+   "tags": [
+    "numbers",
+    "radix"
+   ],
+   "distractors": [
+    "11001\nff\nNaN",
+    "25\n255\n0.5",
+    "11001\nFF\n0.5"
+   ],
+   "explain": "toString(radix) converts to that base: 25 is 11001 in binary and 255 is ff in hex (lower case). Fractions work too — 0.5 is exactly one half, which is 0.1 in binary.",
+   "output": [
+    "11001",
+    "ff",
+    "0.1"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "js-120-promise-chain",
+   "lang": "js",
+   "file": "js/120-promise-chain.js",
+   "code": "Promise.resolve(1)\n  .then((v) => { console.log(v); return v + 1; })\n  .then((v) => { console.log(v); throw new Error(\"x\"); })\n  .catch((e) => { console.log(\"caught\", e.message); return 9; })\n  .then((v) => console.log(v))\n  .finally(() => console.log(\"done\"));\nconsole.log(\"sync\");\n",
+   "hash": "65b7d045b8f68997",
+   "title": "Down the promise chain",
+   "difficulty": 3,
+   "tags": [
+    "promises",
+    "errors"
+   ],
+   "distractors": [
+    "1\n2\ncaught x\n9\ndone\nsync",
+    "sync\n1\n2\ncaught x\ndone",
+    "sync\n1\n2\ncaught x\nundefined\ndone"
+   ],
+   "explain": "\"sync\" prints first because every .then callback is asynchronous. Each handler receives the previous return value; the throw skips ahead to catch, whose return value (9) feeds the next then. finally runs last and does not change the value.",
+   "output": [
+    "sync",
+    "1",
+    "2",
+    "caught x",
+    "9",
+    "done"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 30
+  },
+  {
+   "id": "js-125-comma-and-arrays",
+   "lang": "js",
+   "file": "js/125-comma-and-arrays.js",
+   "code": "const x = (1, 2, 3);\nconsole.log(x);\nconsole.log([1, 2, 3] + [4, 5]);\n",
+   "hash": "5d96383a89ae2a16",
+   "title": "Commas everywhere",
+   "difficulty": 3,
+   "tags": [
+    "operators",
+    "coercion",
+    "arrays"
+   ],
+   "distractors": [
+    "1\n1,2,3,4,5",
+    "3\n[1,2,3,4,5]",
+    "3\n1,2,3,4,5"
+   ],
+   "explain": "The comma operator evaluates each operand and yields the last one, so x is 3. + on two arrays converts both to strings (\"1,2,3\" and \"4,5\") and concatenates them, so the 3 and 4 collide into \"34\".",
+   "output": [
+    "3",
+    "1,2,34,5"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 24
+  },
+  {
+   "id": "js-130-bigint",
+   "lang": "js",
+   "file": "js/130-bigint.js",
+   "code": "console.log(typeof 10n);\nconsole.log(String(10n + 5n));\nconsole.log(String(2n ** 64n));\n",
+   "hash": "f338db6401d269c6",
+   "title": "Big numbers",
+   "difficulty": 2,
+   "tags": [
+    "bigint",
+    "types"
+   ],
+   "distractors": [
+    "number\n15\n18446744073709552000",
+    "bigint\n15n\n18446744073709551616",
+    "bigint\n15\n1.8446744073709552e+19"
+   ],
+   "explain": "BigInt is its own primitive type. Arithmetic between BigInts is exact, so 2n ** 64n is the full 20-digit value with no rounding. String() renders it without the n suffix.",
+   "output": [
+    "bigint",
+    "15",
+    "18446744073709551616"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-135-math-max-min",
+   "lang": "js",
+   "file": "js/135-math-max-min.js",
+   "code": "console.log(Math.max());\nconsole.log(Math.min());\nconsole.log(Math.max([1, 2]));\n",
+   "hash": "7b6d78ffc02f4698",
+   "title": "Max of nothing",
+   "difficulty": 1,
+   "tags": [
+    "Math",
+    "NaN"
+   ],
+   "distractors": [
+    "0\n0\n2",
+    "undefined\nundefined\nNaN",
+    "-Infinity\nInfinity\n2"
+   ],
+   "explain": "With no arguments, Math.max starts from -Infinity and Math.min from Infinity — the identity values for those operations. Passing an array gives one argument that converts to the string \"1,2\", which is NaN as a number.",
+   "output": [
+    "-Infinity",
+    "Infinity",
+    "NaN"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-140-json-stringify",
+   "lang": "js",
+   "file": "js/140-json-stringify.js",
+   "code": "console.log(JSON.stringify({ a: undefined, b: null, c: () => 1, d: NaN }));\nconsole.log(JSON.stringify([undefined]));\n",
+   "hash": "c977e99a0ebcadc3",
+   "title": "What JSON keeps",
+   "difficulty": 2,
+   "tags": [
+    "JSON",
+    "undefined",
+    "NaN"
+   ],
+   "distractors": [
+    "{\"a\":undefined,\"b\":null,\"d\":NaN}\n[undefined]",
+    "{\"b\":null}\n[]",
+    "{\"a\":null,\"b\":null,\"c\":null,\"d\":null}\n[null]"
+   ],
+   "explain": "JSON.stringify drops properties whose value is undefined or a function, and turns NaN into null. In arrays it cannot drop positions, so undefined becomes null instead.",
+   "output": [
+    "{\"b\":null,\"d\":null}",
+    "[null]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-145-closure-counters",
+   "lang": "js",
+   "file": "js/145-closure-counters.js",
+   "code": "function make() {\n  let n = 0;\n  return { inc: () => ++n, get: () => n };\n}\nconst a = make();\nconst b = make();\na.inc(); a.inc(); b.inc();\nconsole.log(a.get(), b.get());\n",
+   "hash": "802564ff2a4438f3",
+   "title": "Private counters",
+   "difficulty": 2,
+   "tags": [
+    "closures"
+   ],
+   "distractors": [
+    "3 3",
+    "2 2",
+    "3 1"
+   ],
+   "explain": "Each call to make() creates a fresh n captured by its own pair of closures. a and b never share state, so a has been incremented twice and b once.",
+   "output": [
+    "2 1"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-150-chained-comparison",
+   "lang": "js",
+   "file": "js/150-chained-comparison.js",
+   "code": "console.log(1 < 2 < 3);\nconsole.log(3 > 2 > 1);\n",
+   "hash": "5f64ec4341bbc1d7",
+   "title": "Chained comparisons",
+   "difficulty": 2,
+   "tags": [
+    "operators",
+    "coercion"
+   ],
+   "distractors": [
+    "true\ntrue",
+    "false\nfalse",
+    "true\nSyntaxError"
+   ],
+   "explain": "Comparisons are evaluated left to right and produce booleans. 1 < 2 is true, and true < 3 becomes 1 < 3, which is true. 3 > 2 is true, and true > 1 becomes 1 > 1, which is false.",
+   "output": [
+    "true",
+    "false"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 30
+  },
+  {
+   "id": "js-155-delete-element",
+   "lang": "js",
+   "file": "js/155-delete-element.js",
+   "code": "const a = [1, 2, 3];\ndelete a[1];\nconsole.log(a.length, a.join(\"-\"), 1 in a);\n",
+   "hash": "d8dac385e8c4c06b",
+   "title": "delete on an array",
+   "difficulty": 2,
+   "tags": [
+    "arrays",
+    "delete",
+    "sparse"
+   ],
+   "distractors": [
+    "2 1-3 false",
+    "3 1-undefined-3 true",
+    "2 1-3 true"
+   ],
+   "explain": "delete removes the property but never reindexes an array, leaving a hole: length stays 3, join renders the hole as an empty string, and the in operator reports the index as missing.",
+   "output": [
+    "3 1--3 false"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-160-string-comparison",
+   "lang": "js",
+   "file": "js/160-string-comparison.js",
+   "code": "console.log(\"10\" < \"9\");\nconsole.log(10 < \"9\");\nconsole.log(\"b\" > \"a\");\nconsole.log(\"B\" > \"a\");\n",
+   "hash": "83979d2e67feb8a0",
+   "title": "Comparing strings",
+   "difficulty": 2,
+   "tags": [
+    "strings",
+    "comparison",
+    "coercion"
+   ],
+   "distractors": [
+    "false\nfalse\ntrue\ntrue",
+    "true\ntrue\ntrue\nfalse",
+    "false\ntrue\ntrue\ntrue"
+   ],
+   "explain": "Two strings compare character by character, so \"10\" < \"9\" because \"1\" comes before \"9\". Mixing a number and a string converts the string to a number, so 10 < 9 is false. Upper-case letters have lower code units than lower-case ones, so \"B\" > \"a\" is false.",
+   "output": [
+    "true",
+    "false",
+    "true",
+    "false"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 31
+  },
+  {
+   "id": "js-165-async-order",
+   "lang": "js",
+   "file": "js/165-async-order.js",
+   "code": "async function f() {\n  console.log(\"a\");\n  await null;\n  console.log(\"b\");\n}\nf();\nconsole.log(\"c\");\nsetTimeout(() => console.log(\"d\"), 0);\nqueueMicrotask(() => console.log(\"e\"));\n",
+   "hash": "dd7720953e164f4f",
+   "title": "async/await ordering",
+   "difficulty": 4,
+   "tags": [
+    "async",
+    "event loop",
+    "microtasks"
+   ],
+   "distractors": [
+    "a\nb\nc\ne\nd",
+    "a\nc\ne\nb\nd",
+    "a\nc\nd\nb\ne"
+   ],
+   "explain": "f() runs synchronously until its first await, printing \"a\", then yields. \"c\" prints next. queueMicrotask is queued after the await's continuation, so \"b\" comes before \"e\". The timer is a macrotask and prints \"d\" last.",
+   "output": [
+    "a",
+    "c",
+    "b",
+    "e",
+    "d"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-170-float-limits",
+   "lang": "js",
+   "file": "js/170-float-limits.js",
+   "code": "console.log(0.1 * 3);\nconsole.log(0.3 / 0.1);\nconsole.log(9007199254740992 + 1);\n",
+   "hash": "c681573579d1b30c",
+   "title": "Floating point limits",
+   "difficulty": 3,
+   "tags": [
+    "floats",
+    "precision"
+   ],
+   "distractors": [
+    "0.3\n3\n9007199254740993",
+    "0.30000000000000004\n3\n9007199254740992",
+    "0.30000000000000004\n2.9999999999999996\n9007199254740993"
+   ],
+   "explain": "0.1 * 3 accumulates a binary rounding error, and 0.3 / 0.1 lands just under 3. Above 2^53 doubles can only represent even integers, so adding 1 to 9007199254740992 rounds back to itself.",
+   "output": [
+    "0.30000000000000004",
+    "2.9999999999999996",
+    "9007199254740992"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-175-array-coercion",
+   "lang": "js",
+   "file": "js/175-array-coercion.js",
+   "code": "console.log([1] == 1, [1, 2] == \"1,2\", [] + {});\n",
+   "hash": "08301938c3a95869",
+   "title": "Arrays in disguise",
+   "difficulty": 2,
+   "tags": [
+    "arrays",
+    "coercion",
+    "equality"
+   ],
+   "distractors": [
+    "false false [object Object]",
+    "true false",
+    "true true [object Array]"
+   ],
+   "explain": "== with an array first converts it to a string via join: \"1\" == 1 and \"1,2\" == \"1,2\" are both true. Adding an array and an object converts both to strings — \"\" for [] and \"[object Object]\" for {}.",
+   "output": [
+    "true true [object Object]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 28
+  },
+  {
+   "id": "js-180-reduce-empty",
+   "lang": "js",
+   "file": "js/180-reduce-empty.js",
+   "code": "try {\n  console.log([].reduce((a, b) => a + b));\n} catch (e) {\n  console.log(e.constructor.name);\n}\nconsole.log([1, 2, 3].reduce((a, b) => a + b));\n",
+   "hash": "540fab968f1b71bb",
+   "title": "Reducing nothing",
+   "difficulty": 3,
+   "tags": [
+    "arrays",
+    "reduce",
+    "errors"
+   ],
+   "distractors": [
+    "undefined\n6",
+    "0\n6",
+    "NaN\n6"
+   ],
+   "explain": "Without an initial value, reduce uses the first element as the accumulator. An empty array has no first element, so it throws a TypeError. With elements, it sums 1 + 2 + 3 normally.",
+   "output": [
+    "TypeError",
+    "6"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 27
+  },
+  {
+   "id": "js-185-function-hoisting",
+   "lang": "js",
+   "file": "js/185-function-hoisting.js",
+   "code": "console.log(typeof f, typeof g);\nfunction f() {}\nvar g = function () {};\n",
+   "hash": "7e70e6aeb1b22c6e",
+   "title": "Two ways to declare",
+   "difficulty": 3,
+   "tags": [
+    "hoisting",
+    "functions"
+   ],
+   "distractors": [
+    "function function",
+    "undefined undefined",
+    "function ReferenceError"
+   ],
+   "explain": "Function declarations are hoisted with their body, so f is callable before its line. A function expression assigned to var is only hoisted as an undefined variable; the assignment happens later.",
+   "output": [
+    "function undefined"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 24
+  },
+  {
+   "id": "js-190-set-dedupe",
+   "lang": "js",
+   "file": "js/190-set-dedupe.js",
+   "code": "const s = new Set([1, \"1\", 1, NaN, NaN, {}, {}]);\nconsole.log(s.size);\n",
+   "hash": "32a034a97360ba64",
+   "title": "What a Set considers equal",
+   "difficulty": 2,
+   "tags": [
+    "Set",
+    "equality",
+    "NaN"
+   ],
+   "distractors": [
+    "4",
+    "3",
+    "6"
+   ],
+   "explain": "Set uses SameValueZero: 1 and \"1\" are different types, NaN equals NaN here (unlike ===), and two object literals are two distinct references. That leaves 1, \"1\", NaN, {} and {} — five entries.",
+   "output": [
+    "5"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 24
+  },
+  {
+   "id": "js-195-spread-from",
+   "lang": "js",
+   "file": "js/195-spread-from.js",
+   "code": "console.log([...\"hello\"].reverse().join(\"\"));\nconsole.log(Array.from({ length: 3 }, (_, i) => i * 2).join());\n",
+   "hash": "f17ee124a7e9c929",
+   "title": "Spread and Array.from",
+   "difficulty": 2,
+   "tags": [
+    "iterables",
+    "spread"
+   ],
+   "distractors": [
+    "olleh\n0,1,2",
+    "hello\n0,2,4",
+    "olleh\n2,4,6"
+   ],
+   "explain": "A string is iterable by code point, so spreading it gives an array of characters. Array.from with a mapping function runs it for each index of the length-3 array-like, producing 0, 2 and 4.",
+   "output": [
+    "olleh",
+    "0,2,4"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 26
+  },
+  {
+   "id": "js-200-labelled-optional",
+   "lang": "js",
+   "file": "js/200-labelled-optional.js",
+   "code": "const user = { profile: null };\nconsole.log(user.profile?.name);\nconsole.log(0 ?? \"default\");\nconsole.log(0 || \"default\");\n",
+   "hash": "39d33122815106e1",
+   "title": "Optional chaining and nullish",
+   "difficulty": 2,
+   "tags": [
+    "optional chaining",
+    "nullish coalescing"
+   ],
+   "distractors": [
+    "TypeError\n0\ndefault",
+    "undefined\ndefault\ndefault",
+    "undefined\n0\n0"
+   ],
+   "explain": "?. short-circuits to undefined instead of throwing when the left side is null or undefined. ?? only falls back for null and undefined, so a 0 survives; || treats 0 as falsy and replaces it.",
+   "output": [
+    "undefined",
+    "0",
+    "default"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 30
+  },
+  {
+   "id": "js-205-object-reference",
+   "lang": "js",
+   "file": "js/205-object-reference.js",
+   "code": "let a = { n: 1 };\nconst b = a;\na.n = 2;\na = { n: 3 };\nconsole.log(b.n, a.n);\n",
+   "hash": "74628e38e103b71a",
+   "title": "Same object, two names",
+   "difficulty": 1,
+   "tags": [
+    "references",
+    "objects"
+   ],
+   "distractors": [
+    "1 2",
+    "2 1",
+    "1 1"
+   ],
+   "explain": "b = a copies the reference, not the object, so both names point at the same object and see the update. Assigning a whole new object to a afterwards only rebinds a.",
+   "output": [
+    "2 3"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "js-210-string-number-mix",
+   "lang": "js",
+   "file": "js/210-string-number-mix.js",
+   "code": "console.log(1 + 2 + \"3\" - 3);\n",
+   "hash": "444a88befd48d3f5",
+   "title": "A string of math",
+   "difficulty": 3,
+   "tags": [
+    "coercion",
+    "operators"
+   ],
+   "distractors": [
+    "6",
+    "33",
+    "123"
+   ],
+   "explain": "Evaluation goes left to right: 1 + 2 is 3 (both numbers), 3 + \"3\" is the string \"33\", and \"33\" - 3 coerces back to a number: 30.",
+   "output": [
+    "30"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 25
+  },
+  {
+   "id": "py-010-mutable-default",
+   "lang": "py",
+   "file": "py/010-mutable-default.py",
+   "code": "def f(x, acc=[]):\n    acc.append(x)\n    return acc\n\nprint(f(1))\nprint(f(2))\nprint(f(3, []))\n",
+   "hash": "edbf14020677051b",
+   "title": "The mutable default",
+   "difficulty": 2,
+   "tags": [
+    "defaults",
+    "mutability"
+   ],
+   "distractors": [
+    "[1]\n[2]\n[3]",
+    "[1]\n[1, 2]\n[1, 2, 3]",
+    "[1]\n[2]\n[1, 2, 3]"
+   ],
+   "explain": "Default values are evaluated once, when the function is defined, so every call that omits acc shares the same list. Passing a fresh list for the third call sidesteps it.",
+   "output": [
+    "[1]",
+    "[1, 2]",
+    "[3]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-015-is-vs-equals",
+   "lang": "py",
+   "file": "py/015-is-vs-equals.py",
+   "code": "a = 256\nb = 256\nprint(a is b)\nc = [1]\nd = [1]\nprint(c == d, c is d)\n",
+   "hash": "6f3fbf59785ebf48",
+   "title": "is versus ==",
+   "difficulty": 2,
+   "tags": [
+    "identity",
+    "equality"
+   ],
+   "distractors": [
+    "True\nTrue True",
+    "False\nTrue False",
+    "True\nFalse False"
+   ],
+   "explain": "== compares values; is compares identity. Small integers are cached, so both names point at the same 256 object. Two separate list literals are equal in value but are two different objects.",
+   "output": [
+    "True",
+    "True False"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-020-late-binding",
+   "lang": "py",
+   "file": "py/020-late-binding.py",
+   "code": "fs = [lambda: i for i in range(3)]\nprint([f() for f in fs])\ngs = [lambda i=i: i for i in range(3)]\nprint([g() for g in gs])\n",
+   "hash": "2ba1adbf03750f61",
+   "title": "Late binding",
+   "difficulty": 3,
+   "tags": [
+    "closures",
+    "lambdas"
+   ],
+   "distractors": [
+    "[0, 1, 2]\n[0, 1, 2]",
+    "[2, 2, 2]\n[2, 2, 2]",
+    "[0, 1, 2]\n[2, 2, 2]"
+   ],
+   "explain": "A closure looks up i when it is called, not when it is created, and by then the loop has finished with i == 2. The default argument i=i captures the current value at definition time.",
+   "output": [
+    "[2, 2, 2]",
+    "[0, 1, 2]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-025-floor-division",
+   "lang": "py",
+   "file": "py/025-floor-division.py",
+   "code": "print(7 // 2, -7 // 2, 7 % 3, -7 % 3)\n",
+   "hash": "ace36aa27a1d333e",
+   "title": "Floor division and modulo",
+   "difficulty": 1,
+   "tags": [
+    "integers",
+    "operators"
+   ],
+   "distractors": [
+    "3 -3 1 -1",
+    "3.5 -3.5 1 1",
+    "3 -4 1 -1"
+   ],
+   "explain": "// rounds toward negative infinity, so -7 // 2 is -4, not -3. Python's % takes the sign of the divisor, so -7 % 3 is 2 (because -7 == -3*3 + 2).",
+   "output": [
+    "3 -4 1 2"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 11
+  },
+  {
+   "id": "py-030-round-half-even",
+   "lang": "py",
+   "file": "py/030-round-half-even.py",
+   "code": "print(round(0.5), round(1.5), round(2.5), round(2.675, 2))\n",
+   "hash": "b51eca453b6e769e",
+   "title": "Banker's rounding",
+   "difficulty": 2,
+   "tags": [
+    "floats",
+    "rounding"
+   ],
+   "distractors": [
+    "1 2 3 2.68",
+    "0 2 2 2.68",
+    "1 2 3 2.67"
+   ],
+   "explain": "round() uses round-half-to-even: ties go to the nearest even number, so 0.5 → 0, 1.5 → 2 and 2.5 → 2. round(2.675, 2) gives 2.67 because 2.675 is actually stored as 2.67499999… in binary.",
+   "output": [
+    "0 2 2 2.67"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-035-bool-is-int",
+   "lang": "py",
+   "file": "py/035-bool-is-int.py",
+   "code": "print(True + True, isinstance(True, int), sum([True, False, True]))\n",
+   "hash": "b0c7bad0bf9834b4",
+   "title": "Booleans are integers",
+   "difficulty": 1,
+   "tags": [
+    "bool",
+    "types"
+   ],
+   "distractors": [
+    "TrueTrue True 2",
+    "2 False 2",
+    "True True 2"
+   ],
+   "explain": "bool is a subclass of int with True == 1 and False == 0, so booleans add up and count in sums. isinstance(True, int) is therefore True.",
+   "output": [
+    "2 True 2"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-040-sequence-multiply",
+   "lang": "py",
+   "file": "py/040-sequence-multiply.py",
+   "code": "print(\"ab\" * 3, \"3\" + \"4\", [0] * 3)\n",
+   "hash": "90de079147f732a5",
+   "title": "Multiplying sequences",
+   "difficulty": 1,
+   "tags": [
+    "strings",
+    "lists",
+    "operators"
+   ],
+   "distractors": [
+    "ababab 7 [0, 0, 0]",
+    "6 34 [0, 0, 0]",
+    "ababab 34 [0, 3]"
+   ],
+   "explain": "* on a sequence repeats it, and + on strings concatenates, so \"3\" + \"4\" is \"34\" rather than 7.",
+   "output": [
+    "ababab 34 [0, 0, 0]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-045-nested-list-alias",
+   "lang": "py",
+   "file": "py/045-nested-list-alias.py",
+   "code": "a = [[0] * 2] * 2\na[0][0] = 9\nprint(a)\n",
+   "hash": "d8624d19d8ecb9ec",
+   "title": "Shared rows",
+   "difficulty": 2,
+   "tags": [
+    "lists",
+    "references"
+   ],
+   "distractors": [
+    "[[9, 0], [0, 0]]",
+    "[[9, 9], [9, 9]]",
+    "[[9, 0], [9, 0], [9, 0]]"
+   ],
+   "explain": "[[0] * 2] * 2 repeats a reference to the same inner list twice. Changing a[0][0] changes the one list both rows point to.",
+   "output": [
+    "[[9, 0], [9, 0]]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-050-tuple-augmented",
+   "lang": "py",
+   "file": "py/050-tuple-augmented.py",
+   "code": "t = (1, [2])\ntry:\n    t[1] += [3]\nexcept TypeError:\n    print(\"error\")\nprint(t)\n",
+   "hash": "5931fea7e77a1d2f",
+   "title": "The tuple that changed anyway",
+   "difficulty": 4,
+   "tags": [
+    "tuples",
+    "mutability",
+    "augmented assignment"
+   ],
+   "distractors": [
+    "error\n(1, [2])",
+    "(1, [2, 3])",
+    "error\n(1, [2, 3, 3])"
+   ],
+   "explain": "t[1] += [3] first extends the list in place (that succeeds), then tries to assign the result back into the tuple, which raises TypeError. So the error is printed and the list inside the tuple has still grown.",
+   "output": [
+    "error",
+    "(1, [2, 3])"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-055-finally-wins",
+   "lang": "py",
+   "file": "py/055-finally-wins.py",
+   "code": "def f():\n    try:\n        return 1\n    finally:\n        return 2\n\ndef g():\n    try:\n        raise ValueError\n    except ValueError:\n        return \"e\"\n    finally:\n        print(\"f\")\n\nprint(f())\nprint(g())\n",
+   "hash": "7043a8480b62ffdd",
+   "title": "finally always runs",
+   "difficulty": 3,
+   "tags": [
+    "exceptions",
+    "finally"
+   ],
+   "distractors": [
+    "1\ne\nf",
+    "2\ne\nf",
+    "1\nf\ne"
+   ],
+   "explain": "A return inside finally overrides the return from try, so f() gives 2. In g() the except block's return value is kept, but finally still runs before the function actually returns, so \"f\" prints first.",
+   "output": [
+    "2",
+    "f",
+    "e"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-060-chained-comparisons",
+   "lang": "py",
+   "file": "py/060-chained-comparisons.py",
+   "code": "print(1 < 2 < 3, 1 < 3 > 2, 1 == 1 in [1], \"a\" < \"b\" < \"B\")\n",
+   "hash": "20f8429585f0dfb3",
+   "title": "Chained comparisons",
+   "difficulty": 2,
+   "tags": [
+    "comparisons",
+    "operators"
+   ],
+   "distractors": [
+    "True True True True",
+    "True False True False",
+    "True True False False"
+   ],
+   "explain": "a < b < c means a < b and b < c, and the same chaining applies to any comparison operators, including in. \"b\" < \"B\" is False because upper-case letters sort before lower-case ones.",
+   "output": [
+    "True True True False"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-065-dict-order",
+   "lang": "py",
+   "file": "py/065-dict-order.py",
+   "code": "d = {\"a\": 1, \"b\": 2}\nd[\"a\"] = 3\nd[\"c\"] = 4\ndel d[\"b\"]\nd[\"b\"] = 5\nprint(list(d))\n",
+   "hash": "d2478d972b334f73",
+   "title": "Dictionary order",
+   "difficulty": 2,
+   "tags": [
+    "dicts",
+    "ordering"
+   ],
+   "distractors": [
+    "['a', 'b', 'c']",
+    "['c', 'a', 'b']",
+    "['b', 'a', 'c']"
+   ],
+   "explain": "Dicts keep insertion order. Updating an existing key keeps its position, deleting removes it, and inserting it again puts it at the end.",
+   "output": [
+    "['a', 'c', 'b']"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-070-slicing",
+   "lang": "py",
+   "file": "py/070-slicing.py",
+   "code": "s = \"abc\"\nprint(s[1:10], s[10:], s[-1], s[::-1])\n",
+   "hash": "4cf942fcd9cdae26",
+   "title": "Slices never complain",
+   "difficulty": 1,
+   "tags": [
+    "strings",
+    "slicing"
+   ],
+   "distractors": [
+    "IndexError",
+    "bc abc c cba",
+    "bc None c cba"
+   ],
+   "explain": "Slicing clamps out-of-range indices instead of raising, so s[1:10] is \"bc\" and s[10:] is an empty string. Negative indices count from the end, and [::-1] reverses.",
+   "output": [
+    "bc  c cba"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-075-class-attribute",
+   "lang": "py",
+   "file": "py/075-class-attribute.py",
+   "code": "class A:\n    items = []\n\na = A()\nb = A()\na.items.append(1)\nb.items = [2]\nA.items.append(3)\nprint(a.items, b.items, A.items)\n",
+   "hash": "b4b1defcc2387c5d",
+   "title": "Class attribute or instance attribute?",
+   "difficulty": 3,
+   "tags": [
+    "classes",
+    "attributes"
+   ],
+   "distractors": [
+    "[1] [2] [3]",
+    "[1, 3] [2, 3] [1, 3]",
+    "[1, 2, 3] [1, 2, 3] [1, 2, 3]"
+   ],
+   "explain": "a.items.append mutates the single list on the class, shared by every instance. b.items = [2] creates a new instance attribute that shadows it for b only. A.items.append(3) mutates the class list, which a still sees.",
+   "output": [
+    "[1, 3] [2] [1, 3]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-080-for-else",
+   "lang": "py",
+   "file": "py/080-for-else.py",
+   "code": "for i in range(3):\n    if i == 5:\n        break\nelse:\n    print(\"no break\")\n\nfor i in range(3):\n    if i == 1:\n        break\nelse:\n    print(\"broke\")\n",
+   "hash": "f33488e557ae55a5",
+   "title": "for … else",
+   "difficulty": 2,
+   "tags": [
+    "loops",
+    "control flow"
+   ],
+   "distractors": [
+    "no break\nbroke",
+    "broke",
+    "no break\nno break"
+   ],
+   "explain": "The else clause of a loop runs only when the loop finishes without hitting break. The first loop never breaks, so \"no break\" prints; the second breaks at i == 1, so its else is skipped.",
+   "output": [
+    "no break"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-085-exhausted-generator",
+   "lang": "py",
+   "file": "py/085-exhausted-generator.py",
+   "code": "g = (x * x for x in range(3))\nprint(sum(g), sum(g), list(g))\n",
+   "hash": "c4671aa989ac2f2f",
+   "title": "Used up",
+   "difficulty": 2,
+   "tags": [
+    "generators",
+    "iterators"
+   ],
+   "distractors": [
+    "5 5 [0, 1, 4]",
+    "5 5 []",
+    "5 0 [0, 1, 4]"
+   ],
+   "explain": "A generator can only be consumed once. The first sum drains it (0 + 1 + 4 = 5), so the second sum sees nothing and list() gets an empty iterator.",
+   "output": [
+    "5 0 []"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-090-star-unpacking",
+   "lang": "py",
+   "file": "py/090-star-unpacking.py",
+   "code": "a, *b, c = [1, 2, 3, 4, 5]\nprint(a, b, c)\n*x, = \"hi\"\nprint(x)\n",
+   "hash": "1932091a1715c491",
+   "title": "Star unpacking",
+   "difficulty": 2,
+   "tags": [
+    "unpacking",
+    "sequences"
+   ],
+   "distractors": [
+    "1 [2, 3, 4] 5\nhi",
+    "1 (2, 3, 4) 5\n['h', 'i']",
+    "1 [2, 3, 4, 5]\n['h', 'i']"
+   ],
+   "explain": "The starred target collects whatever is left after the other names take theirs, always as a list. *x, = \"hi\" is the same trick with a single starred target, so it slurps every character.",
+   "output": [
+    "1 [2, 3, 4] 5",
+    "['h', 'i']"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-095-float-vs-int",
+   "lang": "py",
+   "file": "py/095-float-vs-int.py",
+   "code": "print(0.1 + 0.2, 0.1 + 0.2 == 0.3, 1e16 + 1, 2 ** 53 + 1)\n",
+   "hash": "242e01ffdb05ac12",
+   "title": "Floats and ints under pressure",
+   "difficulty": 2,
+   "tags": [
+    "floats",
+    "integers"
+   ],
+   "distractors": [
+    "0.3 True 1e+16 9007199254740992",
+    "0.30000000000000004 False 10000000000000001 9007199254740993",
+    "0.30000000000000004 False 1e+16 9007199254740992"
+   ],
+   "explain": "0.1 + 0.2 is the usual binary rounding surprise. 1e16 is a float, so adding 1 is lost to precision and repr shows 1e+16. 2 ** 53 + 1 is pure integer arithmetic, which is exact at any size.",
+   "output": [
+    "0.30000000000000004 False 1e+16 9007199254740993"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-100-not-precedence",
+   "lang": "py",
+   "file": "py/100-not-precedence.py",
+   "code": "print(not 1 == 2, not 1 + 1, (not 1) + 1)\n",
+   "hash": "5ce3e5f0e5a9fe9c",
+   "title": "Where does not bind?",
+   "difficulty": 3,
+   "tags": [
+    "operators",
+    "precedence"
+   ],
+   "distractors": [
+    "False False 1",
+    "True False 0",
+    "True True 1"
+   ],
+   "explain": "not has lower precedence than comparison and arithmetic operators. not 1 == 2 is not (1 == 2) → True; not 1 + 1 is not (2) → False; (not 1) + 1 is False + 1 → 1.",
+   "output": [
+    "True False 1"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-105-string-methods",
+   "lang": "py",
+   "file": "py/105-string-methods.py",
+   "code": "print(\"Hello\".swapcase(), \"a-b-c\".split(\"-\", 1), \"  x \".strip() + \"|\")\n",
+   "hash": "527f726aa93e7593",
+   "title": "String methods",
+   "difficulty": 1,
+   "tags": [
+    "strings",
+    "methods"
+   ],
+   "distractors": [
+    "hELLO ['a', 'b', 'c'] x|",
+    "HELLO ['a', 'b-c'] x |",
+    "hELLO ['a', 'b-c']   x |"
+   ],
+   "explain": "swapcase flips the case of every letter. split with maxsplit=1 stops after the first separator. strip removes surrounding whitespace before the \"|\" is appended.",
+   "output": [
+    "hELLO ['a', 'b-c'] x|"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-110-get-vs-setdefault",
+   "lang": "py",
+   "file": "py/110-get-vs-setdefault.py",
+   "code": "d = {}\nprint(d.get(\"a\", 1), d)\nd.setdefault(\"a\", 2)\nprint(d.get(\"a\", 1), d)\n",
+   "hash": "1d0d6645a6345c02",
+   "title": "get versus setdefault",
+   "difficulty": 2,
+   "tags": [
+    "dicts"
+   ],
+   "distractors": [
+    "1 {'a': 1}\n2 {'a': 2}",
+    "1 {}\n1 {'a': 2}",
+    "1 {}\n2 {}"
+   ],
+   "explain": "get returns the default without touching the dict. setdefault inserts the default when the key is missing, so afterwards \"a\" exists with the value 2 and get finds it.",
+   "output": [
+    "1 {}",
+    "2 {'a': 2}"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-115-sorted-stable",
+   "lang": "py",
+   "file": "py/115-sorted-stable.py",
+   "code": "print(sorted([\"bb\", \"a\", \"ccc\", \"dd\"], key=len))\nprint(sorted([3, 1, 2], reverse=True))\n",
+   "hash": "ee4fb0c7ea10c61b",
+   "title": "Sorting by key",
+   "difficulty": 2,
+   "tags": [
+    "sorting",
+    "stability"
+   ],
+   "distractors": [
+    "['ccc', 'dd', 'bb', 'a']\n[3, 2, 1]",
+    "['a', 'dd', 'bb', 'ccc']\n[3, 2, 1]",
+    "['a', 'bb', 'dd', 'ccc']\n[1, 2, 3]"
+   ],
+   "explain": "Sorting is stable, so \"bb\" and \"dd\" (equal length) keep their original order. sorted with reverse=True still keeps equal elements in original order but here they are all distinct.",
+   "output": [
+    "['a', 'bb', 'dd', 'ccc']",
+    "[3, 2, 1]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-120-dict-key-collision",
+   "lang": "py",
+   "file": "py/120-dict-key-collision.py",
+   "code": "print(1 == 1.0, hash(1) == hash(1.0), {1: \"a\", 1.0: \"b\", True: \"c\"})\n",
+   "hash": "90962b0ff2b0f3af",
+   "title": "Three keys, one slot",
+   "difficulty": 3,
+   "tags": [
+    "dicts",
+    "hashing",
+    "equality"
+   ],
+   "distractors": [
+    "True True {1: 'a', 1.0: 'b', True: 'c'}",
+    "True False {1: 'c'}",
+    "True True {True: 'c'}"
+   ],
+   "explain": "1, 1.0 and True are all equal and hash to the same value, so they are the same dict key. The first key written (1) keeps its spelling; later writes only update the value, ending with \"c\".",
+   "output": [
+    "True True {1: 'c'}"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-125-exception-hierarchy",
+   "lang": "py",
+   "file": "py/125-exception-hierarchy.py",
+   "code": "try:\n    int(\"x\")\nexcept (ValueError, TypeError) as e:\n    print(type(e).__name__)\n\ntry:\n    {}[\"k\"]\nexcept LookupError as e:\n    print(type(e).__name__)\n",
+   "hash": "8759c49967142000",
+   "title": "Which exception?",
+   "difficulty": 3,
+   "tags": [
+    "exceptions",
+    "hierarchy"
+   ],
+   "distractors": [
+    "TypeError\nKeyError",
+    "ValueError\nLookupError",
+    "ValueError\nIndexError"
+   ],
+   "explain": "int(\"x\") raises ValueError. A missing dict key raises KeyError, which is a subclass of LookupError, so the broader except clause catches it — but the object's own class name is still KeyError.",
+   "output": [
+    "ValueError",
+    "KeyError"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-130-nonlocal-unbound",
+   "lang": "py",
+   "file": "py/130-nonlocal-unbound.py",
+   "code": "def outer():\n    x = 1\n    def inner():\n        nonlocal x\n        x += 1\n        return x\n    inner()\n    inner()\n    return x\n\nprint(outer())\n\ny = 0\ndef f():\n    try:\n        y += 1\n    except UnboundLocalError:\n        print(\"unbound\")\n\nf()\n",
+   "hash": "591fe16fcd17cc80",
+   "title": "nonlocal and the unbound local",
+   "difficulty": 3,
+   "tags": [
+    "scope",
+    "closures"
+   ],
+   "distractors": [
+    "3\n1",
+    "1\nunbound",
+    "3\nNameError"
+   ],
+   "explain": "nonlocal lets inner() rebind outer's x, so two calls take it to 3. In f(), the assignment y += 1 makes y local to the whole function, and reading it before assignment raises UnboundLocalError, even though a global y exists.",
+   "output": [
+    "3",
+    "unbound"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-135-format-spec",
+   "lang": "py",
+   "file": "py/135-format-spec.py",
+   "code": "x = 3.14159\nprint(f\"{x:.2f}|{x:8.1f}|{'hi':>5}|{42:05d}\")\n",
+   "hash": "f775b3316931e7bc",
+   "title": "Format specs",
+   "difficulty": 2,
+   "tags": [
+    "f-strings",
+    "formatting"
+   ],
+   "distractors": [
+    "3.14|3.1|hi|42",
+    "3.14|     3.1|hi   |00042",
+    "3.142|     3.1|   hi|42"
+   ],
+   "explain": ".2f rounds to two decimals; 8.1f pads to width 8; >5 right-aligns in a field of 5; 05d zero-pads an integer to width 5.",
+   "output": [
+    "3.14|     3.1|   hi|00042"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-140-range-tricks",
+   "lang": "py",
+   "file": "py/140-range-tricks.py",
+   "code": "print(list(range(10, 0, -3)), list(range(0)), range(5)[-1])\n",
+   "hash": "4f446bd9b6e8c2e6",
+   "title": "range from the other end",
+   "difficulty": 1,
+   "tags": [
+    "range",
+    "sequences"
+   ],
+   "distractors": [
+    "[10, 7, 4, 1] [] 5",
+    "[10, 7, 4] [] 4",
+    "[10, 7, 4, 1] [0] 4"
+   ],
+   "explain": "range(10, 0, -3) counts down until it would pass 0. range(0) is empty. range objects support indexing, and -1 gives the last element, 4.",
+   "output": [
+    "[10, 7, 4, 1] [] 4"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-145-all-any-empty",
+   "lang": "py",
+   "file": "py/145-all-any-empty.py",
+   "code": "print(all([]), any([]), all([[]]), any([[]]))\n",
+   "hash": "2fb89694916285d2",
+   "title": "all and any of nothing",
+   "difficulty": 2,
+   "tags": [
+    "builtins",
+    "truthiness"
+   ],
+   "distractors": [
+    "False False False False",
+    "True False True True",
+    "True True False False"
+   ],
+   "explain": "all([]) is True (no element is false) and any([]) is False (no element is true). A list containing an empty list has one falsy element, so all is False and any is False.",
+   "output": [
+    "True False False False"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-150-set-of-equals",
+   "lang": "py",
+   "file": "py/150-set-of-equals.py",
+   "code": "print({3, 1, 2}, sorted({3, 1, 2}, reverse=True), len({1, 1.0, True}))\n",
+   "hash": "dbccfb3e91a10e90",
+   "title": "Sets and equal values",
+   "difficulty": 2,
+   "tags": [
+    "sets",
+    "equality"
+   ],
+   "distractors": [
+    "{3, 1, 2} [3, 2, 1] 3",
+    "{1, 2, 3} [3, 2, 1] 2",
+    "{1, 2, 3} [1, 2, 3] 1"
+   ],
+   "explain": "Small integers hash to themselves, so this set iterates in numeric order. 1, 1.0 and True are equal with the same hash, so the set keeps only one of them.",
+   "output": [
+    "{1, 2, 3} [3, 2, 1] 1"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-155-zip-shortest",
+   "lang": "py",
+   "file": "py/155-zip-shortest.py",
+   "code": "print(dict(zip(\"abc\", range(10))))\nprint(list(zip([1, 2], [3])))\n",
+   "hash": "2653b52e3aefb24f",
+   "title": "zip stops early",
+   "difficulty": 2,
+   "tags": [
+    "zip",
+    "dicts"
+   ],
+   "distractors": [
+    "{'a': 0, 'b': 1, 'c': 2}\n[(1, 3), (2, None)]",
+    "ValueError",
+    "{'a': 0, 'b': 1, 'c': 2, 3: None}\n[(1, 3)]"
+   ],
+   "explain": "zip stops at the shortest input. Pairing \"abc\" with range(10) yields three pairs; pairing a two-element list with a one-element list yields one.",
+   "output": [
+    "{'a': 0, 'b': 1, 'c': 2}",
+    "[(1, 3)]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-160-remove-while-iterating",
+   "lang": "py",
+   "file": "py/160-remove-while-iterating.py",
+   "code": "a = [1, 2, 2, 3]\nfor x in a:\n    if x == 2:\n        a.remove(x)\nprint(a)\n",
+   "hash": "3782b9b0e89b387a",
+   "title": "Removing while iterating",
+   "difficulty": 3,
+   "tags": [
+    "lists",
+    "iteration"
+   ],
+   "distractors": [
+    "[1, 3]",
+    "[1, 2, 2, 3]",
+    "[]"
+   ],
+   "explain": "The loop walks by index. After removing the first 2 at index 1, the second 2 slides into index 1 — which the loop has already passed — so it survives. Never mutate a list you are iterating over.",
+   "output": [
+    "[1, 2, 3]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-165-join-needs-strings",
+   "lang": "py",
+   "file": "py/165-join-needs-strings.py",
+   "code": "try:\n    print(\",\".join([1, 2]))\nexcept TypeError:\n    print(\"TypeError\")\nprint(\",\".join(map(str, [1, 2])))\n",
+   "hash": "b895f95dff700a2d",
+   "title": "join wants strings",
+   "difficulty": 2,
+   "tags": [
+    "strings",
+    "join",
+    "errors"
+   ],
+   "distractors": [
+    "1,2\n1,2",
+    "3\n1,2",
+    "TypeError\n[1, 2]"
+   ],
+   "explain": "str.join only accepts strings; integers raise TypeError. Mapping str over the list first fixes it.",
+   "output": [
+    "TypeError",
+    "1,2"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-170-shallow-deep-copy",
+   "lang": "py",
+   "file": "py/170-shallow-deep-copy.py",
+   "code": "import copy\n\na = [[1], [2]]\nb = a[:]\nc = copy.deepcopy(a)\na[0].append(9)\nprint(b, c)\n",
+   "hash": "c1ec9078abe8aa41",
+   "title": "Shallow versus deep",
+   "difficulty": 2,
+   "tags": [
+    "copying",
+    "references"
+   ],
+   "distractors": [
+    "[[1], [2]] [[1], [2]]",
+    "[[1, 9], [2]] [[1, 9], [2]]",
+    "[[1], [2]] [[1, 9], [2]]"
+   ],
+   "explain": "A slice copies the outer list but not the inner lists, so b still shares the inner [1] with a and sees the appended 9. deepcopy duplicates everything, so c is untouched.",
+   "output": [
+    "[[1, 9], [2]] [[1], [2]]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 14
+  },
+  {
+   "id": "py-175-print-sep-end",
+   "lang": "py",
+   "file": "py/175-print-sep-end.py",
+   "code": "print(\"a\", \"b\", sep=\"-\", end=\"!\")\nprint(\"c\")\n",
+   "hash": "5909d3dbaefd79bf",
+   "title": "sep and end",
+   "difficulty": 1,
+   "tags": [
+    "print"
+   ],
+   "distractors": [
+    "a b!\nc",
+    "a-b\n!c",
+    "a-b!c!"
+   ],
+   "explain": "sep goes between arguments and end replaces the newline. Since the first print ends with \"!\" and no newline, \"c\" lands on the same line.",
+   "output": [
+    "a-b!c"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-180-str-vs-repr",
+   "lang": "py",
+   "file": "py/180-str-vs-repr.py",
+   "code": "class P:\n    def __repr__(self):\n        return \"R\"\n    def __str__(self):\n        return \"S\"\n\np = P()\nprint(p, [p], f\"{p}\", f\"{p!r}\")\n",
+   "hash": "7d79bc29b150ce87",
+   "title": "__str__ versus __repr__",
+   "difficulty": 3,
+   "tags": [
+    "classes",
+    "dunder methods"
+   ],
+   "distractors": [
+    "S [S] S S",
+    "R [R] R R",
+    "S [R] R S"
+   ],
+   "explain": "print and f-strings use __str__. Containers show their elements with __repr__, and the !r conversion asks for __repr__ explicitly.",
+   "output": [
+    "S [R] S R"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-185-inplace-vs-new",
+   "lang": "py",
+   "file": "py/185-inplace-vs-new.py",
+   "code": "a = [1]\nb = a\na += [2]\nprint(a is b)\na = a + [3]\nprint(a is b, b)\n",
+   "hash": "071efc87bc571f38",
+   "title": "+= on a list",
+   "difficulty": 3,
+   "tags": [
+    "lists",
+    "augmented assignment",
+    "references"
+   ],
+   "distractors": [
+    "False\nFalse [1]",
+    "True\nTrue [1, 2, 3]",
+    "True\nFalse [1, 2, 3]"
+   ],
+   "explain": "a += [2] extends the existing list in place, so b (the same object) sees it. a = a + [3] builds a new list and rebinds a, leaving b at [1, 2].",
+   "output": [
+    "True",
+    "False [1, 2]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-190-truthy-strings",
+   "lang": "py",
+   "file": "py/190-truthy-strings.py",
+   "code": "print(bool(\"False\"), bool(\"\"), bool(0.0), bool([0]), bool(None))\n",
+   "hash": "2c65a047047de877",
+   "title": "Truthiness of odd values",
+   "difficulty": 1,
+   "tags": [
+    "truthiness",
+    "bool"
+   ],
+   "distractors": [
+    "False False False False False",
+    "True False False False False",
+    "True True False True False"
+   ],
+   "explain": "Any non-empty string is truthy, including \"False\". Empty strings, zero, and None are falsy. A list is truthy if it has any elements, even a single 0.",
+   "output": [
+    "True False False True False"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-195-nested-comprehension",
+   "lang": "py",
+   "file": "py/195-nested-comprehension.py",
+   "code": "print([[j for j in range(i)] for i in range(3)])\n",
+   "hash": "88776345c3a2339d",
+   "title": "Nested comprehension",
+   "difficulty": 2,
+   "tags": [
+    "comprehensions"
+   ],
+   "distractors": [
+    "[[0], [0, 1], [0, 1, 2]]",
+    "[[0], [0, 1]]",
+    "[[0, 1, 2], [0, 1], [0]]"
+   ],
+   "explain": "The inner range(i) has i elements, and i runs 0, 1, 2, so the rows have 0, 1 and 2 elements respectively.",
+   "output": [
+    "[[], [0], [0, 1]]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-200-power-precedence",
+   "lang": "py",
+   "file": "py/200-power-precedence.py",
+   "code": "print(-3 ** 2, (-3) ** 2, 2 ** -1, 10 / 5)\n",
+   "hash": "091d817175ce51ca",
+   "title": "Powers and signs",
+   "difficulty": 2,
+   "tags": [
+    "operators",
+    "precedence"
+   ],
+   "distractors": [
+    "9 9 0.5 2",
+    "-9 9 0 2.0",
+    "-9 9 0.5 2"
+   ],
+   "explain": "** binds tighter than unary minus, so -3 ** 2 is -(3 ** 2) = -9. Parentheses fix it. A negative exponent yields a float, and / always returns a float, even for exact division.",
+   "output": [
+    "-9 9 0.5 2.0"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-205-global-shadow",
+   "lang": "py",
+   "file": "py/205-global-shadow.py",
+   "code": "x = 10\n\ndef f():\n    x = 20\n    return x\n\nprint(f(), x)\n\ndef g():\n    global x\n    x = 30\n\ng()\nprint(x)\n",
+   "hash": "573fe0c4b5c8a755",
+   "title": "Shadowing a global",
+   "difficulty": 2,
+   "tags": [
+    "scope",
+    "global"
+   ],
+   "distractors": [
+    "20 20\n30",
+    "20 10\n10",
+    "10 10\n30"
+   ],
+   "explain": "Assigning x inside f() creates a local x that shadows the global, which stays 10. g() declares global x, so its assignment changes the module-level variable.",
+   "output": [
+    "20 10",
+    "30"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 12
+  },
+  {
+   "id": "py-210-string-identity",
+   "lang": "py",
+   "file": "py/210-string-identity.py",
+   "code": "s = \"banana\"\nprint(s.count(\"an\"), \"aaa\".count(\"aa\"), s.rfind(\"a\") - s.find(\"a\"))\n",
+   "hash": "10900afb10c05d6d",
+   "title": "Counting with strings",
+   "difficulty": 2,
+   "tags": [
+    "strings",
+    "methods"
+   ],
+   "distractors": [
+    "2 3 2",
+    "3 2 1",
+    "2 2 1"
+   ],
+   "explain": "count finds non-overlapping occurrences, so \"aaa\" contains \"aa\" only once. find returns the first index; rfind the last.",
+   "output": [
+    "2 1 4"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  },
+  {
+   "id": "py-215-walrus",
+   "lang": "py",
+   "file": "py/215-walrus.py",
+   "code": "data = [1, 2, 3]\nif (n := len(data)) > 2:\n    print(n)\nprint([y for x in data if (y := x * 2) < 10])\n",
+   "hash": "d7526b8489ab5140",
+   "title": "The walrus",
+   "difficulty": 3,
+   "tags": [
+    "walrus",
+    "assignment expressions"
+   ],
+   "distractors": [
+    "3\n[1, 2, 3]",
+    "6\n[1, 2, 3, 3]",
+    "3\n[1, 2, 3, 6]"
+   ],
+   "explain": ":= assigns and yields the value in one expression. n becomes 3 inside the if. In the comprehension, y is assigned to the doubled value inside the filter and then used as the element, so the result is the doubled values — and unlike x, y leaks out of the comprehension (it is 6 afterwards).",
+   "output": [
+    "3",
+    "[2, 4, 6]"
+   ],
+   "verified": true,
+   "problems": [],
+   "ms": 13
+  }
+ ]
+}
