@@ -22,188 +22,234 @@
 const TOOL_SEO = {
   // 46 Toolkit Additions
   'pdf-watermark': {
-    title: 'PDF Watermark Online Free — Add Text or Logo Stamp',
-    description: 'Add custom text or image watermark stamps to your PDF online. Adjust opacity, rotation, and placement with zero file uploads.',
+    title: 'Add Watermark to PDF Free: Text or Logo, Tiled or Centred',
+    description:
+      'Add a text or logo watermark to any PDF free, with no sign-up. Set opacity, angle and pages, or tile it or place it behind text. Files are never stored.',
   },
   'pdf-page-numbers': {
-    title: 'Add Page Numbers to PDF Free — Custom Pagination',
-    description: 'Insert page numbers into any position in your PDF document. Support for Arabic, Roman, and Bates numbering formats.',
+    title: 'Add Page Numbers to PDF Free: Page X of Y, Roman, Bates',
+    description:
+      'Add page numbers to PDF files free: Page X of Y footers, skipped covers, roman numeral front matter and ABC-001 Bates labels. No sign-up, nothing stored.',
   },
   'pdf-esign': {
-    title: 'Sign PDF Online Free — Draw, Type or Stamp e-Sign',
-    description: 'Draw or type your signature and position it on any page of your PDF. 100% private, client-side digital signing.',
+    title: 'Sign PDF Online Free: Draw, Type or Add Your Signature',
+    description:
+      'Sign a PDF online free: draw, type or add your signature, place it with the date and your name on any page, and download a clean copy. No account.',
   },
   'pdf-redact': {
-    title: 'Redact PDF Online — Permanently Blackout Sensitive Data',
-    description: 'Permanently remove and black out confidential text, CNIC numbers, and secrets from PDF content streams.',
+    title: 'Redact PDF Online Free: Truly Remove Text, Then Verify',
+    description:
+      'Black out text in a PDF and delete it from the file, not just cover it. Find every match, check that the result is clean, and download. Free, no sign-up.',
   },
   'pdf-grayscale': {
-    title: 'Convert PDF to Grayscale — Black & White PDF Tool',
-    description: 'Convert color PDFs to pure grayscale to reduce printing ink costs and meet government portal document upload standards.',
+    title: 'Convert PDF to Grayscale Free: Print-Ready Gray PDF',
+    description:
+      'Convert PDF to grayscale free, for every page or only the ones you pick. Text stays selectable and sharp, photos turn truly gray, and no watermark is.',
   },
   'pdf-compare': {
-    title: 'Compare PDF Files Online — Visual & Text Diff Tool',
-    description: 'Compare two PDF documents side-by-side. Highlights added and deleted lines and detects metadata differences.',
+    title: 'Compare Two PDF Files Free: See Every Text Change',
+    description:
+      'Compare two PDF files free: see which pages changed, the exact words removed or added, author and date metadata, and download the diff as a patch.',
   },
   'pdf-bookmarks': {
-    title: 'PDF Bookmarks & Outline Editor — Build Clickable TOC',
-    description: 'View, edit, and organize PDF outline bookmarks or automatically insert an interactive table of contents page.',
+    title: 'Add Bookmarks to PDF Free, with a Contents Page',
+    description:
+      'Add, edit and nest PDF bookmarks free. Paste a chapter list as Title | page, keep existing bookmarks, and add a table of contents page. No sign-up.',
   },
   'docx-to-pdf': {
-    title: 'Word to PDF Converter Online Free — DOCX to PDF',
-    description: 'Convert DOCX Word documents into beautifully styled PDFs in your browser without requiring Microsoft Office.',
+    title: 'DOCX to PDF Converter: Free Word to PDF, No Sign-Up',
+    description:
+      'Convert DOCX to PDF free on A4, US Letter, Legal or A5 with your own margins. No account or watermark, and files are never stored on our servers.',
   },
   'xlsx-to-pdf': {
-    title: 'Excel to PDF Converter — XLSX Spreadsheets to PDF',
-    description: 'Turn Excel worksheets into cleanly formatted, page-aligned PDF tables without server uploads.',
+    title: 'Excel to PDF Free: Fit Every Column on the Page',
+    description:
+      'Convert Excel to PDF free with every column fitted to the page, the header row on each page, and your pick of sheets. No sign-up, no watermark.',
   },
   'image-to-pdf': {
-    title: 'Image to PDF Converter — JPG, PNG, WebP to PDF',
-    description: 'Combine multiple JPG, PNG, and WebP images into a single multi-page PDF with margins and sizing controls.',
+    title: 'JPG to PDF: Combine Photos Into One Sharp PDF Free',
+    description:
+      'Turn JPG, PNG and WebP images into one PDF on A4 or Letter, with JPGs kept at full resolution. Free, no sign-up, no watermark, files never stored.',
   },
   'heic-to-jpg': {
-    title: 'HEIC to JPG Converter Free — iPhone Photos to JPG',
-    description: 'Convert Apple iPhone HEIC and HEIF photos to universal JPG or PNG format right inside your browser.',
+    title: 'HEIC to JPG Converter: Free, Full Resolution, Batch ZIP',
+    description:
+      'Convert HEIC to JPG free: batch iPhone HEIC and HEIF photos to JPG, PNG or WebP at full resolution, download as one ZIP. No sign-up, no watermark.',
   },
   'avif-to-jpg': {
-    title: 'AVIF to JPG Converter — Convert Modern AVIF Images',
-    description: 'Convert modern AVIF images to JPG, PNG, or WebP with adjustable quality and batch conversion support.',
+    title: 'AVIF to JPG Converter: Free, Batch, High Quality',
+    description:
+      'Convert AVIF to JPG, PNG or WebP free. Batch convert to one ZIP, pick quality from 40 to 100% and keep the original pixel size.',
   },
   'gif-to-mp4': {
-    title: 'GIF to MP4 Video Converter — Compress Animated GIFs',
-    description: 'Convert heavy animated GIFs into lightweight, fast-loading MP4 or WebM videos locally with built-in muxing.',
+    title: 'GIF to MP4 Converter: Free, No Watermark or Sign-Up',
+    description:
+      'Convert GIF to MP4 free, with no watermark or sign-up. Keep the original rhythm, loop short clips, and get a video Instagram, TikTok and WhatsApp accept.',
   },
   'webm-mp4': {
-    title: 'WebM to MP4 Converter — Convert Video in Browser',
-    description: 'Convert WebM screen recordings into MP4 videos and vice-versa with quality, resolution, and audio controls.',
+    title: 'WebM to MP4 Converter Free, Plus MP4 to WebM',
+    description:
+      'Convert WebM to MP4 free so it plays on iPhone, QuickTime and PowerPoint. Choose resolution, frame rate and quality, keep audio, no watermark.',
   },
   'ogg-to-mp3': {
-    title: 'OGG / Opus to MP3 Converter — Voice Note Converter',
-    description: 'Convert WhatsApp voice notes (.opus / .ogg) and Telegram audio to universal WAV or M4A formats.',
+    title: 'Opus to WAV & OGG to M4A Converter, Free Online',
+    description:
+      'Convert Opus, OGG, OGA and WebM voice notes to WAV or M4A that play anywhere. Trim, mono and normalise options. Free, and files are never stored.',
   },
   'm4a-to-mp3': {
-    title: 'M4A to MP3 Audio Converter — Apple Audio to WAV',
-    description: 'Convert Apple Voice Memos and iTunes M4A audio files into standard WAV or AAC format with audio trimming.',
+    title: 'M4A to WAV Converter for Voice Memos and AAC, Free',
+    description:
+      'Convert M4A and AAC voice memos to WAV free. Trim dead air, downmix to mono, lift quiet recordings to -1 dB peak, and pick 16 or 24-bit output.',
   },
   'csv-json': {
-    title: 'CSV to JSON Converter & JSON to CSV Online',
-    description: 'Two-way conversion between tabular CSV files and structured JSON objects with delimiter auto-detection.',
+    title: 'CSV to JSON Converter - Free, Two-Way, Nested JSON to CSV',
+    description:
+      'Convert CSV to JSON or JSON to CSV free. Keeps leading zeros, auto-detects semicolon and tab files, and flattens nested JSON into clean columns.',
   },
   'xml-json': {
-    title: 'XML to JSON Converter & JSON to XML Online Free',
-    description: 'Convert legacy XML documents to clean JSON and vice-versa for API debugging and software development.',
+    title: 'XML to JSON Converter, and JSON to XML, Free',
+    description:
+      'Convert XML to JSON and back for free. Attributes become @ keys, repeated tags become arrays, and leading zeros stay intact. Pretty-print or minify XML.',
   },
   'yaml-json': {
-    title: 'YAML to JSON Converter & JSON to YAML Online',
-    description: 'Convert Kubernetes configs, Docker-Compose files, and YAML documents to JSON and back with inline validation.',
+    title: 'YAML to JSON Converter: Free, Both Directions',
+    description:
+      'Convert YAML to JSON or JSON to YAML free. NO and yes stay strings, anchors expand, 2 or 4 space indent, and errors show the line to fix.',
   },
   'sql-csv': {
-    title: 'SQL to CSV Converter & CSV to SQL INSERTs',
-    description: 'Turn CSV spreadsheets into bulk SQL INSERT queries or extract database tables from SQL dumps to CSV format.',
+    title: 'CSV to SQL INSERT Converter, and SQL to CSV',
+    description:
+      'Turn CSV rows into INSERT statements for MySQL, PostgreSQL, SQLite or SQL Server, with CREATE TABLE, NULLs and apostrophes handled. Free, no sign-up.',
   },
   'markdown-converter': {
-    title: 'Markdown to PDF & HTML Converter Online',
-    description: 'Render Markdown notes into styled HTML pages or printable PDFs with code syntax highlighting and table support.',
+    title: 'Markdown to PDF & HTML Converter, Free with Live Preview',
+    description:
+      'Convert Markdown to PDF or HTML free. Live preview, A4 or US Letter, tables and task lists kept, plus a paste-ready HTML fragment for your blog.',
   },
   'archive-to-zip': {
-    title: 'TAR, GZ to ZIP Converter — Repack Archives Online',
-    description: 'Inspect and repack TAR, TAR.GZ, TGZ, and GZ archives into standard ZIP files directly in your browser.',
+    title: 'TAR.GZ to ZIP Converter: TGZ, TAR and GZ Free',
+    description:
+      'Convert TAR.GZ, TGZ, TAR and GZ to ZIP free. Preview contents first, merge several archives into one ZIP, no sign-up and no size cap.',
   },
   'timestamp-converter': {
-    title: 'Unix Timestamp to Date Converter — Epoch Time Tool',
-    description: 'Convert Unix epoch timestamps (seconds and milliseconds) to readable human dates across all timezones.',
+    title: 'Unix Timestamp Converter: Epoch to Date and Back',
+    description:
+      'Convert Unix timestamps to dates and back. Auto-detects seconds, milliseconds, microseconds or nanoseconds and shows UTC, ISO 8601 and your time zone.',
   },
   'background-remover': {
-    title: 'Free Background Remover Online — Transparent PNG Cutout',
-    description: 'Remove plain and studio backgrounds from product photos and logos with tolerance and edge feathering controls.',
+    title: 'Remove White Background from Logo - Free Transparent PNG',
+    description:
+      'Remove the white background from a logo, signature or product photo, including inside letters. Fix halos and download a transparent PNG or WebP.',
   },
   'favicon-generator': {
-    title: 'Favicon & App Icon Generator — Multi-Size Icon Suite',
-    description: 'Generate multi-size favicon.ico, 16-512px PNGs, Apple Touch icon, and site.webmanifest package.',
+    title: 'Favicon Generator: ICO, Apple Touch Icon and Manifest',
+    description:
+      'Turn one logo into favicon.ico, PNG icons, an apple-touch-icon and a web manifest in one ZIP, with the HTML head snippet ready to paste. Free, no sign-up.',
   },
   'exif-remover': {
-    title: 'EXIF Metadata Stripper — Remove GPS from Photos',
-    description: 'Inspect camera and GPS coordinates and strip all EXIF metadata from JPG, PNG, and WebP photos for privacy.',
+    title: 'Remove EXIF Data from Photos Free, No Quality Loss',
+    description:
+      'Remove EXIF data and GPS location from JPG, PNG and WebP photos for free. See what each picture reveals first, then strip it with no loss in quality.',
   },
   'image-watermark': {
-    title: 'Batch Image Watermark — Stamp Photos in Bulk',
-    description: 'Apply copyright text or logo stamps onto multiple images in batch with opacity, rotation, and tile controls.',
+    title: 'Batch Watermark Photos Online Free: Text or Logo',
+    description:
+      'Stamp one text or logo watermark on every photo at once, corner or tiled diagonal, and download them all as a ZIP. Free, no sign-up, no added branding.',
   },
   'image-blur': {
-    title: 'Blur & Pixelate Image Online — Censor Private Details',
-    description: 'Blur, pixelate, or black out faces, license plates, and sensitive documents with an interactive brush.',
+    title: 'Blur Part of an Image Online Free: Faces, Plates, Text',
+    description:
+      'Blur, pixelate or black out faces, number plates, card numbers and chat names in any photo. Free, no sign-up, no watermark, and files are never stored.',
   },
   'image-ocr': {
-    title: 'Image to Text OCR Online — Extract Text from Images',
-    description: 'Extract editable text from screenshots, scanned documents, and photos using client-side text detection.',
+    title: 'Image to Text (OCR): Extract Text from a Photo Free',
+    description:
+      'Turn a photo or screenshot into text. Enlarge, sharpen and invert faint or dark-mode images so OCR reads them. Free, no sign-up, files never stored.',
   },
   'svg-optimizer': {
-    title: 'SVG Optimizer Online — Minify & Clean SVG Files',
-    description: 'Minify SVG files, strip Figma/Illustrator editor junk, round coordinates, and preview before and after sizes.',
+    title: 'SVG Optimizer: Minify and Clean SVG Code Free',
+    description:
+      'Free SVG optimizer that strips Inkscape, Illustrator and Figma bloat, rounds long decimals and shows a before/after preview so nothing breaks.',
   },
   'meme-generator': {
-    title: 'Free Meme Generator Online — Custom Caption Maker',
-    description: 'Create classic memes with custom top and bottom outlined impact captions and instant high-res PNG export.',
+    title: 'Meme Generator: Free Top and Bottom Text, No Watermark',
+    description:
+      'Free meme generator for your own pictures: classic Impact top and bottom text or white caption bars, live preview, JPG or PNG download.',
   },
   'jwt-decoder': {
-    title: 'JWT Decoder Online — Inspect Token Header & Payload',
-    description: 'Decode JWT tokens, inspect claims, verify expiration, and validate HS256/384/512 signatures without internet transmission.',
+    title: 'JWT Decoder: Decode, Check Expiry and Verify Signatures',
+    description:
+      'Free JWT decoder: paste a token to read its header and payload, see exp as a UTC date, and verify HS256, RS256 or ES256 signatures. No sign-up.',
   },
   'hash-generator': {
-    title: 'Hash & Checksum Generator — MD5, SHA-256, SHA-512',
-    description: 'Compute MD5, SHA-1, SHA-256, SHA-512, CRC32 hashes, and HMAC checksums for text and files locally.',
+    title: 'Hash Generator: MD5, SHA-256, CRC32 and HMAC Free',
+    description:
+      'Get MD5, SHA-1, SHA-256, SHA-512 and CRC32 of any text or file at once, and paste a checksum to see which one matches. Free, no sign-up.',
   },
   'uuid-generator': {
-    title: 'UUID & Secret Generator — UUID v4, v7, Password Maker',
-    description: 'Generate batch UUID v4/v7, ULIDs, cryptographic random passwords, and hex API secrets using Web Crypto.',
+    title: 'UUID Generator: Free v4, v7, ULID and Secret Keys',
+    description:
+      'Generate UUID v4, v7 and ULIDs in bulk, plus 256-bit JWT secrets, API keys and passwords. Free, no sign-up, and nothing you generate is ever stored.',
   },
   'sql-formatter': {
-    title: 'SQL Formatter & Beautifier — Format SQL Queries',
-    description: 'Format, indent, and beautify messy SQL queries for MySQL, PostgreSQL, SQLite, and SQL Server.',
+    title: 'SQL Formatter Online Free: Beautify and Minify SQL',
+    description:
+      'Paste a messy query or drop a .sql file and get clean, indented SQL. Pick uppercase or lowercase keywords and your indent, or minify it to one line.',
   },
   'css-generator': {
-    title: 'CSS Visual Generators — Box Shadow, Glassmorphism, Gradients',
-    description: 'Interactive visual UI generator for CSS box shadows, glassmorphism blur, linear/mesh gradients, and border radius.',
+    title: 'CSS Generator: Box Shadow, Glass, Gradient & Radius',
+    description:
+      'Free CSS generator for layered box shadows, glassmorphism, gradients, blob border radius and text shadows. Live preview, then copy or download the CSS.',
   },
   'regex-tester': {
-    title: 'RegEx Tester & Explainer — Test Regular Expressions',
-    description: 'Real-time regular expression tester with syntax highlighting, capture groups, and plain-English pattern explanations.',
+    title: 'Regex Tester: Test and Explain Regular Expressions Free',
+    description:
+      'Test regex free with live match highlighting, capture group tables, a replace preview and plain-English explanations of every token in your pattern.',
   },
   'diff-checker': {
-    title: 'Text & Code Diff Checker — Compare Text Differences',
-    description: 'Compare two code or text files side-by-side. Highlights line and character additions, deletions, and unified patches.',
+    title: 'Diff Checker: Compare Two Texts or Code Free',
+    description:
+      'Compare two texts or code files and see changed words or characters highlighted as you type. Ignore whitespace or case, then download a .patch file.',
   },
   'url-encoder': {
-    title: 'URL Encoder / Decoder & Query String Parser',
-    description: 'Encode and decode URLs, query parameters, Base64 strings, and HTML entities entirely in your browser.',
+    title: 'URL Encoder Decoder: Encode, Decode and Parse URLs Free',
+    description:
+      'Free URL encoder decoder: percent-encode or decode text, fix + vs %20, URI malformed and %2520 errors, and read every query parameter at a glance.',
   },
   'word-counter': {
-    title: 'Word & Character Counter — Reading Time & Text Stats',
-    description: 'Live word count, character count, sentence count, reading time, and keyword density as you type.',
+    title: 'Word Counter: Free Word and Character Count Tool',
+    description:
+      'Count words, characters, sentences and paragraphs as you type, with reading time, speaking time and keyword density. Free, and no sign-up needed.',
   },
   'case-converter': {
-    title: 'Case Converter Suite — UPPERCASE, camelCase, snake_case',
-    description: 'Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case.',
+    title: 'Case Converter: Upper, Lower, Title Case and camelCase',
+    description:
+      'Free case converter with 18 options: uppercase, lowercase, title and sentence case, camelCase, snake_case, kebab-case and URL slugs. Updates as you type.',
   },
   'line-tools': {
-    title: 'Duplicate Line Remover & Sorter — Clean Text Lists',
-    description: 'Remove duplicate lines, empty lines, sort alphabetically or naturally, reverse, and filter text entries.',
+    title: 'Remove Duplicate Lines and Sort Text Online, Free',
+    description:
+      'Remove duplicate lines, sort lists A to Z or naturally, count repeats, shuffle and number lines. Paste or drop a file; free, no sign-up, nothing stored.',
   },
   'video-trimmer': {
-    title: 'Video Trimmer Online — Cut MP4 & WebM Videos',
-    description: 'Frame-accurate browser video trimmer. Cut clips and export MP4 or WebM without uploading video files.',
+    title: 'Trim Video Online Free: Frame-Accurate MP4 Cutter',
+    description:
+      'Trim video online free and cut MP4 or WebM clips on the exact frame. No watermark, no sign-up, and your files are never stored on our servers.',
   },
   'audio-trimmer': {
-    title: 'Audio Trimmer & Ringtone Maker — Cut Audio Clips',
-    description: 'Trim audio files with interactive visual waveforms and fade in/out effects for custom ringtones and clips.',
+    title: 'Audio Trimmer: Free Ringtone Maker with Fade In and Out',
+    description:
+      'Cut any song or recording to the part you want, add a fade in and out, and export an M4A ringtone for iPhone or Android, or lossless WAV. Free.',
   },
   'video-muter': {
-    title: 'Video Audio Remover (Muter) — Mute Video Online',
-    description: 'Remove audio tracks from MP4, MOV, and WebM videos losslessly in 2 seconds with zero server uploads.',
+    title: 'Remove Audio from Video Online Free, No Quality Loss',
+    description:
+      'Remove audio from MP4, MOV or WebM videos in one click. MP4 and MOV keep every frame untouched, with no watermark, no sign-up and nothing stored.',
   },
   'video-speed': {
-    title: 'Video Speed Adjuster — Speed Up or Slow Down Video',
-    description: 'Adjust video speed from 0.25x to 4x while preserving natural audio pitch and export high quality MP4.',
+    title: 'Change Video Speed Online Free: 0.25x to 4x, Same Pitch',
+    description:
+      'Speed up or slow down any video from 0.25x to 4x and download MP4 or WebM. Voices keep their natural pitch, sound stays in sync, and there is no watermark.',
   },
   'pdf-compressor': {
     title: 'Compress PDF Online Free — Reduce PDF Size',

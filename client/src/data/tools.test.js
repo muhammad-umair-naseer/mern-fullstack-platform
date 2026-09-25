@@ -16,10 +16,9 @@ const toolDetail = read('../pages/ToolDetail.js');
 const slugs = TOOLS.map((t) => t.slug);
 const live = [...IMPLEMENTED];
 // The 46 toolkit tools render through ToolkitRunner from a module under
-// public/toolkit/src/tools; they have no guide yet, so the guide invariants
-// below apply to the React tools only. Their own invariant is the last test.
+// public/toolkit/src/tools rather than a case in ToolDetail; they are held to
+// every guide invariant like the rest, plus their own module check below.
 const toolkit = new Set(NEW_TOOLKIT_SLUGS);
-const guided = live.filter((s) => !toolkit.has(s));
 
 describe('tool catalogue', () => {
   test('slugs are unique', () => {
@@ -35,8 +34,8 @@ describe('tool catalogue', () => {
     expect(slugs.filter((s) => !toolkit.has(s) && !toolDetail.includes(`case '${s}':`))).toEqual([]);
   });
 
-  test('every live React tool has a guide, meta and FAQ data', () => {
-    const missing = guided
+  test('every live tool has a guide, meta and FAQ data', () => {
+    const missing = live
       .map((s) => ({
         slug: s,
         guide: Boolean(ARTICLES[s]),
@@ -49,7 +48,6 @@ describe('tool catalogue', () => {
 
   test('meta titles and descriptions fit a search result', () => {
     const bad = live
-      .filter((s) => TOOL_SEO[s])
       .map((s) => ({ slug: s, t: TOOL_SEO[s].title.length, d: TOOL_SEO[s].description.length }))
       .filter((r) => r.t < 15 || r.t > 70 || r.d < 50 || r.d > 160);
     expect(bad).toEqual([]);

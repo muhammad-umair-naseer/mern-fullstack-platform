@@ -1838,6 +1838,1750 @@ const TOOL_FAQS = {
       a: "No. Files are never stored on our servers, never queued or logged, and never retained after your session or used for training. The exported file is a new document; your PDF is left exactly as it was.",
     },
   ],
+  'pdf-watermark': [
+    {
+      q: "How do I add a watermark to a PDF for free?",
+      a: "Add your PDF to the tool at the top of this page, choose a text or logo watermark, set position, opacity and rotation, and press Apply watermark. Download the file named -watermarked.pdf. Your original is left as it was.",
+    },
+    {
+      q: "Is it safe to upload a PDF to watermark online?",
+      a: "Your files are never stored on our servers and nothing is retained after your session. Your documents are never used for training. That said, remember that a watermark labels a copy; it does not lock it, so add a password with the PDF password protector if the file itself needs guarding.",
+    },
+    {
+      q: "Why does my watermark text show wrong characters?",
+      a: "The built-in fonts cover Latin letters only, so Chinese, Japanese, Arabic, Cyrillic and emoji come out garbled. Save the text as a PNG image and use the Image / logo watermark mode instead.",
+    },
+    {
+      q: "Why does it say my PDF is encrypted?",
+      a: "The file has password protection, which the watermark tool cannot open. Remove the password with the PDF unlocker, watermark the unlocked copy, then add a password again with the PDF password protector if you need one.",
+    },
+    {
+      q: "Can I watermark only some pages?",
+      a: "Yes. Type the pages in the Pages box, for example 1 or 1,3-5, and leave it blank for every page.",
+    },
+    {
+      q: "Can I watermark several PDFs at once?",
+      a: "No. The tool handles one PDF per run and there is no batch option. Combine them first with the PDF merger if one marked document suits you.",
+    },
+    {
+      q: "My watermark hides the text underneath. How do I fix it?",
+      a: "Run the tool again on your unmarked original with a lower opacity, such as 20%, or tick Place behind page content. On scanned pages, lower the opacity instead, because a mark behind a scan is hidden by the scanned image.",
+    },
+    {
+      q: "Can I watermark a photo or a Word document here?",
+      a: "This tool takes PDFs only. For JPG or PNG photos, use the image watermark tool. For Word or Excel files, convert them with DOCX to PDF or XLSX to PDF first, then watermark the PDF.",
+    },
+  ],
+  'pdf-page-numbers': [
+    {
+      q: "How do I add page numbers to a PDF for free?",
+      a: "Choose your PDF in the tool above, pick a format such as Page 1 of 10, set the position, and press Add page numbers. Download the copy ending in -numbered.pdf, with no account needed.",
+    },
+    {
+      q: "How do I leave the cover page without a number?",
+      a: "Set Skip first N pages to 1. The cover gets no label and is not counted, so the Page X of Y total stays correct.",
+    },
+    {
+      q: "Can I use roman numerals for the front matter and normal numbers for the rest?",
+      a: "Yes, in two passes. Number the front matter with Only these pages and the i, ii, iii style, then load that download and number the body with 1, 2, 3 starting at 1. A title page left out of both passes stays unnumbered.",
+    },
+    {
+      q: "Can I do Bates numbering like ABC-001?",
+      a: "Yes. Choose Prefix + number, type ABC- in Prefix, and pick the padded 001, 002 style. Padding is fixed at three digits, so six or eight digit Bates numbers are not available.",
+    },
+    {
+      q: "Will the numbers continue across several PDFs?",
+      a: "Not automatically, because one file is numbered per run. Merge the files first and number the result once, or give each file a Start at value that follows on from the previous one.",
+    },
+    {
+      q: "Why are my page numbers covering text?",
+      a: "Some documents have content close to the page edge. Increase the margin, reduce the font size, or move the numbers to the top, then rerun on your original.",
+    },
+    {
+      q: "Can I number a password protected PDF?",
+      a: "Not while it is encrypted. If you know the password, remove it with PDF unlock, add the numbers, then add a password again with PDF protect if needed.",
+    },
+    {
+      q: "PDF page numbers don't match the viewer. How do I fix it?",
+      a: "The viewer counts every page from the cover, while the printed footer starts wherever you told it to. If you want them to agree, rerun on your original with Skip first N pages set to 0 and Start at set to 1. If the mismatch is deliberate, such as an unnumbered cover, it is expected and correct.",
+    },
+    {
+      q: "How do I add page numbers to PDF specific pages only?",
+      a: "Type the pages in Only these pages, for example 2-20 or 1,3-5, and leave it blank for every page. The first selected page shows the Start at value, and pages outside the range stay blank and are not counted in the total.",
+    },
+    {
+      q: "Can I add page numbers on a Mac without paid PDF software?",
+      a: "Yes. Open this page in Safari or Chrome on your Mac, choose the PDF, and download the numbered copy. There is no account, subscription or watermark.",
+    },
+    {
+      q: "Is it safe to number legal or confidential documents here?",
+      a: "Your files are never stored on our servers, nothing is retained after your session, and nothing is used for training. The numbered copy is a new file; your original is unchanged.",
+    },
+  ],
+  'pdf-esign': [
+    {
+      q: "How do I sign a PDF online for free?",
+      a: "Add the PDF to the tool above, draw, type or add an image of your signature, and click the page preview where it belongs. Press Sign & download to save the copy named -signed.pdf, with no account and no watermark.",
+    },
+    {
+      q: "Can I sign a PDF on iPhone or Android?",
+      a: "Yes. To sign a PDF on iPhone, or to sign a PDF on Android free, open this page, choose the file, pick Draw and sign with your finger. Placing and downloading work as on a laptop.",
+    },
+    {
+      q: "Does it work on Windows and Chromebook?",
+      a: "Yes. To sign a PDF on Windows without paid PDF software, or sign a PDF on a Chromebook, the steps are the same as anywhere else: choose the file, make your signature, place it and download. You do not need a paid PDF editor or an account.",
+    },
+    {
+      q: "My PDF app’s fill and sign option is not working. What can I do?",
+      a: "If the sign option is greyed out or the file will not open, the PDF is usually password-protected or secured by its sender. Remove the protection with the PDF unlocker (you need the password), then sign it here. If the app simply keeps failing, add the PDF to the tool above instead: draw, type or add an image of your signature, click where it goes and download the signed copy.",
+    },
+    {
+      q: "Is it safe to sign a PDF online here?",
+      a: "Yes, you can sign a PDF privately here. Your files are never stored on our servers, nothing is retained after you download the signed copy, and nothing is used for training. For a sensitive contract, you can also add a password to the signed file with the PDF password protector.",
+    },
+    {
+      q: "Are electronic signatures legally binding?",
+      a: "For most everyday agreements in many countries, yes; the US ESIGN Act and the EU eIDAS Regulation both recognise simple electronic signatures. Wills, deeds and some government forms may need more, so check what the recipient requires.",
+    },
+    {
+      q: "Is this a digital signature with a certificate?",
+      a: "No. It is a visible electronic signature drawn into the page, not a certificate-based digital signature. If a document asks for a certificate signature, you will need a service that issues one.",
+    },
+    {
+      q: "Can I send the PDF to other people to sign?",
+      a: "Not from this tool. It signs one PDF for you, with no invitations, reminders or audit trail. Each person can sign their own copy here and send it back.",
+    },
+    {
+      q: "Can I add different initials and a full signature in one go?",
+      a: "Every signature box in one pass uses the same signature, and every text box the same text line. Place your initials first and download, then add that signed copy back into the tool for the full signature, date and name.",
+    },
+    {
+      q: "Can I fill in the form fields before signing?",
+      a: "This tool places a date or a single text line where you click; it does not type into existing form boxes. To add fields to a form, use the fillable PDF maker, and use the PDF flattener to lock filled answers in place.",
+    },
+    {
+      q: "Why does my signature have a white box around it?",
+      a: "The image still has its paper background. Keep the Make white background transparent option ticked and near-white areas become clear. For coloured or shadowed paper, use the background remover first.",
+    },
+  ],
+  'pdf-redact': [
+    {
+      q: "How do I redact a PDF online for free?",
+      a: "Choose the PDF in the tool above, drag boxes over what you want hidden, and press Apply redaction. The file downloads as a new copy ending in -redacted.pdf, with no account or daily limit.",
+    },
+    {
+      q: "Is the text actually removed, or just covered?",
+      a: "With Remove underlying text left ticked, which is the default, every character under a box is deleted from the file before the box is painted. Links and comments overlapping the box are removed too. Unticking the option gives a cover-only box that can be taken off later.",
+    },
+    {
+      q: "Why can I still copy or search text after blacking it out elsewhere?",
+      a: "Because a drawn rectangle only covers the words; the text is still in the file underneath. Redact the file again here with true redaction on, then confirm with a search and a copy and paste test.",
+    },
+    {
+      q: "Why is my PDF redaction not working?",
+      a: "If the text can still be searched or copied, the box only covered it: redact again here with Remove underlying text ticked. If Find text says no matches, the words are part of an image or were turned into shapes, so draw the box by hand or use the scanned-page route. If the file is refused, it is encrypted and needs unlocking first; if a phrase is missed, search its single words.",
+    },
+    {
+      q: "How do I redact a PDF without paid PDF software?",
+      a: "Use the tool at the top of this page. It is free with no account or trial: choose the PDF, draw boxes or mark every match of a word, and apply. The text under each box is deleted from the file, the same true redaction paid editors offer.",
+    },
+    {
+      q: "Can I redact every mention of a name at once?",
+      a: "Yes. Type it into Find text and press Mark all matches to box every exact match on every page, ignoring case. Review each page before applying, and search for single words too, since a phrase stored in pieces can be missed.",
+    },
+    {
+      q: "Can it find emails, phone numbers or card numbers automatically?",
+      a: "No. The search is exact text only, with no pattern matching. Search for each specific value you need hidden, or draw boxes over them by hand.",
+    },
+    {
+      q: "Does it work on scanned PDFs?",
+      a: "A scanned page is an image, so a box covers it but the pixels stay in the file. Convert the pages with PDF to JPG, black out the details with Image Blur, and rebuild with Image to PDF. PDF OCR can make scanned text searchable first.",
+    },
+    {
+      q: "Does redacting remove the author name and other metadata?",
+      a: "No. Document properties, bookmarks and attachments are kept as they are. Bookmark titles can be changed with the bookmark editor, and you should check the file properties before sharing.",
+    },
+    {
+      q: "Can I redact a password-protected PDF?",
+      a: "Not directly. Encrypted files are refused with a message asking you to remove the protection first. Unlock it with the PDF unlocker if you know the password, redact, then add a new password with the PDF password protector if you need one.",
+    },
+    {
+      q: "Is it safe to redact confidential files here?",
+      a: "Your files are never stored on our servers, nothing is retained after your session, and nothing is used for training. The original stays untouched, and only the redacted copy is downloaded.",
+    },
+  ],
+  'pdf-grayscale': [
+    {
+      q: "How do I convert a PDF to grayscale for free?",
+      a: "Add the PDF to the tool at the top of this page, leave the image option on, leave Pages empty for the whole document and press Convert to grayscale. Download the copy named -grayscale.pdf. There is no account and no watermark.",
+    },
+    {
+      q: "Do I need paid PDF software to convert a PDF to grayscale?",
+      a: "No. In paid desktop editors the colour conversion option usually sits among the print-production tools of the paid tier. This tool does the same everyday job free: text stays selectable and photos turn grey. The one case where a paid editor is still the right choice is a print shop that runs a strict colour-free preflight check.",
+    },
+    {
+      q: "Is grayscale the same as black and white?",
+      a: "Not quite. Grayscale uses shades of grey, so photos and charts stay readable, while strict black and white uses only pure black and pure white pixels. This tool makes grayscale, which is what most printing and \"no colour\" rules need.",
+    },
+    {
+      q: "Will the text in my grayscale PDF still be selectable?",
+      a: "Yes. Text, lines and links are not turned into images, so you can still search, copy and click them, and the pages stay sharp when you zoom. Only embedded photos are rewritten, as grey images.",
+    },
+    {
+      q: "Can I convert only some pages to grayscale?",
+      a: "Yes. Type the pages you want in the Pages field, for example 1,3-5,8, and every other page keeps its colour. The whole of each chosen page is greyed; you cannot keep a single coloured element on it.",
+    },
+    {
+      q: "Why does my printer still print in colour when grayscale is selected?",
+      a: "The grayscale setting in a print dialog is a request that some drivers ignore or reset. Converting the PDF first gives the printer a file with no colour to print, which is the reliable fix.",
+    },
+    {
+      q: "Why is my grayscale PDF larger than the original?",
+      a: "JPEG photos inside the PDF are saved again as grey images without further quality loss, and that can take more space than the original compressed colour version. Run the result through the PDF compressor to bring the size down.",
+    },
+    {
+      q: "Will a print shop accept the grayscale PDF as colour-free?",
+      a: "Not always. The stored colour values of text and vector shapes are kept and displayed grey, so a strict preflight check can still flag colour. For home, office and school printing it prints grey as expected.",
+    },
+    {
+      q: "Is it safe to convert confidential PDFs?",
+      a: "Your files are never stored on our servers and nothing is retained once the conversion is done. Documents are never used for training. Password-protected PDFs need their password removed with PDF unlock before they can be converted.",
+    },
+  ],
+  'pdf-compare': [
+    {
+      q: "How do I compare two PDF files for free?",
+      a: "Drop the original into Original (A) and the revision into Revised (B), then press Compare. You get the changed pages with highlighted words, a metadata comparison and a downloadable patch.",
+    },
+    {
+      q: "How to check if two PDFs are identical?",
+      a: "Compare them with Ignore whitespace on. If the verdict says the text is identical, the wording matches on every page. Images, stamps and signatures are not checked.",
+    },
+    {
+      q: "Can I compare PDF side by side?",
+      a: "The two files load side by side as A and B. The result is one redline view per changed page, with removed and added lines marked, which is quicker to scan than two full pages.",
+    },
+    {
+      q: "Why does the comparison say there are no differences when the files clearly differ?",
+      a: "The files are almost certainly scans with no text layer. Run both through the PDF OCR tool, then compare the results.",
+    },
+    {
+      q: "Can it compare images, layout or formatting?",
+      a: "No. Only the text on each page is compared, so changes to images, fonts, styling, layout, annotations and signatures are not detected. None of our tools does a visual comparison.",
+    },
+    {
+      q: "Is it safe to put contracts into online PDF tools?",
+      a: "It depends on what the tool keeps, so check its privacy terms before adding a confidential contract. Here, files are never stored on our servers, nothing is retained after your session, and nothing is used for training. No account is needed, so the comparison is not tied to your name either.",
+    },
+    {
+      q: "Can I download the comparison as a highlighted PDF?",
+      a: "No. The only export is a plain-text unified diff named pdf-diff.patch, and none of our tools produces a marked-up PDF. For a visual record, screenshot the page cards.",
+    },
+    {
+      q: "Can I compare more than two PDFs at once?",
+      a: "No. Each comparison is one original against one revision. For several drafts, compare each with the next in turn.",
+    },
+  ],
+  'pdf-bookmarks': [
+    {
+      q: "How do I add bookmarks to a PDF for free?",
+      a: "Choose the PDF in the tool above, press + Add bookmark for each section and set its title and page, then press Save bookmarks and download. There is no account and no page limit, and your original file stays as it was.",
+    },
+    {
+      q: "Can I edit bookmarks a PDF already has?",
+      a: "Yes. Existing bookmarks load into the tree when you open the file, ready to rename, retarget, nest, reorder or delete. Saving replaces the old outline with the edited one.",
+    },
+    {
+      q: "How do I make nested bookmarks with chapters and sub-sections?",
+      a: "Press + child on a chapter to add a sub-section under it. For many entries at once, use Import from text with one Title | page per line and two spaces of indentation for each level deeper.",
+    },
+    {
+      q: "Is the table of contents page clickable?",
+      a: "No. The contents page lists titles and page numbers as printed text. The clickable navigation is the bookmarks panel, which includes a bookmark for the contents page itself, and the file can be set to open with that panel showing.",
+    },
+    {
+      q: "Why do my bookmarks go to the wrong page?",
+      a: "Page numbers in the tool count physical pages from the start of the file, not the numbers printed in the footer. If the document has front matter, add that many pages to each number. The one-page shift from an added contents page is corrected for you.",
+    },
+    {
+      q: "Can it auto-generate bookmarks from a scanned PDF?",
+      a: "Not directly, because auto-detect needs a text layer and scanned pages are only images. Run the file through PDF OCR first, then use Auto-detect headings. Manual bookmarks and the text import work on scanned files straight away.",
+    },
+    {
+      q: "How do I remove all bookmarks from a PDF?",
+      a: "Open the file, delete each top-level bookmark so the tree is empty, then save. Deleting a parent also deletes its children, so even a deep outline clears in a few clicks.",
+    },
+    {
+      q: "How do I add bookmarks to a PDF without paid PDF software?",
+      a: "Use the tool above: open the PDF, build the tree with + Add bookmark or a pasted Title | page list, and press Save bookmarks. It is free with no account, keeps any bookmarks the file already has, and can add a printed contents page at the front.",
+    },
+    {
+      q: "Is there a PDF bookmark editor for Mac?",
+      a: "Yes. Open this page in Safari or Chrome on macOS and it works the same as on Windows: rename, nest and reorder bookmarks, paste a whole chapter list, and add a contents page. The result is a normal PDF that any Mac PDF reader shows with its bookmarks.",
+    },
+    {
+      q: "Why were my bookmarks lost after converting to PDF?",
+      a: "Most word processors only turn headings into bookmarks when the bookmarks export option is ticked and the headings use real heading styles. To fix the PDF you already have, paste the chapter list into Import from text here and save; the outline is rebuilt without going back to the source file.",
+    },
+    {
+      q: "Is it safe to bookmark a confidential contract or thesis here?",
+      a: "Your files are never stored on our servers, nothing is retained after your session, and nothing is used for training. The bookmarked copy is a new download, so the original stays where you keep it.",
+    },
+  ],
+  'docx-to-pdf': [
+    {
+      q: "How do I convert DOCX to PDF for free?",
+      a: "Add the .docx to the tool above, choose a page size and margins, press Convert to PDF and download the result. There is no account, no watermark and no daily limit.",
+    },
+    {
+      q: "Is it safe to convert Word to PDF online?",
+      a: "It depends on the site. Here your files are never stored on our servers, nothing is retained after the conversion, and your documents are never used for training. That suits CVs, contracts and HR letters.",
+    },
+    {
+      q: "Why does my PDF look different from my Word document?",
+      a: "The PDF is laid out afresh in Helvetica and Courier, so your original typefaces are not embedded and line breaks can move. Columns, text boxes, headers and table styling are simplified. When the exact look matters, save as PDF inside Word.",
+    },
+    {
+      q: "Can I convert a .doc, .odt or Google Docs file?",
+      a: "No, only .docx files are read. Re-save the document as .docx, or download it from Google Docs as a Word document, then convert it here.",
+    },
+    {
+      q: "My Word attachment will not open. Can I get a PDF instead?",
+      a: "Yes. A search like \"docx file won't open need PDF\" usually means Word is not available to you, so convert the .docx here and open the PDF in any reader. If the tool says it is not a Word document, ask the sender to save it again as .docx.",
+    },
+    {
+      q: "Are images and tables kept?",
+      a: "PNG, JPEG, GIF, WebP and BMP pictures are kept at their Word size. Tables become plain text grids without shading or merged cells. EMF and WMF drawings are left out.",
+    },
+    {
+      q: "Can I convert several Word files at once?",
+      a: "The tool converts one file per run. Convert each document in turn, then combine the PDFs into a single file with the PDF merger.",
+    },
+    {
+      q: "Will headers, footers and page numbers carry over?",
+      a: "No, headers, footers and footnotes are not included in the PDF. Add page numbers afterwards with the PDF page numbers tool on the finished PDF.",
+    },
+  ],
+  'xlsx-to-pdf': [
+    {
+      q: "How do I convert Excel to PDF for free?",
+      a: "Drop your .xlsx file on the tool at the top of this page, choose the sheets, check the page setup and press Convert to PDF. You get a preview and a download named after your workbook. There is no account and no watermark on your pages.",
+    },
+    {
+      q: "Why are my columns cut off when I save Excel as PDF?",
+      a: "The sheet is wider than the page, so Excel tiles the extra columns onto later pages. This tool always scales each sheet to the page width, so every column appears on the same page. For very wide sheets, choose A3 landscape so the text stays readable.",
+    },
+    {
+      q: "Can I convert Excel to PDF without Excel installed?",
+      a: "Yes. You only need the .xlsx file, not Excel or an Office licence, so it suits an attachment opened on a Chromebook, a shared PC or a phone.",
+    },
+    {
+      q: "Does it keep my Excel formatting and charts?",
+      a: "No. Colours, fonts, borders, merged cells, conditional formatting, number formats and charts are dropped, and each sheet is redrawn as a plain gridded table. If the PDF must look exactly like the sheet, use Save as PDF inside Excel instead.",
+    },
+    {
+      q: "How does Excel to PDF on iPhone work?",
+      a: "Open this page on the iPhone, tap the file panel and pick the .xlsx from the Files app. The finished PDF downloads and shares like any other file.",
+    },
+    {
+      q: "Will it open .xls, .csv or .ods files?",
+      a: "No, only .xlsx and .xlsm workbooks are accepted. Resave the file as .xlsx in your spreadsheet app, or convert it with the spreadsheet converter, then bring it back here.",
+    },
+    {
+      q: "Can I put several workbooks into one PDF?",
+      a: "Not in one step; it converts one workbook at a time. Convert each, then combine the PDFs with the PDF merger. Sheets from the same workbook already share one PDF.",
+    },
+    {
+      q: "Is it safe to convert payroll or client spreadsheets here?",
+      a: "Your files are never stored on our servers, nothing is retained after your session, and nothing is used for training. If the PDF itself needs protecting before you send it, add a password with the PDF password protector.",
+    },
+  ],
+  'image-to-pdf': [
+    {
+      q: "How do I convert JPG to PDF for free?",
+      a: "Add your JPG files to the tool at the top of this page, put them in order, choose a page size and press Create PDF. There is no account, watermark or daily limit.",
+    },
+    {
+      q: "Can I combine several images into one PDF?",
+      a: "Yes. Add as many pictures as you need and each becomes its own page, in the order shown in the list. Use the up arrow on a row to move it earlier and the cross to remove it.",
+    },
+    {
+      q: "Will my JPG to PDF come out blurry?",
+      a: "Not with the default encoding, which keeps each JPEG exactly as saved, at full resolution. Blur often comes from low-quality recompression or stretching a small photo onto a large page.",
+    },
+    {
+      q: "How do I make the PDF smaller, for example under 100 KB?",
+      a: "Switch Image encoding to Recompress all as JPEG and lower the JPEG quality slider. There is no target-size setting, so for a strict portal limit run the result through the PDF compressor or shrink the photos first with the JPEG compressor.",
+    },
+    {
+      q: "Does it work with iPhone HEIC photos?",
+      a: "It depends on the app you open this page in: Safari generally opens HEIC, while Chrome and Firefox often cannot. The reliable route is to convert with HEIC to JPG first.",
+    },
+    {
+      q: "Is the PDF searchable?",
+      a: "No. The pages are pictures, so the text in a photographed document cannot be selected or searched yet. Run the finished PDF through PDF OCR to add a text layer.",
+    },
+    {
+      q: "Is it safe to convert passport or ID photos here?",
+      a: "Your files are never stored on our servers, nothing is retained after you finish, and nothing is used for training. For extra care, add a password with PDF protect before sending the file, and remove location data from the photos with the EXIF remover.",
+    },
+    {
+      q: "Does a transparent PNG keep its transparency?",
+      a: "Yes, with the default encoding, PNG and WebP transparency is carried into the PDF, so a logo sits cleanly on the page. Choosing Recompress all as JPEG removes transparency, because JPEG cannot store it.",
+    },
+  ],
+  'heic-to-jpg': [
+    {
+      q: "How do I convert HEIC to JPG for free?",
+      a: "Add your HEIC or HEIF photos to the tool at the top of this page, leave the format on JPG and press Convert. Download each photo, or the ZIP when there are several. There is no account, no watermark and no daily limit.",
+    },
+    {
+      q: "Why will my HEIC file not open in Chrome or on Windows?",
+      a: "HEIC needs HEIF support, and Chrome, Edge and Firefox on Windows or Linux currently do not have it, so this tool cannot read HEIC there either. Use Safari on a Mac, iPhone or iPad, or ask the sender to switch their camera to Most Compatible so future photos arrive as JPG.",
+    },
+    {
+      q: "I can't upload HEIC photos to website forms. What should I do?",
+      a: "Many forms, job portals and marketplaces only accept JPG or PNG and reject HEIC outright. Convert the photo to JPG here and upload that instead. If the site also caps file size, run the JPG through the JPEG compressor afterwards.",
+    },
+    {
+      q: "How do I convert HEIC to JPG for Instagram or Facebook upload?",
+      a: "Most social apps accept photos straight from your iPhone, but some older apps and desktop upload pages mishandle HEIC. Convert to JPG at the default 90 percent quality and post the JPG.",
+    },
+    {
+      q: "Does converting HEIC to JPG lose quality?",
+      a: "Resolution never changes, and at the default 90 percent quality most photos look the same as the original. Raise the slider to 95 or 100 percent if you want the most detail and do not mind larger files. For a lossless copy, choose PNG instead.",
+    },
+    {
+      q: "Does the JPG keep the date, location and camera details?",
+      a: "No. The date taken, GPS location and camera model are removed during conversion. That is useful when sharing photos publicly, but keep the HEIC originals if you rely on those details to sort an archive.",
+    },
+    {
+      q: "How do I stop my iPhone taking HEIC photos?",
+      a: "Go to Settings > Camera > Formats and choose Most Compatible, and new photos are saved as JPG. To keep HEIC on the phone but get JPG on your computer, set Settings > Photos > Transfer to Mac or PC to Automatic instead.",
+    },
+    {
+      q: "Can I convert HEIC to PNG, WebP or another format?",
+      a: "PNG and WebP are in the Format menu next to JPG. If WebP cannot be saved on your setup, the tool tells you; convert to JPG instead and use the image converter for WebP, AVIF, TIFF, GIF or BMP.",
+    },
+    {
+      q: "Can I convert JPG back to HEIC?",
+      a: "No. This tool only goes from HEIC and HEIF to JPG, PNG or WebP, and no other tool on the site creates HEIC files. Keep your HEIC originals if you may want them later.",
+    },
+    {
+      q: "Can I turn HEIC photos into a PDF?",
+      a: "Not in one step. Convert the photos to JPG here, then combine them with the image to PDF tool, which lets you set the page order.",
+    },
+  ],
+  'avif-to-jpg': [
+    {
+      q: "How do I convert AVIF to JPG for free?",
+      a: "Drop your AVIF files onto the tool at the top of this page, leave the format on JPG, and press Convert. Download each JPG from its card, or the ZIP when you convert several.",
+    },
+    {
+      q: "Why won’t my AVIF file open?",
+      a: "Many programs, including Windows Photos without the AV1 video extension, older editors and some upload forms, cannot read AVIF yet. Converting it to JPG or PNG gives you a file that opens in any app.",
+    },
+    {
+      q: "Does converting AVIF to JPG lose quality?",
+      a: "A little, because JPG is a lossy format. At 85 to 90% on the slider the difference is usually hard to see in normal viewing, and 95 to 100% is best for printing. If you need a lossless copy, choose PNG as the output instead.",
+    },
+    {
+      q: "Why are my images saving as AVIF instead of JPG?",
+      a: "The website you saved from serves its pictures as AVIF, so “Save image as” stores the file in that format, whatever you name it. Renaming the extension to .jpg does not change the data inside. Drop the saved file onto the tool above with the format left on JPG, and you get a real JPG that any app accepts.",
+    },
+    {
+      q: "Can I convert many AVIF files at once?",
+      a: "Yes. Add as many AVIF images as you like and press Convert once. Every image gets its own download, and a ZIP of all of them appears at the top.",
+    },
+    {
+      q: "What happens to transparent areas in an AVIF?",
+      a: "JPG cannot store transparency, so transparent areas are filled with white by default, or black if you choose it. To keep the transparency, pick PNG or WebP output and set the background to Transparent.",
+    },
+    {
+      q: "Will the JPG keep my photo’s EXIF data and location?",
+      a: "No. EXIF, GPS, camera details and embedded colour profiles are removed during conversion, and they cannot be added back afterwards. The picture itself keeps its full pixel size.",
+    },
+    {
+      q: "Can I convert JPG or PNG to AVIF here?",
+      a: "Not on this page, which only reads AVIF. Use the image converter for other directions between image formats. For iPhone HEIC photos, the HEIC to JPG converter is the right tool.",
+    },
+    {
+      q: "Is it safe to convert private photos here?",
+      a: "Your images are never stored on our servers, nothing is retained after you leave, and nothing is used for training. The converted file is yours to download and keep.",
+    },
+  ],
+  'gif-to-mp4': [
+    {
+      q: "How do I convert a GIF to MP4 for free?",
+      a: "Add the GIF to the tool at the top of this page, leave MP4 selected and press Convert. There is no account, no watermark and no daily limit.",
+    },
+    {
+      q: "Will the MP4 look worse than the GIF?",
+      a: "Keep max width at 0 and choose Match GIF timing, and the video keeps the original size and rhythm. Frames the GIF never had are not invented, so a choppy GIF stays choppy.",
+    },
+    {
+      q: "Is GIF to MP4 with transparent background possible?",
+      a: "No. MP4 has no transparent layer, so see-through pixels are filled with the black or white background you choose. Keep the file as a GIF if transparency is essential.",
+    },
+    {
+      q: "Why is the GIF transparent background black in the video?",
+      a: "MP4 and WebM have no transparent layer, so every see-through pixel has to be filled with a solid colour, and black is the default. Set Background for transparency to White and convert again, or pick whichever of the two matches where the video will sit.",
+    },
+    {
+      q: "Is converting a GIF to MP4 here private?",
+      a: "Yes. Your GIF and the finished video are never stored on our servers, nothing is retained after you leave the page, and your files are never used to train AI models. No account or email is needed to use it.",
+    },
+    {
+      q: "Does the video have sound, and can I add music?",
+      a: "The video is always silent and this tool has no option to add a soundtrack. If you want to turn an audio track into a video, the MP3 to MP4 converter does that as a separate job.",
+    },
+    {
+      q: "Can I paste a GIF link instead of a file?",
+      a: "Not here. The tool takes a GIF file, so download the animation first and then add it.",
+    },
+    {
+      q: "Why does it say MP4 is not available?",
+      a: "MP4 export needs Chrome or Edge 94 or later, or Safari 16.4 or later. Elsewhere the tool exports WebM instead, which most modern players and web pages can play. You can then turn that WebM into an MP4 with the WebM to MP4 converter.",
+    },
+    {
+      q: "Can I trim the GIF or change its speed while converting?",
+      a: "No, the whole animation is converted and the frame rate setting changes smoothness, not playback speed. Convert first, then use the video trimmer to cut it and the video speed changer to make it faster or slower.",
+    },
+    {
+      q: "Can I convert several GIFs at once?",
+      a: "No, the tool takes one GIF per run. When the first download is done, add the next GIF and press Convert again.",
+    },
+  ],
+  'webm-mp4': [
+    {
+      q: "How do I convert WebM to MP4 for free?",
+      a: "Choose the WebM in the tool at the top of this page, leave the output on MP4 and press Convert. Preview the result and download it. There is no account, no watermark and no charge.",
+    },
+    {
+      q: "Will converting WebM to MP4 reduce quality?",
+      a: "Every conversion re-encodes the video, so it is never a bit-for-bit copy. Keep Resolution on Original and set Quality to high or max, and the difference is very hard to see.",
+    },
+    {
+      q: "Why does my WebM not play on iPhone or in QuickTime?",
+      a: "Photos and QuickTime Player do not support WebM, so the file is not damaged, just unsupported. Converting it to an H.264 MP4 makes it open on iPhone, iPad and Mac like any other video.",
+    },
+    {
+      q: "My converted video has no sound. What happened?",
+      a: "Either Keep audio was unticked, or the soundtrack used a codec that could not be read, so it was dropped and the result is labelled no audio. Tick Keep audio and try again in an up-to-date Chrome or Edge.",
+    },
+    {
+      q: "Can I convert MP4 to WebM here too?",
+      a: "Yes. Choose an MP4 and the output switches to WebM automatically. WebM output takes as long as the video plays and uses a fixed bitrate, so the Quality slider does not change it.",
+    },
+    {
+      q: "Why is MP4 not offered when I open the page?",
+      a: "Creating MP4 needs Chrome 94 or later, Edge, or Safari 16.4 or later. Elsewhere, such as Firefox, the tool offers WebM only and says so. Open the page in Chrome, Edge or Safari to get MP4.",
+    },
+    {
+      q: "Can I convert several WebM files at once, or make the file smaller?",
+      a: "The tool handles one video per run. To reach a specific size, for email or chat limits, convert first and then use the video compressor, which is built for that job.",
+    },
+    {
+      q: "Is it safe to convert private screen recordings?",
+      a: "Yes. Your videos are never stored on our servers, nothing is retained after your session, and nothing is ever used for training.",
+    },
+  ],
+  'ogg-to-mp3': [
+    {
+      q: "How do I convert Opus to WAV for free?",
+      a: "Add the .opus file to the tool at the top of this page, leave the format on WAV, choose a bit depth and press Convert. Preview it, then download. There is no account and no daily limit.",
+    },
+    {
+      q: "Can this tool convert OGG to MP3?",
+      a: "No. It writes WAV or M4A (AAC), and the page says so. Both play on Windows, Mac, iPhone and Android, and WAV avoids a second round of lossy compression. If you strictly need a .mp3, use the Audio Converter.",
+    },
+    {
+      q: "Which files does it accept?",
+      a: "OGG Vorbis, Opus, OGA and WebM audio, including WhatsApp voice notes saved as .opus and Telegram .oga messages. It converts one file at a time. For MP4 or MOV video with sound, use MP4 to MP3 or the Video Converter instead.",
+    },
+    {
+      q: "Why can’t I open OGG files on Mac, and does this work in Safari?",
+      a: "QuickTime and the Music app do not read OGG Vorbis, so converting to M4A or WAV fixes playback. Here, Opus needs Safari 17 or later and OGG Vorbis may not open in Safari at all, while Chrome, Edge and Firefox open both.",
+    },
+    {
+      q: "Which should I choose, WAV or M4A?",
+      a: "Choose WAV for editing, transcription or archiving, with 16-bit for speech and 24-bit or 32-bit float for production. Choose M4A (AAC, 128 kbps) for a small file to keep on an iPhone or share.",
+    },
+    {
+      q: "How do I convert OGG to WAV for Audacity?",
+      a: "Add the .ogg, .oga or .opus file above, keep the format on WAV and choose 16-bit for speech or 24-bit or 32-bit float for editing with effects. Press Convert, download the WAV, then use Import > Audio in Audacity or drag the file into the window. WAV opens in Audacity without any extra codec library.",
+    },
+    {
+      q: "Can I convert a whole folder of voice notes at once?",
+      a: "Not at the moment. Each run converts one file, and there is no ZIP download. The Audio Converter also works one file at a time, so for a long list, convert the recordings you actually need and keep the rest as they are.",
+    },
+    {
+      q: "Can I convert OGG privately, and is it safe for WhatsApp or Telegram voice notes?",
+      a: "Yes. Your recordings are never stored on our servers, nothing is retained after your session, and your audio is never used for training. You download the converted file and keep control of it.",
+    },
+    {
+      q: "Can it merge voice notes, transcribe them or keep the tags?",
+      a: "No. It trims by start and end time, downmixes to mono and normalises loudness, but it does not join files, produce text or copy tags and cover art. For a visual trim with fades, the Audio Trimmer is the better choice.",
+    },
+  ],
+  'm4a-to-mp3': [
+    {
+      q: "How do I convert M4A to WAV for free?",
+      a: "Add the M4A file to the tool above, leave Format on WAV, choose a bit depth and press Convert. Check the result in the player, then download it; no account is needed.",
+    },
+    {
+      q: "Can this tool convert M4A to MP3?",
+      a: "No. It writes WAV or M4A only, and the tool says so. For an MP3, use the Cortexis audio converter, which accepts M4A and AAC files and lets you choose the MP3 bitrate.",
+    },
+    {
+      q: "What settings should I use for a voice memo going to transcription?",
+      a: "Choose WAV, 16-bit, and tick Downmix to mono. Trim silence at each end and tick Normalise peak to −1 dB if it is quiet. That gives the standard file most speech-to-text services accept.",
+    },
+    {
+      q: "Why will my iTunes song not convert?",
+      a: "Songs protected by DRM, such as older iTunes Store purchases and subscription downloads, can only be played by the authorised app. No tool on this site can convert them. Tracks you ripped from CD, or purchases sold without protection, convert normally.",
+    },
+    {
+      q: "Why is the WAV so much bigger than my M4A?",
+      a: "WAV is uncompressed and stores every sample, while M4A uses lossy AAC compression. Mono halves a WAV, and the M4A output is there when you only need a smaller file.",
+    },
+    {
+      q: "Can I convert several M4A files at once?",
+      a: "No; the tool takes one file per run, so add the next file and press Convert again. The file renamer can tidy the names afterwards.",
+    },
+    {
+      q: "Is it safe to convert private recordings here?",
+      a: "Your recordings are never stored on our servers, nothing is retained after your session, and nothing is used for training.",
+    },
+    {
+      q: "Can I choose the sample rate or keep the tags?",
+      a: "No. The export uses the sample rate shown on the info line, which can be 48 kHz. Tags, album art and chapter markers are not copied, so re-add them in your editor if needed.",
+    },
+  ],
+  'csv-json': [
+    {
+      q: "Is this CSV to JSON converter free?",
+      a: "Yes. It is CSV to JSON online free, with no account needed. Paste or drop your CSV, press Convert, then copy or download data.json.",
+    },
+    {
+      q: "Why did my ZIP codes or IDs lose their leading zeros elsewhere, and will they here?",
+      a: "Many converters turn anything numeric-looking into a number, dropping leading zeros. Here, values starting with a zero followed by more digits stay strings, as do digit strings of 16 characters or more. To keep every value as text, untick Convert numbers/booleans.",
+    },
+    {
+      q: "How do I turn nested JSON into CSV columns?",
+      a: "Choose JSON to CSV and leave Flatten nested objects on. A nested object becomes dot-path columns such as address.city, and an array becomes indexed columns such as tags.0 and tags.1. Arrays are not expanded into extra rows.",
+    },
+    {
+      q: "Why does it say Invalid JSON?",
+      a: "The input must be one complete, valid JSON document, and the message includes the parser reason. Trailing commas, single quotes, truncated copies and JSON Lines files are the usual causes. The JSON formatter helps you find the exact spot.",
+    },
+    {
+      q: "Can it convert my API response JSON to CSV if the list is inside a data key?",
+      a: "Yes. If the top level is an object that wraps an array of objects, such as a data or results key, the first such array is used automatically. Other top-level objects become a single row.",
+    },
+    {
+      q: "How do I use CSV to JSON output in React, Node or TypeScript code?",
+      a: "The download is a standard JSON array of objects, one per row, keyed by your header names. Save data.json into your project and import it, or paste the copied text into JSON.parse. Turn off Pretty-print JSON for a single compact line that is easy to drop into a fixture or mock response.",
+    },
+    {
+      q: "Can I get an Excel XLSX file directly?",
+      a: "Not from this tool, which outputs plain CSV. Import that CSV through the Excel Data tab with UTF-8 chosen, or convert it to XLSX with the spreadsheet converter.",
+    },
+    {
+      q: "My CSV has no header row. What happens?",
+      a: "The first row is always read as the column names, so your first record would become the keys. Add a header line before converting. Also rename any duplicate column names, because a later column with the same name overwrites the earlier one.",
+    },
+    {
+      q: "Is it safe to convert customer or financial data?",
+      a: "Your files are never stored on our servers, nothing is retained after your session, and nothing is used for training. You can also paste only the columns you need.",
+    },
+  ],
+  'xml-json': [
+    {
+      q: "How do I convert XML to JSON for free?",
+      a: "Paste your XML into the tool at the top of this page, or drop in an .xml file, choose XML to JSON and press Convert. Copy the result or download it as data.json. There is no account and no sign-up.",
+    },
+    {
+      q: "How are XML attributes shown in the JSON?",
+      a: "Each attribute becomes a key with an @ prefix, so id=\"42\" turns into \"@id\". When the same element also has text, that text is stored under #text next to the attributes.",
+    },
+    {
+      q: "Why is one element an object and another an array?",
+      a: "Repeated sibling elements become an array, while a single element stays an object. This is the array-of-one problem, and the tool cannot force a tag to always be an array. Handle it in your code by wrapping a lone object in an array before looping over it.",
+    },
+    {
+      q: "Will numbers and leading zeros be kept correctly?",
+      a: "With Convert numbers/booleans ticked, plain decimal numbers, true, false and null become real JSON types. Values with leading zeros, such as 007 or many postcodes, stay strings so they are never altered.",
+    },
+    {
+      q: "Can I convert JSON back to XML?",
+      a: "Yes. Choose JSON to XML, pick a root name if needed, and press Convert. Keys starting with @ become attributes, #text becomes element text, and a top-level array is wrapped in your chosen root with each entry written as an item element.",
+    },
+    {
+      q: "How do I use the converted JSON in my code?",
+      a: "Copy the output or download data.json, then read it with your language's standard JSON parser, such as JSON.parse in a web app or json.loads in Python. Access attributes by their @ keys, for example order[\"@id\"]. Wherever a tag can appear once or many times, wrap a lone object in an array before looping.",
+    },
+    {
+      q: "Does the tool check whether my XML is valid?",
+      a: "No. The parser is forgiving and converts unclosed or mismatched tags without reporting them, and there is no XSD schema or DTD check. If validity matters, check the XML against its schema first. To validate the JSON result, use the JSON formatter.",
+    },
+    {
+      q: "Can it load XML from a URL or an RSS feed address?",
+      a: "No. Input is pasted text or a file you add. Save the feed, sitemap or API response first, then paste or drop it into the tool.",
+    },
+    {
+      q: "Is it safe to convert API responses or customer data here?",
+      a: "Your files and pasted text are never stored on our servers, nothing is retained after your session, and nothing is ever used for training. The result is yours to copy or download.",
+    },
+  ],
+  'yaml-json': [
+    {
+      q: "How do I convert YAML to JSON for free?",
+      a: "Paste your YAML or drop a .yaml or .yml file into the tool above, leave the direction on YAML to JSON and press Convert. Copy the result or download it as data.json, with no account needed.",
+    },
+    {
+      q: "Can it convert JSON to YAML as well?",
+      a: "Yes. Switch the Conversion menu to JSON to YAML, paste the JSON and press Convert, then copy it or download data.yaml. Strings YAML would misread, such as \"no\" or \"1.0\", are quoted.",
+    },
+    {
+      q: "Will NO or yes turn into false or true?",
+      a: "No. The converter follows YAML 1.2 core rules, so only true and false in any capitalisation become booleans. NO, yes, on and off stay strings in the JSON, which avoids the Norway problem.",
+    },
+    {
+      q: "Why did my zip code or version number change?",
+      a: "Unquoted values that look like numbers become numbers, so 01234 becomes 1234 and 1.10 becomes 1.1. Quote the value in your YAML to keep the exact string.",
+    },
+    {
+      q: "How do I convert YAML multiple documents to JSON, such as a Kubernetes file split by ---?",
+      a: "Not in one go. The separators are ignored, so the documents merge into one object and duplicate keys overwrite. Split the file at each --- and convert each part, then combine the results into a JSON array yourself if you need one.",
+    },
+    {
+      q: "Do I need a command-line tool to convert YAML to JSON?",
+      a: "No. You can convert YAML to JSON online here, with no terminal command or script to write: paste or drop one file, press Convert, and copy or download the result. A command-line tool still makes more sense for converting many files at once, since this converter handles one file per click.",
+    },
+    {
+      q: "Does it check my YAML against a Kubernetes or OpenAPI schema?",
+      a: "No. It tells you whether the text parses, which catches syntax mistakes but not a wrong field name or a missing required key. For checking the JSON side, use the JSON formatter.",
+    },
+    {
+      q: "Is it safe to paste a config that contains secrets?",
+      a: "Your text and files are never stored on our servers, nothing is retained after your session, and nothing is used for training. As a habit, rotate any secret that has been pasted anywhere it should not be.",
+    },
+    {
+      q: "Are YAML comments kept in the JSON?",
+      a: "No. JSON has no comment syntax, so comments are dropped when converting to JSON, and none are added going the other way.",
+    },
+  ],
+  'sql-csv': [
+    {
+      q: "How do I convert a CSV to SQL INSERT statements for free?",
+      a: "Paste the CSV or drop the file onto the tool above, choose the dialect, table name and rows per INSERT, and press Convert. Copy the script or download it as inserts.sql, with no account needed.",
+    },
+    {
+      q: "Can I type my own table name?",
+      a: "No. The menu offers my_table, data, records or import. Pick one, then find-and-replace it with your real table name before running the script.",
+    },
+    {
+      q: "Which databases does the generated SQL work with?",
+      a: "MySQL and MariaDB, PostgreSQL, SQLite and SQL Server, each with its own quoting and boolean style. It does not write Oracle or DB2 scripts, and it produces INSERT and CREATE TABLE statements only.",
+    },
+    {
+      q: "Why do empty cells become NULL instead of empty strings?",
+      a: "A blank spreadsheet cell usually means a missing value, and NULL is how SQL records one. If a column needs empty strings, edit those values in the script afterwards.",
+    },
+    {
+      q: "Will zip codes and IDs like 007 keep their leading zeros?",
+      a: "Yes. Any value with a leading zero, and any very long string of digits, is written as quoted text, so nothing is stripped or rounded.",
+    },
+    {
+      q: "Can it read an Excel file directly?",
+      a: "No, it reads CSV, pasted text, and .sql or .txt files. Save the workbook as CSV from Excel, or convert an .xlsx or .ods file with the spreadsheet converter, then paste the result here.",
+    },
+    {
+      q: "My SQL dump has several tables. Can I export them all to CSV?",
+      a: "Only the first table found is exported, and the status line says how many were detected. For another table, paste only its INSERT statements and convert again.",
+    },
+    {
+      q: "How do I make bulk INSERT statements with multiple rows from a CSV?",
+      a: "Set Rows per INSERT to 100 or 1000 and convert. Each INSERT then carries that many rows in one VALUES list, which runs much faster than one statement per row. Choose 1 only when you need to find which row a database is rejecting.",
+    },
+    {
+      q: "Can I convert CSV to SQL privately? Is it safe for customer data?",
+      a: "Your data is never stored on our servers, never retained after your session and never used for training. The downloaded script holds your data in plain text, so keep it where the original export belongs.",
+    },
+  ],
+  'markdown-converter': [
+    {
+      q: "How do I convert Markdown to PDF for free?",
+      a: "Paste your Markdown or drop a .md file into the tool at the top of this page, check the live preview, choose A4 or US Letter and press Convert. The PDF downloads under the title you set.",
+    },
+    {
+      q: "Markdown to PDF images not showing: how do I fix it?",
+      a: "Images linked by a web address or file path are not included, so the PDF shows their alt text in brackets. To embed one, convert the image to a data URL with the Base64 encoder and place it on its own line in the Markdown. Data-URL images embed in the PDF output only.",
+    },
+    {
+      q: "Why do emoji show as question marks in the PDF?",
+      a: "The PDF uses standard fonts that cover Western European Latin characters, so emoji and scripts such as Urdu, Arabic, Chinese and Cyrillic print as a question mark. The standalone HTML page keeps every character. If you need a PDF of that text, publish the HTML page and use the save web page as PDF tool.",
+    },
+    {
+      q: "Can I convert Markdown to Word?",
+      a: "Not directly. Convert your Markdown to PDF here, then open the result in the PDF to Word converter to get an editable document.",
+    },
+    {
+      q: "What is the difference between the HTML page and the HTML fragment?",
+      a: "The HTML page is a complete file with its own stylesheet, including light and dark colours, ready to open or share on its own. The fragment is only the body markup with no styles, meant for pasting into a blog editor or site template that already has its own design.",
+    },
+    {
+      q: "Are links clickable in the PDF?",
+      a: "Links are coloured and underlined in the PDF but are not clickable. Share the standalone HTML page when readers need to follow links.",
+    },
+    {
+      q: "Can I convert a PDF back to Markdown?",
+      a: "This tool only goes from Markdown to PDF or HTML. To get the text out of a PDF, use the PDF to text and HTML converter, or the PDF OCR tool if the pages are scans. HTML back to Markdown is not offered.",
+    },
+    {
+      q: "How do I turn Obsidian notes to PDF?",
+      a: "Obsidian notes are plain Markdown files, so drop the .md file onto the tool, set a title and convert. Wiki-style [[links]] and plugin syntax are not standard Markdown and print exactly as written, so tidy them first if they matter.",
+    },
+    {
+      q: "How do I convert a ChatGPT Markdown answer to PDF?",
+      a: "Use the copy button under the answer to get it as Markdown, paste it into the editor and press Convert. Headings, lists, tables and code blocks keep their formatting; emoji in the answer print as a question mark in the PDF.",
+    },
+    {
+      q: "Does Markdown to PDF on iPhone work?",
+      a: "Yes. Open this page in Safari, paste your text or pick the .md file from the Files app, then convert and save the PDF to Files or share it straight on.",
+    },
+    {
+      q: "Can I convert MD to PDF privately?",
+      a: "Yes. Your files are never stored on our servers and nothing is retained once you finish. They are never used for training either, so internal docs and private notes stay yours.",
+    },
+  ],
+  'archive-to-zip': [
+    {
+      q: "How do I convert a tar.gz file to zip for free?",
+      a: "Drop the .tar.gz onto the tool above, check the preview of its contents, and press Create ZIP. The download is named after your file, so project.tar.gz becomes project.zip.",
+    },
+    {
+      q: "Is converting tgz to zip different from tar.gz to zip?",
+      a: "No. A .tgz is simply a shorter name for a gzipped TAR, the same thing as .tar.gz. Both are unpacked and repacked the same way, with the folder structure kept.",
+    },
+    {
+      q: "Why does my .gz file turn into only one file?",
+      a: "Because GZIP compresses a single file, not a folder. A plain .gz becomes one file in the ZIP, named after the archive without the .gz ending. Only a .tar.gz or .tgz, which is a TAR bundle inside the GZIP, holds many files and folders.",
+    },
+    {
+      q: "Can it convert RAR or 7z to ZIP?",
+      a: "Not their contents. RAR and 7z files are added to the ZIP unchanged, and the result note tells you so. Unpack them first with a desktop archive utility, then add the unpacked files here.",
+    },
+    {
+      q: "Will file permissions and empty folders be kept?",
+      a: "No. Unix permissions, owners and symbolic links from a TAR are not carried into the ZIP, and empty folders are dropped because only files are repacked. If you are moving a hosting backup, expect to reset permissions on the new server.",
+    },
+    {
+      q: "Can I combine several archives and files into one ZIP?",
+      a: "Yes. Add tarballs, ZIPs and ordinary files in one go. With the folder option on, each archive goes into its own folder named after it, so identically named files never overwrite each other. The combined download is called archive.zip.",
+    },
+    {
+      q: "Should I choose Deflate or Store?",
+      a: "Deflate compresses the files and is the better default for code, text, logs and database dumps. Store adds no compression and is the fastest choice, which makes sense when the contents are already compressed photos, video or audio.",
+    },
+    {
+      q: "Is it safe to convert a client backup here?",
+      a: "Your files are never stored on our servers, nothing is retained after your session, and nothing is used for training. Password-protected ZIPs cannot be opened, and the ZIP you download carries no password, so keep it somewhere appropriate.",
+    },
+  ],
+  'timestamp-converter': [
+    {
+      q: "How do I convert a Unix timestamp to a date for free?",
+      a: "Paste the number into the Timestamp to Date field at the top of this page. The unit is detected automatically and the date appears in UTC, ISO 8601 and your chosen display timezone, with no account or limit.",
+    },
+    {
+      q: "How can I tell if a timestamp is in seconds or milliseconds?",
+      a: "Count the digits: 10 for seconds, 13 for milliseconds, 16 for microseconds and 19 for nanoseconds, for any date in the present era. The converter applies the same rule and shows the unit it used in the Detected unit row.",
+    },
+    {
+      q: "Why does my timestamp convert to January 1970?",
+      a: "A seconds value was almost certainly treated as milliseconds, which lands it a few weeks after the epoch. An exact 1 January 1970 usually means the value was zero or empty. Paste the raw number here to see its real unit and date.",
+    },
+    {
+      q: "Why is my converted time a few hours off?",
+      a: "The timestamp itself has no time zone, so the number is fine and the reading was done in a different zone than you expected. Compare the UTC row with the zone row, and when converting a typed date, add an offset such as +05:00 if you mean a zone other than your own.",
+    },
+    {
+      q: "How do I convert Date.now() to a date?",
+      a: "Date.now() returns milliseconds since 1970, a 13-digit number such as 1758600000123. Paste it into the Timestamp to Date field and the Detected unit row reads milliseconds, with the date shown in UTC, ISO 8601 and your display zone. In your own code, pass the value straight to new Date(value); if it was divided by 1,000 to get seconds, multiply it back first or the date lands in January 1970.",
+    },
+    {
+      q: "How do I read the exp claim of a JWT as a date?",
+      a: "The exp, iat and nbf claims are Unix timestamps in seconds, so a jwt exp timestamp to date lookup is a simple paste here. To read the whole token, use the JWT decoder.",
+    },
+    {
+      q: "What is the Year 2038 problem?",
+      a: "Systems that store Unix time as a signed 32-bit integer can only count up to 2,147,483,647 seconds, which is 19 January 2038 at 03:14:07 UTC. One second later the value overflows and can wrap to 1901. Paste 2147483647 here to see the boundary; the fix belongs in the software that stores the value.",
+    },
+    {
+      q: "Can I convert a negative Unix timestamp?",
+      a: "Yes. A negative unix timestamp counts backwards from 1970, so -31536000 is 1 January 1969 at midnight UTC. Paste it with the minus sign and it converts like any other value.",
+    },
+    {
+      q: "Does Unix time include leap seconds?",
+      a: "No. Unix time treats every day as exactly 86,400 seconds and ignores leap seconds, which is why it maps cleanly onto calendar dates. For everyday conversions this makes no visible difference.",
+    },
+  ],
+  'background-remover': [
+    {
+      q: "How do I remove the white background from a logo for free?",
+      a: "Add the logo to the tool at the top of this page and keep the default flood-fill method, which clears the white around the logo. Switch to colour mode if white remains inside letters, then download a transparent PNG or WebP.",
+    },
+    {
+      q: "Why is there still white inside the letters of my logo?",
+      a: "The white inside letters such as O, A and e is enclosed, so it is not connected to the outer background. Click each hole to erase it, or switch to Remove a picked colour everywhere, which removes that white wherever it appears.",
+    },
+    {
+      q: "How do I get rid of the white halo around my logo?",
+      a: "Raise the Tolerance slider a few steps so the pale edge pixels are removed too, and keep Edge feathering low for crisp artwork. Check the result on a dark colour before using it.",
+    },
+    {
+      q: "Can it remove the background from photos of people or pets?",
+      a: "Not well. It separates areas by colour rather than recognising subjects, so hair and cluttered scenes need many manual clicks. It is designed for logos, signatures, icons, screenshots and product shots on plain or gradient backgrounds.",
+    },
+    {
+      q: "Can I replace the background with a different colour or picture?",
+      a: "No. It makes the background transparent and nothing more. Place the transparent PNG over any colour in your design software, or use the image watermark tool to lay it over another picture.",
+    },
+    {
+      q: "What file formats can I download?",
+      a: "PNG or WebP, both with a transparent background. JPG cannot hold transparency, so converting the result to JPG fills the empty areas again. For a website icon, take the PNG to the favicon generator.",
+    },
+    {
+      q: "Is there a size limit?",
+      a: "Images larger than 2200 px on their longest side are scaled down to 2200 px, and the download is that size. The image enlarger can scale it up afterwards.",
+    },
+    {
+      q: "How do I remove a background on a Chromebook?",
+      a: "Open this page in Chrome on your Chromebook, add the image and download the transparent PNG or WebP. There is no app to buy and no account to create, and the controls work exactly as they do on a Mac or Windows PC.",
+    },
+    {
+      q: "Is it safe to use with an unreleased logo or my signature?",
+      a: "Yes. Your files are never stored on our servers, nothing is retained after your session, and nothing is ever used for training.",
+    },
+  ],
+  'favicon-generator': [
+    {
+      q: "How do I make a favicon from my logo for free?",
+      a: "Drop a square logo into the favicon generator at the top of this page, set the names and colours, and press Generate ZIP. You get favicon.ico, PNG icons, an apple-touch-icon, a web manifest and the HTML for your head.",
+    },
+    {
+      q: "Can I convert a PNG to ICO here?",
+      a: "Yes. Every package includes a favicon.ico built from your image, holding 16, 32 and 48px versions in one file. Those three sizes are fixed, and no Cortexis tool writes an ICO at another size such as 256px. For a larger icon, make a PNG at that size with the image resizer and link it with its own sizes attribute; PNG icons are widely supported.",
+    },
+    {
+      q: "What size should my source image be?",
+      a: "A square image of 512px or larger works best, as a PNG, SVG or JPG. Anything larger is scaled to 1024px on its longest side first, still ample for the 512px icon.",
+    },
+    {
+      q: "Why does my logo have empty space around it?",
+      a: "The tool fits a non-square image inside the square and centres it rather than cropping it. Crop it square with the image cropper first, and lower Padding to let the mark fill more of the icon.",
+    },
+    {
+      q: "Does it make an SVG favicon or a dark-mode version?",
+      a: "No. The output is PNG and ICO files only, with no icon.svg and no dark-mode variant. The SVG optimizer can tidy an existing SVG logo to serve by hand.",
+    },
+    {
+      q: "Will the icons work when someone adds my site to their home screen?",
+      a: "Yes, if the files are at your site root and the snippet is in the head. iPhones and iPads use the 180px apple-touch-icon, and Android uses the 192 and 512px icons listed in site.webmanifest. Keep the background fill on so the iOS icon does not show a black background.",
+    },
+    {
+      q: "Why is my favicon not showing in Google search results?",
+      a: "Google needs a square icon, ideally at a multiple of 48px, and must be able to crawl both the icon and your home page. Link the 48 or 96px PNG from this package in your home page head, then allow time for Google to recrawl. This page cannot force an update; that happens on Google’s schedule.",
+    },
+    {
+      q: "Why is my favicon blurry?",
+      a: "Usually one large image is being scaled down to 16 or 32px. This package draws each size separately, so link favicon-16x16.png and favicon-32x32.png as the snippet does. If it is still soft, the logo has too much detail for tab size: simplify the mark, or lower Padding so it fills more of the square.",
+    },
+    {
+      q: "Why is my apple touch icon not working?",
+      a: "Check that apple-touch-icon.png sits at your site root and the apple-touch-icon line is in the head. A screenshot instead of your icon means Safari could not find it; a black square means the icon was transparent, so keep the background fill on. Remove the old home-screen shortcut and add it again to see the change.",
+    },
+    {
+      q: "Does it create Windows tiles or a Safari pinned-tab icon?",
+      a: "No. The package has no mstile images, no browserconfig.xml and no pinned-tab SVG. It covers tabs, bookmarks, Google results, Apple home screens and Android.",
+    },
+    {
+      q: "Is my logo kept anywhere?",
+      a: "No. Your files are never stored on our servers and nothing is retained after your session. They are never used for training either.",
+    },
+  ],
+  'exif-remover': [
+    {
+      q: "How do I remove EXIF data from a photo for free?",
+      a: "Add the JPG, PNG or WebP file to the tool above, leave the colour profile box ticked and press Strip metadata. Download the copy with \"clean\" in its name, with no account or watermark.",
+    },
+    {
+      q: "Does removing EXIF data reduce image quality?",
+      a: "No. The tool removes the metadata blocks and leaves the image data exactly as it was, so the picture is not recompressed. The clean file is usually a little smaller only because the metadata is gone.",
+    },
+    {
+      q: "Can someone find my location from a photo I send?",
+      a: "Yes, if the file still contains GPS tags and they receive the original. Add the photo here first; if it has a location, a warning shows the coordinates. Stripping the file removes them.",
+    },
+    {
+      q: "Does Instagram remove EXIF data?",
+      a: "Large social networks generally say they remove location from posted photos, but you cannot check that and policies change. Email and files sent as documents often pass the original on, so cleaning first is safer.",
+    },
+    {
+      q: "Why is my photo rotated after removing EXIF?",
+      a: "The camera used an Orientation tag to tell viewers to turn the picture, and that tag is part of EXIF. Open the clean copy in the rotate and flip tool and turn it upright.",
+    },
+    {
+      q: "Can I remove only the GPS location and keep the camera settings?",
+      a: "Not with this tool. Removal is all or nothing, except that you can keep the ICC colour profile. It also cannot edit fields such as the date or copyright; it only shows and removes metadata.",
+    },
+    {
+      q: "How do I remove GPS data from an iPhone photo?",
+      a: "iPhones usually save photos as HEIC, which this tool does not open. Convert the photo with the HEIC to JPG converter, then add the JPG here and press Strip metadata.",
+    },
+    {
+      q: "Can it remove metadata from videos, PDFs or Word files?",
+      a: "No. It works with JPG, PNG and WebP images only. No tool here removes PDF or office metadata, and the video converter may drop some video tags without a guarantee.",
+    },
+  ],
+  'image-watermark': [
+    {
+      q: "How do I batch watermark photos online free?",
+      a: "Add all your photos to the tool at the top of this page, design one text or logo mark and check it on the preview of the first image. Press Watermark all and download the single ZIP, or each file separately. There is no account, no cap on a paid plan and no added branding.",
+    },
+    {
+      q: "How do I add a logo watermark to multiple photos?",
+      a: "Set Type to Logo image, drop a PNG logo with a transparent background onto the logo panel, then add your photos and choose a position. The same logo is placed on every image at the same relative size. If your logo has a solid background, remove it with the background remover first.",
+    },
+    {
+      q: "How do I add a copyright symbol to a photo?",
+      a: "Use Text mode, which starts with a © symbol in the field. Replace the placeholder with your name and the year, then apply it to one photo or the whole batch.",
+    },
+    {
+      q: "Can I add a text watermark and a logo at the same time?",
+      a: "Not in one pass; each run applies one mark. Watermark the batch with your logo, then run the results again with a text mark.",
+    },
+    {
+      q: "Will the watermark look the same on photos of different sizes?",
+      a: "Yes. Size and margin are percentages of each image’s width, so the mark covers the same share of every photo.",
+    },
+    {
+      q: "Is my camera and copyright metadata kept?",
+      a: "No. The watermarked copies do not carry EXIF details such as camera model, date or location, and no invisible watermark is added. Keep your originals if you need that information. A side benefit is that location data is not published along with the marked copies.",
+    },
+    {
+      q: "Can this remove a watermark from a photo, or watermark a PDF or video?",
+      a: "No. It adds marks to still images only and cannot remove an existing watermark; the image blur tool can obscure a region, but that is not removal. For documents, use the PDF watermark tool. Videos are not supported, and an animated GIF comes out as a single still frame.",
+    },
+    {
+      q: "Are my photos private?",
+      a: "Your photos are never stored on our servers, nothing is retained after your session, and nothing is used for training.",
+    },
+  ],
+  'image-blur': [
+    {
+      q: "How do I blur part of an image online for free?",
+      a: "Add the image to the tool above, drag a rectangle over each area to hide, choose an effect and press Download. The file is saved with -censored in its name, with no account, watermark or charge.",
+    },
+    {
+      q: "Can I blur a face without it looking odd?",
+      a: "Yes. Use Blur, draw the rectangle slightly larger than the head, and raise the strength until the person is unrecognisable. Blur keeps the colours of the area, so it sits more naturally than a black box.",
+    },
+    {
+      q: "Can blurred text be unblurred?",
+      a: "Weak blur or fine pixelation over text can sometimes be guessed, especially numbers in a known format. For text, card numbers and plates, use Black box or White box, which leave nothing behind. Every effect permanently replaces the hidden pixels in the download.",
+    },
+    {
+      q: "Does the tool detect faces or license plates automatically?",
+      a: "No. You draw every region by hand, so nothing is blurred by guesswork, but anything you do not mark stays visible. Check the whole photo for faces, plates and text before downloading.",
+    },
+    {
+      q: "Is my photo stored anywhere?",
+      a: "No. Your images are never stored on our servers, nothing is retained, and nothing is used for training. For extra privacy, remove location data with the EXIF remover before sharing.",
+    },
+    {
+      q: "Can I use different effects on different regions?",
+      a: "Not in one pass; the effect and strength apply to every region. To mix them, download with the first effect as PNG, load that copy, and add the rest with the second.",
+    },
+    {
+      q: "Why is my downloaded image smaller than the original?",
+      a: "Images whose longest side is over 3000 px are scaled down to 3000 px. Smaller images keep their size. For exact dimensions, use the image resizer.",
+    },
+    {
+      q: "Can I blur faces in a video or several photos at once?",
+      a: "No. The tool edits one still image at a time. For several photos, repeat the steps for each; no tool on this site currently blurs video.",
+    },
+  ],
+  'image-ocr': [
+    {
+      q: "How do I convert an image to text for free?",
+      a: "Drop, choose or paste the image into the tool above and check the preview. Where text recognition is available, press Recognise text and copy or download the result. Otherwise download the prepared image and open it in Snipping Tool, Preview or Live Text.",
+    },
+    {
+      q: "Why do I get a prepared image instead of text?",
+      a: "Built-in text recognition is currently offered here only in Chrome or Edge with the experimental web platform features setting switched on. Everywhere else you get a cleaned, enlarged black-and-white PNG, which the text tools in Windows, macOS and iPhone read more reliably.",
+    },
+    {
+      q: "Is online OCR safe for confidential documents?",
+      a: "It depends on the site, and many do not say what happens to your file. Here, images are never stored on our servers, never retained and never used for training.",
+    },
+    {
+      q: "Can I extract text from image files in bulk?",
+      a: "No, it works on one image at a time, and none of our other tools batch image OCR either. For a stack of scanned pages, combine them with image to PDF and run PDF OCR on that one file.",
+    },
+    {
+      q: "Can it read text from a scanned PDF?",
+      a: "No, it accepts images only. Use the PDF OCR tool to make a scanned PDF searchable, or combine photos with image to PDF first and then run PDF OCR on the result.",
+    },
+    {
+      q: "Can I convert a photo of a table into Excel?",
+      a: "Not with this tool; the output is plain text without columns. If the table is in a PDF, PDF to Excel keeps rows and columns.",
+    },
+    {
+      q: "Does it read handwriting or other languages?",
+      a: "There is no language setting, and handwriting is not read reliably. Clear printed text, such as typed pages, screenshots and receipts, gives the best results.",
+    },
+    {
+      q: "My iPhone photo will not open. What should I do?",
+      a: "iPhone photos are often saved as HEIC, which some setups cannot open. Convert it with HEIC to JPG, then drop the JPG here; AVIF to JPG does the same for AVIF files.",
+    },
+  ],
+  'svg-optimizer': [
+    {
+      q: "How do I reduce SVG file size for free?",
+      a: "Paste the SVG code or drop the file into the tool at the top of this page, leave the default options on and press Optimise. Compare the previews, then copy the result or download it as a .min.svg file.",
+    },
+    {
+      q: "Will optimizing change how my SVG looks?",
+      a: "It should not. The one setting that can change the shape is decimal precision: set it too low and curves or thin details can shift. Compare the Before and After previews, and raise the precision if anything moved.",
+    },
+    {
+      q: "What decimal precision should I use?",
+      a: "The default of 3 suits icons, logos and most web graphics. Large illustrations can often use 1 or 2 with no visible change. For files going to a cutting machine, keep 3 or higher, because the machine follows the path exactly.",
+    },
+    {
+      q: "How do I remove Inkscape or Illustrator data from an SVG?",
+      a: "Keep the Remove editor data option ticked. It strips Inkscape, Sodipodi, Illustrator, Adobe, Sketch, Figma and similar namespaced elements and attributes, plus data-name, enable-background and xml:space=\"preserve\" outside text.",
+    },
+    {
+      q: "Does it remove the title and description from my SVG?",
+      a: "Yes, by default, because the metadata option covers title and desc too. Those elements give the graphic an accessible name that screen readers announce, so untick the option for icons, charts or logos that need a label.",
+    },
+    {
+      q: "Can I make minified SVG readable again?",
+      a: "Yes. Paste the minified code, tick Pretty print output and press Optimise. The output is indented two spaces per level.",
+    },
+    {
+      q: "Can it convert my SVG to PNG or optimize many files at once?",
+      a: "No. It outputs SVG only and works on one file per run. For PNG, JPG or other formats, use the vector converter; for a set of favicons from one SVG, use the favicon generator.",
+    },
+    {
+      q: "Is it safe to optimize a client logo here?",
+      a: "Your files are never stored on our servers, nothing is retained after your session, and nothing is used for training.",
+    },
+  ],
+  'meme-generator': [
+    {
+      q: "Is this meme generator really free, with no watermark?",
+      a: "Yes. There is no account, no payment and no daily limit, and the downloaded meme carries no logo or watermark.",
+    },
+    {
+      q: "How do I remove the watermark another meme site added?",
+      a: "This tool does not erase watermarks from a finished meme. The clean fix is to start from the original picture, add the same captions here, and download a copy with no watermark at all. If the mark sits at the very edge, the image cropper can trim it off.",
+    },
+    {
+      q: "Does it have popular meme templates?",
+      a: "No. This meme maker captions a picture you supply rather than offering a template library. If you already have a template image saved, drop it in or paste it and add your text in the usual way.",
+    },
+    {
+      q: "What font do memes use, and can I change it?",
+      a: "Classic memes use Impact in bold white with a black outline, and that is the default here. You can switch to Arial Black, Comic Sans or a serif, and change both the text and outline colours.",
+    },
+    {
+      q: "How do I make a meme from a screenshot?",
+      a: "Copy the screenshot and paste it onto the drop panel at the top of the page. Type your captions, choose PNG under Output to keep text sharp, and press Download meme.",
+    },
+    {
+      q: "Can I make an animated GIF meme?",
+      a: "Not with this tool. It always produces a single still picture, and an animated GIF is used as its first frame only. To animate, caption several stills here and combine them with the GIF maker, or turn a video clip into a GIF with the video trimmer and the MP4 to GIF converter.",
+    },
+    {
+      q: "Why is my meme smaller than my original photo?",
+      a: "Pictures larger than 1600 pixels on their longest side are scaled down to 1600 before captions are added, which keeps files easy to share. The image enlarger can make it bigger afterwards.",
+    },
+    {
+      q: "My meme is too big to send in a chat app. What can I do?",
+      a: "Save it as JPG rather than PNG, which is usually smaller for photos. If it is still over the limit, run it through the image compressor or JPEG compressor and lower the quality until it fits.",
+    },
+    {
+      q: "Is it safe to caption personal photos here?",
+      a: "Your pictures are never stored on our servers, nothing is retained, and nothing is used for training. To strip location data from a photo first, use the EXIF remover.",
+    },
+  ],
+  'jwt-decoder': [
+    {
+      q: "How do I decode a JWT for free?",
+      a: "Paste the token into the box at the top of this page. The header and payload appear as formatted JSON straight away, with the expiry and other claims listed underneath. There is no account or sign-up.",
+    },
+    {
+      q: "Is it safe to paste a JWT into an online JWT decoder site?",
+      a: "It depends on what the page does with it. On this page, tokens, secrets and keys are never stored on our servers, nothing is retained, and nothing is used for training. When you only need the structure, an expired or test token is the safer habit.",
+    },
+    {
+      q: "How do I decode an Azure AD access token or a Firebase auth token?",
+      a: "Paste it into the Token box; a leading Bearer is removed for you. The payload shows the tenant or project as iss, the app as aud, and roles, scopes or custom claims as plain JSON. Both are usually RS256-signed, and their providers often publish keys as JWKS entries or certificates, which this tool does not accept, so convert the matching key to a BEGIN PUBLIC KEY block before verifying.",
+    },
+    {
+      q: "Can I decode a JWT without the secret?",
+      a: "Yes. The header and payload are only base64url-encoded, so anyone can read them without a key. Without the secret or public key you cannot prove the token is genuine, so decoding alone is never validation.",
+    },
+    {
+      q: "Why does my JWT signature show as invalid?",
+      a: "Usually the key is wrong. Check for a trailing space in the secret, tick the base64url box if the secret is stored encoded, and make sure the public key matches the kid in the header. A certificate pasted instead of a BEGIN PUBLIC KEY block cannot be read at all.",
+    },
+    {
+      q: "Can I verify a token using my provider's JWKS URL?",
+      a: "Not directly. The tool does not fetch keys, and a JWKS lists keys in JSON (JWK) form rather than PEM. Open the JWKS document yourself, find the key whose kid matches the token, convert that key to a PEM public key with your usual crypto tooling, and paste the result. Certificates and BEGIN RSA PUBLIC KEY blocks are not accepted, only BEGIN PUBLIC KEY.",
+    },
+    {
+      q: "Can this tool create or sign a new JWT?",
+      a: "No. It decodes and verifies existing tokens only; it has no generator and does not sign with a private key. Issue test tokens with your auth library, then paste them here.",
+    },
+    {
+      q: "Does it decrypt encrypted JWE tokens or verify EdDSA?",
+      a: "No. Encrypted tokens with five parts and EdDSA or Ed25519 signatures are not supported. It handles signed tokens using HS, RS, PS and ES algorithms.",
+    },
+    {
+      q: "My string is base64 but not a JWT. What should I use?",
+      a: "Use the Base64 encoder and decoder, which handles plain base64 and base64url text of any kind. This page only reads dot-separated JWT parts.",
+    },
+  ],
+  'hash-generator': [
+    {
+      q: "Can you decrypt an MD5 hash?",
+      a: "No. A hash is one-way: it is a fingerprint of the data, not an encrypted copy of it, so there is nothing to decrypt. Sites that claim to reverse MD5 are looking up hashes of common words they have already stored, which only works for short, guessable inputs. This tool does not attempt that.",
+    },
+    {
+      q: "Is MD5 secure?",
+      a: "For spotting accidental corruption in a download, MD5 still does the job. For anything where someone might deliberately forge a match, such as signatures or certificates, it is considered broken, and it should never be used to store passwords. Prefer SHA-256 when you have the choice, and use a dedicated password hashing scheme such as bcrypt or Argon2 for passwords.",
+    },
+    {
+      q: "How do I check the SHA-256 of an ISO file?",
+      a: "Set Source to File, drop the ISO on the panel and paste the SHA-256 value from the download page into Compare with. If the SHA-256 row turns green, your copy matches. For very large images that are slow to open here, the sha256sum, shasum or certutil command gives the same value.",
+    },
+    {
+      q: "What is a CRC32 checksum used for?",
+      a: "CRC32 is a short 8-character checksum used to catch accidental errors, and it is the value ZIP archives and many ROM and firmware lists record. Drop the file here to get the CRC32 checksum of a file online and compare it with the listing. It is not designed to resist deliberate tampering, so use SHA-256 for that.",
+    },
+    {
+      q: "Can I hash several files at once?",
+      a: "No, the tool takes one file at a time and the Compare box accepts a single checksum. To check a SHA256SUMS or .md5 list with many entries, the sha256sum or md5sum command with its check option is the faster route. For one or two files, drop each in turn.",
+    },
+    {
+      q: "Why does my HMAC not match what my server produces?",
+      a: "The most common reasons are a key given in hex or Base64, since the HMAC key box reads plain text only, and a message that differs slightly, such as reformatted JSON or a missing trailing newline. Paste the raw body exactly as it was received. Also check that you are comparing against the HMAC-SHA-256 row and that the header value is hex rather than Base64.",
+    },
+    {
+      q: "Is it safe to hash a private file here?",
+      a: "Your files and text are never stored on our servers, nothing is retained, and nothing is used for training. A digest cannot be turned back into the file, though a hash of a short, common word or password can be guessed by trying likely inputs, so treat hashes of secrets with the same care as the secrets themselves.",
+    },
+    {
+      q: "Does it support SHA-3 or bcrypt?",
+      a: "No. It calculates MD5, SHA-1, SHA-256, SHA-384, SHA-512 and CRC32, plus HMAC versions of the first five. SHA-3, SHA-224, BLAKE2, BLAKE3, RIPEMD-160 and password hashes such as bcrypt, scrypt, Argon2 and PBKDF2 are not available.",
+    },
+  ],
+  'uuid-generator': [
+    {
+      q: "How do I generate a UUID for free?",
+      a: "Open the tool at the top of this page and a batch of version 4 UUIDs is already waiting. Change the type or the How many box, then press Copy all or Download .txt.",
+    },
+    {
+      q: "Is a GUID the same as a UUID?",
+      a: "Yes. GUID is Microsoft's name for the same 128-bit identifier, and a standard UUID string works in a .NET Guid or SQL Server uniqueidentifier column. For the uppercase braced style, use the case converter and line tools.",
+    },
+    {
+      q: "Should I use UUID v4 or v7 for a primary key?",
+      a: "For a database primary key, v7 is usually better, because its leading timestamp keeps new rows near the end of the index. Use v4 when the ID is public and should reveal nothing about when it was created. Both fit the same column type.",
+    },
+    {
+      q: "Can two UUIDs ever be the same?",
+      a: "In theory yes, in practice no, as long as the random source is secure. Real collisions come from weak random number generators, not from the format, and every value here uses a cryptographically secure source.",
+    },
+    {
+      q: "Are v7 UUIDs and ULIDs generated here strictly in order?",
+      a: "They sort correctly across milliseconds, but values made within the same millisecond are ordered by their random part. That keeps indexes healthy but is not a strict sequence, so keep a separate sequence column if exact order matters.",
+    },
+    {
+      q: "How long should a JWT HS256 secret be?",
+      a: "At least 256 bits, which is 32 random bytes, as the JWA specification requires. Choose Base64url secret or Base64 secret at 32 bytes. Do not use a UUID as a signing secret.",
+    },
+    {
+      q: "Can it make uppercase or braced GUIDs, or v5 UUIDs?",
+      a: "Not directly. Output is always lowercase with hyphens, so uppercase it with the case converter, add braces with the prefix and suffix option in line tools, and remove hyphens with a replace in the regex tester. Version 1, 3 and 5 UUIDs are not offered.",
+    },
+    {
+      q: "Do you keep the passwords and secrets I generate?",
+      a: "No. Generated values are never stored on our servers, never logged, never retained and never used for training. Copy what you need into a password manager before you leave, because it cannot be recovered later.",
+    },
+  ],
+  'sql-formatter': [
+    {
+      q: "How do I format a SQL query for free?",
+      a: "Paste the query into the SQL box at the top of this page or drop a .sql file on it, choose the keyword case and indent, and press Format. Copy the result or download it as query.sql. There is no account and no daily limit.",
+    },
+    {
+      q: "Why does a SQL formatter change my query, and does it change the results?",
+      a: "No. Format changes only whitespace and the case of SQL keywords, and SQL keywords are case-insensitive, so the query returns the same results. Table names, column names, function names and string values are left as you typed them.",
+    },
+    {
+      q: "Will the formatter tell me if my SQL has an error?",
+      a: "No. It lays out the text it is given without checking the grammar, so an invalid query comes out tidy but still invalid. Run the query against your database to see the error and its position.",
+    },
+    {
+      q: "Can I choose MySQL, PostgreSQL or SQL Server formatting?",
+      a: "There is one general ruleset rather than a dialect menu. It understands backtick, double-quote and square-bracket identifiers, :: casts and $$ bodies, so everyday MySQL, PostgreSQL, SQLite and SQL Server queries format well. Features specific to one dialect are laid out by the same general rules.",
+    },
+    {
+      q: "How do I convert a multi-line SQL query to a single line?",
+      a: "Paste it and press Minify. Comments are removed and spacing is collapsed, giving one line you can download as query.min.sql. Check string values with meaningful spacing, because spaces inside quotes are collapsed too.",
+    },
+    {
+      q: "Why did Minify remove part of my PostgreSQL query?",
+      a: "The # character is always treated as the start of a MySQL-style comment, so anything after it on that line is dropped. If your query uses # as a PostgreSQL operator, use the formatted output instead of the minified one.",
+    },
+    {
+      q: "Is it safe to paste production queries here?",
+      a: "Your SQL is never stored on our servers, nothing is retained after your session, and it is never used for training. That matters when a query contains table names, customer IDs or connection details.",
+    },
+    {
+      q: "Can it turn INSERT statements into a CSV file?",
+      a: "Not this tool. The SQL to CSV converter turns INSERT statements into CSV rows and CSV back into INSERT statements. Format the query here first if you want to read it before converting.",
+    },
+  ],
+  'css-generator': [
+    {
+      q: "Is this CSS generator free to use?",
+      a: "Yes. All five generators are free, with no account and no limit on how many rules you create. Copy the CSS or download it as a .css file as often as you like.",
+    },
+    {
+      q: "Why does my box shadow look harsh, and how do I soften it?",
+      a: "Lower the opacity, raise the blur, and set Layering to \"Two layers (soft)\" or \"Three layers (smooth)\". The tab splits your shadow into a crisp close layer and softer outer ones.",
+    },
+    {
+      q: "Why is my backdrop-filter blur not showing?",
+      a: "There may be nothing behind the element to blur, the tint may be too opaque, or a parent with its own filter, opacity or backdrop-filter may be limiting it. For Safari, keep the -webkit-backdrop-filter line the generator includes.",
+    },
+    {
+      q: "Can I add more than three colours to a gradient?",
+      a: "No. The gradient tab supports two or three colours, with a movable middle stop when you choose three. Repeating gradients and custom radial shapes are not available; extra stops can be added to the copied CSS by hand.",
+    },
+    {
+      q: "Can I export the gradient or shape as an image?",
+      a: "No, the tool writes CSS text only, as a copied rule or a downloaded .css file. To convert an image you already have between formats, use the image converter, and to tidy an SVG file, use the SVG optimizer.",
+    },
+    {
+      q: "Does it output Tailwind classes or SCSS?",
+      a: "No. The output is standard CSS only, with no Tailwind classes, SCSS variables or React style objects. The plain CSS can be adapted to any of them.",
+    },
+    {
+      q: "Can I build several different box shadows in one rule?",
+      a: "Only through layering. The shadow tab turns one shadow into two or three softer copies, but cannot combine unrelated shadows with different colours. Generate each one and join them with commas in a single box-shadow declaration.",
+    },
+    {
+      q: "Can I preview the glass effect over my own background image?",
+      a: "No. The glass preview always sits over the same colourful gradient. Copy the CSS and check it on your own page, where the real content behind the panel is what gets blurred.",
+    },
+    {
+      q: "Does it generate neumorphism or animation CSS?",
+      a: "No. There are no neumorphism presets and no animation, transition or keyframe output. For a soft-UI look, pair a light and a dark box shadow by hand using two runs of the Box shadow tab.",
+    },
+    {
+      q: "How do I convert colours to HEX, RGB or HSL for these settings?",
+      a: "The output writes HEX, or rgba() where opacity is involved. For converting between HEX, RGB and HSL, use the colour format utilities, and to take an exact colour from an image, use the colour picker tool.",
+    },
+  ],
+  'regex-tester': [
+    {
+      q: "How do I test a regex online for free?",
+      a: "Type the pattern into the Pattern field of the tool at the top of this page, tick the flags you need and paste some sample text. Matches are highlighted as you type, with a group table and an explanation.",
+    },
+    {
+      q: "Why does my regex only match the first occurrence?",
+      a: "The g (global) flag is missing. Without g or y, a JavaScript regex stops after the first match. Tick g in the tool, or add it after the closing slash in your code.",
+    },
+    {
+      q: "Why is my regex multiline not working?",
+      a: "Without the m flag, ^ and $ match only the start and end of the whole text, not of each line. Without the s flag, the dot does not match a newline, so a pattern cannot run across lines. Tick m for per-line anchors and s for patterns that span lines.",
+    },
+    {
+      q: "What does this regex mean?",
+      a: "Paste it into the Pattern field and read the Explanation panel, which describes each token in plain English and indents groups to show nesting. It is a helper rather than a full parser, so it ignores flags.",
+    },
+    {
+      q: "Does it support lookbehind and named groups?",
+      a: "Yes. Lookbehind, both positive and negative, and named groups are part of the JavaScript standard and work here. Named groups appear in the Matches table as name=value and can be used in a replacement with $<name>.",
+    },
+    {
+      q: "Can I test PHP, Python or PCRE regex here?",
+      a: "No. The tool follows JavaScript regex rules only, so syntax such as possessive quantifiers, atomic groups, inline modifiers like (?i) or the \\A and \\Z anchors will error or behave differently. For those, test in that language.",
+    },
+    {
+      q: "Is it safe to paste logs or customer data?",
+      a: "Test strings and patterns are never stored on our servers, nothing is retained after your session, and none of it is used for training. As with any tool, paste only what you need: a few representative lines usually test a pattern as well as a whole log.",
+    },
+    {
+      q: "Can I save or share a pattern?",
+      a: "Not from this tool; there are no permalinks and no saved library. Copy the pattern somewhere safe, and download the replace result as replaced.txt.",
+    },
+  ],
+  'diff-checker': [
+    {
+      q: "How do I compare two texts online for free?",
+      a: "Paste the original into the Original box and the new version into the Modified box, or drop a text file onto each. The comparison appears immediately, with the changed words highlighted, and there is no account or limit.",
+    },
+    {
+      q: "Is it safe to compare confidential text here?",
+      a: "Yes. Nothing you paste or drop is stored on our servers, nothing is retained, and nothing is used for training. Diffs are never saved or shared through links.",
+    },
+    {
+      q: "Why does the diff show the whole file as changed?",
+      a: "Most often the file was re-indented or trailing spaces changed, so every line differs invisibly. Tick Ignore whitespace and only the real edits remain. Re-wrapped text, where the line breaks moved, genuinely differs and cannot be hidden.",
+    },
+    {
+      q: "Can I ignore whitespace and capitalisation?",
+      a: "Yes. Ignore whitespace collapses runs of spaces and tabs and trims each line, and Ignore case treats upper and lower case as equal. Both affect the visual comparison only; the unified patch is always computed on the exact text.",
+    },
+    {
+      q: "How do I download the diff as a patch file?",
+      a: "Press Download in the Unified diff panel to save changes.patch in the standard unified format, or Copy to take the text. Tools such as git apply and patch can read it.",
+    },
+    {
+      q: "Can I compare PDF or Word documents?",
+      a: "Not directly, because both are packaged formats rather than plain text. For PDFs, use the PDF compare tool or extract the text with the PDF to TXT converter first. For Word files, copy the text out of each document and paste it in.",
+    },
+    {
+      q: "How do I compare two JSON files that are formatted differently?",
+      a: "Run both through the JSON formatter so they share the same indentation and layout, then paste them here. The diff compares lines rather than meaning, so keys that were only reordered will still appear as changes.",
+    },
+    {
+      q: "How do I compare two lists for differences?",
+      a: "Here is how to compare two lists for differences when they are in a different order: sort and de-duplicate both with the line tools first, then paste one list into each box. Items found in only one list show as removed or added lines. There is no ignore-line-order option, so unsorted lists show more changes than really exist.",
+    },
+    {
+      q: "How do I find what changed in a config file?",
+      a: "To find what changed in a config file, drop the last working copy onto Drop file A and the current copy onto Drop file B. Tick Ignore whitespace so re-indentation drops out, and switch to character-level marks to catch a single altered value. Configs with secrets are never stored on our servers, and nothing is retained.",
+    },
+    {
+      q: "Can I compare two versions of an essay?",
+      a: "Yes. To compare two versions of an essay, paste the first draft as the original and the revised draft as the modified text, then choose word-level marks. Every reworded sentence shows the old wording removed and the new wording highlighted. Keep paragraphs wrapped the same way in both drafts so one edit does not ripple through the following lines.",
+    },
+    {
+      q: "Does it merge changes or show two columns side by side?",
+      a: "No. It shows one inline column with separate line numbers for each version, and it has no merge or copy-across. To carry edits over, apply the downloaded patch with a tool that supports patches.",
+    },
+  ],
+  'url-encoder': [
+    {
+      q: "What is the difference between URL encoding and URL decoding?",
+      a: "URL encoding turns characters a web address cannot hold, such as spaces and ampersands, into %XX codes. URL decoding reverses it, so free%20tools becomes free tools again.",
+    },
+    {
+      q: "Should I use encodeURIComponent or encodeURI?",
+      a: "Use Encode component for a single value or an address placed inside another address. Use Encode full URL to keep a complete link working, since it leaves / ? # & = and : alone.",
+    },
+    {
+      q: "Is a space %20 or + in a URL?",
+      a: "In a link, a space is %20. In form data sent as application/x-www-form-urlencoded, it is +. Use Form encoding only for form bodies.",
+    },
+    {
+      q: "Is there a form urlencoded encoder for application/x-www-form-urlencoded bodies?",
+      a: "Yes. Choose Form encoding: it escapes each value like Encode component, then writes spaces as + instead of %20, which is what an application/x-www-form-urlencoded body expects. Encode each key and value separately and join them with = and &. Form decode reverses it, turning + back into a space.",
+    },
+    {
+      q: "How do I unescape HTML entities like &amp; and &quot;?",
+      a: "Paste the text and choose HTML entities decode. Named entities such as &amp; and &quot; and numeric ones such as &#39; turn back into & and \" and ', so text copied from a CMS export or an email reads normally again.",
+    },
+    {
+      q: "Why does my plus sign turn into a space?",
+      a: "The receiving side reads the value as form data, where + means a space. Encode it first so the plus becomes %2B. When decoding, plain Decode keeps a plus as a plus.",
+    },
+    {
+      q: "How do I fix a URI malformed error?",
+      a: "The text contains a % that is not a valid encoded byte, such as a literal 50% or a legacy code like %E9. Encode the raw text if it was never encoded; legacy character sets need fixing at their source.",
+    },
+    {
+      q: "How do I fix %2520 in a link?",
+      a: "That is a double encoded space. Decode the string, paste the output back in and Decode again; each pass removes one layer.",
+    },
+    {
+      q: "Can it decode Base64url or a JWT?",
+      a: "It encodes Base64url but does not decode it. Use the JWT decoder for token segments and the Base64 encoder and decoder for other Base64 work, including files.",
+    },
+    {
+      q: "Is it safe to paste links that contain tokens?",
+      a: "Yes. Links, tokens and text you paste are never stored on our servers, nothing is retained, and nothing is used for training. Treat the decoded output with the same care as the original link.",
+    },
+  ],
+  'word-counter': [
+    {
+      q: "How do I get a word count for my text?",
+      a: "Paste or type the text into the box at the top of this page, or drop a .txt, .md or .csv file onto the strip above it. The word count and nine other figures appear at once and update as you edit.",
+    },
+    {
+      q: "Why is my word count different from Google Docs or Word?",
+      a: "Each program makes its own choices about hyphens, dashes, numbers and abbreviations. Here, hyphenated words and contractions count once, while 1,500 and U.K. count as two. For a submission, treat the official system as final.",
+    },
+    {
+      q: "Does the character count include spaces?",
+      a: "The Characters figure includes every space and line break. Chars (no spaces) leaves all of them out. If a limit does not say which it means, assume spaces are included.",
+    },
+    {
+      q: "How long does it take to read 1000 words?",
+      a: "At the default reading speed of 230 words per minute, the tool shows 4 min 21 s. Set your own speed between 80 and 600 words per minute and the reading time updates immediately.",
+    },
+    {
+      q: "How many words is a 5 minute speech?",
+      a: "At the tool's speaking pace of 150 words per minute, about 750 words. If you speak slowly, aim lower.",
+    },
+    {
+      q: "Can it check keyword phrases, or count words in a PDF?",
+      a: "The density table covers single words only, so phrases appear as separate words. PDFs and Word files do not load directly. Convert a PDF with the PDF to text converter, or a scanned one with PDF OCR, then paste the text.",
+    },
+    {
+      q: "Will my meta description fit in search results?",
+      a: "The tool shows characters left or over against 160, a common guideline. Results are shortened by display width, not a fixed character count, so put the key point first.",
+    },
+    {
+      q: "Is my essay or manuscript kept anywhere?",
+      a: "No. Your text is never stored on our servers, nothing is retained after you close the page, and it is never used for training.",
+    },
+  ],
+  'case-converter': [
+    {
+      q: "How to change uppercase to lowercase without retyping?",
+      a: "Paste the text into the case converter above and choose lowercase, or Sentence case for normal capitals at the start of each sentence. Then press Copy and paste it back.",
+    },
+    {
+      q: "Which words does Title Case leave lowercase?",
+      a: "Short words such as a, an, the, and, but, or, of, on, to and per stay lowercase unless they start the text. It does not follow a named style guide such as AP or Chicago.",
+    },
+    {
+      q: "Why did NASA turn into Nasa?",
+      a: "Title Case, Sentence case and Capitalized Case give each word one capital and lowercase the rest, with no exceptions list for acronyms. Fix those words by hand afterwards.",
+    },
+    {
+      q: "How do I turn a column header into a snake_case name?",
+      a: "Paste the header and choose snake_case; spaces and punctuation become word breaks. Convert headers one at a time, because several lines are joined into a single name.",
+    },
+    {
+      q: "Can I convert a whole Word document or PDF and keep the formatting?",
+      a: "No. It reads pasted text or a .txt or .md file and returns plain text, so formatting is not kept. For a PDF, extract the text with the PDF to text converter first.",
+    },
+    {
+      q: "Does the slug option work for non-English titles?",
+      a: "Accented Latin letters lose their accents and are kept. Letters from other scripts, such as Arabic or Chinese, are dropped because the slug keeps only a to z, digits and hyphens.",
+    },
+    {
+      q: "Is my text stored or used for training?",
+      a: "No. What you paste is never stored on our servers, nothing is retained after you leave, and it is never used for training.",
+    },
+    {
+      q: "Can it count words or sort lines while converting?",
+      a: "Not in the same step. Use the word counter for word, character and sentence totals, and line tools for sorting, removing duplicates or numbering lines.",
+    },
+  ],
+  'line-tools': [
+    {
+      q: "How do I remove duplicate lines from a list for free?",
+      a: "Paste the list into the tool at the top of this page, or drop a .txt, .csv or .md file on it, and press Remove duplicates. Copy the result or download it as lines.txt; there is no account and no daily cap.",
+    },
+    {
+      q: "Does removing duplicates change the order of my list?",
+      a: "No. Each surviving line stays in the position of the copy that was kept, the first one by default or the last one if you untick Keep first occurrence. To sort as well, copy the result back into the box and press a sort button.",
+    },
+    {
+      q: "Why does sorting put 10 before 2?",
+      a: "Alphabetical sorting compares text one character at a time, and the character 1 comes before 2. Use Natural sort to read numbers inside lines as whole numbers, or Numeric sort when each line begins with a number.",
+    },
+    {
+      q: "Is the duplicate check case-sensitive?",
+      a: "Not by default. Case-insensitive is ticked when the page opens, so Apple and apple count as one line. Untick it when capitals matter.",
+    },
+    {
+      q: "How do I see how many times each line appears?",
+      a: "Press Count occurrences. Every distinct line is listed once with its count, most frequent first, much like sort | uniq -c.",
+    },
+    {
+      q: "Can I compare two lists and find what is missing?",
+      a: "Not with this tool; it works on one list at a time. Paste both lists into the diff checker to see which lines appear in one but not the other.",
+    },
+    {
+      q: "Can I remove duplicates based on one column of a CSV?",
+      a: "No. Each row is compared as a whole line, so it works well for a one-column CSV but not for matching on a single field. For column work, use the CSV to JSON converter or the spreadsheet converter.",
+    },
+    {
+      q: "Is it safe to paste a customer email list here?",
+      a: "Your text is never stored on our servers, nothing is retained after you close the page, and it is never used for training. The cleaned list you copy or download is yours alone.",
+    },
+  ],
+  'video-trimmer': [
+    {
+      q: "How do I trim a video online for free?",
+      a: "Load the video into the tool at the top of this page, set the start and end with the Set start and Set end buttons or by typing seconds, and press Trim & export. There is no account and no watermark, and your original file is left untouched.",
+    },
+    {
+      q: "Is my video private when I trim it here?",
+      a: "Your files are never stored on our servers and nothing is retained after your session. Videos are never used for training.",
+    },
+    {
+      q: "Can I cut several parts out of one video at once?",
+      a: "Not in one run. The trimmer exports one continuous range each time, so run it once per clip you want. It does not join clips, so it cannot remove a middle section and close the gap.",
+    },
+    {
+      q: "Does trimming reduce video quality?",
+      a: "Every clip is re-encoded so that the cut lands on the exact frame, which means it is never a bit-for-bit copy of the source. Choosing Original resolution and the frame rate closest to your source keeps the clip as close to the original as the tool allows. If you need a smaller file afterwards, use the video compressor.",
+    },
+    {
+      q: "Can I trim a YouTube video by pasting its link?",
+      a: "No. The tool works on a video file you already have, not on a web address. Load a file you have the right to use.",
+    },
+    {
+      q: "Can I save the clip as MOV or as a GIF?",
+      a: "The trimmer outputs MP4 or WebM. For MOV and other containers, convert the trimmed clip with the video converter. For a looping animation, use the MP4 to GIF converter or the GIF maker.",
+    },
+    {
+      q: "How do I make the trimmed clip small enough for Discord or email?",
+      a: "Choosing 720p or 480p makes the clip lighter, but the trimmer does not aim for a target file size. Run the finished clip through the video compressor for that.",
+    },
+    {
+      q: "Can I mute the video or change its speed while trimming?",
+      a: "You can untick Keep audio for a silent clip. To mute a full-length video use the video muter, to pull the sound out as an MP3 use the MP4 to MP3 converter, and to speed a clip up or slow it down use the video speed tool.",
+    },
+  ],
+  'audio-trimmer': [
+    {
+      q: "How do I trim an audio file for free?",
+      a: "Add the file to the audio trimmer at the top of this page, click the waveform to set the start and end, preview it, then choose M4A or WAV and press Export. There is no account and no watermark.",
+    },
+    {
+      q: "Can I export the trimmed clip as an MP3?",
+      a: "No. It opens MP3 files but exports M4A (AAC) or WAV, which play on every current phone and computer. For an MP3, trim here and then use the audio converter or the M4A to MP3 converter.",
+    },
+    {
+      q: "How do I make a ringtone from a song for my iPhone?",
+      a: "Place the start at the hook, choose the iPhone ringtone (max 40 s) preset, and export as M4A. Rename the file from .m4a to .m4r, add it through Finder, Apple Devices or iTunes, then pick it under Settings, Sounds and Haptics, Ringtone.",
+    },
+    {
+      q: "Why is my custom ringtone not showing up on my iPhone?",
+      a: "The usual causes are an extension that still reads .m4a instead of .m4r, a clip longer than 40 seconds, or a transfer method that does not register ringtones. Fix the name, re-trim with the 40-second preset if needed, and add it again.",
+    },
+    {
+      q: "What do I do if my iPhone ringtone is too long?",
+      a: "An iPhone ringtone too long for the 40-second limit will not appear in the list. Open the original song again, choose the iPhone ringtone (max 40 s) preset and export a new M4A. If you move the end handle afterwards, check the clip length shown above the waveform before you export.",
+    },
+    {
+      q: "Why is my trimmed audio file bigger than the original?",
+      a: "You most likely exported WAV from a compressed file such as an MP3. WAV is uncompressed, so even a short clip can outweigh the whole song. Export as M4A for a small file instead.",
+    },
+    {
+      q: "Can I cut audio out of a video?",
+      a: "Yes. Drop an MP4 or WebM video onto the tool and it keeps only the sound, which you can trim and export as M4A or WAV. The video itself is not shortened; for that, use the video trimmer.",
+    },
+    {
+      q: "Can I remove a section from the middle of a song?",
+      a: "Not with this tool. It keeps one continuous selection and discards everything outside it, so it cannot delete a middle part and join the two ends. It also does not merge files.",
+    },
+    {
+      q: "Is it safe to trim private recordings here?",
+      a: "Your files are never stored on our servers, and nothing is retained after your session. They are never used for training, so a voice memo or interview stays yours.",
+    },
+  ],
+  'video-muter': [
+    {
+      q: "How do I remove audio from a video for free?",
+      a: "Add the video to the tool at the top of this page, press Remove audio, and download the copy with -muted in its name. There is no account, no watermark and no export limit, and your original file is left unchanged.",
+    },
+    {
+      q: "Does removing audio reduce the video quality?",
+      a: "Not for MP4, M4V or MOV. The sound track is deleted and the video stream is copied byte for byte, so codec, resolution, frame rate and bitrate stay identical. WebM and MKV are the exception: they are re-encoded to MP4 at 30 fps, which is a new, lossy copy.",
+    },
+    {
+      q: "Can I mute just one part of a video?",
+      a: "No. Every audio track is removed for the whole clip, and there is no way to mute a time range or a single word. If the section can go entirely, cut it out with the video trimmer instead.",
+    },
+    {
+      q: "Can I keep the audio as a separate file?",
+      a: "Not with this tool, because muting discards the sound. Save the audio first with the MP4 to MP3 converter or the audio converter, then mute the video here.",
+    },
+    {
+      q: "Will a MOV file from my iPhone stay a MOV?",
+      a: "Yes. MOV input comes back as MOV and MP4 or M4V input as MP4, with the picture untouched.",
+    },
+    {
+      q: "Why could someone still hear a video I muted on my phone?",
+      a: "A mute toggle in a player or an undoable edit in a photo app only hides the audio, and sharing the original data can bring it back. A copy made here has no audio track at all, so there is nothing for the recipient to restore.",
+    },
+    {
+      q: "Can I replace the soundtrack with new music?",
+      a: "Not here, and no sibling tool adds music either. Mute the clip here, then add a sound in the app you are posting to, such as Instagram Reels.",
+    },
+    {
+      q: "My video is too large for other sites. Can I still remove the audio?",
+      a: "Yes. No file-size cap is set here, so a video too large for other services to accept can still have its audio removed. Long MP4 and MOV recordings go through the same quick track removal as short clips, with no re-encoding. If you also need the result smaller, run the muted copy through the video compressor.",
+    },
+    {
+      q: "Is there an easier way than command-line software to strip the audio track?",
+      a: "Yes. Command-line tools can drop the sound and copy the video stream, but you have to know the right commands. Here it is one button: for MP4, M4V and MOV the result is the same lossless stream copy, with the picture untouched and nothing to type.",
+    },
+    {
+      q: "Is it safe to mute dashcam or security camera footage here?",
+      a: "Your videos are never stored on our servers, nothing is retained after your session, and footage is never used for training. Keep the original, since a muted copy cannot get its sound back.",
+    },
+  ],
+  'video-speed': [
+    {
+      q: "How do I change video speed online for free?",
+      a: "Choose your video in the tool above, pick a speed from 0.25× to 4×, and press Apply speed. Preview the result, then download a file named with the speed, such as clip-2x.mp4. There is no account and no watermark.",
+    },
+    {
+      q: "Will the voices sound like chipmunks when I speed up a video?",
+      a: "No. With Keep audio ticked, the sound is time-stretched so it fits the new length while voices keep their normal pitch. That applies to slowing down too, so speech never drops into a deep growl. Pitch is always preserved, so the tool cannot make a chipmunk effect on purpose either.",
+    },
+    {
+      q: "Can I speed up only part of a video?",
+      a: "Not in one step, because the whole clip always changes speed. Cut the section you want with the video trimmer, then bring that piece here and change its speed.",
+    },
+    {
+      q: "Can I choose a custom speed like 1.1× or 8×?",
+      a: "No. The speeds are fixed presets: 0.25×, 0.5×, 0.75×, 1.25×, 1.5×, 2×, 3× and 4×. For a faster timelapse than 4×, trim out the quiet stretches first so the remaining footage is shorter.",
+    },
+    {
+      q: "Why does my slow motion look choppy?",
+      a: "Slowing ordinary footage has to stretch the frames it already has, so at 0.25× each frame is shown several times. This tool repeats real frames and does not invent new ones. Footage recorded at a high frame rate slows down far more smoothly.",
+    },
+    {
+      q: "Why does WebM take so long to export?",
+      a: "A WebM export takes as long as the finished video runs: a 30-second clip slowed to 0.25× takes about two minutes. MP4 export is not tied to the running time in the same way, so it is the better choice where it is available.",
+    },
+    {
+      q: "Is it private to change video speed here?",
+      a: "Your videos are never stored on our servers, and nothing is retained after your session. Your footage is never used for training.",
+    },
+    {
+      q: "How do I speed up an iPhone video without an app?",
+      a: "Open this page in Safari, choose the clip from your photo library, pick a speed such as 2×, and press Apply speed. Download the MP4, then save it from the Files app to Photos if you want it in your library. MP4 export needs Safari 16.4 or later; on an older version, choose WebM instead.",
+    },
+    {
+      q: "Can I make the sped-up video smaller or turn it into a GIF?",
+      a: "Not in this tool, which only changes speed, resolution and frame rate. Choosing 720p or 480p gives a smaller file, but for a real size reduction run the result through the video compressor, and for a looping GIF use MP4 to GIF or the GIF maker.",
+    },
+    {
+      q: "Can I change the speed of an MP3 or a YouTube video?",
+      a: "No to both. This tool works on a video file you already have, not on a link, and it does not change the speed of audio-only files. The audio trimmer can cut an MP3 or WAV, but none of our tools changes audio speed today.",
+    },
+  ],
 };
 
 /** The FAQ pairs for a tool, or an empty array when it has none. */
