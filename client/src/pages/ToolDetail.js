@@ -95,7 +95,18 @@ export default function ToolDetail() {
 
   const category = CATEGORIES.find((c) => c.id === tool.category);
   const meta = COMPLEXITY[tool.complexity];
-  const related = toolsIn(tool.category).filter((x) => x.id !== tool.id).slice(0, 6);
+  // The tool's neighbours in its category, wrapping round, rather than the
+  // first six: with a fixed first six, every page linked to the same handful
+  // and tools further down the list were never linked from anywhere. Taking
+  // neighbours gives every tool inbound links from the six around it.
+  const peers = toolsIn(tool.category);
+  const at = peers.findIndex((x) => x.id === tool.id);
+  const related = peers.length > 1
+    ? [1, -1, 2, -2, 3, -3]
+        .map((d) => peers[(at + d + peers.length) % peers.length])
+        .filter((x, i, arr) => x.id !== tool.id && arr.findIndex((y) => y.id === x.id) === i)
+        .slice(0, 6)
+    : [];
 
   // Whether this page may be indexed, and whether it offers a working tool,
   // both depend on there being code behind the slug — not on the editorial
@@ -299,6 +310,9 @@ export default function ToolDetail() {
               : `${tool.description} Planned as a free Cortexis tool, currently in development.`
         }
         path={`/tools/${tool.slug}`}
+        // Each guided tool shares with its own card (the guide's banner as JPG,
+        // made by make-og.mjs) instead of the generic site image.
+        image={Article ? `/blog/og/${tool.slug}.jpg` : undefined}
         noindex={!live}
         schema={[
           breadcrumbs([

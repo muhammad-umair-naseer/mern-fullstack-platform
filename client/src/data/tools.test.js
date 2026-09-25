@@ -65,6 +65,13 @@ describe('tool catalogue', () => {
     expect(missing).toEqual([]);
   });
 
+  test('every guided tool has its social card in public/blog/og', () => {
+    const missing = Object.keys(ARTICLES).filter(
+      (s) => !fs.existsSync(path.join(__dirname, '../../public/blog/og', `${s}.jpg`))
+    );
+    expect(missing).toEqual([]);
+  });
+
   test('every toolkit tool has its module under public/toolkit/src/tools', () => {
     const dir = path.join(__dirname, '../../public/toolkit/src/tools');
     const missing = [...toolkit].filter((s) => !fs.existsSync(path.join(dir, `${s}.js`)));

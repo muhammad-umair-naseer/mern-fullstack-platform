@@ -127,10 +127,10 @@ export const TOOLS = [
   t(71, 'DOCX to PDF', 'convert', 3, 'Convert Word documents to styled, printable PDFs without Microsoft Office.', true, 'docx-to-pdf'),
   t(72, 'XLSX to PDF', 'convert', 3, 'Convert Excel spreadsheets into cleanly formatted, page-aligned PDF tables.', true, 'xlsx-to-pdf'),
   t(73, 'Image to PDF', 'convert', 2, 'Combine multiple JPG, PNG, WebP images into a single multi-page PDF.', true, 'image-to-pdf'),
-  t(74, 'HEIC to JPG / PNG', 'convert', 3, 'Convert iPhone HEIC/HEIF photos to JPG or PNG with native browser decoding.', true, 'heic-to-jpg'),
+  t(74, 'HEIC to JPG / PNG', 'convert', 3, 'Convert iPhone HEIC/HEIF photos to JPG or PNG in a couple of clicks.', true, 'heic-to-jpg'),
   t(75, 'AVIF to JPG / PNG / WebP', 'convert', 2, 'Convert modern AVIF images to standard formats with custom quality.', true, 'avif-to-jpg'),
   t(76, 'GIF to MP4', 'convert', 3, 'Convert animated GIFs into small, ultra-fast MP4 or WebM videos.', true, 'gif-to-mp4'),
-  t(77, 'WEBM ↔ MP4', 'convert', 3, 'Convert between WebM and MP4 formats locally with resolution & bitrate controls.', true, 'webm-mp4'),
+  t(77, 'WEBM ↔ MP4', 'convert', 3, 'Convert between WebM and MP4 with resolution and quality controls.', true, 'webm-mp4'),
   t(78, 'OGG / OPUS to MP3', 'convert', 2, 'Convert WhatsApp voice notes and OGG/Opus audio to universal WAV or M4A.', true, 'ogg-to-mp3'),
   t(79, 'M4A / AAC to MP3', 'convert', 2, 'Convert Apple voice memos and M4A audio to WAV or AAC with trimming.', true, 'm4a-to-mp3'),
   t(80, 'CSV ↔ JSON', 'convert', 2, 'Two-way conversion between tabular CSV data and JSON objects.', true, 'csv-json'),
@@ -142,7 +142,7 @@ export const TOOLS = [
   t(86, 'Unix Timestamp ↔ Date', 'convert', 1, 'Convert Unix epoch timestamps to human dates across timezones and vice-versa.', true, 'timestamp-converter'),
 
   // Image & Graphics
-  t(87, 'Background Remover', 'image', 3, 'Remove plain or gradient backgrounds from logos and product photos locally.', true, 'background-remover'),
+  t(87, 'Background Remover', 'image', 3, 'Remove plain or gradient backgrounds from logos and product photos.', true, 'background-remover'),
   t(88, 'Favicon & App Icon Generator', 'image', 2, 'Generate 16-512px PNGs, favicon.ico, Apple touch icon and site.webmanifest.', true, 'favicon-generator'),
   t(89, 'EXIF / Metadata Remover', 'image', 2, 'Inspect camera/GPS metadata and strip EXIF data from JPG, PNG, WebP losslessly.', true, 'exif-remover'),
   t(90, 'Batch Image Watermark', 'image', 2, 'Apply custom copyright text or logo stamps onto multiple photos simultaneously.', true, 'image-watermark'),
@@ -152,7 +152,7 @@ export const TOOLS = [
   t(94, 'Meme Generator', 'image', 2, 'Classic Impact-font meme generator with custom top/bottom captions.', true, 'meme-generator'),
 
   // Developer & Code
-  t(95, 'JWT Decoder', 'dev', 2, 'Decode JWT header, payload, check expiration, and verify signatures offline.', true, 'jwt-decoder'),
+  t(95, 'JWT Decoder', 'dev', 2, 'Decode a JWT header and payload, check its expiry and verify its signature.', true, 'jwt-decoder'),
   t(96, 'Hash & Checksum Generator', 'dev', 1, 'Calculate MD5, SHA-1, SHA-256, SHA-512, CRC32, and HMAC for text or files.', true, 'hash-generator'),
   t(97, 'UUID & Secret Generator', 'dev', 1, 'Generate batch UUID v4/v7, ULIDs, secure passwords, and cryptographic hex tokens.', true, 'uuid-generator'),
   t(98, 'SQL Formatter', 'dev', 2, 'Beautify or minify SQL queries with indentation and consistent keyword casing.', true, 'sql-formatter'),
