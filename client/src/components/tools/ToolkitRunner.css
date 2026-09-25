@@ -1,0 +1,708 @@
+/* Scoped Toolkit Runner Styles for Cortexis React App */
+.toolkit-runner {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --accent: #2563eb;
+  --accent-2: #1e293b;
+  --accent-soft: #eff6ff;
+  --ok: #059669;
+  --warn: #d97706;
+  --err: #dc2626;
+  --err-soft: #fef2f2;
+  --radius: 14px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font);
+  color: var(--text);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.toolkit-runner * {
+  box-sizing: border-box;
+}
+
+.toolkit-runner h1,
+.toolkit-runner h2,
+.toolkit-runner h3 {
+  line-height: 1.25;
+  margin: 0 0 0.5em;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.toolkit-runner h1 { font-size: 1.6rem; }
+.toolkit-runner h2 { font-size: 1.3rem; }
+.toolkit-runner h3 { font-size: 1.05rem; }
+
+.toolkit-runner p {
+  margin: 0 0 1em;
+}
+
+.toolkit-runner code,
+.toolkit-runner .mono {
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+.toolkit-runner button,
+.toolkit-runner input,
+.toolkit-runner select,
+.toolkit-runner textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.toolkit-runner [hidden] {
+  display: none !important;
+}
+
+/* Tool Layout */
+.toolkit-runner .tool {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.toolkit-runner .tool.two {
+  grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+}
+
+@media (max-width: 900px) {
+  .toolkit-runner .tool.two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.toolkit-runner .card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.toolkit-runner .card h3 {
+  margin-bottom: 14px;
+  font-size: 1rem;
+}
+
+.toolkit-runner .card + .card {
+  margin-top: 14px;
+}
+
+.toolkit-runner .stack > * + * {
+  margin-top: 14px;
+}
+
+/* Dropzone */
+.toolkit-runner .dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.toolkit-runner .dropzone.compact {
+  padding: 16px;
+}
+
+.toolkit-runner .dropzone:hover,
+.toolkit-runner .dropzone.over,
+.toolkit-runner .dropzone:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.toolkit-runner .dz-icon {
+  font-size: 26px;
+  color: var(--accent);
+}
+
+.toolkit-runner .dz-label {
+  font-weight: 600;
+  margin-top: 6px;
+  color: #1e293b;
+}
+
+.toolkit-runner .dz-hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* Chips & Badges */
+.toolkit-runner .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.88rem;
+  margin: 4px 6px 0 0;
+  max-width: 100%;
+}
+
+.toolkit-runner .chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
+  font-weight: 500;
+}
+
+.toolkit-runner .chip-size {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.toolkit-runner .chip-x {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: background 0.15s;
+}
+
+.toolkit-runner .chip-x:hover {
+  background: var(--line);
+  color: var(--text);
+}
+
+/* Form Controls */
+.toolkit-runner .field {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.toolkit-runner .field-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.toolkit-runner .field-help {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.toolkit-runner .field input:not([type=checkbox]):not([type=range]):not([type=color]),
+.toolkit-runner .field select,
+.toolkit-runner textarea,
+.toolkit-runner input.wide {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.92rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.toolkit-runner textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.toolkit-runner textarea.mono {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+}
+
+.toolkit-runner input:focus,
+.toolkit-runner select:focus,
+.toolkit-runner textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.toolkit-runner input[type=color] {
+  width: 50px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.toolkit-runner .range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolkit-runner .range input {
+  flex: 1;
+}
+
+.toolkit-runner .range-val {
+  min-width: 54px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.toolkit-runner .check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 14px 10px 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.toolkit-runner .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.toolkit-runner .grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+
+@media (max-width: 560px) {
+  .toolkit-runner .grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Buttons */
+.toolkit-runner .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text);
+  transition: all 0.15s ease;
+}
+
+.toolkit-runner .btn:hover {
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.toolkit-runner .btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.toolkit-runner .btn.primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.28);
+}
+
+.toolkit-runner .btn.big {
+  padding: 12px 22px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.toolkit-runner .btn.danger {
+  color: var(--err);
+  border-color: #fecaca;
+  background: var(--err-soft);
+}
+
+.toolkit-runner .btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.toolkit-runner .btn.small {
+  padding: 4px 10px;
+  font-size: 0.82rem;
+}
+
+/* Progress & Feedback */
+.toolkit-runner .progress {
+  margin: 12px 0;
+}
+
+.toolkit-runner .progress .track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.toolkit-runner .progress .bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), #60a5fa);
+  transition: width 0.2s ease;
+}
+
+.toolkit-runner .progress-label {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.toolkit-runner .result {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 5px solid var(--ok);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.toolkit-runner .result-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolkit-runner .result-title {
+  font-weight: 700;
+  color: #166534;
+}
+
+.toolkit-runner .result-meta {
+  color: #15803d;
+  font-size: 0.85rem;
+}
+
+.toolkit-runner .result-preview {
+  margin-top: 14px;
+}
+
+.toolkit-runner .result-preview img,
+.toolkit-runner .result-preview video {
+  max-height: 420px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: repeating-conic-gradient(var(--surface-2) 0 25%, transparent 0 50%) 0 0/16px 16px;
+}
+
+.toolkit-runner .pdf-frame {
+  width: 100%;
+  height: 500px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.toolkit-runner .error {
+  background: var(--err-soft);
+  color: var(--err);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.toolkit-runner .notice {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.toolkit-runner .notice.warn {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: var(--warn);
+}
+
+.toolkit-runner .notice.ok {
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  color: var(--ok);
+}
+
+.toolkit-runner .toasts {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toolkit-runner .toast {
+  background: #1e293b;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.toolkit-runner .toast.error {
+  background: var(--err);
+}
+
+/* Data Tables & Key-Value Lists */
+.toolkit-runner table.data {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.88rem;
+  margin-top: 10px;
+}
+
+.toolkit-runner table.data th,
+.toolkit-runner table.data td {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.toolkit-runner table.data th {
+  background: var(--surface-2);
+  font-weight: 600;
+  color: #334155;
+}
+
+.toolkit-runner .kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  font-size: 0.9rem;
+}
+
+.toolkit-runner .kv dt {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.toolkit-runner .kv dd {
+  margin: 0;
+  word-break: break-all;
+  font-weight: 600;
+}
+
+.toolkit-runner .tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--line);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.toolkit-runner .tabs button {
+  border: 0;
+  background: transparent;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+}
+
+.toolkit-runner .tabs button.on {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Diff View */
+.toolkit-runner .diff {
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  max-height: 70vh;
+}
+
+.toolkit-runner .diff .l {
+  display: grid;
+  grid-template-columns: 40px 40px 1fr;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.toolkit-runner .diff .n {
+  color: var(--muted);
+  text-align: right;
+  padding: 0 8px;
+  user-select: none;
+  border-right: 1px solid var(--line);
+}
+
+.toolkit-runner .diff .ins { background: #dcfce7; }
+.toolkit-runner .diff .del { background: #fee2e2; }
+.toolkit-runner .diff .ins .n { background: #bbf7d0; }
+.toolkit-runner .diff .del .n { background: #fecaca; }
+
+/* Canvas & Page Wireframe */
+.toolkit-runner .canvas-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.toolkit-runner .canvas-wrap canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  touch-action: none;
+}
+
+.toolkit-runner .page-box {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin: 12px auto;
+  user-select: none;
+  touch-action: none;
+}
+
+.toolkit-runner .page-box .mark {
+  position: absolute;
+  border: 2px solid var(--accent);
+  background: rgba(37, 99, 235, 0.15);
+  cursor: move;
+}
+
+.toolkit-runner .page-box .mark.black {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: #000;
+}
+
+.toolkit-runner .page-box .mark .x {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--err);
+  color: #fff;
+  font-size: 13px;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toolkit-runner .page-box .mark .rz {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 3px;
+  cursor: nwse-resize;
+}
+
+.toolkit-runner .thumbs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toolkit-runner .thumb {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: var(--surface);
+  cursor: pointer;
+  width: 100px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+
+.toolkit-runner .thumb.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.toolkit-runner .thumb img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 6px;
+}
+
+.toolkit-runner .preview-box {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  background: repeating-conic-gradient(var(--surface-2) 0 25%, transparent 0 50%) 0 0/20px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  padding: 16px;
+}
+
+.toolkit-runner .pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolkit-runner .pill-list button {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.toolkit-runner .pill-list button.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}

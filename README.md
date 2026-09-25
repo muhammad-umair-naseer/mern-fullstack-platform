@@ -30,7 +30,26 @@ at any step.
 | Backend | Node.js, Express 4, better-sqlite3, Joi, bcryptjs, jsonwebtoken, Nodemailer |
 | Security | Helmet, CORS, express-rate-limit |
 
-## Getting Started
+## Quick Start with Docker (No Local Dependencies Required)
+
+Anyone can clone and run the full stack (Frontend, Backend API, PostgreSQL, Redis) with **zero local dependencies** installed (no Node.js, npm, or database setup needed):
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/abdullah5654/cortexis-website.git
+cd cortexis-website
+
+# 2. Build and launch all services with Docker Compose
+docker compose up --build
+```
+
+Once started, open:
+* **Web Application & 109 Tools:** `http://localhost:5000`
+* **API Endpoints:** `http://localhost:5000/api`
+
+---
+
+## Local Development (Without Docker)
 
 ```bash
 # Install everything and build the client

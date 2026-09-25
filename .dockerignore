@@ -18,9 +18,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Exclude standalone tool archives, test files and dumps
-*.pdf
-*.zip
+# Exclude standalone tool archives, test files and dumps in root
+/*.pdf
+/*.zip
 extracted_tools/
 brand-source/
 Image Color Picker/
@@ -37,6 +37,7 @@ tool3-merger/
 tool4-splitter/
 tool7-crop/
 tool8-resize/
-*.html
-!client/public/index.html
+/*.html
+!client/public/**
+
 

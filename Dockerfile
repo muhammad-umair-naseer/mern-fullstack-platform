@@ -1,5 +1,10 @@
 # Build stage for React frontend
 FROM node:24-alpine AS client-builder
+WORKDIR /app
+
+# Copy courses metadata needed for sitemap & client build
+COPY server/src/content/courses /app/server/src/content/courses
+
 WORKDIR /app/client
 
 COPY client/package*.json ./
