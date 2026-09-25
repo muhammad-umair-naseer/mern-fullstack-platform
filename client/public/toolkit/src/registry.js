@@ -1,9 +1,9 @@
 // Central registry of every tool. Used by the hub page, the tool shell and the static page generator.
 export const CATEGORIES = [
   { id: 'pdf', name: 'PDF tools', blurb: 'Edit, protect and organise PDFs with a built-in PDF engine.' },
-  { id: 'convert', name: 'Converters', blurb: 'Documents, images, media, data and archives — converted in your browser.' },
+  { id: 'convert', name: 'Converters', blurb: 'Documents, images, media, data and archives — converted in seconds, nothing kept.' },
   { id: 'image', name: 'Image tools', blurb: 'Privacy, branding and icon utilities for images.' },
-  { id: 'dev', name: 'Developer tools', blurb: 'Everyday utilities for developers, with zero network requests.' },
+  { id: 'dev', name: 'Developer tools', blurb: 'Everyday utilities for developers — instant, private, nothing stored.' },
   { id: 'text', name: 'Text & media', blurb: 'Text clean-up and quick audio/video edits.' },
 ];
 
@@ -17,14 +17,14 @@ export const TOOLS = [
   { slug: 'pdf-compare', name: 'Compare PDFs', category: 'pdf', description: 'Find what changed between two PDF versions: text differences, page counts, size and metadata, side by side.', keywords: 'compare diff pdf versions' },
   { slug: 'pdf-bookmarks', name: 'PDF Bookmarks / TOC', category: 'pdf', description: 'View, edit or build the bookmark tree (outline) of a PDF and add a clickable table of contents.', keywords: 'bookmarks outline toc table of contents pdf' },
   // ---- Converters ----
-  { slug: 'docx-to-pdf', name: 'DOCX to PDF', category: 'convert', description: 'Convert Word documents to PDF entirely in your browser — headings, lists, tables and images are preserved.', keywords: 'word docx pdf convert document' },
+  { slug: 'docx-to-pdf', name: 'DOCX to PDF', category: 'convert', description: 'Convert Word documents to PDF — headings, lists, tables and images are preserved.', keywords: 'word docx pdf convert document' },
   { slug: 'xlsx-to-pdf', name: 'XLSX to PDF', category: 'convert', description: 'Turn Excel workbooks into clean PDF tables, one section per sheet, in portrait or landscape.', keywords: 'excel xlsx pdf spreadsheet convert' },
   { slug: 'image-to-pdf', name: 'Image to PDF', category: 'convert', description: 'Combine JPG, PNG, WebP, GIF, BMP or SVG images into one PDF with page size, margins and fit options.', keywords: 'jpg png webp image pdf combine merge' },
-  { slug: 'heic-to-jpg', name: 'HEIC to JPG / PNG', category: 'convert', description: "Convert iPhone HEIC/HEIF photos to JPG or PNG using your browser's native decoder.", keywords: 'heic heif iphone jpg png convert' },
+  { slug: 'heic-to-jpg', name: 'HEIC to JPG / PNG', category: 'convert', description: "Convert iPhone HEIC/HEIF photos to JPG or PNG.", keywords: 'heic heif iphone jpg png convert' },
   { slug: 'avif-to-jpg', name: 'AVIF to JPG / PNG / WebP', category: 'convert', description: 'Convert AVIF images to JPG, PNG or WebP with adjustable quality — batch supported.', keywords: 'avif jpg png webp convert' },
   { slug: 'gif-to-mp4', name: 'GIF to MP4', category: 'convert', description: 'Turn animated GIFs into small MP4 (or WebM) videos with a built-in GIF decoder and MP4 muxer.', keywords: 'gif mp4 video convert animation' },
-  { slug: 'webm-mp4', name: 'WEBM ↔ MP4', category: 'convert', description: 'Convert WebM to MP4 or MP4 to WebM in the browser, with resolution and quality controls.', keywords: 'webm mp4 convert video' },
-  { slug: 'ogg-to-mp3', name: 'OGG / OPUS Converter', category: 'convert', description: 'Convert OGG and Opus audio to WAV or M4A (AAC) — decoding happens locally.', keywords: 'ogg opus mp3 wav m4a aac audio convert' },
+  { slug: 'webm-mp4', name: 'WEBM ↔ MP4', category: 'convert', description: 'Convert WebM to MP4 or MP4 to WebM, with resolution and quality controls.', keywords: 'webm mp4 convert video' },
+  { slug: 'ogg-to-mp3', name: 'OGG / OPUS Converter', category: 'convert', description: 'Convert OGG and Opus audio to WAV or M4A (AAC).', keywords: 'ogg opus mp3 wav m4a aac audio convert' },
   { slug: 'm4a-to-mp3', name: 'M4A / AAC Converter', category: 'convert', description: 'Convert M4A and AAC audio to WAV or M4A with trimming and normalisation.', keywords: 'm4a aac mp3 wav audio convert' },
   { slug: 'csv-json', name: 'CSV ↔ JSON', category: 'convert', description: 'Convert CSV to JSON (array of objects) and JSON to CSV with delimiter detection and nested flattening.', keywords: 'csv json convert data' },
   { slug: 'xml-json', name: 'XML ↔ JSON', category: 'convert', description: 'Convert XML to JSON and back with a predictable attribute/text mapping.', keywords: 'xml json convert data' },
@@ -39,7 +39,7 @@ export const TOOLS = [
   { slug: 'exif-remover', name: 'EXIF / Metadata Remover', category: 'image', description: 'See what your photos reveal (GPS, camera, dates) and strip all metadata from JPG, PNG and WebP losslessly.', keywords: 'exif metadata gps privacy strip remove' },
   { slug: 'image-watermark', name: 'Batch Image Watermark', category: 'image', description: 'Add a text or logo watermark to many images at once — position, tiling, opacity, size — and download as ZIP.', keywords: 'watermark batch images logo text' },
   { slug: 'image-blur', name: 'Blur / Censor / Pixelate', category: 'image', description: 'Blur, pixelate or black out faces, plates and private details by drawing regions on the image.', keywords: 'blur pixelate censor face privacy' },
-  { slug: 'image-ocr', name: 'Image to Text (OCR)', category: 'image', description: "Extract text from images with the browser's built-in text detector, or prepare scans for OCR.", keywords: 'ocr text recognition image scan' },
+  { slug: 'image-ocr', name: 'Image to Text (OCR)', category: 'image', description: "Extract text from a photo or scan, or prepare the image for an OCR app.", keywords: 'ocr text recognition image scan' },
   { slug: 'svg-optimizer', name: 'SVG Optimizer', category: 'image', description: 'Minify SVG files: strip editor metadata, round coordinates, clean styles — with a live before/after preview.', keywords: 'svg optimize minify svgo' },
   { slug: 'meme-generator', name: 'Meme Generator', category: 'image', description: 'Classic top/bottom text memes with outlined Impact-style captions, custom colours and sizes.', keywords: 'meme generator caption text image' },
   // ---- Dev ----
@@ -55,7 +55,7 @@ export const TOOLS = [
   { slug: 'word-counter', name: 'Word & Character Counter', category: 'text', description: 'Words, characters, sentences, paragraphs, reading time and keyword density as you type.', keywords: 'word count character count reading time' },
   { slug: 'case-converter', name: 'Case Converter Suite', category: 'text', description: 'UPPER, lower, Title, Sentence, camelCase, snake_case, kebab-case, CONSTANT_CASE and more.', keywords: 'case convert upper lower camel snake kebab' },
   { slug: 'line-tools', name: 'Duplicate Line Remover & Sorter', category: 'text', description: 'Remove duplicate or empty lines, sort (A–Z, natural, numeric, by length), shuffle, reverse, trim and number lines.', keywords: 'duplicate lines remove sort shuffle text' },
-  { slug: 'video-trimmer', name: 'Video Trimmer', category: 'text', description: 'Cut a clip out of a video and export MP4 (or WebM) — frame-accurate, no upload.', keywords: 'video trim cut clip mp4' },
+  { slug: 'video-trimmer', name: 'Video Trimmer', category: 'text', description: 'Cut a clip out of a video and export MP4 (or WebM) — frame-accurate.', keywords: 'video trim cut clip mp4' },
   { slug: 'audio-trimmer', name: 'Audio Trimmer / Ringtone Maker', category: 'text', description: 'Trim audio with a waveform, add fades, and export WAV or M4A — perfect for ringtones.', keywords: 'audio trim ringtone cut fade' },
   { slug: 'video-muter', name: 'Video Audio Muter', category: 'text', description: 'Remove the audio track from MP4/MOV losslessly (no re-encoding), or from any video by re-encoding.', keywords: 'mute video remove audio' },
   { slug: 'video-speed', name: 'Video Speed Adjuster', category: 'text', description: 'Speed up or slow down a video (0.25×–4×) with pitch-preserving audio and MP4 export.', keywords: 'video speed fast slow motion' },
