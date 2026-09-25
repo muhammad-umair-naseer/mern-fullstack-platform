@@ -8,6 +8,16 @@ import { closeWorker } from './workers/email.worker.js';
 
 const PORT = process.env.PORT || 5000;
 
+// A rejected promise nobody awaited (a Redis command that timed out while the
+// cache was down, a queued email that could not be sent) must not take the
+// whole API down with it. Log it with enough context to find, and carry on.
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason instanceof Error ? reason.stack : reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err.stack || err);
+});
+
 boot()
   .then(({ courses, lessons }) => {
     console.log(`📚 Seeded ${courses} course(s), ${lessons} lesson(s)`);

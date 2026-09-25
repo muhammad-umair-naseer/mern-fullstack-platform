@@ -13,7 +13,12 @@ export const createLimiter = ({ windowMs, max, prefix, message }) => {
   const store = new RedisStore({
     sendCommand: (...args) => {
       const client = getRedisClient();
-      if (!client) {
+      if (!client) throw new Error('Redis client unavailable');
+      // While the first connection is still being made, ioredis queues the
+      // command and runs it on connect. Once Redis is known to be down, that
+      // queue would only fail at the command timeout and stall every request
+      // by that long — refuse up front so passOnStoreError lets it through.
+      if (!isRedisReady() && ['reconnecting', 'close', 'end'].includes(client.status)) {
         throw new Error('Redis client unavailable');
       }
       return client.call(...args);

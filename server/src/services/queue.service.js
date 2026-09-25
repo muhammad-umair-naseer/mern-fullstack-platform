@@ -5,6 +5,11 @@ import { sendVerificationCode } from './verificationMail.js';
 import { maybeSendContactEmail } from './mailer.js';
 import { alertAdmin, notifySignup } from './adminAlert.js';
 
+// BullMQ rejects custom job ids containing ':' (it is the key separator), so
+// every id is built through this — with ':' in the ids, not one email ever
+// reached the queue and each one fell back to direct dispatch.
+const jobIdOf = (...parts) => parts.map((p) => String(p).replace(/:/g, '-')).join('-');
+
 /**
  * BullMQ Email & Notification Queue Service
  * 
@@ -81,7 +86,7 @@ export const getEmailQueue = () => {
 export const queueVerificationEmail = async ({ name, email, code }) => {
   const queue = getEmailQueue();
   const normalizedEmail = String(email).trim().toLowerCase();
-  const jobId = `verify:${normalizedEmail}:${code}`;
+  const jobId = jobIdOf('verify', normalizedEmail, code);
 
   if (isRedisReady() && queue) {
     try {
@@ -107,7 +112,7 @@ export const queueContactEmail = async (data) => {
   const normalizedEmail = String(data.email || '').trim().toLowerCase();
   const msgHash = crypto.createHash('md5').update(String(data.message || '').trim()).digest('hex').slice(0, 12);
   const timeWindow = Math.floor(Date.now() / 60000); // 1-minute deduplication window
-  const jobId = `contact:${normalizedEmail}:${msgHash}:${timeWindow}`;
+  const jobId = jobIdOf('contact', normalizedEmail, msgHash, timeWindow);
 
   if (isRedisReady() && queue) {
     try {
@@ -129,7 +134,7 @@ export const queueContactEmail = async (data) => {
 export const queueAdminAlert = async ({ key, subject, detail, context }) => {
   const queue = getEmailQueue();
   const timeWindow = Math.floor(Date.now() / 30000); // 30s deduplication window
-  const jobId = `alert:${key}:${timeWindow}`;
+  const jobId = jobIdOf('alert', key, timeWindow);
 
   if (isRedisReady() && queue) {
     try {
@@ -151,7 +156,7 @@ export const queueAdminAlert = async ({ key, subject, detail, context }) => {
 export const queueSignupNotification = async ({ name, email }) => {
   const queue = getEmailQueue();
   const normalizedEmail = String(email).trim().toLowerCase();
-  const jobId = `signup:${normalizedEmail}`;
+  const jobId = jobIdOf('signup', normalizedEmail);
 
   if (isRedisReady() && queue) {
     try {
@@ -174,7 +179,7 @@ export const queueInternshipAlert = async (data) => {
   const queue = getEmailQueue();
   const normalizedEmail = String(data.email || '').trim().toLowerCase();
   const timeWindow = Math.floor(Date.now() / 60000);
-  const jobId = `intern:${normalizedEmail}:${encodeURIComponent(data.internshipTitle || '')}:${timeWindow}`;
+  const jobId = jobIdOf('intern', normalizedEmail, encodeURIComponent(data.internshipTitle || ''), timeWindow);
 
   if (isRedisReady() && queue) {
     try {

@@ -159,6 +159,42 @@ under a learner mid-quiz.
 | GET | `/api/learn/certificate/:code` | — | Public verification |
 | POST | `/api/contact` · `/api/courses/register` · `/api/internships/apply` | — | Site forms |
 
+## Continuous Integration
+
+Every push and pull request runs `.github/workflows/ci.yml`:
+
+| Job | What it proves |
+| --- | --- |
+| Repository hygiene | no `.env`, database or key file is committed; lockfiles exist; `docker-compose.yml` parses |
+| API on sqlite / postgres | every module parses; the end-to-end learner suite (sign-up → verification → enrolment → gated lessons → quizzes → certificate, plus both public forms) passes on SQLite and on PostgreSQL, each with a real Redis; the server cold-boots and `/health` names the right database |
+| Web client | ESLint with zero warnings; Jest (catalogue invariants: every live tool is routed, has its guide, meta, FAQ data and banner); the production build with blog, sitemap and the Chrome prerender against a live API; a check that the prerender really produced the tool pages; the build is kept as an artifact |
+| Production image | for pull requests, pushes to `main` and manual runs: the Docker image is built exactly as a host would build it and the running container is smoke-tested (`/health`, the API, a prerendered page, the sitemap) |
+
+Run the same checks locally before pushing:
+
+```bash
+npm test --prefix server                                  # needs Redis on 127.0.0.1:6379
+DATABASE_URL=postgres://localhost/cortexis_test npm test --prefix server
+npx eslint --max-warnings=0 src   # in client/
+CI=true npm test --prefix client -- --watchAll=false
+docker build -t cortexis-website .                        # builds and prerenders
+```
+
+The image build boots a throwaway API on SQLite and prerenders every public
+route with Chromium, so an image built anywhere ships the same crawlable pages.
+
+### Deploying with Docker Compose
+
+```bash
+cp .env.example .env      # then fill in JWT_SECRET, POSTGRES_PASSWORD, REDIS_PASSWORD
+docker compose up -d --build
+```
+
+Compose refuses to start until those three values are set — there are no
+built-in defaults, so a forgotten secret can never fall back to something the
+public repository knows. Postgres and Redis run alongside the API on a private
+network; only port 5000 is published.
+
 ## Notes
 
 - Login returns an identical message for an unknown email and a wrong password, so the

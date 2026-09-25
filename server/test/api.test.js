@@ -27,7 +27,7 @@ process.env.DATABASE_FILE ??= join(tmp, 'test.db');
 
 const { default: app, boot } = await import('../src/app.js');
 const { getDB, closeDB } = await import('../src/setup/db.js');
-const { getRedisClient, isRedisReady } = await import('../src/services/redis.service.js');
+const { getRedisClient } = await import('../src/services/redis.service.js');
 
 let server;
 let base;
@@ -59,8 +59,10 @@ const answersFor = async (questions) => {
 before(async () => {
   await boot();
   db = getDB();
-  // Isolated Redis DB, wiped so rate-limit counters from a previous run cannot bleed in.
-  if (isRedisReady()) await getRedisClient().flushdb();
+  // Isolated Redis DB, wiped so rate-limit counters from a previous run cannot
+  // bleed in. Not gated on the ready flag: the client queues the command until
+  // it connects, and if Redis is absent the rejection is simply ignored.
+  await getRedisClient()?.flushdb().catch(() => {});
   await new Promise((resolve) => {
     server = app.listen(0, () => {
       base = `http://127.0.0.1:${server.address().port}`;

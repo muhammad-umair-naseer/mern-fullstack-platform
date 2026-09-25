@@ -187,6 +187,9 @@ try {
     executablePath: CHROME,
     headless: 'new',
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    // The scroll pass on the heaviest pages can exceed the 180 s default when
+    // several tabs share a small CI or container CPU.
+    protocolTimeout: 300000,
   });
 } catch (err) {
   console.warn(`⚠️ Could not launch Chrome (${err.message}). Skipping prerender step.`);
@@ -197,7 +200,12 @@ try {
 let written = 0;
 const failed = [];
 
-for (const route of routes) {
+// Routes render in parallel tabs. Each one is independent — its own page, its
+// own scroll, its own file — so N tabs finish in roughly 1/N of the time, and
+// a 120-route build stops being the slowest step of every image build.
+const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY) || 4);
+
+const renderRoute = async (route) => {
   const page = await browser.newPage();
   try {
     await page.setViewport({ width: 1280, height: 900 });
@@ -224,7 +232,10 @@ for (const route of routes) {
     await page.evaluate(async () => {
       const step = Math.round(window.innerHeight * 0.8);
       const frame = () => new Promise((r) => requestAnimationFrame(() => r()));
-      for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+      // Bounded: a page whose height keeps growing (or a starved tab) must not
+      // scroll forever. 400 steps is well past the longest page on the site.
+      const deadline = Date.now() + 60000;
+      for (let y = 0, steps = 0; y < document.documentElement.scrollHeight && steps < 400 && Date.now() < deadline; y += step, steps += 1) {
         window.scrollTo(0, y);
         await frame();
         await frame();
@@ -251,12 +262,12 @@ for (const route of routes) {
     }));
     if (check.text < 200) {
       failed.push(`${route}: only ${check.text} chars of text`);
-      continue;
+      return;
     }
     // Two titles means a crawler picks the first, which may be the wrong page's.
     if (check.titles !== 1 || check.descs !== 1) {
       failed.push(`${route}: ${check.titles} title tags and ${check.descs} descriptions, expected 1 of each`);
-      continue;
+      return;
     }
 
     const dir = route === '/' ? BUILD : join(BUILD, route);
@@ -269,6 +280,20 @@ for (const route of routes) {
   } finally {
     await page.close();
   }
+};
+
+// A route that fails once (almost always a timeout under CPU contention) gets
+// a second, solo attempt after the pool drains, before it counts as failed.
+const queue = [...routes];
+await Promise.all(
+  Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+    for (let route = queue.shift(); route !== undefined; route = queue.shift()) await renderRoute(route);
+  })
+);
+const retry = failed.splice(0).map((f) => f.split(':')[0]);
+for (const route of retry) {
+  process.stdout.write(`  retrying ${route}\n`);
+  await renderRoute(route);
 }
 
 await browser.close();

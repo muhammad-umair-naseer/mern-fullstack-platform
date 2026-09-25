@@ -1,0 +1,286 @@
+# Continuous integration for the Cortexis platform.
+#
+# Four jobs. Three run in parallel on every push and pull request:
+#   hygiene  - nothing secret or generated is committed; compose file parses
+#   server   - the Express API: syntax, the end-to-end learner suite on SQLite
+#              AND on PostgreSQL (each with a real Redis), then a cold boot
+#   client   - the React client: lint (warnings fail), Jest, the production
+#              build with blog, sitemap and the Chrome prerender against a
+#              live API, and proof that the prerender actually happened
+# The fourth builds the production Docker image exactly as a host would and
+# smoke-tests the running container. It needs the other three and runs for
+# pull requests, pushes to main and manual runs.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Same major as the Dockerfile, so CI proves what production runs.
+  NODE_VERSION: '24'
+  FORCE_COLOR: '1'
+  # Long random value the code insists on; never used outside CI.
+  CI_JWT_SECRET: ci-only-jwt-secret-not-for-production-0123456789abcdef
+
+jobs:
+  hygiene:
+    name: Repository hygiene
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No environment files, databases or keys are committed
+        run: |
+          set -euo pipefail
+          bad=$(git ls-files | grep -E '(^|/)\.env(\.[^/]+)?$' | grep -v '\.example$' || true)
+          bad="$bad$(git ls-files | grep -E '\.(db|db-wal|db-shm|sqlite|pem|key|p12)$' || true)"
+          if [ -n "$bad" ]; then
+            echo "::error::These files must never be committed:"
+            echo "$bad"
+            exit 1
+          fi
+          echo "clean"
+
+      - name: Lockfiles are present (npm ci depends on them)
+        run: test -f client/package-lock.json && test -f server/package-lock.json
+
+      - name: docker-compose.yml parses (with the secrets it insists on)
+        env:
+          JWT_SECRET: ci-only-jwt-secret-not-for-production-0123456789abcdef
+          POSTGRES_PASSWORD: ci-only
+          REDIS_PASSWORD: ci-only
+        run: docker compose config -q
+
+  server:
+    name: API on ${{ matrix.database }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        database: [sqlite, postgres]
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cortexis
+          POSTGRES_PASSWORD: cortexis
+          POSTGRES_DB: cortexis_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U cortexis -d cortexis_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: server
+    env:
+      NODE_ENV: test
+      # Job-level env cannot read the env context, so the CI-only value is repeated here.
+      JWT_SECRET: ci-only-jwt-secret-not-for-production-0123456789abcdef
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: '6379'
+      REDIS_DB: '15'
+      # Empty means "use SQLite"; the code treats an empty DATABASE_URL as unset.
+      DATABASE_URL: ${{ matrix.database == 'postgres' && 'postgres://cortexis:cortexis@127.0.0.1:5432/cortexis_test' || '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Every module parses
+        run: find src -name '*.js' -print0 | xargs -0 -n 1 node --check
+
+      - name: End-to-end suite (sign-up to certificate, both public forms)
+        env:
+          EMBEDDED_WORKER: 'false'
+          DATABASE_FILE: /tmp/ci-suite.db
+        run: npm test
+
+      - name: Cold boot answers /health with the right database
+        env:
+          PORT: '5055'
+          DATABASE_FILE: /tmp/ci-boot.db
+        run: |
+          set -euo pipefail
+          node src/server.js > /tmp/boot.log 2>&1 &
+          pid=$!
+          for i in $(seq 1 60); do
+            curl -sf http://127.0.0.1:5055/health > /tmp/health.json 2>/dev/null && break
+            sleep 1
+          done
+          if ! grep -q '"ok":true' /tmp/health.json 2>/dev/null; then
+            echo "::error::API did not come up"; cat /tmp/boot.log; kill "$pid" || true; exit 1
+          fi
+          grep -q '"database":"${{ matrix.database }} (connected)"' /tmp/health.json
+          curl -sf http://127.0.0.1:5055/api/learn/courses | grep -q '"slug"'
+          kill "$pid"
+          echo "booted on ${{ matrix.database }}:"; cat /tmp/health.json
+
+  client:
+    name: Web client (lint, test, build, prerender)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      - name: Install client
+        working-directory: client
+        run: npm ci
+
+      - name: Install API (the prerender reads the catalogue through it)
+        working-directory: server
+        run: npm ci --omit=dev
+
+      - name: Lint (any warning fails)
+        working-directory: client
+        run: npx eslint --max-warnings=0 src
+
+      - name: Build scripts parse
+        working-directory: client
+        run: for f in scripts/*.mjs; do node --check "$f"; done
+
+      - name: Unit tests
+        working-directory: client
+        env:
+          CI: 'true'
+        run: npm test -- --watchAll=false
+
+      - name: Start the API for prerendering
+        working-directory: server
+        env:
+          NODE_ENV: test
+          PORT: '5000'
+          JWT_SECRET: ${{ env.CI_JWT_SECRET }}
+          DATABASE_FILE: /tmp/ci-prerender.db
+          EMBEDDED_WORKER: 'false'
+          # No Redis here on purpose: the build must not depend on one.
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: '1'
+          REDIS_CONNECT_TIMEOUT: '500'
+        run: |
+          set -euo pipefail
+          nohup node src/server.js > /tmp/api.log 2>&1 &
+          echo $! > /tmp/api.pid
+          for i in $(seq 1 60); do
+            curl -sf http://127.0.0.1:5000/health > /dev/null 2>&1 && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:5000/api/learn/courses > /dev/null || { echo "::error::API not reachable"; cat /tmp/api.log; exit 1; }
+
+      - name: Production build (blog, sitemap, bundle, prerender)
+        working-directory: client
+        env:
+          CI: 'true'
+          PRERENDER_API: http://127.0.0.1:5000
+        run: |
+          set -euo pipefail
+          CHROME_PATH="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium-browser || command -v chromium)"
+          echo "Chrome: $CHROME_PATH"
+          export CHROME_PATH
+          npm run build
+
+      - name: Stop the API
+        if: always()
+        run: |
+          if [ -f /tmp/api.pid ]; then kill "$(cat /tmp/api.pid)" 2>/dev/null || true; fi
+
+      - name: The prerender really happened
+        working-directory: client
+        run: |
+          set -euo pipefail
+          test -f build/index.html
+          test -f build/sitemap.xml
+          tools=$(find build/tools -mindepth 1 -maxdepth 1 -type d | wc -l)
+          echo "prerendered tool pages: $tools"
+          [ "$tools" -ge 60 ]
+          grep -q 'Document Research Lab' build/tools/pdf-merger/index.html
+          grep -q '<title>' build/tools/pdf-merger/index.html
+          urls=$(grep -c '<loc>' build/sitemap.xml)
+          echo "sitemap urls: $urls"
+          [ "$urls" -ge 100 ]
+
+      - name: Keep the build for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-build
+          path: client/build
+          retention-days: 7
+          if-no-files-found: error
+
+  docker:
+    name: Production image builds and serves
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    needs: [hygiene, server, client]
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build the image exactly as a host would
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: cortexis-website:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: The container boots and serves the prerendered site
+        run: |
+          set -euo pipefail
+          docker run -d --name smoke -p 5000:5000 \
+            -e JWT_SECRET="$CI_JWT_SECRET" \
+            -e EMBEDDED_WORKER=false \
+            -e REDIS_HOST=127.0.0.1 -e REDIS_PORT=1 -e REDIS_CONNECT_TIMEOUT=500 \
+            cortexis-website:ci
+          for i in $(seq 1 60); do
+            curl -sf http://127.0.0.1:5000/health > /tmp/health.json 2>/dev/null && break
+            sleep 1
+          done
+          if ! grep -q '"ok":true' /tmp/health.json 2>/dev/null; then
+            echo "::error::container did not come up"; docker logs smoke; exit 1
+          fi
+          curl -sf http://127.0.0.1:5000/api/learn/courses | grep -q '"slug"'
+          curl -sf http://127.0.0.1:5000/tools/pdf-merger | grep -q 'Document Research Lab'
+          curl -sf http://127.0.0.1:5000/sitemap.xml | grep -q '<loc>'
+          echo "healthy:"; cat /tmp/health.json
+          docker rm -f smoke

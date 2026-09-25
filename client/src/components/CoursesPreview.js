@@ -40,11 +40,11 @@ const CoursesPreview = () => {
           subtitle="Outcome-driven programs with hands-on projects and expert mentorship"
           titleClassName="courses-title"
         />
-        <ul className="courses-row row" role="list" aria-label="Featured course cards">
+        <ul className="courses-row row" aria-label="Featured course cards">
           {courses.map((course, index) => {
             const titleId = `course-title-${index}`;
             return (
-              <li key={index} className="col-md-4 mb-4" role="listitem" data-reveal>
+              <li key={index} className="col-md-4 mb-4" data-reveal>
                 <Link
                   to="/courses"
                   className="card course-preview-card h-100 course-link"

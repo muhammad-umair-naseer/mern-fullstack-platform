@@ -10,11 +10,11 @@ services:
     environment:
       - PORT=5000
       - NODE_ENV=production
-      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:-cortexis_secure_pg_pass}@postgres:5432/cortexis
-      - JWT_SECRET=${JWT_SECRET:-4bb1ae5e13ae44801f68672156c361ef8ff62f7a4161bcbeaeb5157e8f247e5f9356157502a692abe4ba493ff8de6d98}
+      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/cortexis
+      - JWT_SECRET=${JWT_SECRET:?set JWT_SECRET in .env (64+ random hex characters)}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-cortexis_secure_redis_pass}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
       - SMTP_HOST=${SMTP_HOST:-}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
@@ -36,7 +36,7 @@ services:
     environment:
       - POSTGRES_DB=cortexis
       - POSTGRES_USER=cortexis
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cortexis_secure_pg_pass}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     # Security: No public ports exposed to host. Only accessible within the internal docker network.
     volumes:
       - cortexis_pg_data:/var/lib/postgresql/data
@@ -52,14 +52,14 @@ services:
     image: redis:7-alpine
     container_name: cortexis-redis
     restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:-cortexis_secure_redis_pass} --maxmemory 256mb --maxmemory-policy volatile-lru
+    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:?set REDIS_PASSWORD in .env} --maxmemory 256mb --maxmemory-policy volatile-lru
     # Security: No public ports exposed to host. Only accessible within the internal docker network.
     volumes:
       - cortexis_redis_data:/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-cortexis_secure_redis_pass}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
