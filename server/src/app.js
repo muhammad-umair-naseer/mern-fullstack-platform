@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
@@ -9,7 +10,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import { connectDB, dbEngine } from './setup/db.js';
-import { initRedis, redisPing, redisStats } from './services/redis.service.js';
+import { initRedis, redisPing, redisStats, isRedisReady } from './services/redis.service.js';
 import { seedCourses } from './content/seed.js';
 import { createLimiter } from './middleware/rateLimiter.js';
 import { getQueueMetrics } from './services/queue.service.js';
@@ -71,8 +72,18 @@ app.get('/health', async (_req, res) => {
 // Registered after the API so the catch-all cannot swallow /api/* requests.
 if (process.env.NODE_ENV === 'production') {
   const buildDir = path.join(__dirname, '../../client/build');
-  app.use(express.static(buildDir));
-  app.get('*', (_req, res) => res.sendFile(path.join(buildDir, 'index.html')));
+  const shell = path.join(buildDir, 'index.html');
+  // redirect:false — a directory URL such as /tools/pdf-merger must not 301 to
+  // a trailing slash; the sitemap lists it without one, and a redirect on every
+  // tool page is what search engines then index instead of the page.
+  app.use(express.static(buildDir, { redirect: false }));
+  app.get('*', (req, res) => {
+    // The prerender writes <route>/index.html for every public route. Serve
+    // that page when it exists, and the SPA shell for everything else.
+    const target = path.normalize(path.join(buildDir, req.path, 'index.html'));
+    if (target.startsWith(buildDir + path.sep) && fs.existsSync(target)) return res.sendFile(target);
+    return res.sendFile(shell);
+  });
 }
 
 /**
@@ -85,7 +96,7 @@ if (process.env.NODE_ENV === 'production') {
  */
 export const boot = async ({ worker = process.env.EMBEDDED_WORKER !== 'false' } = {}) => {
   await Promise.all([connectDB(), initRedis()]);
-  if (worker) initWorker();
+  if (worker && isRedisReady()) initWorker();
   const { courses, lessons } = await seedCourses();
   return { courses, lessons };
 };

@@ -1,12 +1,13 @@
 import React, { Suspense } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY, isImplemented } from '../data/tools';
+import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY, isImplemented, NEW_TOOLKIT_SLUGS } from '../data/tools';
 import { toolSeo } from '../data/toolSeo';
 import { toolFaqs } from '../data/toolFaqs';
 import { toolArticle } from '../data/toolArticles';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import Seo from '../seo/Seo';
 import { breadcrumbs, softwareApplication, faq } from '../seo/schema';
+import ToolkitRunner from '../components/tools/ToolkitRunner';
 import PdfCompressor from '../components/tools/PdfCompressor';
 import PdfMerger from '../components/tools/PdfMerger';
 import PdfWord from '../components/tools/PdfWord';
@@ -108,6 +109,10 @@ export default function ToolDetail() {
   const Article = live ? toolArticle(tool.slug) : null;
 
   const renderToolComponent = () => {
+    if (NEW_TOOLKIT_SLUGS && NEW_TOOLKIT_SLUGS.has(tool.slug)) {
+      return <ToolkitRunner slug={tool.slug} toolName={tool.name} />;
+    }
+
     switch (tool.slug) {
       case 'pdf-compressor':
         return <PdfCompressor />;

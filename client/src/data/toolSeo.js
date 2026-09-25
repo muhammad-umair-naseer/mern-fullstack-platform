@@ -20,6 +20,191 @@
  * writes it a real one.
  */
 const TOOL_SEO = {
+  // 46 Toolkit Additions
+  'pdf-watermark': {
+    title: 'PDF Watermark Online Free — Add Text or Logo Stamp',
+    description: 'Add custom text or image watermark stamps to your PDF online. Adjust opacity, rotation, and placement with zero file uploads.',
+  },
+  'pdf-page-numbers': {
+    title: 'Add Page Numbers to PDF Free — Custom Pagination',
+    description: 'Insert page numbers into any position in your PDF document. Support for Arabic, Roman, and Bates numbering formats.',
+  },
+  'pdf-esign': {
+    title: 'Sign PDF Online Free — Draw, Type or Stamp e-Sign',
+    description: 'Draw or type your signature and position it on any page of your PDF. 100% private, client-side digital signing.',
+  },
+  'pdf-redact': {
+    title: 'Redact PDF Online — Permanently Blackout Sensitive Data',
+    description: 'Permanently remove and black out confidential text, CNIC numbers, and secrets from PDF content streams.',
+  },
+  'pdf-grayscale': {
+    title: 'Convert PDF to Grayscale — Black & White PDF Tool',
+    description: 'Convert color PDFs to pure grayscale to reduce printing ink costs and meet government portal document upload standards.',
+  },
+  'pdf-compare': {
+    title: 'Compare PDF Files Online — Visual & Text Diff Tool',
+    description: 'Compare two PDF documents side-by-side. Highlights added and deleted lines and detects metadata differences.',
+  },
+  'pdf-bookmarks': {
+    title: 'PDF Bookmarks & Outline Editor — Build Clickable TOC',
+    description: 'View, edit, and organize PDF outline bookmarks or automatically insert an interactive table of contents page.',
+  },
+  'docx-to-pdf': {
+    title: 'Word to PDF Converter Online Free — DOCX to PDF',
+    description: 'Convert DOCX Word documents into beautifully styled PDFs in your browser without requiring Microsoft Office.',
+  },
+  'xlsx-to-pdf': {
+    title: 'Excel to PDF Converter — XLSX Spreadsheets to PDF',
+    description: 'Turn Excel worksheets into cleanly formatted, page-aligned PDF tables without server uploads.',
+  },
+  'image-to-pdf': {
+    title: 'Image to PDF Converter — JPG, PNG, WebP to PDF',
+    description: 'Combine multiple JPG, PNG, and WebP images into a single multi-page PDF with margins and sizing controls.',
+  },
+  'heic-to-jpg': {
+    title: 'HEIC to JPG Converter Free — iPhone Photos to JPG',
+    description: 'Convert Apple iPhone HEIC and HEIF photos to universal JPG or PNG format right inside your browser.',
+  },
+  'avif-to-jpg': {
+    title: 'AVIF to JPG Converter — Convert Modern AVIF Images',
+    description: 'Convert modern AVIF images to JPG, PNG, or WebP with adjustable quality and batch conversion support.',
+  },
+  'gif-to-mp4': {
+    title: 'GIF to MP4 Video Converter — Compress Animated GIFs',
+    description: 'Convert heavy animated GIFs into lightweight, fast-loading MP4 or WebM videos locally with built-in muxing.',
+  },
+  'webm-mp4': {
+    title: 'WebM to MP4 Converter — Convert Video in Browser',
+    description: 'Convert WebM screen recordings into MP4 videos and vice-versa with quality, resolution, and audio controls.',
+  },
+  'ogg-to-mp3': {
+    title: 'OGG / Opus to MP3 Converter — Voice Note Converter',
+    description: 'Convert WhatsApp voice notes (.opus / .ogg) and Telegram audio to universal WAV or M4A formats.',
+  },
+  'm4a-to-mp3': {
+    title: 'M4A to MP3 Audio Converter — Apple Audio to WAV',
+    description: 'Convert Apple Voice Memos and iTunes M4A audio files into standard WAV or AAC format with audio trimming.',
+  },
+  'csv-json': {
+    title: 'CSV to JSON Converter & JSON to CSV Online',
+    description: 'Two-way conversion between tabular CSV files and structured JSON objects with delimiter auto-detection.',
+  },
+  'xml-json': {
+    title: 'XML to JSON Converter & JSON to XML Online Free',
+    description: 'Convert legacy XML documents to clean JSON and vice-versa for API debugging and software development.',
+  },
+  'yaml-json': {
+    title: 'YAML to JSON Converter & JSON to YAML Online',
+    description: 'Convert Kubernetes configs, Docker-Compose files, and YAML documents to JSON and back with inline validation.',
+  },
+  'sql-csv': {
+    title: 'SQL to CSV Converter & CSV to SQL INSERTs',
+    description: 'Turn CSV spreadsheets into bulk SQL INSERT queries or extract database tables from SQL dumps to CSV format.',
+  },
+  'markdown-converter': {
+    title: 'Markdown to PDF & HTML Converter Online',
+    description: 'Render Markdown notes into styled HTML pages or printable PDFs with code syntax highlighting and table support.',
+  },
+  'archive-to-zip': {
+    title: 'TAR, GZ to ZIP Converter — Repack Archives Online',
+    description: 'Inspect and repack TAR, TAR.GZ, TGZ, and GZ archives into standard ZIP files directly in your browser.',
+  },
+  'timestamp-converter': {
+    title: 'Unix Timestamp to Date Converter — Epoch Time Tool',
+    description: 'Convert Unix epoch timestamps (seconds and milliseconds) to readable human dates across all timezones.',
+  },
+  'background-remover': {
+    title: 'Free Background Remover Online — Transparent PNG Cutout',
+    description: 'Remove plain and studio backgrounds from product photos and logos with tolerance and edge feathering controls.',
+  },
+  'favicon-generator': {
+    title: 'Favicon & App Icon Generator — Multi-Size Icon Suite',
+    description: 'Generate multi-size favicon.ico, 16-512px PNGs, Apple Touch icon, and site.webmanifest package.',
+  },
+  'exif-remover': {
+    title: 'EXIF Metadata Stripper — Remove GPS from Photos',
+    description: 'Inspect camera and GPS coordinates and strip all EXIF metadata from JPG, PNG, and WebP photos for privacy.',
+  },
+  'image-watermark': {
+    title: 'Batch Image Watermark — Stamp Photos in Bulk',
+    description: 'Apply copyright text or logo stamps onto multiple images in batch with opacity, rotation, and tile controls.',
+  },
+  'image-blur': {
+    title: 'Blur & Pixelate Image Online — Censor Private Details',
+    description: 'Blur, pixelate, or black out faces, license plates, and sensitive documents with an interactive brush.',
+  },
+  'image-ocr': {
+    title: 'Image to Text OCR Online — Extract Text from Images',
+    description: 'Extract editable text from screenshots, scanned documents, and photos using client-side text detection.',
+  },
+  'svg-optimizer': {
+    title: 'SVG Optimizer Online — Minify & Clean SVG Files',
+    description: 'Minify SVG files, strip Figma/Illustrator editor junk, round coordinates, and preview before and after sizes.',
+  },
+  'meme-generator': {
+    title: 'Free Meme Generator Online — Custom Caption Maker',
+    description: 'Create classic memes with custom top and bottom outlined impact captions and instant high-res PNG export.',
+  },
+  'jwt-decoder': {
+    title: 'JWT Decoder Online — Inspect Token Header & Payload',
+    description: 'Decode JWT tokens, inspect claims, verify expiration, and validate HS256/384/512 signatures without internet transmission.',
+  },
+  'hash-generator': {
+    title: 'Hash & Checksum Generator — MD5, SHA-256, SHA-512',
+    description: 'Compute MD5, SHA-1, SHA-256, SHA-512, CRC32 hashes, and HMAC checksums for text and files locally.',
+  },
+  'uuid-generator': {
+    title: 'UUID & Secret Generator — UUID v4, v7, Password Maker',
+    description: 'Generate batch UUID v4/v7, ULIDs, cryptographic random passwords, and hex API secrets using Web Crypto.',
+  },
+  'sql-formatter': {
+    title: 'SQL Formatter & Beautifier — Format SQL Queries',
+    description: 'Format, indent, and beautify messy SQL queries for MySQL, PostgreSQL, SQLite, and SQL Server.',
+  },
+  'css-generator': {
+    title: 'CSS Visual Generators — Box Shadow, Glassmorphism, Gradients',
+    description: 'Interactive visual UI generator for CSS box shadows, glassmorphism blur, linear/mesh gradients, and border radius.',
+  },
+  'regex-tester': {
+    title: 'RegEx Tester & Explainer — Test Regular Expressions',
+    description: 'Real-time regular expression tester with syntax highlighting, capture groups, and plain-English pattern explanations.',
+  },
+  'diff-checker': {
+    title: 'Text & Code Diff Checker — Compare Text Differences',
+    description: 'Compare two code or text files side-by-side. Highlights line and character additions, deletions, and unified patches.',
+  },
+  'url-encoder': {
+    title: 'URL Encoder / Decoder & Query String Parser',
+    description: 'Encode and decode URLs, query parameters, Base64 strings, and HTML entities entirely in your browser.',
+  },
+  'word-counter': {
+    title: 'Word & Character Counter — Reading Time & Text Stats',
+    description: 'Live word count, character count, sentence count, reading time, and keyword density as you type.',
+  },
+  'case-converter': {
+    title: 'Case Converter Suite — UPPERCASE, camelCase, snake_case',
+    description: 'Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, snake_case, and kebab-case.',
+  },
+  'line-tools': {
+    title: 'Duplicate Line Remover & Sorter — Clean Text Lists',
+    description: 'Remove duplicate lines, empty lines, sort alphabetically or naturally, reverse, and filter text entries.',
+  },
+  'video-trimmer': {
+    title: 'Video Trimmer Online — Cut MP4 & WebM Videos',
+    description: 'Frame-accurate browser video trimmer. Cut clips and export MP4 or WebM without uploading video files.',
+  },
+  'audio-trimmer': {
+    title: 'Audio Trimmer & Ringtone Maker — Cut Audio Clips',
+    description: 'Trim audio files with interactive visual waveforms and fade in/out effects for custom ringtones and clips.',
+  },
+  'video-muter': {
+    title: 'Video Audio Remover (Muter) — Mute Video Online',
+    description: 'Remove audio tracks from MP4, MOV, and WebM videos losslessly in 2 seconds with zero server uploads.',
+  },
+  'video-speed': {
+    title: 'Video Speed Adjuster — Speed Up or Slow Down Video',
+    description: 'Adjust video speed from 0.25x to 4x while preserving natural audio pitch and export high quality MP4.',
+  },
   'pdf-compressor': {
     title: 'Compress PDF Online Free — Reduce PDF Size',
     description:

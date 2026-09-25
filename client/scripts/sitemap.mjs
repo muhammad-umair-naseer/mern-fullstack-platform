@@ -9,7 +9,7 @@
  *
  * Set SITE_URL in the environment to override the domain.
  */
-import { readdirSync, writeFileSync, statSync } from 'fs';
+import { readdirSync, writeFileSync, statSync, existsSync } from 'fs';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname, resolve } from 'path';
 
@@ -40,7 +40,8 @@ const STATIC = [
 const iso = (d) => new Date(d).toISOString().slice(0, 10);
 
 const courses = [];
-for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
+if (existsSync(COURSES)) {
+  for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
   const mod = (await import(pathToFileURL(`${COURSES}/${file}`).href)).default;
   courses.push({
     path: `/learn/${mod.slug}`,
@@ -48,6 +49,7 @@ for (const file of readdirSync(COURSES).filter((f) => f.endsWith('.js'))) {
     changefreq: 'monthly',
     lastmod: iso(statSync(`${COURSES}/${file}`).mtime),
   });
+  }
 }
 
 // A tool joins the sitemap the moment it actually works.

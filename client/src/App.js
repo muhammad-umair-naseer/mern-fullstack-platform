@@ -43,6 +43,10 @@ const Faq = lazy(() => import('./pages/Faq'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 
+// Playground & multiplayer games
+const Games = lazy(() => import('./pages/Games'));
+const GameFrame = lazy(() => import('./pages/GameFrame'));
+
 export default function App() {
   return (
     <Router>
@@ -83,6 +87,10 @@ export default function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/:slug" element={<ToolDetail />} />
+
+            {/* Playground & multiplayer games */}
+            <Route path="/games" element={<Games />} />
+            <Route path="/games/:gameId" element={<GameFrame />} />
 
             {/* Learning platform */}
             <Route path="/login" element={<Login />} />

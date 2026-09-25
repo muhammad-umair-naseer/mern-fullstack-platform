@@ -1,0 +1,7 @@
+# Generated pages only — anchored, so src/tools/ (the tool modules) is never swallowed.
+/tools/
+sitemap.xml
+robots.txt
+node_modules/
+tests/browser/out/
+tests/unit/out/

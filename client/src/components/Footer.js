@@ -223,11 +223,7 @@ const Footer = () => {
             <ul>
               <li><Link to="/blog">Blog</Link></li>
               <li><Link to="/tools">Free tools</Link></li>
-              {/* /your-bot only. /whatsapp-bot mounts the same component and is
-                  kept alive because those exact URLs are registered with Meta
-                  for WhatsApp Business Platform review, but it self-canonicalises
-                  here and is absent from the sitemap — linking it would split
-                  the signal for nothing. */}
+              <li><Link to="/games">Playground &amp; Games</Link></li>
               <li><Link to="/your-bot">Your Bot</Link></li>
             </ul>
             {/* Derived from the isLive flags, not typed. The site ships once

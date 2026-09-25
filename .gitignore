@@ -57,9 +57,7 @@ extracted_tools/
 *.sql
 *.db
 
-# Package managers
-package-lock.json
-yarn.lock
+# Lockfiles are committed on purpose: npm ci and every Docker build depend on them.
 
 # SQLite write-ahead log sidecars
 *.db-wal

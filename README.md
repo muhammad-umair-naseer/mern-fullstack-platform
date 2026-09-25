@@ -30,7 +30,33 @@ at any step.
 | Backend | Node.js, Express 4, PostgreSQL (pg) / SQLite, Joi, bcryptjs, jsonwebtoken, Nodemailer |
 | Security | Helmet, CORS, express-rate-limit |
 
-## Getting Started
+## Quick Start with Docker (No Local Dependencies Required)
+
+Anyone can clone and run the full stack (Frontend, Backend API, PostgreSQL, Redis, Gotcha Rush, and TypeDash) with **zero local dependencies** installed (no Node.js, npm, or database setup needed):
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/abdullah5654/cortexis-website.git
+cd cortexis-website
+
+# 2. Build and launch all services with Docker Compose
+docker compose up --build
+```
+
+Once started, open:
+* **Web Application & 109 Tools:** `http://localhost:5000`
+* **Playground & Games Arena:** `http://localhost:5000/games`
+* **Gotcha Rush (Live Code Quiz Battle):** `http://localhost:3001`
+* **TypeDash (Live Multiplayer Typing Race):** `http://localhost:4001`
+* **API Endpoints:** `http://localhost:5000/api`
+
+### Included Multiplayer Games & Playground
+* **Gotcha Rush (`/games/gotcha-rush` or `:3001`):** Real-time multiplayer "predict the output" quiz featuring tricky JavaScript & Python snippets, combo streaks, 50-50 lifelines, Solo Rush mode, and live WebSocket match lobbies.
+* **TypeDash (`/games/typedash` or `:4001`):** High-speed multiplayer typing sprint with real-time peer tracks, ghost replays of previous winners, 7+ programming & natural language passage catalogs, daily challenges, and seasons.
+
+---
+
+## Local Development (Without Docker)
 
 ```bash
 # Install everything and build the client
@@ -165,23 +191,21 @@ Every push and pull request runs `.github/workflows/ci.yml`:
 
 | Job | What it proves |
 | --- | --- |
-| Repository hygiene | no `.env`, database or key file is committed; lockfiles exist; `docker-compose.yml` parses |
-| API on sqlite / postgres | every module parses; the end-to-end learner suite (sign-up → verification → enrolment → gated lessons → quizzes → certificate, plus both public forms) passes on SQLite and on PostgreSQL, each with a real Redis; the server cold-boots and `/health` names the right database |
-| Web client | ESLint with zero warnings; Jest (catalogue invariants: every live tool is routed, has its guide, meta, FAQ data and banner); the production build with blog, sitemap and the Chrome prerender against a live API; a check that the prerender really produced the tool pages; the build is kept as an artifact |
-| Production image | for pull requests, pushes to `main` and manual runs: the Docker image is built exactly as a host would build it and the running container is smoke-tested (`/health`, the API, a prerendered page, the sitemap) |
+| Repository hygiene | no `.env`, database or key file is committed; every package has its lockfile; `docker-compose.yml` parses |
+| API on PostgreSQL | every module parses; the end-to-end learner suite (sign-up → verification → enrolment → gated lessons → quizzes → certificate, plus both public forms) passes against a real Postgres and Redis; the server cold-boots and `/health` reports `postgres (connected)` |
+| Web client | ESLint with zero warnings; Jest (catalogue invariants: every live tool is routed, every React tool has its guide, meta, FAQ data and banner, every toolkit tool has its module); the toolkit's own syntax check and unit tests; the production build with blog, sitemap and the Chrome prerender against a live API; a check that the prerender really produced the tool pages; the build is kept as an artifact |
+| Games | Gotcha Rush and TypeDash: their full test suites, browser tests included, then each game's image is built and its container answers `/healthz` |
+| Production image | for pull requests, pushes to `main` and manual runs: the image is built from the client the client job prerendered, and the running container is smoke-tested on Postgres and Redis (`/health`, the API, a prerendered page, the sitemap) |
 
 Run the same checks locally before pushing:
 
 ```bash
-npm test --prefix server                                  # needs Redis on 127.0.0.1:6379
-DATABASE_URL=postgres://localhost/cortexis_test npm test --prefix server
-npx eslint --max-warnings=0 src   # in client/
+DATABASE_URL=postgres://localhost/cortexis_test npm test --prefix server   # needs Redis on 127.0.0.1:6379
+npx eslint --max-warnings=0 src                      # in client/
 CI=true npm test --prefix client -- --watchAll=false
-docker build -t cortexis-website .                        # builds and prerenders
+npm run check && npm test                             # in client/public/toolkit
+npm test                                              # in games/gotcha-rush and games/typedash
 ```
-
-The image build boots a throwaway API on SQLite and prerenders every public
-route with Chromium, so an image built anywhere ships the same crawlable pages.
 
 ### Deploying with Docker Compose
 
@@ -193,7 +217,12 @@ docker compose up -d --build
 Compose refuses to start until those three values are set — there are no
 built-in defaults, so a forgotten secret can never fall back to something the
 public repository knows. Postgres and Redis run alongside the API on a private
-network; only port 5000 is published.
+network; the site is published on port 5000 and the games on 3001 and 4001.
+
+An image built on the host has no API to prerender against, so it ships the
+client without static HTML behind each route. The image CI builds does have
+it: the client job prerenders every public route against a live API and the
+image job bakes that build in. For search visibility, deploy CI-built images.
 
 ## Notes
 

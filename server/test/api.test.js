@@ -20,12 +20,10 @@ process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET ??= 'test-secret-that-is-long-enough-for-jwt';
 process.env.EMBEDDED_WORKER = 'false';
 process.env.REDIS_DB ??= '15';
-delete process.env.SMTP_HOST;
-
-const tmp = mkdtempSync(join(tmpdir(), 'cortexis-test-'));
-process.env.DATABASE_FILE ??= join(tmp, 'test.db');
+process.env.DATABASE_URL ??= 'postgresql://postgres:postgres@localhost:5432/cortexis_db';
 
 const { default: app, boot } = await import('../src/app.js');
+
 const { getDB, closeDB } = await import('../src/setup/db.js');
 const { getRedisClient } = await import('../src/services/redis.service.js');
 
@@ -76,8 +74,8 @@ after(async () => {
   const client = getRedisClient();
   if (client) await client.quit().catch(() => {});
   await closeDB();
-  rmSync(tmp, { recursive: true, force: true });
 });
+
 
 const learner = { name: 'Test Learner', email: `learner-${Date.now()}@example.com`, password: 'correct horse battery' };
 let token;
@@ -240,6 +238,9 @@ test('play the whole course through to a certificate', async () => {
 });
 
 test('contact and internship forms persist', async () => {
+  const initialMessages = Number((await q('SELECT COUNT(*) AS n FROM contact_messages').get())?.n || 0);
+  const initialApplications = Number((await q('SELECT COUNT(*) AS n FROM internship_applications').get())?.n || 0);
+
   const bad = await api('POST', '/api/contact', { body: { name: 'x', email: 'nope', message: 'hi' } });
   assert.equal(bad.status, 400);
 
@@ -257,6 +258,6 @@ test('contact and internship forms persist', async () => {
 
   const messages = await q('SELECT COUNT(*) AS n FROM contact_messages').get();
   const applications = await q('SELECT COUNT(*) AS n FROM internship_applications').get();
-  assert.equal(Number(messages.n), 1);
-  assert.equal(Number(applications.n), 1);
+  assert.equal(Number(messages.n), initialMessages + 1);
+  assert.equal(Number(applications.n), initialApplications + 1);
 });

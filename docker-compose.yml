@@ -29,6 +29,49 @@ services:
       redis:
         condition: service_healthy
 
+  gotcha-rush:
+    build:
+      context: ./games/gotcha-rush
+      dockerfile: Dockerfile
+    container_name: cortexis-gotcha-rush
+    restart: unless-stopped
+    ports:
+      - "${GOTCHA_PORT:-3001}:3000"
+    environment:
+      - PORT=3000
+      - DATA_FILE=/data/gotcharush.json
+      - RUNNER=off
+    volumes:
+      - cortexis_gotcha_data:/data
+    networks:
+      - cortexis_internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+  typedash:
+    build:
+      context: ./games/typedash
+      dockerfile: Dockerfile
+    container_name: cortexis-typedash
+    restart: unless-stopped
+    ports:
+      - "${TYPEDASH_PORT:-4001}:4000"
+    environment:
+      - PORT=4000
+      - DATA_FILE=/data/typedash.json
+    volumes:
+      - cortexis_typedash_data:/data
+    networks:
+      - cortexis_internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:4000/healthz || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
   postgres:
     image: postgres:16-alpine
     container_name: cortexis-postgres
@@ -73,4 +116,9 @@ volumes:
     driver: local
   cortexis_redis_data:
     driver: local
+  cortexis_gotcha_data:
+    driver: local
+  cortexis_typedash_data:
+    driver: local
+
 
