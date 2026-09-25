@@ -456,7 +456,7 @@ export class PdfDocument {
 
   // ---------------- Saving ----------------
   /** Serialize the whole document (full rewrite with a fresh classic xref table). */
-  async save({ producer = 'Cortexis Tools (client-side PDF engine)' } = {}) {
+  async save({ producer = 'Cortexis Tools' } = {}) {
     if (this.trailer.get('Encrypt')) throw new PdfError('encrypted');
     this.info.set('Producer', PDFString.fromText(producer));
     this.info.set('ModDate', PDFString.fromText(pdfDate(new Date())));

@@ -3,13 +3,16 @@ import { parseMarkdown, markdownToDocument, renderMarkdownToPdf, markdownToHtml 
 import { PdfBuilder } from '../core/pdf/pdfkit.js';
 
 export function mount(root) {
-  const inp = textarea({ rows: 18, class: 'mono', value: '# Project Notes\n\nA **Markdown** document with a [link](https://cortexis.pk), `code`, and:\n\n- bullet one\n- bullet two\n  - nested\n\n1. First\n2. Second\n\n| Feature | Status |\n|---------|:------:|\n| PDF export | ✅ |\n| HTML export | ✅ |\n\n```js\nconsole.log("hello");\n```\n\n> Everything runs in your browser.' });
+  const inp = textarea({ rows: 18, class: 'mono', value: '# Project Notes\n\nA **Markdown** document with a [link](https://cortexis.pk), `code`, and:\n\n- bullet one\n- bullet two\n  - nested\n\n1. First\n2. Second\n\n| Feature | Status |\n|---------|:------:|\n| PDF export | ✅ |\n| HTML export | ✅ |\n\n```js\nconsole.log("hello");\n```\n\n> Write it once, then export it as a PDF or an HTML page.' });
   const target = select([['pdf', 'PDF'], ['html', 'HTML page (standalone)'], ['fragment', 'HTML fragment']], 'pdf');
   const pageSize = select([['A4', 'A4'], ['Letter', 'US Letter']], 'A4');
   const title = input('text', { value: 'Document', class: 'wide' });
   const fontSize = number(11, { min: 8, max: 16 });
   const preview = h('div.card', { style: { maxHeight: '60vh', overflow: 'auto' } });
-  const renderPreview = () => { preview.innerHTML = markdownToHtml(inp.value); };
+  // Headings are shifted down a level in the on-page preview only, so a "# Title" in the
+  // document never adds a second h1 to the page. Downloads keep the author's levels.
+  const demote = (html) => html.replace(/<(\/?)h([1-5])\b/g, (_, slash, n) => `<${slash}h${Number(n) + 1}`);
+  const renderPreview = () => { preview.innerHTML = demote(markdownToHtml(inp.value)); };
   inp.addEventListener('input', renderPreview); renderPreview();
   const out = h('div');
   const go = button('Convert', () => run(go, async () => {

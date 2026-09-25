@@ -289,7 +289,7 @@ export class Mp4Muxer {
     if (this.audio) mk('soun', this.audio, this.asamples);
     if (!traks.length) throw new Error('No samples were written');
     const mvhd = full('mvhd', 1, 0, concat([(() => { const w = new ByteWriter(16); w.u64be(mp4Time()).u64be(mp4Time()); return w.result(); })(), u32(mvTs), (() => { const w = new ByteWriter(8); w.u64be(movieDur); return w.result(); })(), u32(0x10000), u16(0x100, 0), u32(0, 0), MATRIX, u32(0, 0, 0, 0, 0, 0), u32(trackId)]));
-    const udta = box('udta', box('meta', u32(0), full('hdlr', 0, 0, u32(0), str('mdir'), str('appl'), u32(0, 0), u8(0)), box('ilst', box('\xa9too', box('data', u32(1, 0), latin1.encode('Cortexis Tools (client-side MP4 muxer)'))))));
+    const udta = box('udta', box('meta', u32(0), full('hdlr', 0, 0, u32(0), str('mdir'), str('appl'), u32(0, 0), u8(0)), box('ilst', box('\xa9too', box('data', u32(1, 0), latin1.encode('Cortexis Tools'))))));
     const moov = box('moov', mvhd, ...traks, udta);
     const mdatHeader = new ByteWriter(mdatHdr);
     if (mdatHdr === 8) mdatHeader.u32be(this.size + 8).str('mdat'); else mdatHeader.u32be(1).str('mdat').u64be(this.size + 16);
