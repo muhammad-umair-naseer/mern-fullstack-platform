@@ -8,5 +8,7 @@ Disallow: /dashboard
 Disallow: /login
 Disallow: /signup
 Disallow: /certificate/
+# Test fixtures that ship inside the toolkit folder.
+Disallow: /toolkit/tests/
 
 Sitemap: https://cortexissolutionhub.com/sitemap.xml

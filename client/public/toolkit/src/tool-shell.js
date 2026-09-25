@@ -20,7 +20,7 @@ if (!tool) {
     h('div.crumbs', h('a', { href: base || './' }, 'All tools'), ' / ', h('a', { href: (base || './') + '#cat-' + tool.category }, cat ? cat.name : tool.category)),
     h('div.row', { style: { justifyContent: 'space-between' } }, h('h1', tool.name), fav),
     h('p', tool.description),
-    h('div.badges', h('span.badge', 'Runs in your browser'), h('span.badge.gray', 'No upload · no sign-up'))
+    h('div.badges', h('span.badge', 'Private — nothing retained'), h('span.badge.gray', 'Free · no sign-up'))
   );
   recents.push(tool.slug);
   root.append(h('p.muted', 'Loading tool…'));
