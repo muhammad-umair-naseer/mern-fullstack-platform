@@ -6,8 +6,10 @@ import BrandLogo from './BrandLogo';
 import { useIntroTimeline } from '../hooks/useIntroTimeline';
 import './Navbar.css';
 
-// Home is the wordmark; every other destination keeps its place in the bar.
+// The wordmark also goes home, but visitors look for a Home link too. `end`
+// keeps it from matching every page nested under "/".
 const LINKS = [
+  { to: '/', label: 'Home', end: true },
   { to: '/services', label: 'Services' },
   { to: '/courses', label: 'Courses' },
   { to: '/internships', label: 'Internships' },
@@ -67,7 +69,7 @@ const Navbar = () => {
           <ul>
             {LINKS.map((l, i) => (
               <li key={l.to} style={{ '--i': i }}>
-                <NavLink to={l.to} className="nav-link" onClick={close} data-intro>
+                <NavLink to={l.to} end={l.end} className="nav-link" onClick={close} data-intro>
                   {l.label}
                 </NavLink>
               </li>
