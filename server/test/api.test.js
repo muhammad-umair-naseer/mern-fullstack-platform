@@ -261,3 +261,70 @@ test('contact and internship forms persist', async () => {
   assert.equal(Number(messages.n), initialMessages + 1);
   assert.equal(Number(applications.n), initialApplications + 1);
 });
+
+test('game token: signed, short-lived, for verified learners only', async () => {
+  const jwt = (await import('jsonwebtoken')).default;
+  const { signToken } = await import('../src/middleware/auth.js');
+  const { gameSsoSecret, GAME_TOKEN_TTL_SEC } = await import('../src/services/gameSso.js');
+
+  const anon = await api('POST', '/api/auth/game-token');
+  assert.equal(anon.status, 401, 'no site session, no game token');
+
+  const res = await api('POST', '/api/auth/game-token', { token });
+  assert.equal(res.status, 200, JSON.stringify(res));
+  assert.equal(res.expiresIn, GAME_TOKEN_TTL_SEC);
+  assert.equal(res.user.name, learner.name);
+
+  const claims = jwt.verify(res.token, gameSsoSecret(), {
+    algorithms: ['HS256'],
+    issuer: 'cortexis',
+    audience: 'cortexis-games',
+  });
+  assert.equal(claims.sub, String(res.user.id));
+  assert.equal(claims.name, learner.name);
+  assert.equal(claims.exp - claims.iat, GAME_TOKEN_TTL_SEC, 'ten minutes');
+  assert.throws(() => jwt.verify(res.token, process.env.JWT_SECRET), 'not signed with the site secret');
+
+  // Contract with the games: each game server's own verifier (node:crypto, no
+  // jsonwebtoken) accepts exactly this token and binds it to this learner.
+  const { createRequire } = await import('node:module');
+  const { existsSync } = await import('node:fs');
+  const requireCjs = createRequire(import.meta.url);
+  for (const game of ['gotcha-rush', 'typedash']) {
+    const path = new URL(`../../games/${game}/server/cx.js`, import.meta.url).pathname;
+    if (!existsSync(path)) continue;   // the API checked out on its own
+    const cx = requireCjs(path);
+    const verified = cx.verifyGameToken(res.token);
+    assert.equal(verified.sub, String(res.user.id), `${game} reads the learner id`);
+    assert.equal(verified.name, learner.name, `${game} reads the learner name`);
+    assert.throws(() => cx.verifyGameToken(token), `${game} refuses the 30-day site session itself`);
+  }
+
+  // A configured secret replaces the development one; production without one
+  // keeps game sign-in off rather than signing with a known constant.
+  const saved = { secret: process.env.GAME_SSO_SECRET, env: process.env.NODE_ENV };
+  try {
+    process.env.GAME_SSO_SECRET = 'a-configured-game-secret-that-is-at-least-32-chars';
+    const configured = await api('POST', '/api/auth/game-token', { token });
+    assert.equal(configured.status, 200);
+    assert.doesNotThrow(() => jwt.verify(configured.token, process.env.GAME_SSO_SECRET, { audience: 'cortexis-games' }));
+    assert.throws(() => jwt.verify(configured.token, 'cortexis-dev-only-game-sso-secret--do-not-use-in-production'));
+
+    delete process.env.GAME_SSO_SECRET;
+    process.env.NODE_ENV = 'production';
+    const off = await api('POST', '/api/auth/game-token', { token });
+    assert.equal(off.status, 503, 'no secret in production: game sign-in stays off');
+  } finally {
+    if (saved.secret === undefined) delete process.env.GAME_SSO_SECRET; else process.env.GAME_SSO_SECRET = saved.secret;
+    process.env.NODE_ENV = saved.env;
+  }
+
+  // A correct password on an unconfirmed address is refused, as login does.
+  const pending = { name: 'Pending Player', email: `pending-${Date.now()}@example.com`, password: 'correct horse battery' };
+  assert.equal((await api('POST', '/api/auth/register', { body: pending })).status, 201);
+  const row = await q('SELECT id, email FROM users WHERE email = ?').get(pending.email);
+  const unverified = await api('POST', '/api/auth/game-token', { token: signToken(row) });
+  assert.equal(unverified.status, 403);
+  assert.equal(unverified.needsVerification, true);
+  await q('DELETE FROM users WHERE id = ?').run(row.id);
+});

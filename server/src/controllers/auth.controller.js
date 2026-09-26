@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { getDB } from '../setup/db.js';
 import { signToken } from '../middleware/auth.js';
+import { gameSsoSecret, signGameToken, GAME_TOKEN_TTL_SEC } from '../services/gameSso.js';
 import {
   registerSchema,
   loginSchema,
@@ -219,3 +220,23 @@ export const login = async (req, res) => {
 };
 
 export const me = (req, res) => res.json({ user: publicUser(req.user) });
+
+// ---------------------------------------------------------------- game token
+
+/**
+ * Trade the site session for a 10-minute token the games accept (see
+ * services/gameSso.js). requireAuth has already refused unknown accounts and
+ * unverified addresses, the same way login does.
+ */
+export const gameToken = (req, res) => {
+  const secret = gameSsoSecret();
+  if (!secret) {
+    return res.status(503).json({ message: 'Game sign-in is not configured on this server' });
+  }
+  const user = { id: req.user.id, name: req.user.name };
+  return res.json({
+    token: signGameToken(user, secret),
+    user,
+    expiresIn: GAME_TOKEN_TTL_SEC,
+  });
+};

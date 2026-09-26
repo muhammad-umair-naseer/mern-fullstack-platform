@@ -21,6 +21,7 @@ services:
       - SMTP_PASS=${SMTP_PASS:-}
       - CONTACT_TO=${CONTACT_TO:-}
       - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
     networks:
       - cortexis_internal
     depends_on:
@@ -41,6 +42,11 @@ services:
       - PORT=3000
       - DATA_FILE=/data/gotcharush.json
       - RUNNER=off
+      - NODE_ENV=production
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
+      - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
+      - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
     volumes:
       - cortexis_gotcha_data:/data
     networks:
@@ -62,6 +68,11 @@ services:
     environment:
       - PORT=4000
       - DATA_FILE=/data/typedash.json
+      - NODE_ENV=production
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
+      - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
+      - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
     volumes:
       - cortexis_typedash_data:/data
     networks:

@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Seo from '../seo/Seo';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../lib/api';
 
 const GAME_CONFIG = {
   'gotcha-rush': {
@@ -124,6 +126,52 @@ export default function GameFrame() {
   const config = GAME_CONFIG[gameId];
   const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
   const gameUrl = config ? `http://${hostname}:${config.port}` : '';
+  const gameOrigin = gameUrl ? new URL(gameUrl).origin : '';
+
+  /*
+   * Sign-in bridge. A visitor signed in here is signed in to the game too:
+   * trade the site session for a 10-minute game token and post it to the
+   * frame, only ever to the game's exact origin. The game asks again with
+   * cortexis:need-token whenever it wants one; a site sign-out is passed on.
+   */
+  const { user } = useAuth();
+  const tokenRef = useRef(null);            // { token, until, userId }
+  const minting = useRef(null);             // the request in flight: a load and the game's ask share it
+  const wasSignedIn = useRef(false);
+  const signedInAs = useRef(null);          // the current user id, for answers that arrive late
+  signedInAs.current = user ? user.id : null;
+  const postToGame = useCallback((message) => {
+    const win = iframeRef.current && iframeRef.current.contentWindow;
+    if (win && gameOrigin) win.postMessage(message, gameOrigin);
+  }, [gameOrigin]);
+  const sendToken = useCallback(async () => {
+    if (!user) return;
+    try {
+      let t = tokenRef.current;
+      if (!t || t.userId !== user.id || t.until - Date.now() < 60000) {
+        if (!minting.current) {
+          const userId = user.id;
+          minting.current = api('/auth/game-token', { method: 'POST' })
+            .then((res) => ({ token: res.token, until: Date.now() + res.expiresIn * 1000, userId }))
+            .finally(() => { minting.current = null; });
+        }
+        t = await minting.current;
+        if (t.userId !== signedInAs.current) return;   // signed out, or in as someone else, meanwhile
+        tokenRef.current = t;
+      }
+      postToGame({ type: 'cortexis:game-token', token: t.token });
+    } catch {
+      /* no token: the game still offers its own sign-in and guest play */
+    }
+  }, [user, postToGame]);
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.origin !== gameOrigin || !iframeRef.current || e.source !== iframeRef.current.contentWindow) return;
+      if (e.data && e.data.type === 'cortexis:need-token') sendToken();
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [gameOrigin, sendToken]);
 
   // Ask the game server whether it is up. An opaque no-cors request resolves
   // whenever anything answers and rejects when nothing is listening, which is
@@ -155,6 +203,17 @@ export default function GameFrame() {
       document.removeEventListener('webkitfullscreenchange', onChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      wasSignedIn.current = true;
+      if (isLoaded) sendToken();
+    } else if (wasSignedIn.current) {
+      wasSignedIn.current = false;
+      tokenRef.current = null;
+      postToGame({ type: 'cortexis:signed-out' });
+    }
+  }, [user, isLoaded, sendToken, postToGame]);
 
   const handleReload = useCallback(() => {
     setSpin(false);
