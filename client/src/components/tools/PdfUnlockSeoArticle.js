@@ -64,7 +64,7 @@ export default function PdfUnlockSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/unlock-pdf.webp"
-            alt="Unlock PDF online free - removing the open password and owner permissions from a password protected PDF document"
+            alt="An open padlock with its keys still in the lock on a pale surface"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

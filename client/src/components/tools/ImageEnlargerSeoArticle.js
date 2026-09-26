@@ -94,7 +94,7 @@ export default function ImageEnlargerSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/image-enlarger.webp"
-            alt="Free image enlarger online - upscale a small low-resolution photo to 2x or 4x its size with crisp edges"
+            alt="A loupe magnifying colour negatives on a lightbox beside a film holder"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

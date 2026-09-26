@@ -65,7 +65,7 @@ export default function HashGeneratorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/hash-generator.webp"
-            alt="Free online hash generator showing MD5, SHA-1, SHA-256, SHA-512 and CRC32 checksums of a file, with a matching sha256 checksum highlighted"
+            alt="An inked fingertip held up close, its unique ridges in sharp focus"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

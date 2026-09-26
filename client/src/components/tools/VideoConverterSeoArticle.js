@@ -81,7 +81,7 @@ export default function VideoConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/video-converter.webp"
-            alt="Video converter online free - convert MOV, MKV, WebM, AVI, FLV and WMV to MP4 with an optional 480p, 720p or 1080p cap"
+            alt="A flat-screen TV playing a coral reef scene in a bright living room"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

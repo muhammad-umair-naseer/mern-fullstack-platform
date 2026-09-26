@@ -73,7 +73,7 @@ export default function GifMakerSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/gif-maker.webp"
-            alt="GIF maker from images - combine JPG, PNG and WebP photos into one animated GIF free"
+            alt="Vintage photobooth strips fanned out beside an old twin-lens camera"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

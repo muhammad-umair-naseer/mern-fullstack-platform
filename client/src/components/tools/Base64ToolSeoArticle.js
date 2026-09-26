@@ -69,7 +69,7 @@ export default function Base64ToolSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/base64-encoder-decoder.webp"
-            alt="Free base64 encoder decoder - encode text and files to Base64 or decode Base64 back to readable text"
+            alt="Rows of punched cards whose patterns of holes encode data as characters"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

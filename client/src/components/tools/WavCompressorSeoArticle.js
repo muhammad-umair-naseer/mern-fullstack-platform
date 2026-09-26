@@ -73,7 +73,7 @@ export default function WavCompressorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/wav-compressor.webp"
-            alt="Free WAV compressor - reduce WAV file size by sample rate, mono mix and bit depth while keeping the file a WAV"
+            alt="A broadcast microphone hanging from a boom arm against a pale wall"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

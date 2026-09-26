@@ -66,7 +66,7 @@ export default function ExifRemoverSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/exif-remover.webp"
-            alt="Remove EXIF metadata online free - GPS location, camera model and capture date shown on a JPG before the metadata is wiped"
+            alt="A hand pressing a red pin into a street map, marking an exact location"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

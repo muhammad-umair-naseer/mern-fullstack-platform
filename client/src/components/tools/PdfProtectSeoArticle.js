@@ -93,7 +93,7 @@ export default function PdfProtectSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/password-protect-pdf.webp"
-            alt="Password protect a PDF online free - adding an open password, an owner password and permission restrictions to a PDF document"
+            alt="A handmade paper envelope sealed shut with an orange wax seal"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

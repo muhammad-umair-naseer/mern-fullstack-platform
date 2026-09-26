@@ -71,7 +71,7 @@ export default function PresentationConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/presentation-converter.webp"
-            alt="PPTX to Markdown converter free - extract PowerPoint slide titles, bullets and speaker notes to Markdown, HTML or text"
+            alt="A man presenting a sales chart on a large wall screen to his colleagues"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

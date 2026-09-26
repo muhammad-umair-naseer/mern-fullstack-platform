@@ -82,7 +82,7 @@ export default function PngCompressorSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/png-compressor.webp"
-            alt="Compress PNG online free - PNG compressor shrinking a transparent image file while keeping its alpha channel intact"
+            alt="Rows of die-cut lightbulb stickers filled with coloured crystal illustrations"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -94,7 +94,7 @@ export default function PdfOrganizerSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-organizer.webp"
-            alt="Organize PDF pages online free - a visual page grid used to reorder, rotate, duplicate and delete pages inside a PDF document"
+            alt="A hand arranging blank sticky notes into a neat grid on a grey wall"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

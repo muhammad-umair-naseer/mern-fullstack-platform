@@ -102,7 +102,7 @@ export default function PdfOcrSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-ocr.webp"
-            alt="PDF OCR tool extracting the recognised text of a scanned document as copyable plain text"
+            alt="A magnifying glass resting on the dense printed text of an old open book"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

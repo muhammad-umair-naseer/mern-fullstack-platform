@@ -86,7 +86,7 @@ export default function PdfResizeSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-resize.webp"
-            alt="Resize PDF page size online free - changing a PDF from US Letter to A4 with fit, fill and stretch placement options"
+            alt="A paper trimmer with a measuring guide beside a sheet of paper and wooden pegs"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

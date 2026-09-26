@@ -54,7 +54,7 @@ export default function PdfTxtHtmlRtfOdtSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-txt-html-rtf-odt.webp"
-            alt="PDF to TXT, HTML, RTF and ODT converter online free - the text and headings of a PDF exported into four editable document formats"
+            alt="One hand typing on a laptop while the other writes notes in a paper notebook"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

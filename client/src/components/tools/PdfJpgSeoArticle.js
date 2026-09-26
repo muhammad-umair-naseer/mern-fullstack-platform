@@ -60,7 +60,7 @@ export default function PdfJpgSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-jpg.webp"
-            alt="Convert PDF to JPG free - turn PDF pages into JPG images and build a PDF from photos"
+            alt="Hands sorting instant prints of snowy trees and fireworks across a table"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

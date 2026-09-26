@@ -65,7 +65,7 @@ export default function ImageOcrSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/image-ocr.webp"
-            alt="OCR text extraction online free - a receipt and a screenshot cleaned up in black and white so OCR can extract the text from them"
+            alt="Tortoiseshell glasses over old printed pages and an engraving of a hot air balloon"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

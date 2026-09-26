@@ -71,7 +71,7 @@ export default function ImageCompressorSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/image-compressor.webp"
-            alt="Free image compressor - reduce image size to JPG or WebP with a quality slider and no resizing"
+            alt="Gold contacts on a white SD memory card in close up"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -101,7 +101,7 @@ export default function PdfMergerSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/merge-pdf-files.webp"
-            alt="Merge PDF files online free - combine multiple PDF documents into one file in a custom page order"
+            alt="Hands filing a stack of loose papers into one thick ring binder"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

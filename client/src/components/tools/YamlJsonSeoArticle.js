@@ -63,7 +63,7 @@ export default function YamlJsonSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/yaml-json.webp"
-            alt="YAML to JSON converter free - a Kubernetes service config shown as YAML beside the same data as pretty printed JSON, with a JSON to YAML option"
+            alt="A laptop showing indented code in a dark editor on a bright white desk"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

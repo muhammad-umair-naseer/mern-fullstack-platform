@@ -65,7 +65,7 @@ export default function PdfPageNumbersSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-page-numbers.webp"
-            alt="Add page numbers to PDF online free - add page numbers to thesis PDF roman and arabic, Page X of Y footer, and Bates numbering with prefix and leading zeros"
+            alt="The pages of an open book fanned out one after another under soft light"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

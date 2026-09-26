@@ -68,7 +68,7 @@ export default function RegexTesterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/regex-tester.webp"
-            alt="Regex tester online free - a regular expression highlighting email matches in sample text, with a capture group table, regex replace preview and plain-English explanation"
+            alt="A hand writing notes beside printed text marked up with yellow and pink highlighters"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -65,7 +65,7 @@ export default function VideoMuterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/video-muter.webp"
-            alt="Remove audio from video online free - muting an MP4 or MOV clip to a silent video without sound, no watermark and no quality loss"
+            alt="A vintage film projector with two reels threaded, standing against a pale wall"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

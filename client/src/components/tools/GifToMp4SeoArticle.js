@@ -64,7 +64,7 @@ export default function GifToMp4SeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/gif-to-mp4.webp"
-            alt="Free GIF to MP4 converter turning an animated GIF into a high quality MP4 video with no watermark, ready for Instagram, TikTok and WhatsApp status"
+            alt="A skateboarder captured in four successive frames as he pushes along a white wall"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

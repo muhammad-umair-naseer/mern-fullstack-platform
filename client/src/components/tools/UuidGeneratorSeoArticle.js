@@ -62,7 +62,7 @@ export default function UuidGeneratorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/uuid-generator.webp"
-            alt="Free online UUID generator making bulk UUID v4, UUID v7 and ULID values alongside a 256-bit JWT secret key and a prefixed API key"
+            alt="Rows of old iron keys hung on a wall, no two cut quite alike"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -62,7 +62,7 @@ export default function VideoSpeedSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/video-speed.webp"
-            alt="Change video speed online with a free video speed changer - a clip sped up to 2x and slowed to slow motion video with voices kept at natural pitch"
+            alt="A camera on a slider and tripod set to film a time-lapse of sunset over a hillside town"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

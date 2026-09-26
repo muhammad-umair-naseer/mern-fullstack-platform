@@ -62,7 +62,7 @@ export default function MarkdownConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/markdown-converter.webp"
-            alt="Markdown to PDF converter online free - a README with headings, a task list and a table shown beside its formatted PDF and HTML versions"
+            alt="A typeset book page with a red pilcrow and a heading set in a clean serif"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

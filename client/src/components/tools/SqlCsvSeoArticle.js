@@ -63,7 +63,7 @@ export default function SqlCsvSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/sql-csv.webp"
-            alt="CSV to SQL insert converter turning spreadsheet rows into MySQL, PostgreSQL and SQL Server INSERT statements with a CREATE TABLE, and SQL insert statements back to CSV"
+            alt="A card catalogue drawer pulled open to rows of index cards"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

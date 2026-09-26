@@ -40,7 +40,7 @@ export default function PdfCompressorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/how-to-compress-pdf-online.webp"
-            alt="Compress PDF online free - reduce PDF file size tool interface"
+            alt="An old wooden rolling press with a heavy iron roller and a copper plate on its bed"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

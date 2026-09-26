@@ -64,7 +64,7 @@ export default function ArchiveToZipSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/archive-to-zip.webp"
-            alt="TAR.GZ to ZIP converter online free - a TGZ backup archive and a GZ log file repacked into a single ZIP file with folders"
+            alt="A tan canvas holdall zipped shut on a wooden floor beside a white chair"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

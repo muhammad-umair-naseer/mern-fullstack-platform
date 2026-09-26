@@ -68,7 +68,7 @@ export default function CadConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/cad-converter.webp"
-            alt="Free DXF to SVG converter - preview a CAD drawing, count its entities, then export SVG, PNG, PDF or JSON"
+            alt="Two machined aluminium flanges resting on the technical drawings they were made from"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

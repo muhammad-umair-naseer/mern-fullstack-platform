@@ -93,7 +93,7 @@ export default function QrGeneratorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/qr-code-generator.webp"
-            alt="Free QR code generator creating a scannable QR code for a website URL, a Wi-Fi network and a vCard contact card"
+            alt="A save the date card printed with a small QR code among wedding stationery"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

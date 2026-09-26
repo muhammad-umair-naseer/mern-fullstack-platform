@@ -65,7 +65,7 @@ export default function TimestampConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/timestamp-converter.webp"
-            alt="Unix timestamp converter online free - converting epoch time in seconds, milliseconds, microseconds or nanoseconds to a readable date in UTC, IST or Pakistan time"
+            alt="A wall of vintage clocks, each showing a slightly different time"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -73,7 +73,7 @@ export default function PdfToPsdEpsPsSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-psd-eps-ps.webp"
-            alt="Convert PDF to PSD, EPS or PS free - export PDF pages as flat Photoshop and PostScript files"
+            alt="A vintage printing press in a sunlit print workshop"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

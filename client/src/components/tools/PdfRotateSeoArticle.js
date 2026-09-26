@@ -90,7 +90,7 @@ export default function PdfRotateSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-rotate.webp"
-            alt="Rotate PDF pages online free - sideways PDF page being turned 90 degrees and saved in the correct orientation"
+            alt="A printed planner lying askew on sunlit wooden boards beside a leafy plant"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

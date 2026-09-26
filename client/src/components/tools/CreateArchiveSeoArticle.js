@@ -70,7 +70,7 @@ export default function CreateArchiveSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/create-archive.webp"
-            alt="Create zip file online free - bundle files and folders into one ZIP archive with a compression level slider"
+            alt="A bundle of old letters tied with string beside sepia photographs, an ink pen and bottle"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

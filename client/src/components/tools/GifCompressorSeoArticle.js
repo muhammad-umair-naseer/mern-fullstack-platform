@@ -75,7 +75,7 @@ export default function GifCompressorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/gif-compressor.webp"
-            alt="GIF compressor - reduce GIF size with scale, colour, frame dropping and speed controls"
+            alt="A woman at a cafe table laughing at something playing on her phone"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

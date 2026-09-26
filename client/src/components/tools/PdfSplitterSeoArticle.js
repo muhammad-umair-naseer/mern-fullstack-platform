@@ -92,7 +92,7 @@ export default function PdfSplitterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-splitter.webp"
-            alt="Split a PDF online free - one large PDF document divided into several smaller separate PDF files"
+            alt="Hands cutting a printed sheet into separate pieces with scissors"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -62,7 +62,7 @@ export default function ImageBlurSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/image-blur.webp"
-            alt="Blur faces and number plates online free - blurred faces, a pixelated license plate and a blacked-out card number, anonymized before sharing"
+            alt="Dried flowers seen only as soft blurred shadows through frosted glass panes"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

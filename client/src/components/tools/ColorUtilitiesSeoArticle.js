@@ -71,7 +71,7 @@ export default function ColorUtilitiesSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/colour-format-utilities.webp"
-            alt="Color code converter - convert HEX to RGB, HSL and CMYK, generate tints and shades, and check WCAG contrast"
+            alt="Thread swatches graded from yellow through magenta to teal on labelled cards"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

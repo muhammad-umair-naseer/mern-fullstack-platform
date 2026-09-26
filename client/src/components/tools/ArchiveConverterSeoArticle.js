@@ -67,7 +67,7 @@ export default function ArchiveConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/archive-converter.webp"
-            alt="Free zip to tar.gz converter - re-pack ZIP, TAR and TAR.GZ archives in either direction"
+            alt="A grid of open cardboard boxes, empty and ready to be packed into a new container"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

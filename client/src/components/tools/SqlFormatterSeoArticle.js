@@ -63,7 +63,7 @@ export default function SqlFormatterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/sql-formatter.webp"
-            alt="SQL formatter online free - a one-line SQL query beautified into indented clauses with uppercase keywords, ready to copy or download"
+            alt="A metal filing cabinet drawer packed with neatly ordered index cards"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

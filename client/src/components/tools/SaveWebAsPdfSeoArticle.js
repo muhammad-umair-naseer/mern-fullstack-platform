@@ -62,7 +62,7 @@ export default function SaveWebAsPdfSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/save-web-as-pdf.webp"
-            alt="Save a webpage as a PDF online free - a live web page captured from its URL into a text-searchable PDF with links, or pasted text typeset into a clean document"
+            alt="A tablet showing a saved document page beside a glass of iced coffee on a wooden table"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

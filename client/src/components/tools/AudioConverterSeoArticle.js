@@ -65,7 +65,7 @@ export default function AudioConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/audio-converter.webp"
-            alt="Free online audio converter - convert MP3, WAV, OGG, Opus, FLAC and M4A with a bitrate you choose"
+            alt="A tonearm resting on a spinning vinyl record, the needle tracking its grooves"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

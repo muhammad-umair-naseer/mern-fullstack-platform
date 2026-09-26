@@ -72,7 +72,7 @@ export default function Mp4ToMp3SeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/mp4-mp3.webp"
-            alt="Convert MP4 to MP3 free - extract the audio track from a video and choose the bitrate"
+            alt="A woman in headphones on a window seat with her phone, a dog dozing at her feet"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

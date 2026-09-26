@@ -66,7 +66,7 @@ export default function M4aToMp3SeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/m4a-to-mp3.webp"
-            alt="M4A to WAV converter online free - turning an iPhone voice memo and AAC audio into a 16-bit mono WAV file for transcription and podcast editing"
+            alt="Two people talking across a table with a phone lying between them"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

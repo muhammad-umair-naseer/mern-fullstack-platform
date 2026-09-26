@@ -71,7 +71,7 @@ export default function ImageConverterSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/image-converter.webp"
-            alt="Free image converter - convert PNG, JPG, WebP, BMP and SVG to PNG, JPG, WebP or PDF"
+            alt="Loose curls of developed colour negative film against a pale background"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

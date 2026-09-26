@@ -90,7 +90,7 @@ export default function PdfFlattenSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/flatten-pdf.webp"
-            alt="Flatten a PDF online free - PDF flattener baking filled interactive form fields into fixed page content"
+            alt="Pressed flowers laid flat across the pages of an open old book"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

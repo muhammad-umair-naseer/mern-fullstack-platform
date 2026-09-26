@@ -64,7 +64,7 @@ export default function FaviconGeneratorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/favicon-generator.webp"
-            alt="Favicon generator free online - one square logo turned into favicon.ico, an apple touch icon, android chrome 192x192 png icons and a web app manifest"
+            alt="A hand sketching tiny icon thumbnails in pencil across a spiral notebook"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

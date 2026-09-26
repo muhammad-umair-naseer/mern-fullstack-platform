@@ -79,7 +79,7 @@ export default function ImageResizerSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/image-resizer.webp"
-            alt="Resize image online free - image resizer changing the width, height and dimensions of a photo in pixels"
+            alt="Framed photographs in three different sizes hung together on a pale wall"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

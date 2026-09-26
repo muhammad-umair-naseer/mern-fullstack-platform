@@ -66,7 +66,7 @@ export default function OggToMp3SeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/ogg-to-mp3.webp"
-            alt="Opus to WAV and OGG to M4A converter turning a WhatsApp voice note and a Telegram OGA message into playable WAV and M4A audio files"
+            alt="A woman at her desk recording a voice message into her phone"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

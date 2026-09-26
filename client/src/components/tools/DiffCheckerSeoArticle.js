@@ -64,7 +64,7 @@ export default function DiffCheckerSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/diff-checker.webp"
-            alt="Online diff checker free - comparing two versions of text and code with added and removed lines highlighted word by word, ready to download diff as patch file"
+            alt="The word twenty spelled twice in letter tiles, the second copy with two tiles knocked out of place"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

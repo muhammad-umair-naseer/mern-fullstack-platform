@@ -92,7 +92,7 @@ export default function ImageCropperSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/image-cropper.webp"
-            alt="Crop an image online free - interactive image cropper with a drag handle selection and 1:1, 4:3 and 16:9 aspect ratio presets"
+            alt="Gold scissors resting on an old group photograph among paper swatches and clippings"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

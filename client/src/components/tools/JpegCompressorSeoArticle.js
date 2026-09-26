@@ -71,7 +71,7 @@ export default function JpegCompressorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/jpeg-compressor.webp"
-            alt="Compress JPEG online free - shrink a JPG to a chosen quality while keeping its exact pixel dimensions"
+            alt="Hands holding a mirrorless camera with a mountain shot framed on its rear screen"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

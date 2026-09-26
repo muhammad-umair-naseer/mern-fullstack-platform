@@ -65,7 +65,7 @@ export default function UrlEncoderSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/url-encoder.webp"
-            alt="URL encoder decoder online free - percent encoding a search link with spaces and commas, decoding it back and parsing its query string into key and value pairs"
+            alt="Fingers holding a fountain pen to the kraft paper of an opened envelope"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

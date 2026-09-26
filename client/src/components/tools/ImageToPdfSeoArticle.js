@@ -63,7 +63,7 @@ export default function ImageToPdfSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/image-to-pdf.webp"
-            alt="JPG to PDF converter online free - combining JPG, PNG and WebP photos of receipts and documents into one multi-page A4 PDF"
+            alt="A row of small prints standing side by side on a narrow wooden ledge"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

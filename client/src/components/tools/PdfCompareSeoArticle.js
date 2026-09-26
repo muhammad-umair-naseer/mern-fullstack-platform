@@ -63,7 +63,7 @@ export default function PdfCompareSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-compare.webp"
-            alt="Compare two PDF files online free - an original and a revised PDF document with removed and added lines highlighted page by page, plus an author and producer metadata comparison"
+            alt="Two printed schedule sheets side by side on a desk, ready to check against each other"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

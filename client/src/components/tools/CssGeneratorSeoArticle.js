@@ -59,7 +59,7 @@ export default function CssGeneratorSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/css-generator.webp"
-            alt="CSS generator with live preview of a layered box shadow, a frosted glassmorphism card, a conic gradient, an organic blob border radius and a neon text shadow, ready to copy as CSS"
+            alt="A ceramic ring and a blank card on a wooden tray, their soft shadows falling across linen"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

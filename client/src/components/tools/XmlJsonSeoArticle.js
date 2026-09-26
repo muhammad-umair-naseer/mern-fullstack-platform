@@ -69,7 +69,7 @@ export default function XmlJsonSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/xml-json.webp"
-            alt="XML to JSON converter online free - an XML order document with attributes and repeated elements converted to structured JSON, and JSON converted back to XML"
+            alt="Hands typing code on a laptop at a wooden table beside a latte and wildflowers"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -64,7 +64,7 @@ export default function WordCounterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/word-counter.webp"
-            alt="Free word counter online showing word count, character count with and without spaces, sentence and paragraph counts, reading time and a keyword density table for an essay"
+            alt="A vintage typewriter on a wooden writing desk with notebooks and a pen"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

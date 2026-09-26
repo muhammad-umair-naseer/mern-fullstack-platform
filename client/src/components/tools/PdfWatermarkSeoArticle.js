@@ -64,7 +64,7 @@ export default function PdfWatermarkSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-watermark.webp"
-            alt="Add watermark to PDF online free - a diagonal CONFIDENTIAL text watermark and a transparent PNG logo stamped across PDF pages"
+            alt="A cream envelope stamped with a floral monogram beside gold scissors"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

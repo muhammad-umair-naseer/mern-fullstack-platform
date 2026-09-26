@@ -62,7 +62,7 @@ export default function JwtDecoderSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/jwt-decoder.webp"
-            alt="JWT decoder online free - decode a JWT bearer token into its header, payload claims and expiry time, then verify the HS256 or RS256 signature"
+            alt="A wax seal pressed over a sprig of dried grasses on cream paper"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

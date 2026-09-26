@@ -79,7 +79,7 @@ export default function PdfToExcelSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-excel.webp"
-            alt="Convert PDF to Excel online free - extracting a table of figures from a PDF report into an editable XLSX spreadsheet"
+            alt="Handwritten columns of figures filling the pages of an old bound ledger"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

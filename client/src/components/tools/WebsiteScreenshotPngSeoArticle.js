@@ -69,7 +69,7 @@ export default function WebsiteScreenshotPngSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/website-png-screenshot.webp"
-            alt="Website screenshot PNG free - capture a URL at a device viewport with a window frame, or render HTML to a transparent PNG"
+            alt="A man browsing a web page on a tablet beside a cup of black coffee"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

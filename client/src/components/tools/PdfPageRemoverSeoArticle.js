@@ -92,7 +92,7 @@ export default function PdfPageRemoverSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-page-remover.webp"
-            alt="Delete pages from a PDF online free - PDF page remover showing page thumbnails marked for deletion and pages kept"
+            alt="Hands crumpling a sheet of paper over a desk scattered with discarded pages"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

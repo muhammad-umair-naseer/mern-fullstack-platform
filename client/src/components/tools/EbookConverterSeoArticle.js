@@ -81,7 +81,7 @@ export default function EbookConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/ebook-converter.webp"
-            alt="Markdown to EPUB converter free - build an EPUB 3 ebook with real chapters from Markdown, TXT or HTML"
+            alt="Hands holding an e-reader open to a page of text in a meadow of tall grass"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

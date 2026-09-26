@@ -86,7 +86,7 @@ export default function PdfPngWebpSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/pdf-png-webp-tiff-bmp-gif.webp"
-            alt="Convert PDF to image online free - exporting PDF pages to PNG, WebP, JPEG, TIFF, BMP and GIF image files"
+            alt="Hands opening a linen-bound album to spreads of garden and food photographs"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -69,7 +69,7 @@ export default function PdfWordSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-to-word-converter.webp"
-            alt="Convert PDF to Word online free - PDF to DOCX converter turning a locked PDF into an editable Word document"
+            alt="A laptop beside a blank sheet of paper and a pen on a wooden desk"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

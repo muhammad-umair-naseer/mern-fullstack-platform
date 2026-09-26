@@ -78,7 +78,7 @@ export default function PdfToEbookSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-ebook.webp"
-            alt="PDF to EPUB converter free - convert a PDF into a reflowable EPUB, Kindle HTML, FB2, Markdown or text eBook"
+            alt="A hand holding an e-reader open to a page of text on a sandy beach"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -87,7 +87,7 @@ export default function ExtractPagesSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/extract-pages-from-pdf.webp"
-            alt="Extract pages from PDF online free - selecting page thumbnails from a long PDF and saving them as a brand new PDF file"
+            alt="A tall stack of printed pages flagged with bright sticky tabs marking the ones to pull out"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

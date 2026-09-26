@@ -66,7 +66,7 @@ export default function AudioTrimmerSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/audio-trimmer.webp"
-            alt="Audio trimmer and free ringtone maker online - selecting the chorus of a song on a waveform with fade in and fade out before exporting an M4A ringtone"
+            alt="A clear cassette tape with a loop of loose tape pulled out, ready to be cut and spliced"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

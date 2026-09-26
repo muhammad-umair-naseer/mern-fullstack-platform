@@ -62,7 +62,7 @@ export default function CsvJsonSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/csv-json.webp"
-            alt="CSV to JSON online free - spreadsheet rows turned into a JSON array of objects, and nested JSON flattened back into CSV columns"
+            alt="Birch magazine holders on a shelf with papers filed upright in neat rows"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

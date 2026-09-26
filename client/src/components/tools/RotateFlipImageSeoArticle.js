@@ -55,7 +55,7 @@ export default function RotateFlipImageSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/rotate-flip-image.webp"
-            alt="Rotate and flip online free - a sideways snapshot turned upright by 90 degrees and a logo mirrored horizontally, with transparent corners on a custom angle"
+            alt="A woman straightening a framed photograph hanging on a wall"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

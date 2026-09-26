@@ -64,7 +64,7 @@ export default function PdfGrayscaleSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-grayscale.webp"
-            alt="Convert PDF to grayscale free - a colour PDF report with charts and photos turned into a black and white PDF ready for printing"
+            alt="Black and white postcards and a vintage snapshot held with a clip and tied with a grey ribbon"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

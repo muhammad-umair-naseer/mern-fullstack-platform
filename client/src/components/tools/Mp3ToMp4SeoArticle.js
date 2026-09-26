@@ -73,7 +73,7 @@ export default function Mp3ToMp4SeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/mp3-mp4.webp"
-            alt="MP3 to MP4 converter - turn an audio track and a cover image into a YouTube-ready video"
+            alt="A tablet, a camera on a tripod and a microphone set up on a desk to record a video"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -70,7 +70,7 @@ export default function PdfToHtmlSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-html.webp"
-            alt="Free PDF to HTML converter - turn PDF pages into flowing semantic HTML with headings and paragraphs"
+            alt="An open laptop on a wooden desk with lines of markup in a code editor"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -64,7 +64,7 @@ export default function Mp4ToGifSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/mp4-gif.webp"
-            alt="Convert MP4 to GIF free - turn a video clip into a clean animated GIF with a custom colour palette"
+            alt="A curl of green-tinted film negative with frames of city scenes"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

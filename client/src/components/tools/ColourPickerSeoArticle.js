@@ -82,7 +82,7 @@ export default function ColourPickerSeoArticle() {
               attribute exists to carry, so the rule is wrong. */}
           <img
             src="/blog/colour-picker.webp"
-            alt="Image colour picker tool sampling a pixel from a photo and showing its HEX, RGB and HSL colour codes"
+            alt="A paint swatch fan spread open in a sweep of colours against a white wall"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

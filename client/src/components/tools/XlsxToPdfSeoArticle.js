@@ -62,7 +62,7 @@ export default function XlsxToPdfSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/xlsx-to-pdf.webp"
-            alt="Excel to PDF converter online free - a wide xlsx spreadsheet turned into a landscape PDF table with gridlines, every column fitted to the page and the header row repeated"
+            alt="A hand holding printed charts over a desk with a notebook, calculator and laptop"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

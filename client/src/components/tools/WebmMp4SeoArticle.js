@@ -62,7 +62,7 @@ export default function WebmMp4SeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/webm-mp4.webp"
-            alt="WebM to MP4 converter online free - turning a WebM screen recording into an H.264 MP4 video that plays on iPhone, QuickTime and PowerPoint"
+            alt="A phone on a small tripod recording the sea from a beach"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

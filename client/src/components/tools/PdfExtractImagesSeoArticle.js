@@ -92,7 +92,7 @@ export default function PdfExtractImagesSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/extract-images-from-pdf.webp"
-            alt="Extract images from PDF online free - a PDF document turning into a grid of downloadable high-resolution PNG page images"
+            alt="An open album showing a row of ocean wave photographs across its pages"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

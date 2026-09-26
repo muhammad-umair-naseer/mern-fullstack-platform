@@ -86,7 +86,7 @@ export default function PdfFormBuilderSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/make-pdf-fillable.webp"
-            alt="Make a PDF fillable online free - placing interactive text fields and checkboxes onto a flat PDF form"
+            alt="A pen poised over the blank lines of a printed form, ready to fill it in"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

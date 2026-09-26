@@ -59,7 +59,7 @@ export default function FontConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/font-converter.webp"
-            alt="WOFF to TTF converter free online - unwrap a web font to an installable TTF or OTF, or wrap a desktop font as WOFF"
+            alt="A printed type specimen sheet showing bold capital letters and numerals on a grid"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

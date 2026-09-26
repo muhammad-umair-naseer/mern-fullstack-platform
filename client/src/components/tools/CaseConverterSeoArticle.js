@@ -61,7 +61,7 @@ export default function CaseConverterSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/case-converter.webp"
-            alt="Free online case converter changing text from uppercase to lowercase, title case, sentence case, camelCase, snake_case and kebab-case"
+            alt="Worn wooden letterpress blocks sorted into the compartments of a type case"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

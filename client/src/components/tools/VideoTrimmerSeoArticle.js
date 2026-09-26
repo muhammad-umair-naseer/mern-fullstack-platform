@@ -65,7 +65,7 @@ export default function VideoTrimmerSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/video-trimmer.webp"
-            alt="Trim video online free - a video cutter timeline with start and end markers selecting one clip from a longer MP4 recording, no watermark"
+            alt="Hands holding a tablet with a video clip open on an editing timeline"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

@@ -79,7 +79,7 @@ export default function PdfSpreadsheetSuiteSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-spreadsheet-suite.webp"
-            alt="Convert multiple PDF to Excel free - several PDFs queued into one .xlsx workbook with a worksheet per page"
+            alt="A notebook with a written total beside a calculator, coins, a pen and a hand-drawn chart"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

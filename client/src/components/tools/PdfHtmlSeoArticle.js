@@ -71,7 +71,7 @@ export default function PdfHtmlSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/pdf-html.webp"
-            alt="Free PDF to HTML converter - turn PDF pages into clean, reflowable HTML5 with real headings and paragraphs"
+            alt="A laptop on a wooden table showing markup in a code editor"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

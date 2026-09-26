@@ -72,7 +72,7 @@ export default function FileRenamerSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/file-renamer.webp"
-            alt="Bulk rename files online free - batch rename files with find and replace, kebab-case, prefix, suffix and sequential numbering"
+            alt="Four blank hang tags in white, kraft and black on strings, ready to be labelled"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"

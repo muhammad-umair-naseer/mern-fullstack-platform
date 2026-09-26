@@ -63,7 +63,7 @@ export default function AvifToJpgSeoArticle() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl bg-slate-950">
           <img
             src="/blog/avif-to-jpg.webp"
-            alt="AVIF to JPG converter online free - batch converting AVIF images to high quality JPG, PNG and WebP files with a white background for transparent areas"
+            alt="Glossy prints scattered across a table beside reading glasses and a potted aloe"
             className="w-full h-auto object-cover max-h-[500px]"
             loading="lazy"
             width="1200"
