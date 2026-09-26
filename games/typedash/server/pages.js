@@ -1,6 +1,7 @@
 'use strict';
+const cfg = require('./config');
 const { CATALOGUE } = require('./achievements');
-const { STAGES } = require('./passages');
+const { STAGES, CHAIN } = require('./passages');
 const { nameOf } = require('./countries');
 const { siteConfig } = require('./cx');
 
@@ -46,6 +47,96 @@ const I = {
   menu: '<path d="M4 8h16M4 16h11"/>',
   back: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
 };
+
+/** A padlock whose shackle can swing open (the unlock animation turns `.shackle`). */
+const LOCK = '<svg class="lock-i" viewBox="0 0 24 24" aria-hidden="true"><path class="shackle" d="M8 11V7.6a4 4 0 0 1 8 0V11"/><rect x="5" y="11" width="14" height="10" rx="2.6"/></svg>';
+
+/* ------------------------------------------------- the English chain */
+
+/**
+ * The browser's half of the English chain on the server pages. Pages are
+ * cached and do not know who is looking, so the markup arrives in a new
+ * visitor's state (paragraph 1 open, the rest locked). This runs inline, right
+ * after that markup and before the first paint, and repaints it from the
+ * progress the game keeps in this browser (the cached profile's `done`); the
+ * game runs it again when it shows a page itself (js/router.js). The rule is
+ * passages.js's: 1 is always open, the rest open in order, finished ones stay
+ * open. It is sent as source, so it must not reach outside itself.
+ */
+function paintChain(script) {
+  const root = script.parentElement;
+  const lockOn = script.dataset.lock !== 'off';
+  // back here from the browser's back/forward cache: you may have typed since, so paint again
+  if (document.readyState === 'loading') addEventListener('pageshow', (e) => { if (e.persisted) paintChain(script); });
+  let has = new Set();
+  try {
+    const profile = JSON.parse(localStorage.getItem('td_profile_cache_v1') || 'null');
+    if (profile && Array.isArray(profile.done)) has = new Set(profile.done);
+  } catch (_) { /* no storage: a new visitor */ }
+
+  // the set page: every paragraph in order, each done, next, open or locked
+  const items = [...root.querySelectorAll('[data-chain-list] li[data-n]')];
+  let next = null;
+  let missing = 0;       // the last paragraph so far that is still to do
+  let count = 0;
+  for (const li of items) {
+    let state = 'open';
+    if (has.has(li.dataset.id)) { state = 'done'; count++; } else if (!next) { state = 'next'; next = li; } else if (lockOn) state = 'locked';
+    if (state === 'locked') li.querySelector('[data-need]').textContent = missing;
+    if (state !== 'done') missing = Number(li.dataset.n);
+    li.dataset.state = state;
+    li.classList.remove('unlocking', 'ps-play');
+  }
+  if (!items.length) count = has.size;
+
+  for (const bar of root.querySelectorAll('[data-chain-progress]')) {
+    const total = Number(bar.dataset.total) || 1;
+    const n = Math.min(total, count);
+    bar.querySelector('b').textContent = n;
+    bar.style.setProperty('--p', (n / total).toFixed(4));
+  }
+
+  const cta = root.querySelector('[data-chain-cta]');
+  if (cta && count) {
+    cta.href = next ? `/app#practice/${next.dataset.id}` : '/app#practice';
+    cta.firstChild.nodeValue = next ? `Type paragraph ${next.dataset.n}` : 'Type a random one';
+  }
+
+  // coming back after finishing one: the newly opened card unlocks on screen
+  if (items.length) {
+    const at = next ? Number(next.dataset.n) : items.length + 1;
+    let seen = 0;
+    try { seen = Number(localStorage.getItem('td_chain_seen_v1')) || 0; localStorage.setItem('td_chain_seen_v1', String(at)); } catch (_) { /* no storage */ }
+    if (next && lockOn && seen && at > seen && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      next.classList.add('unlocking');   // held on its first frame (the card as it was, locked) until it is in view
+      const play = () => setTimeout(() => next.classList.add('ps-play'), 420);
+      if (!('IntersectionObserver' in window)) play();
+      else {
+        const io = new IntersectionObserver((seenNow) => { if (seenNow.some((e) => e.isIntersecting)) { io.disconnect(); play(); } }, { threshold: 0.6 });
+        io.observe(next);
+      }
+    }
+  }
+
+  // one paragraph's page: its start button, or the lock and the way to it
+  const gate = root.querySelector('[data-chain-gate]');
+  if (gate) {
+    const before = gate.dataset.before ? gate.dataset.before.split(' ') : [];
+    const need = has.has(gate.dataset.id) ? null : before.find((id) => !has.has(id));
+    gate.dataset.state = lockOn && need ? 'locked' : 'open';
+    if (need) {
+      const link = gate.querySelector('[data-gate-next]');
+      link.href = `/app#practice/${need}`;
+      link.querySelector('b').textContent = before.indexOf(need) + 1;
+    }
+  }
+}
+
+/** The inline script that runs paintChain where it stands. */
+const paintScript = () => `<script data-paint${cfg.PRACTICE_LOCK ? '' : ' data-lock="off"'}>(${paintChain})(document.currentScript)</script>`;
+
+/** "0 of N done" and a slim bar; paintChain fills in the player's own count. */
+const chainProgress = (cls = '', i = null) => `<span class="chain-prog ${cls}" data-chain-progress data-total="${CHAIN.length}" style="--p:0${i == null ? '' : `;--i:${i}`}"><span class="cp-text"><b>0</b> of ${CHAIN.length} done</span><i class="cp-bar" aria-hidden="true"><i></i></i></span>`;
 
 /** A car drawn in pencil: the empty seat on a podium or a board. */
 const PENCIL_CAR = '<svg class="pencil-car" viewBox="0 0 122 52" aria-hidden="true"><path d="M6 33 C6 27 10 24 16 23 L34 21 L46 10 C49 7 53 6 58 6 L84 6 C89 6 93 8 96 12 L104 21 L113 24 C117 25 119 28 119 32 L119 36 C119 39 117 40 114 40 L11 40 C8 40 6 38 6 36 Z"/><circle cx="30" cy="40" r="8.5"/><circle cx="92" cy="40" r="8.5"/></svg>';
@@ -468,6 +559,7 @@ function practiceIndexPage({ origin, passages, records, langs = {}, categories =
       <span class="set-sub">${esc(set.english && set.english !== set.name ? set.english : set.note)}</span>
       <span class="set-sample" aria-hidden="true">${esc(sampleOf(set))}</span>
       <span class="set-meta"><b>${set.items.length}</b> paragraphs<span class="stagebar" title="${set.stages} stages, easy to hard">${Array.from({ length: set.stages }, (_, i) => `<i style="--s:${i}"></i>`).join('')}</span></span>
+      ${set.items.some((p) => p.chain) ? chainProgress('on-card') : ''}
     </a>`;
   const body = `
   <section class="pg-hero pr-hero" data-hero>
@@ -489,6 +581,7 @@ function practiceIndexPage({ origin, passages, records, langs = {}, categories =
     <div class="set-grid langs">${sets.filter((x) => x.kind === 'language').map(card).join('')}</div>
     <div class="set-grid drills">${sets.filter((x) => x.kind === 'drill').map(card).join('')}</div>
   </section>
+  ${paintScript()}
 
   <section class="pg-band embed-band">
     <div class="embed-copy">
@@ -511,11 +604,28 @@ function practiceIndexPage({ origin, passages, records, langs = {}, categories =
 function practiceSetPage({ origin, set, records, allSets }) {
   const rec = Object.fromEntries(records.map((r) => [r.passageId, r]));
   const title = `${set.name} typing practice · ${set.items.length} passages · TypeDash`;
-  const description = `${set.items.length} ${set.name} typing practice passages, sorted into ${set.stages} stages from easy to hard. Type any of them in your browser — free, no sign-up.`;
-  const item = (p) => {
+  const chained = set.items.some((p) => p.chain);   // English: the paragraphs open in order
+  const description = `${set.items.length} ${set.name} typing practice passages, sorted into ${set.stages} stages from easy to hard. Type ${chained ? 'them one after another' : 'any of them'} in your browser — free, no sign-up.`;
+  const meta = (p) => {
     const r = rec[p.id];
-    return `<li><a href="/practice/${esc(p.id)}"><b>${esc(p.title)}</b></a> <span class="passage-meta">${p.words} words${r ? ` · fastest so far ${r.wpm} a min by ${flag(r.country)} ${esc(r.name)}` : ' · nobody has raced it yet'}</span></li>`;
+    return `<span class="passage-meta">${p.words} words${r ? ` · fastest so far ${r.wpm} a min by ${flag(r.country)} ${esc(r.name)}` : ' · nobody has raced it yet'}</span>`;
   };
+  const item = (p) => `<li><a href="/practice/${esc(p.id)}"><b>${esc(p.title)}</b></a> ${meta(p)}</li>`;
+  // a numbered card; paintChain sets the player's own state (next, done, open, locked)
+  const chainItem = (p) => `<li class="ps" data-id="${esc(p.id)}" data-n="${p.chain}" data-state="${p.chain === 1 ? 'next' : cfg.PRACTICE_LOCK ? 'locked' : 'open'}">
+        <span class="ps-n">${p.chain}</span>
+        <span class="ps-body">
+          <span class="ps-flag">Up next</span>
+          <a class="ps-title" href="/practice/${esc(p.id)}"><b>${esc(p.title)}</b></a>
+          ${meta(p)}
+          <span class="ps-hint">Finish <b data-need>${p.chain - 1}</b> to unlock</span>
+          <span class="sr-only ps-done">Done</span>
+        </span>
+        <span class="ps-side">
+          <a class="ps-go" href="/app#practice/${esc(p.id)}" aria-label="Type paragraph ${p.chain}"></a>
+          <span class="ps-lock">${LOCK}</span>
+        </span>
+      </li>`;
   const stages = STAGES
     .map((st) => ({ st, items: set.items.filter((p) => (p.stage || 1) === st.id) }))
     .filter((x) => x.items.length);
@@ -526,8 +636,9 @@ function practiceSetPage({ origin, set, records, allSets }) {
     <div class="pg-copy">
       <p class="crumb hero-late" style="--i:0"><a href="/practice">Paragraphs</a></p>
       ${heroTitle(esc(set.name))}
-      <p class="pg-lead hero-late" style="--i:2">${set.items.length} paragraphs in ${plural(set.stages, 'stage')}. Nothing is locked.</p>
-      ${first ? `<div class="pg-cta hero-late" style="--i:3"><a class="btn primary big-cta" href="/app#practice/${esc(first.id)}">Start with the first one</a></div>` : ''}
+      <p class="pg-lead hero-late" style="--i:2">${set.items.length} paragraphs in ${plural(set.stages, 'stage')}.${chained ? '' : ' Nothing is locked.'}</p>
+      ${chained ? chainProgress('hero-late', 2) : ''}
+      ${first ? `<div class="pg-cta hero-late" style="--i:3"><a class="btn primary big-cta" href="/app#practice/${esc(first.id)}"${chained ? ' data-chain-cta' : ''}>Start with the first one</a></div>` : ''}
     </div>
     <div class="stage-road hero-media" data-stage-road aria-hidden="true">
       <span class="sr-track"><span class="sr-car" data-car="${set.kind === 'drill' ? 'hatch' : 'dash'}"></span></span>
@@ -535,7 +646,7 @@ function practiceSetPage({ origin, set, records, allSets }) {
     </div>
   </section>
 
-  <section class="stages" style="--n:${stages.length}">
+  <section class="stages" style="--n:${stages.length}"${chained ? ' data-chain-list' : ''}>
     ${stages.map((x) => `<div class="stage card s${x.st.id}">
       <div class="stage-head">
         <span class="stage-no">Stage ${x.st.id}</span>
@@ -543,9 +654,10 @@ function practiceSetPage({ origin, set, records, allSets }) {
         <span class="stage-note">${esc(x.st.note)}</span>
         <span class="stage-count">${plural(x.items.length, 'paragraph')}</span>
       </div>
-      <ol class="passage-list">${x.items.map(item).join('')}</ol>
+      <ol class="passage-list${chained ? ' chain-list' : ''}">${x.items.map(chained ? chainItem : item).join('')}</ol>
     </div>`).join('')}
   </section>
+  ${chained ? paintScript() : ''}
 
   <section class="pg-band">
     <h2 class="band-title">Other languages and drills</h2>
@@ -555,7 +667,7 @@ function practiceSetPage({ origin, set, records, allSets }) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${set.name} typing practice`,
-    itemListElement: set.items.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.title, url: `${origin}/practice/${p.id}` })),
+    itemListElement: stages.flatMap((x) => x.items).map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.title, url: `${origin}/practice/${p.id}` })),
   };
   return layout({ origin, path: set.path, title, description, body, jsonLd, nav: 'practice', page: 'practice-set' });
 }
@@ -570,12 +682,14 @@ function practicePage({ origin, passage, record, prev, next, langs = {}, categor
   const setName = p.category !== 'prose' ? catName : langName;
   const title = `Typing practice: “${p.title}” (${p.words} words, ${p.lang === 'en' && p.category === 'prose' ? 'English' : `${langName}${p.category !== 'prose' ? ` · ${catName}` : ''}`}) · TypeDash`;
   const description = `${p.text.slice(0, 150).replace(/\s+\S*$/, '')}… Type this ${p.words}-word paragraph in your browser${record ? `, then race a replay of the fastest run so far (${record.wpm} words a minute)` : ''}. Free, no sign-up.`;
+  // an English paragraph opens once every one before it is done: a new visitor sees it locked (paintChain knows better)
+  const gate = p.chain ? ` data-chain-gate data-id="${esc(p.id)}" data-before="${esc(CHAIN.slice(0, p.chain - 1).map((x) => x.id).join(' '))}" data-state="${p.chain > 1 && cfg.PRACTICE_LOCK ? 'locked' : 'open'}"` : '';
   const body = `
   <section class="pg-hero psg-hero" data-hero>
     <div class="pg-copy">
       <p class="crumb hero-late" style="--i:0"><a href="/practice">Paragraphs</a><a href="${esc(setPath)}">${esc(setName)}</a></p>
       ${heroTitle(esc(p.title))}
-      <p class="psg-meta hero-late" style="--i:2"><span class="stage-no">Stage ${stage.id}</span><b>${esc(stage.name)}</b><span>${p.words} words</span><span>${p.text.length} characters</span></p>
+      <p class="psg-meta hero-late" style="--i:2"><span class="stage-no">Stage ${stage.id}</span><b>${esc(stage.name)}</b>${p.chain ? `<span>Paragraph ${p.chain}</span>` : ''}<span>${p.words} words</span><span>${p.text.length} characters</span></p>
     </div>
   </section>
 
@@ -584,15 +698,20 @@ function practicePage({ origin, passage, record, prev, next, langs = {}, categor
     <div class="sheet-lane" aria-hidden="true"><span class="sheet-road"><span class="sheet-car" data-car="${esc(record ? record.skin || 'dash' : 'dash')}"></span></span><span class="sheet-wpm"><b>0</b> a min</span></div>
   </section>
 
-  <section class="psg-actions">
-    <div class="pg-cta">
+  <section class="psg-actions"${gate}>
+    <div class="pg-cta gate-open">
       <a class="btn primary big-cta" href="/app#practice/${esc(p.id)}">Type this paragraph</a>
       ${record ? `<a class="btn ghost-btn" href="/app#practice/${esc(p.id)}/ghost/wr">Race the record</a>` : ''}
     </div>
+    ${p.chain ? `<div class="pg-cta gate-locked">
+      <span class="btn big-cta lock-pill">${LOCK}Locked</span>
+      <a class="text-link" href="/app#practice/${esc(CHAIN[0].id)}" data-gate-next>Finish paragraph&nbsp;<b>1</b>&nbsp;first</a>
+    </div>` : ''}
     ${record
     ? `<p class="record-line"><span class="rec-label">Record</span><b>${record.wpm} a min</b><span>${flag(record.country)} ${esc(record.name)}, ${record.accuracy}% right in ${fmtTime(record.time)}</span></p>`
     : '<p class="record-line dim">No record yet. The first clean run sets it.</p>'}
   </section>
+  ${p.chain ? paintScript() : ''}
 
   <nav class="passage-nav" aria-label="More paragraphs">
     ${prev ? `<a class="pn prev" href="/practice/${esc(prev.id)}"><small>Previous</small><b>${esc(prev.title)}</b></a>` : '<span></span>'}

@@ -87,6 +87,9 @@ export class Solo {
     this.track = track;
     this.game = game;
     this.catalogue = null;
+    this.chain = [];              // English paragraph ids in the order they open (/api/passages)
+    this.chainIndex = new Map();
+    this.lockOn = true;
     this.bonusCount = 3;
     this.lastId = null;
     this.lastOpts = null;
@@ -98,13 +101,17 @@ export class Solo {
     net.on('hello_ok', () => this.flush());
   }
 
-  /** Pull the passage catalogue once over plain HTTP (cached by the browser). */
+  /** Pull the passage catalogue once over plain HTTP (cached by the browser, keyed by the catalogue's version). */
   async load() {
     try {
-      const res = await fetch('/api/passages');
+      const v = document.documentElement.dataset.catalogue;
+      const res = await fetch(v && !v.startsWith('__') ? `/api/passages?v=${encodeURIComponent(v)}` : '/api/passages');
       if (!res.ok) throw new Error(res.status);
       const data = await res.json();
       this.catalogue = data.passages;
+      this.chain = Array.isArray(data.chain) ? data.chain : [];
+      this.chainIndex = new Map(this.chain.map((id, i) => [id, i]));
+      this.lockOn = data.lock !== false;
       this.langs = data.langs || { en: { name: 'English', native: 'English' } };
       this.categories = data.categories || { prose: { name: 'Prose' } };
       this.bonusCount = data.bonusWords ?? 3;
@@ -119,6 +126,35 @@ export class Solo {
 
   passageById(id) {
     return (this.catalogue || []).find((p) => p.id === id) || null;
+  }
+
+  /*
+   * English paragraphs open in order. The rule is server/passages.js's and the
+   * order comes with the catalogue: paragraph 1 is always open, each one after
+   * it opens once every one before it is done, and anything you have finished
+   * stays open. What you have finished comes with your profile (`done`).
+   */
+
+  /** A paragraph's number in the chain (1..N), or null outside it. */
+  chainNo(id) {
+    const i = this.chainIndex.get(id);
+    return i == null ? null : i + 1;
+  }
+
+  /** The first English paragraph you have not finished yet (null once they all are). */
+  nextParagraph(done = this.identity().done) {
+    const has = done instanceof Set ? done : new Set(done || []);
+    const id = this.chain.find((x) => !has.has(x));
+    return id ? this.passageById(id) : null;
+  }
+
+  /** Null when `id` may be practised; otherwise the paragraph to finish first. */
+  lockOf(id, done = this.identity().done) {
+    if (!this.lockOn || !this.chainIndex.has(id)) return null;
+    const has = done instanceof Set ? done : new Set(done || []);
+    if (has.has(id)) return null;
+    const next = this.nextParagraph(has);
+    return next && this.chainIndex.get(id) > this.chainIndex.get(next.id) ? next : null;
   }
 
   /** A stored replay for a passage: the world record, or the personal best of an account (mine by default). */
@@ -162,6 +198,11 @@ export class Solo {
     if (!p) {
       let pool = this.catalogue.filter((x) => x.lang === lang && x.category === category);
       if (!pool.length) pool = this.catalogue.filter((x) => x.lang === 'en' && x.category === 'prose');
+      if (mode !== 'daily') {
+        const done = new Set(this.identity().done || []);
+        const open = pool.filter((x) => !this.lockOf(x.id, done));   // English paragraphs you have not opened yet stay out of the draw
+        if (open.length) pool = open;
+      }
       if (pool.length > 1) pool = pool.filter((x) => x.id !== this.lastId);
       p = pool[Math.floor(Math.random() * pool.length)];
     }
@@ -459,6 +500,7 @@ export class Solo {
       }
     }
     if (sr) {
+      if (sr.opened) lines.push(`<span class="sr-line unlock"><svg class="i" aria-hidden="true"><use href="#i-unlock"/></svg>Paragraph ${sr.opened.n} unlocked</span>`);
       if (sr.ghost && sr.ghost.wr) lines.push('<span class="sr-line pb">🌍 Nobody on TypeDash has typed this paragraph faster!</span>');
       else if (sr.ghost && sr.ghost.pb) lines.push('<span class="sr-line pb">👻 Your best yet on this paragraph — saved, so you can race yourself later</span>');
       if (sr.improved) lines.push('<span class="sr-line pb">🏆 Your fastest on your own so far</span>');

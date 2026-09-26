@@ -159,6 +159,14 @@ export class Router {
     const main = doc.getElementById('main');
     this.leaveSite();
     this.site.innerHTML = main ? main.innerHTML : '';
+    // the few inline scripts a page paints itself with before it shows (the English
+    // paragraph locks, server/pages.js) do not run from innerHTML: run them here
+    for (const old of this.site.querySelectorAll('script[data-paint]')) {
+      const s = document.createElement('script');
+      for (const a of old.attributes) s.setAttribute(a.name, a.value);
+      s.textContent = old.textContent;
+      old.replaceWith(s);
+    }
     this.site.dataset.page = main ? main.dataset.page || '' : '';
     this.show('site', url);
     document.title = doc.title || 'TypeDash';

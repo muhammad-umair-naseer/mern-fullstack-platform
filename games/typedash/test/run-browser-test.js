@@ -15,6 +15,7 @@ try { fs.unlinkSync(process.env.DATA_FILE); } catch (_) { /* fresh start: record
 const path = require('path');
 const puppeteer = require('puppeteer-core');
 const { server, teams } = require('../server/index.js');
+const { CHAIN } = require('../server/passages.js');
 
 const CHROME = process.env.CHROME || [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -205,12 +206,14 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   console.log('✓ /#practice/<id>/ghost/<account> races that player\'s ghost');
 
   /* ---------------- deep link: /#practice/<id> (a cold load, as from a /practice page) ---------------- */
+  // English paragraphs open in order: the first run finished paragraph 1, so 2 is open now
+  const second = CHAIN[1];
   await page.goto('about:blank');
-  await page.goto(`${base}/app#practice/trains`, { waitUntil: 'networkidle0' });
+  await page.goto(`${base}/app#practice/${second.id}`, { waitUntil: 'networkidle0' });
   await page.waitForFunction(() => window.TypeDash && window.TypeDash.state.room && window.TypeDash.state.room.solo, { timeout: 5000 });
-  assert.strictEqual(await state('S.room.passageId'), 'trains', 'deep link picked the requested passage');
-  assert.ok(/Trains have a rhythm/.test(await page.$eval('#status', (el) => el.textContent)), 'status shows the passage title');
-  console.log('✓ /#practice/trains auto-starts that passage');
+  assert.strictEqual(await state('S.room.passageId'), second.id, 'deep link picked the requested passage');
+  assert.ok((await page.$eval('#status', (el) => el.textContent)).includes(second.title), 'status shows the passage title');
+  console.log(`✓ /#practice/${second.id} auto-starts that passage`);
 
   /* ---------------- race the world from practice results ---------------- */
   await page.waitForFunction(() => window.TypeDash.state.room.state === 'racing', { timeout: 5000 });
@@ -280,6 +283,81 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.waitForFunction(() => document.getElementById('screen-home').classList.contains('active'));
   await page.select('#mode', 'prose');
   console.log('✓ language and mode selectors drive practice (es prose, en code)');
+
+  /* ---------------- English paragraphs open in order ---------------- */
+  {
+    const ctx = await browser.createBrowserContext();       // a new visitor
+    const lp = await ctx.newPage();
+    await lp.setViewport({ width: 1200, height: 900 });
+    const errors = [];
+    lp.on('pageerror', (e) => errors.push(String(e)));
+    lp.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+    // the first frame that has the list in it: your own state must already be painted there (no flash of the default)
+    await lp.evaluateOnNewDocument(() => {
+      const look = () => {
+        const li = document.querySelectorAll('[data-chain-list] li[data-n]');
+        if (li.length) window.__firstFrame = [...li].slice(0, 3).map((x) => x.dataset.state);
+        else if (document.readyState === 'loading') requestAnimationFrame(look);
+      };
+      requestAnimationFrame(look);
+    });
+    const cards = () => lp.$$eval('[data-chain-list] li[data-n]', (ls) => ls.slice(0, 3).map((li) => ({ n: li.dataset.n, state: li.dataset.state, hint: li.querySelector('.ps-hint').textContent.replace(/\s+/g, ' ').trim(), unlocking: li.classList.contains('unlocking') })));
+    await lp.goto(`${base}/practice/lang/en`, { waitUntil: 'networkidle0' });
+    let c = await cards();
+    assert.deepStrictEqual(c.map((x) => x.state), ['next', 'locked', 'locked'], 'a new visitor: 1 up next, 2 locked');
+    assert.strictEqual(c[1].hint, 'Finish 1 to unlock');
+    assert.ok(await lp.$eval('li[data-n="2"] .ps-lock', (el) => getComputedStyle(el).display !== 'none') && await lp.$eval('li[data-n="2"] .ps-go', (el) => getComputedStyle(el).display === 'none'), '2 shows a padlock and cannot be started');
+    assert.ok(/^0 of \d+ done$/.test(await lp.$eval('.set-hero .cp-text', (el) => el.textContent)), 'progress, 0 done');
+
+    // type paragraph 1 from its card
+    await Promise.all([lp.waitForNavigation({ waitUntil: 'networkidle0' }), lp.click('li[data-n="1"] .ps-go')]);
+    await lp.waitForFunction(() => window.TypeDash && window.TypeDash.state.room && window.TypeDash.state.room.state === 'racing', { timeout: 8000 });
+    assert.strictEqual(await lp.evaluate(() => window.TypeDash.state.room.passageId), CHAIN[0].id);
+    await lp.keyboard.type(await lp.evaluate(() => window.TypeDash.state.passage), { delay: 34 });
+    await lp.waitForFunction(() => !document.getElementById('btn-solo-next').hidden, { timeout: 8000 });
+    assert.ok(/Paragraph 2 unlocked/.test(await lp.$eval('#sr-lines', (el) => el.textContent)), 'the result says paragraph 2 opened');
+    assert.ok(await lp.$eval('#btn-solo-next', (b) => b.classList.contains('primary') && /Next paragraph/.test(b.textContent)), 'Next paragraph is the primary button');
+    assert.ok(!(await lp.$eval('#btn-solo-world', (b) => b.classList.contains('primary'))), 'one primary');
+    console.log('✓ finishing paragraph 1: "Paragraph 2 unlocked", Next paragraph is the primary button');
+
+    // inside the game the pages paint themselves too: the English card on /practice
+    await lp.click('#btn-results-leave');
+    await lp.click('#mainnav a[data-nav="practice"]');
+    await lp.waitForFunction(() => location.pathname === '/practice' && document.querySelector('#screen-site.active .chain-prog'), { timeout: 8000 });
+    assert.ok(/^1 of \d+ done$/.test(await lp.$eval('#screen-site .chain-prog .cp-text', (el) => el.textContent)), 'the English card counts 1 done');
+
+    // back on the set page: 2 opens in front of you
+    await lp.goto(`${base}/practice/lang/en`, { waitUntil: 'networkidle0' });
+    assert.deepStrictEqual(await lp.evaluate(() => window.__firstFrame), ['done', 'next', 'locked'], 'the first frame with the list already shows your state (no flash)');
+    c = await cards();
+    assert.deepStrictEqual(c.map((x) => x.state), ['done', 'next', 'locked']);
+    assert.ok(c[1].unlocking && c[2].hint === 'Finish 2 to unlock', 'the new one plays its unlock');
+    await lp.$eval('li[data-n="2"]', (el) => el.scrollIntoView({ block: 'center' }));
+    await lp.waitForFunction(() => document.querySelector('li[data-n="2"]').classList.contains('ps-play'), { timeout: 4000 });
+    assert.ok(/^1 of \d+ done$/.test(await lp.$eval('.set-hero .cp-text', (el) => el.textContent)) && /Type paragraph 2/.test(await lp.$eval('[data-chain-cta]', (a) => a.textContent)), 'progress and the way on');
+    await shot('08-chain');
+    console.log('✓ /practice/lang/en: 1 done, 2 up next (unlocking), 3 locked; progress 1 done');
+
+    // a link to a paragraph you have not opened: the notice, and the one up next
+    const locked = CHAIN[5];
+    await lp.goto(`${base}/app#practice/${locked.id}`, { waitUntil: 'networkidle0' });
+    await lp.waitForFunction(() => !document.getElementById('lock-notice').hidden, { timeout: 6000 });
+    const notice = await lp.evaluate(() => ({ title: document.getElementById('ln-title').textContent, text: document.getElementById('ln-text').textContent, go: document.getElementById('ln-go').textContent, room: !!window.TypeDash.state.room }));
+    assert.deepStrictEqual(notice, { title: 'Paragraph 6 is locked', text: 'Finish paragraph 2 first.', go: 'Type paragraph 2', room: false }, 'the notice, and nothing started');
+    await lp.click('#ln-go');
+    await lp.waitForFunction(() => window.TypeDash.state.room && window.TypeDash.state.room.solo, { timeout: 5000 });
+    assert.strictEqual(await lp.evaluate(() => window.TypeDash.state.room.passageId), CHAIN[1].id, 'it offers the one up next');
+    await lp.click('#btn-leave');
+
+    // and its page keeps the text, with the start button locked
+    await lp.goto(`${base}/practice/${locked.id}`, { waitUntil: 'networkidle0' });
+    const gate = await lp.$eval('[data-chain-gate]', (g) => ({ state: g.dataset.state, next: g.querySelector('[data-gate-next]').getAttribute('href'), shown: getComputedStyle(g.querySelector('.gate-locked')).display !== 'none', start: getComputedStyle(g.querySelector('.gate-open')).display !== 'none' }));
+    assert.deepStrictEqual(gate, { state: 'locked', next: `/app#practice/${CHAIN[1].id}`, shown: true, start: false }, 'locked page: no start, a link to paragraph 2');
+    assert.ok((await lp.$eval('.sheet-text', (el) => el.textContent)).length > 50, 'the paragraph itself is still on the page');
+    assert.deepStrictEqual(errors, [], 'no console errors');
+    await ctx.close();
+    console.log(`✓ a link to paragraph 6 shows the lock notice and offers paragraph 2; its page keeps the text, start locked`);
+  }
 
   /* ---------------- teams: create, then a friend joins from the invite link ---------------- */
   await page.evaluate(() => { location.hash = '#/team'; });   // an old in-game address still lands on the page

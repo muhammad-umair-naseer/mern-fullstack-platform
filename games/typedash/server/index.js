@@ -182,6 +182,8 @@ const PASSAGES_BODY = JSON.stringify({
   categories: passages.CATEGORIES,
   stages: passages.STAGES,
   passages: passages.PASSAGES.map(({ id, title, lang, category, words, text, stage }) => ({ id, title, lang, category, words, text, stage })),
+  chain: passages.CHAIN.map((p) => p.id),   // English paragraphs in the order they open (passages.js)
+  lock: cfg.PRACTICE_LOCK,
 });
 
 /** Room options a client may ask for (language + mode), validated. */
@@ -189,7 +191,19 @@ const roomOpts = (msg) => ({
   lang: passages.isLang(msg && msg.lang) ? msg.lang : 'en',
   category: passages.isCategory(msg && msg.category) ? msg.category : 'prose',
 });
-const PASSAGES_ETAG = `"${require('crypto').createHash('sha1').update(PASSAGES_BODY).digest('hex').slice(0, 16)}"`;
+const CATALOGUE_KEY = require('crypto').createHash('sha1').update(PASSAGES_BODY).digest('hex').slice(0, 16);
+const PASSAGES_ETAG = `"${CATALOGUE_KEY}"`;
+
+/**
+ * Practice on an English paragraph the player has not opened yet? Returns the
+ * refusal to send, or null. The daily is never locked (the caller skips it).
+ */
+function lockRefusal(player, passage) {
+  if (!cfg.PRACTICE_LOCK) return null;
+  const next = passages.lockOf(passage, player.account ? player.account.done : []);
+  if (!next) return null;
+  return { type: 'error', message: `Finish paragraph ${next.chain} first.`, solo: true, locked: true, passageId: passage.id, next: next.id, nextNo: next.chain };
+}
 
 // index.html is static except for the absolute URLs search engines and link
 // unfurlers need; substitute the origin once per host and keep the result.
@@ -207,6 +221,7 @@ function indexHtml(origin) {
     // one navbar and footer for the whole site: the game gets the same markup as every page
     html = indexSrc.text
       .replace(/__ORIGIN__/g, origin)
+      .replace(/__CATALOGUE__/g, CATALOGUE_KEY)   // the game asks for /api/passages?v=<this>: a new catalogue is never read from a stale cache
       .replace('<!--TD:NAV-->', pages.navbar())
       .replace('<!--TD:FOOT-->', pages.footer({ origin }));
     indexCache.set(origin, html);
@@ -316,9 +331,11 @@ function serveStatic(req, res) {
   if ((m = urlPath.match(/^\/practice\/([a-z0-9-]+)\/?$/))) {
     const p = passages.byId(m[1]);
     if (!p) return sendHtml(res, 404, pages.notFoundPage(origin, urlPath));
-    const i = passages.PASSAGES.indexOf(p);
+    // neighbours: English paragraphs step through the chain (6 sits between 5 and 7), the rest through the catalogue
+    const list = p.chain ? passages.CHAIN : passages.PASSAGES;
+    const i = list.indexOf(p);
     const html = cachedPage(`practice:${origin}:${p.id}`, 60000, () => pages.practicePage({
-      origin, passage: p, record: ghosts.wr(p.id), prev: passages.PASSAGES[i - 1] || null, next: passages.PASSAGES[i + 1] || null,
+      origin, passage: p, record: ghosts.wr(p.id), prev: list[i - 1] || null, next: list[i + 1] || null,
       langs: passages.LANGS, categories: passages.CATEGORIES,
     }));
     return sendHtml(res, 200, html, 'public, max-age=60');
@@ -343,7 +360,7 @@ function serveStatic(req, res) {
       const today = daily.summary();
       const y = new Date(Date.now() - 86400000);
       const yRows = daily.rows(dayKey(y)).slice(0, 10);
-      const yc = require('./daily').challengeFor(dayKey(y));
+      const yc = daily.challenge(dayKey(y));
       return pages.dailyPage({ origin, today, yesterday: { number: yc.number, title: yc.passage.title, top: yRows.map((r) => ({ ...r, wpm: r.value })) } });
     });
     return sendHtml(res, 200, html, 'public, max-age=30');
@@ -603,14 +620,22 @@ function handle(player, msg) {
       return;
 
     /* Practice runs are computed in the browser; see server/solo.js. */
-    case 'solo_start':
-      if (!solo.stamp(player, msg)) player.send({ type: 'error', message: 'Unknown passage.' });
+    case 'solo_start': {
+      const p = passages.byId(msg && msg.passageId);
+      if (!p) return player.send({ type: 'error', message: 'Unknown passage.' });
+      const refusal = msg.mode !== 'daily' && lockRefusal(player, p);
+      if (refusal) return player.send(refusal);
+      solo.stamp(player, msg);
       return;
+    }
 
     case 'solo_done': {
       if (!player.account) return player.send({ type: 'error', message: 'Say hello first.' });
       const v = solo.validate(msg, solo.takeStamp(player));
       if (!v.ok) return player.send({ type: 'error', message: v.reason, solo: true });
+      // a locked English paragraph in practice: nothing is recorded
+      const refusal = v.r.mode !== 'daily' && lockRefusal(player, passages.byId(v.r.passageId));
+      if (refusal) return player.send(refusal);
       // ghosts first: "beat the record" is judged against what stood before this run
       const g = ghosts.consider(player.account, v.r);
       const kind = ['wr', 'pb', 'leader', 'rival'].includes(msg.pacerKind) ? msg.pacerKind : 'wpm';
@@ -637,6 +662,7 @@ function handle(player, msg) {
           mode: v.r.mode, passageId: v.r.passageId, passageTitle: v.r.passageTitle,
           wpm: v.r.wpm, accuracy: v.r.accuracy, time: v.r.time, chars: v.r.chars, finished: v.r.finished,
           verified: v.r.verified, improved: out.improved, best: out.best, runs: out.runs,
+          opened: out.opened,                // { id, n, title } when this run opened the next English paragraph
           pacerWpm: v.r.pacerWpm, beatPacer: v.r.beatPacer,
           ghost: { wr: g.wr, pb: g.pb, beat: v.r.beatGhost, prevWr: g.prevWr, kind },
         },

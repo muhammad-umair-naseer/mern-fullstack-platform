@@ -1312,6 +1312,23 @@ body.touch:has(#focus-overlay:not([hidden])) .countdown { align-content: end; pa
 .sr-line.pb { background: var(--copper-tint); color: var(--copper); font-weight: 500; }
 .sr-line.dim { background: transparent; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-4); font-size: 0.8rem; }
 .sr-line:nth-child(2) { animation-delay: 90ms; } .sr-line:nth-child(3) { animation-delay: 180ms; } .sr-line:nth-child(n + 4) { animation-delay: 270ms; }
+.sr-line.unlock { display: inline-flex; align-items: center; gap: 7px; background: var(--ink); color: var(--ivory); font-weight: 500; }
+.sr-line.unlock .i { width: 15px; height: 15px; color: var(--copper-light); }
+#btn-solo-next:not([hidden]) { animation: chip-pop var(--dur-slow) var(--ease-snap) both; }
+
+/* ---------------------------------------------------- the English chain
+   A padlock whose shackle swings open about its right leg; the notice a
+   link to a paragraph you have not opened yet gets instead of a race. */
+.lock-i { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.lock-i .shackle { transform-box: view-box; transform-origin: 16px 11px; }
+.lock-modal .lock-card { width: min(420px, 100%); padding: 34px 28px 24px; text-align: center; }
+.lock-card h2 { margin: 0 0 8px; }
+.ln-lock { display: inline-grid; place-items: center; width: 64px; height: 64px; margin-bottom: 16px; border-radius: 50%; background: var(--sand); color: var(--ink-2); }
+.ln-lock .lock-i { width: 28px; height: 28px; transform-origin: 50% 35%; animation: ln-nudge 720ms var(--ease) 240ms both; }
+@keyframes ln-nudge { 25% { transform: rotate(-9deg); } 50% { transform: rotate(6deg); } 75% { transform: rotate(-3deg); } }
+.ln-text { margin: 0 0 24px; color: var(--ink-3); }
+.ln-actions { justify-content: center; }
+.ln-actions > .btn { flex: 0 0 auto; }
 
 /* everyone, in order */
 .results-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
@@ -1340,6 +1357,8 @@ body.touch:has(#focus-overlay:not([hidden])) .countdown { align-content: end; pa
 #next-race { font: 400 0.76rem var(--mono); color: var(--ink-4); }
 .results-foot .row { justify-content: flex-end; margin-left: auto; }
 .results-foot .row > .btn { flex: 0 0 auto; }
+/* A run that opens the next English paragraph: that is the way on, so it leads the row, full width. */
+.results-foot .row > #btn-solo-next:not([hidden]) { order: -1; flex: 1 0 100%; }
 
 /* ------------------------------------------------------------ level up */
 .levelup {

@@ -164,6 +164,8 @@ const el = {
   btnResultsLeave: $('#btn-results-leave'),
   btnSoloAgain: $('#btn-solo-again'),
   btnSoloWorld: $('#btn-solo-world'),
+  btnSoloNext: $('#btn-solo-next'),
+  lockNotice: $('#lock-notice'),
   dailyCard: $('#daily-card'),
   btnShare: $('#btn-share'),
   btnShareProfile: $('#btn-share-profile'),
@@ -503,6 +505,7 @@ const solo = new Solo({
     skin: account.skin,
     accountId: account.id,
     bestWpm: Math.max(account.stats.solo?.bestWpm || 0, account.stats.bestWpm || 0),
+    done: account.stats.done || [],   // English paragraphs finished: they decide which ones are open
   }),
 });
 for (const p of PACERS) {
@@ -615,6 +618,12 @@ function startPractice(opts = {}) {
 el.btnSolo.addEventListener('click', () => startPractice());
 el.btnSoloAgain.addEventListener('click', () => { el.results.hidden = true; solo.again(); });
 el.btnSoloWorld.addEventListener('click', () => { leaveRoom(); whenConnected(() => net.send({ type: 'quick' })); });
+el.btnSoloNext.addEventListener('click', () => {
+  const id = el.btnSoloNext.dataset.id;
+  if (!id) return;
+  el.results.hidden = true;
+  startPractice({ passageId: id });
+});
 
 // /#practice, /#practice/<passage-id> (the /practice pages link here) and
 // /#practice/<passage-id>/ghost/<wr|accountId> ("beat my ghost" share links): start typing straight away
@@ -623,8 +632,62 @@ function practiceFromHash() {
   if (!m) return false;
   const opts = { passageId: m[1] ? m[1].toLowerCase() : null };
   if (m[2]) opts.pacer = m[2].toLowerCase() === 'wr' ? 'wr' : { ghostOf: m[2] };
-  solo.ready.then(() => startPractice(opts));
+  practiceOrNotice(opts);
   return true;
+}
+
+/* ------------------------------------------------------ the English chain */
+
+// English paragraphs open one after another (solo.lockOf). A link to one you have
+// not opened yet (a deep link, a replay or share link) does not start it: it says
+// so and offers the one that is up next.
+let markSynced = null;
+const accountSynced = new Promise((resolve) => { markSynced = resolve; });
+
+async function practiceOrNotice(opts) {
+  await solo.ready;
+  const id = opts.passageId;
+  if (id && solo.lockOf(id)) {
+    // the progress cached in this browser may be behind (another device): hear from the server first
+    if (!account.synced) await Promise.race([accountSynced, new Promise((r) => setTimeout(r, 3000))]);
+    const next = solo.lockOf(id);
+    if (next) { showLockNotice(id, next); return; }
+  }
+  startPractice(opts);
+}
+
+let lockNext = null;
+function showLockNotice(id, next, nextNo = null) {
+  lockNext = next;
+  const n = solo.chainNo(id);
+  const nn = solo.chainNo(next.id) || nextNo;
+  $('#ln-title').textContent = n ? `Paragraph ${n} is locked` : 'Not open yet';
+  $('#ln-text').textContent = `Finish paragraph ${nn} first.`;
+  $('#ln-go').textContent = `Type paragraph ${nn}`;
+  el.lockNotice.hidden = false;
+  $('#ln-go').focus({ preventScroll: true });
+}
+function closeLockNotice() {
+  if (el.lockNotice.hidden) return;
+  el.lockNotice.hidden = true;
+  lockNext = null;
+  if (location.hash && appPageOf(location.pathname)) history.replaceState(history.state, '', location.pathname);
+}
+$('#ln-go').addEventListener('click', () => {
+  const next = lockNext;
+  closeLockNotice();
+  if (next) startPractice({ passageId: next.id });
+});
+$('#ln-close').addEventListener('click', closeLockNotice);
+el.lockNotice.addEventListener('click', (e) => { if (e.target === el.lockNotice) closeLockNotice(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLockNotice(); });
+
+/** The server would not take a run on a paragraph this browser thought was open (its progress was behind): stop it and point the way. */
+function onLockRefused(m) {
+  if (S.room && S.room.solo && S.room.passageId === m.passageId) { solo.abort(); goHome(); }
+  const next = solo.passageById(m.next);
+  if (next) showLockNotice(m.passageId, next, m.nextNo);
+  else toast(m.message, 'warn', 3200);
 }
 
 /* ------------------------------------------------------------------ share */
@@ -702,6 +765,7 @@ const router = new Router({
     // the game's home address shows the track while you are in a room
     if (page === 'home' && S.room) page = 'race';
     if (page !== 'race') el.results.hidden = true;
+    el.lockNotice.hidden = true;
     showScreen(page);
   },
   canLeave,
@@ -1036,6 +1100,7 @@ net.on('welcome', (m) => {
 
 net.on('account', (m) => {
   account.onAccount(m);
+  markSynced();
   // a new player's country comes from the server (CDN header, else our guess)
   if (m.created && m.profile && m.profile.country) { setCountry(m.profile.country); localStorage.setItem('td_country', el.country.value); }
   cxAuth.syncProfile(m.profile);
@@ -1054,7 +1119,7 @@ net.on('account', (m) => {
 net.on('race_result', onRaceResult);
 
 net.on('online', (m) => { el.online.textContent = m.n; });
-net.on('error', (m) => toast(m.message || 'Something went wrong', 'error'));
+net.on('error', (m) => (m.locked ? onLockRefused(m) : toast(m.message || 'Something went wrong', 'error')));
 net.on('left', () => { if (S.room) goHome(); });
 net.on('player_left', (m) => { if (S.room) toast(`${m.name} left the room`, 'info', 2000); });
 net.on('room', onRoom);
@@ -1409,6 +1474,8 @@ function showResults(m) {
   el.btnResultsStay.hidden = isSolo;
   el.btnSoloAgain.hidden = !isSolo;
   el.btnSoloWorld.hidden = !isSolo;
+  el.btnSoloNext.hidden = true;               // shown once the server says this run opened the next paragraph
+  el.btnSoloWorld.classList.add('primary');
   el.btnResultsLeave.textContent = isSolo ? 'Back home' : 'Leave this game';
   el.nextRace.hidden = isSolo;
   el.btnShare.hidden = !S.lastResultId;
@@ -1520,7 +1587,14 @@ function onRaceResult(msg) {
     ? `+${out.points.toLocaleString()} points`
     : msg.solo ? 'No points for typing on your own — race other people to collect them' : 'No points in a private game';
   el.mrXp.classList.toggle('unranked', !out.ranked);
-  if (msg.solo) solo.onResult(msg);
+  if (msg.solo) {
+    solo.onResult(msg);
+    // finishing it opened the next English paragraph: that is the way on
+    const opened = msg.solo.opened;
+    el.btnSoloNext.hidden = !opened;
+    el.btnSoloNext.dataset.id = opened ? opened.id : '';
+    el.btnSoloWorld.classList.toggle('primary', !opened);
+  }
   if (msg.daily) dailyCard.load();
   if (msg.ranked) loadSeason();
   if (msg.ghost && msg.ghost.wr && !msg.solo) setTimeout(() => toast('🌍 Nobody on TypeDash has typed this paragraph faster', 'success', 3600), 700);

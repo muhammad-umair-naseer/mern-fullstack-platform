@@ -49,10 +49,15 @@ function indexFor(day, n, depth = 2) {
   return raw === prev ? (raw + 1) % n : raw;
 }
 
-/** Deterministic challenge for a UTC day key: passage plus golden words. */
-function challengeFor(day) {
+/**
+ * Deterministic challenge for a UTC day key: passage plus golden words. The
+ * paragraph is drawn from today's pool unless `kept` names the one the day
+ * already has (Daily#challenge), so a growing catalogue never changes a day
+ * that is under way.
+ */
+function challengeFor(day, kept = null) {
   const pool = passages.list({ lang: 'en', category: 'prose' });   // the daily is always English prose: everyone can type it
-  const p = pool[indexFor(day, pool.length)];
+  const p = kept || pool[indexFor(day, pool.length)];
   const bonusWords = passages.pickBonusWords(p.text, cfg.BONUS_WORDS, mulberry32(hash32(`golden:${day}:${p.id}`)));
   return { day, number: numberFor(day), passage: p, bonusWords };
 }
@@ -67,7 +72,24 @@ class Daily {
   }
 
   today(now = new Date()) {
-    return challengeFor(dayKey(now));
+    return this.challenge(dayKey(now));
+  }
+
+  /**
+   * The challenge for a day. A day keeps the paragraph it was first served
+   * with (stored in its record), so adding paragraphs mid-day changes nothing
+   * until tomorrow; today is stored the first time anyone asks for it.
+   */
+  challenge(day = dayKey()) {
+    const rec = this.data[day];
+    const kept = rec ? passages.byId(rec.passageId) : null;
+    if (kept) return challengeFor(day, kept);
+    const ch = challengeFor(day);
+    if (day === dayKey()) {
+      this.dayRecord(day, ch.passage.id);
+      this.store.touch();
+    }
+    return ch;
   }
 
   dayRecord(day, passageId) {
@@ -92,7 +114,7 @@ class Daily {
    */
   record(acc, r, now = new Date()) {
     const day = dayKey(now);
-    const ch = challengeFor(day);
+    const ch = this.challenge(day);
     const number = ch.number;
     if (r.passageId !== ch.passage.id) return { counted: false, reason: 'not-today', number };
     if (!r.finished) return { counted: false, reason: 'unfinished', number };
@@ -186,7 +208,7 @@ class Daily {
   summary(meId = null, now = new Date()) {
     const day = dayKey(now);
     if (!this.summaryCache || this.summaryCache.day !== day || Date.now() - this.summaryCache.at > 5000) {
-      const ch = challengeFor(day);
+      const ch = this.challenge(day);
       const rows = this.rows(day);
       const rec = this.data[day];
       this.summaryCache = {

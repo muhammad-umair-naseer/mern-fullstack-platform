@@ -47,6 +47,9 @@ module.exports = {
   SOLO_TIMELINE_MAX: 400,                  // progress samples accepted per submitted run
   SOLO_START_SLACK_MS: num('SOLO_START_SLACK_MS', 2500), // tolerance between the start stamp and the reported time
   SOLO_STREAK: process.env.SOLO_STREAK !== '0', // practice runs keep the daily streak alive
+  // English paragraphs open in order (passages.CHAIN). PRACTICE_LOCK=0 opens them
+  // all: only for test suites that practise on arbitrary paragraphs.
+  PRACTICE_LOCK: process.env.PRACTICE_LOCK !== '0',
 
   // --- public URLs (share pages, cards, sitemap) ---
   PUBLIC_ORIGIN: (process.env.PUBLIC_ORIGIN || '').replace(/\/$/, ''),  // e.g. https://typedash.app; derived from the request when unset

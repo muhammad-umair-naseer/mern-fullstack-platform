@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const cfg = require('./config');
 const { randomId, clamp } = require('./util');
 const { ACHIEVEMENTS } = require('./achievements');
+const passages = require('./passages');
 
 const hash = (s) => crypto.createHash('sha256').update(String(s)).digest('hex');
 const isCortexisId = (id) => typeof id === 'string' && id.startsWith('cx_');
@@ -64,6 +65,7 @@ const blank = (id, tokenHash) => ({
   badges: [],            // seasonal placings: { season, number, rank }
   team: null,            // team id (server/teams.js)
   langs: {},             // finished runs per passage language, e.g. { en: 12, es: 3 }
+  done: [],              // ids of the English paragraphs finished at least once (passages.CHAIN)
 
   achievements: [],
   rivals: {},
@@ -209,6 +211,7 @@ class Accounts {
     for (const b of guest.badges || []) if (!seen.has(`${b.season}:${b.team || ''}`)) (into.badges ||= []).push(b);
     into.langs ||= {};
     for (const [l, n] of Object.entries(guest.langs || {})) into.langs[l] = (into.langs[l] || 0) + n;
+    if (guest.done && guest.done.length) into.done = [...new Set([...(into.done || []), ...guest.done])];
     for (const a of guest.achievements || []) if (!into.achievements.includes(a)) into.achievements.push(a);
     for (const [rid, r] of Object.entries(guest.rivals || {})) {
       if (rid === into.id) continue;
@@ -396,19 +399,37 @@ class Accounts {
     s.chars += run.chars;
     acc.chars += run.chars;
     let improved = false;
+    let opened = null;
     if (run.finished) {
       s.finished += 1;
       this.countLang(acc, run.lang || 'en');
       if (run.wpm > s.bestWpm) { s.bestWpm = run.wpm; improved = true; }
       if (run.accuracy > s.bestAcc) s.bestAcc = run.accuracy;
       if (run.beatPacer) s.pacerWins += 1;
+      opened = this.markDone(acc, run.passageId);
     }
     acc.lastSeen = Date.now();
 
     const unlocked = this.unlock(acc, { ...run, solo: true, rank: run.beatPacer ? 1 : 2 }, ['solo', 'any']);
 
     this.store.touch();
-    return { streak: acc.streak, bestStreak: acc.bestStreak, streakEvent, unlocked, improved, best: s.bestWpm, runs: s.finished };
+    return { streak: acc.streak, bestStreak: acc.bestStreak, streakEvent, unlocked, improved, best: s.bestWpm, runs: s.finished, opened };
+  }
+
+  /**
+   * An English paragraph was typed to the end (practice or daily): keep it
+   * open for good. Returns the paragraph this opened, { id, n, title }, when
+   * finishing it moved the player's next paragraph on; otherwise null.
+   */
+  markDone(acc, passageId) {
+    const p = passages.byId(passageId);
+    if (!passages.inChain(p)) return null;
+    const done = (acc.done ||= []);
+    if (done.includes(p.id)) return null;
+    const before = passages.chainState(done).next;
+    done.push(p.id);
+    const after = passages.chainState(done).next;
+    return after && after !== before ? { id: after.id, n: after.chain, title: after.title } : null;
   }
 
   /** Head-to-head record between two humans who raced in the same room. */
@@ -465,6 +486,7 @@ class Accounts {
       badges: acc.badges || [],
       team: acc.team || null,
       langs: acc.langs || {},
+      done: (acc.done || []).filter((id) => passages.inChain(passages.byId(id))),   // English paragraphs finished: the browser opens the chain from these
       push: { devices: (acc.push || []).length, prefs: acc.pushPrefs || null },
       achievements: acc.achievements,
       rivals,

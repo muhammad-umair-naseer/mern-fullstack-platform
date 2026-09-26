@@ -246,6 +246,7 @@ Everything in `server/config.js` reads from the environment.
 | `RANKED_PRIVATE` | `0` | set `1` to make private rooms award ranked points |
 | `BOARD_SIZE` | 25 | rows per ranking board |
 | `SOLO_STREAK` | `1` | practice runs keep the daily streak alive (`0` to disable) |
+| `PRACTICE_LOCK` | `1` | English paragraphs open in order (`0` opens them all; for test suites) |
 | `SOLO_START_SLACK_MS` | 2500 | tolerance between the start stamp and a submitted run's time |
 | `DAILY_EPOCH` | `2026-09-01` | the day of Daily #1 |
 | `DAILY_ATTEMPTS` | 1 | scored attempts per day (1 = your first finished run counts) |
@@ -269,6 +270,7 @@ npm run test:race     # race lifecycle, anti-cheat, private rooms, chat
 npm run test:rank     # points, boards, streaks, friendlies, persistence, reconnect
 npm run test:solo     # practice submissions: validation, rejections, board isolation
 npm run test:daily    # seeded daily, one scored attempt, daily board + streak
+npm run test:lock     # English paragraphs open in order: refusals, daily, sign-in union, pages
 npm run test:ghost    # timelines from races/practice, records, bounded PBs, leader ghost
 npm run test:share    # result ids, share pages + cards, profile pages, level-curve parity
 npm run test:pages    # leaderboard/practice/daily pages, robots, sitemap, home OG tags

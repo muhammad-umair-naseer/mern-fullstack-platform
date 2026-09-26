@@ -82,6 +82,39 @@ for (const lang of Object.keys(LANGS)) {
 
 const stageOf = (p) => STAGES[(p && p.stage ? p.stage : 1) - 1] || STAGES[0];
 
+/**
+ * The English chain. English prose is typed in order: paragraph 1 is always
+ * open, and each one after it opens once every paragraph before it is done;
+ * a paragraph you have finished stays open. The order is the one
+ * /practice/lang/en lists them in (easiest stage first, then catalogue order
+ * within a stage), and this is the only place it is decided: every English
+ * paragraph carries its number as `chain`, and the pages, /api/passages and
+ * the browser all read it from here. Other languages, the drills, races and
+ * the daily are never locked.
+ */
+const inChain = (p) => !!p && p.lang === 'en' && p.category === 'prose';
+const CHAIN = PASSAGES.filter(inChain).sort((a, b) => a.stage - b.stage);   // stable: catalogue order within a stage
+CHAIN.forEach((p, i) => { p.chain = i + 1; });
+
+/** Where a player stands, from the ids of the chain paragraphs they have finished. */
+function chainState(done) {
+  const has = done instanceof Set ? done : new Set(done || []);
+  return {
+    has,
+    next: CHAIN.find((p) => !has.has(p.id)) || null,   // the first one not done yet: always open
+    done: CHAIN.filter((p) => has.has(p.id)).length,
+    total: CHAIN.length,
+  };
+}
+
+/** Null when the player may practise `p`; otherwise the paragraph they have to finish first. */
+function lockOf(p, done) {
+  if (!inChain(p)) return null;
+  const st = chainState(done);
+  if (st.has.has(p.id) || !st.next || p.chain <= st.next.chain) return null;
+  return st.next;
+}
+
 const BY_ID = new Map(PASSAGES.map((p) => [p.id, p]));
 if (BY_ID.size !== PASSAGES.length) {
   const seen = new Set();
@@ -129,4 +162,4 @@ function pickBonusWords(text, count, rand = Math.random) {
   return chosen.sort((a, b) => a - b);
 }
 
-module.exports = { PASSAGES, LANGS, CATEGORIES, STAGES, byId, list, pick, pickBonusWords, isLang, isCategory, difficulty, stageOf };
+module.exports = { PASSAGES, LANGS, CATEGORIES, STAGES, CHAIN, byId, list, pick, pickBonusWords, isLang, isCategory, difficulty, stageOf, inChain, chainState, lockOf };
