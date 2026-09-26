@@ -628,8 +628,12 @@ function runReel(root) {
   let started = false; // the first scene waits until the panel is properly in view
   let delay = 0.6; // and lets the frame open before the first message lands
   let onScreen = false;
+  let inView = false; // at least 30% visible
   let last = null;
   let raf = 0;
+  // While the logo intro (public/index.html) covers the page, the reel is
+  // "on screen" but nobody can see it, so its first scene waits for the intro.
+  const introPlaying = () => document.documentElement.classList.contains('intro');
 
   function kick() {
     if (!raf && !document.hidden && onScreen) raf = requestAnimationFrame(frame);
@@ -753,7 +757,8 @@ function runReel(root) {
       (entries) => {
         const e = entries[entries.length - 1];
         onScreen = e.isIntersecting;
-        if (e.intersectionRatio >= 0.3) started = true;
+        if (e.intersectionRatio >= 0.3) inView = true;
+        if (inView && !introPlaying()) started = true;
         root.classList.toggle('is-offscreen', !onScreen);
         last = null;
         kick();
@@ -766,6 +771,15 @@ function runReel(root) {
     started = true;
     kick();
   }
+
+  const onIntroEnd = () => {
+    if (inView && !started) {
+      started = true;
+      last = null;
+      kick();
+    }
+  };
+  window.addEventListener('cortexis:intro-end', onIntroEnd);
 
   $.pp.addEventListener('click', onPlayPause);
   segs.forEach((s) => s.addEventListener('click', onScene));
@@ -781,6 +795,7 @@ function runReel(root) {
     if (ro) ro.disconnect();
     else window.removeEventListener('resize', fit);
     if (io) io.disconnect();
+    window.removeEventListener('cortexis:intro-end', onIntroEnd);
     $.pp.removeEventListener('click', onPlayPause);
     segs.forEach((s) => s.removeEventListener('click', onScene));
     root.removeEventListener('pointermove', onMove);
