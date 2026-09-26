@@ -1,0 +1,568 @@
+/* ── YourBotVisual: a conversation over coffee ───────────────────────────
+   The photograph opens first (300ms), the phone rises onto it (700ms), the
+   channel card, the pause control and the first notice follow. The page
+   opens on a finished conversation; after a beat the thread plays on,
+   beat by beat from YourBotVisual.js: a bubble eases up, the bot's
+   typing dots breathe, its reply lands, a notice drops in beside the phone,
+   and the thread lifts away for the next conversation.
+   Transform and opacity only. */
+
+.ybv {
+  --ybv-sage: #62805A;
+  --ybv-sage-tint: #E3EADF;
+  --ybv-sage-edge: rgba(98, 128, 90, 0.24);
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  margin-left: auto;
+  /* Room above for the notice and below for the channel card, so neither
+     sits on the phone. The bottom allows for the card's float as well. */
+  padding: 4.5rem 0 5.25rem;
+}
+
+/* ── The photograph ─────────────────────────────────────────────────── */
+
+.ybv-frame {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 2.25rem;
+  width: 70%;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--sand);
+  box-shadow: var(--shadow-float);
+  animation: lx-frame-open 1.5s var(--ease-out-expo) 300ms both;
+}
+
+.ybv-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+.ybv-drift {
+  position: absolute;
+  inset: -4%;
+  animation: ybv-drift 24s var(--ease-in-out) 2.4s infinite alternate;
+}
+
+.ybv-drift img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 40% 60%;
+  animation: lx-film-settle 2s var(--ease-out-expo) 300ms both;
+}
+
+@keyframes ybv-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(2%, -1.5%, 0) scale(1.06); }
+}
+
+/* ── The phone ──────────────────────────────────────────────────────── */
+
+/* Positioning wrappers carry the pointer depth (GSAP writes their
+   transform); the elements inside carry the entrances. */
+.ybv-phone-pos {
+  position: relative;
+  z-index: 2;
+  width: 60%;
+  min-width: 17.5rem;
+}
+
+.ybv-phone {
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem;
+  border-radius: var(--r-lg);
+  background: rgba(255, 253, 249, 0.86);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    var(--shadow-float);
+  animation: lx-rise 1.1s var(--ease-out-expo) 700ms both;
+}
+
+.ybv-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.5rem 0.75rem;
+}
+
+.ybv-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 50%;
+  background: var(--copper);
+  color: var(--paper);
+}
+
+.ybv-who {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+  line-height: 1;
+}
+
+.ybv-name {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.ybv-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--ink-3);
+}
+
+.ybv-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ybv-sage);
+}
+
+.ybv-channel {
+  flex-shrink: 0;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  line-height: 1;
+  color: #3B5337;
+  background: var(--ybv-sage-tint);
+  border: 1px solid var(--ybv-sage-edge);
+}
+
+/* The thread's wallpaper: warm sand with a faint dot grain. */
+.ybv-wall {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 0.7rem 0.9rem;
+  border-radius: calc(var(--r-lg) - 0.6rem) calc(var(--r-lg) - 0.6rem) var(--r-sm) var(--r-sm);
+  background-color: rgba(242, 237, 228, 0.7);
+  background-image: radial-gradient(rgba(22, 19, 15, 0.07) 1px, transparent 1.2px);
+  background-size: 14px 14px;
+}
+
+.ybv-day {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1.2;
+  color: var(--ink-3);
+  background: rgba(255, 255, 255, 0.75);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) both;
+}
+
+/* All three conversations share one cell, so the wall takes the height of
+   the longest at every width and nothing around the phone shifts when the
+   next one starts. Only the current thread is visible. */
+.ybv-threads {
+  display: grid;
+  width: 100%;
+}
+
+.ybv-thread {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ybv-thread.is-idle {
+  visibility: hidden;
+}
+
+/* Every slot keeps its space from the start, so the phone never changes
+   height as the conversation fills in. A bot slot stacks its typing dots
+   and its reply in the same cell. */
+.ybv-slot {
+  display: grid;
+}
+
+.ybv-slot > * {
+  grid-area: 1 / 1;
+}
+
+.ybv-slot--in {
+  justify-items: start;
+}
+
+.ybv-slot--out {
+  justify-items: end;
+}
+
+.ybv-msg {
+  display: block;
+  max-width: 84%;
+  padding: 0.5rem 0.7rem 0.4rem;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ink);
+  opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(0.96);
+  transition:
+    opacity 420ms var(--ease-out-quint),
+    transform 700ms var(--ease-out-expo);
+}
+
+.ybv-slot--in .ybv-msg {
+  transform-origin: 0% 100%;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 4px;
+}
+
+.ybv-slot--out .ybv-msg {
+  transform-origin: 100% 100%;
+  background: var(--ybv-sage-tint);
+  border: 1px solid var(--ybv-sage-edge);
+  border-bottom-right-radius: 4px;
+}
+
+.ybv-msg.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+/* The thread lifts away before the next conversation. */
+.ybv-thread.is-leaving .ybv-msg {
+  opacity: 0;
+  transform: translate3d(0, -10px, 0);
+  transition-duration: 600ms, 700ms;
+}
+
+.ybv-thread.is-leaving .ybv-slot:nth-child(2) .ybv-msg { transition-delay: 50ms; }
+.ybv-thread.is-leaving .ybv-slot:nth-child(3) .ybv-msg { transition-delay: 100ms; }
+.ybv-thread.is-leaving .ybv-slot:nth-child(4) .ybv-msg { transition-delay: 150ms; }
+
+.ybv-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  float: right;
+  margin: 0.35rem 0 0 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  line-height: 1;
+  color: var(--ink-4);
+}
+
+.ybv-meta svg {
+  color: var(--ybv-sage);
+}
+
+/* Typing dots */
+.ybv-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: start;
+  padding: 0.6rem 0.75rem;
+  border-radius: 14px;
+  border-bottom-right-radius: 4px;
+  background: var(--ybv-sage-tint);
+  border: 1px solid var(--ybv-sage-edge);
+  opacity: 0;
+  transform: scale(0.9);
+  transform-origin: 100% 100%;
+  transition:
+    opacity 240ms var(--ease-out-quint),
+    transform 420ms var(--ease-out-expo);
+}
+
+.ybv-typing.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.ybv-typing i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ybv-sage);
+  animation: ybv-dots 1.2s var(--ease-in-out) infinite;
+}
+
+.ybv-typing i:nth-child(2) { animation-delay: 0.15s; }
+.ybv-typing i:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes ybv-dots {
+  0%, 60%, 100% { transform: translate3d(0, 0, 0); opacity: 0.4; }
+  30% { transform: translate3d(0, -3px, 0); opacity: 1; }
+}
+
+.ybv-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.35rem 0.35rem 0.9rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.78rem;
+  line-height: 1;
+  color: var(--ink-4);
+}
+
+.ybv-send {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--ivory);
+}
+
+/* ── The notice that drops in when a conversation lands ─────────────── */
+
+.ybv-toast-pos {
+  position: absolute;
+  z-index: 3;
+  top: 0.4rem;
+  right: -0.75rem;
+  width: max-content;
+  max-width: 100%;
+  /* The page opens on a finished conversation, so the first notice is
+     already on: it waits for the phone to rise, then drops in. `translate`
+     leaves `transform` to the pointer depth GSAP writes here. */
+  animation: ybv-drop 900ms var(--ease-out-expo) 1.8s both;
+}
+
+@keyframes ybv-drop {
+  from { opacity: 0; translate: 0 -14px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+.ybv-toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 0.75rem 0.75rem;
+  border-radius: var(--r-md);
+  background: rgba(250, 246, 238, 0.78);
+  opacity: 0;
+  transform: translate3d(0, -14px, 0) scale(0.97);
+  transition:
+    opacity 380ms var(--ease-out-quint),
+    transform 800ms var(--ease-out-expo);
+}
+
+.ybv-toast.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.ybv-toast-mark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--copper-tint);
+  color: var(--copper);
+}
+
+.ybv-toast-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.ybv-toast-title {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.ybv-toast-sub {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--ink-3);
+}
+
+/* ── Channels ───────────────────────────────────────────────────────── */
+
+.ybv-chan-pos {
+  position: absolute;
+  z-index: 3;
+  right: 1rem;
+  bottom: 0;
+}
+
+.ybv-chan {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.85rem 1.05rem;
+  list-style: none;
+  border-radius: var(--r-md);
+  background: rgba(250, 246, 238, 0.78);
+  font-size: 0.8rem;
+  line-height: 1;
+  color: var(--ink);
+  animation:
+    lx-rise 1s var(--ease-out-expo) 1.25s both,
+    lx-float 7s ease-in-out 2.6s infinite alternate;
+}
+
+.ybv-chan li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.ybv-chan-state {
+  margin-left: auto;
+  padding-left: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--ink-3);
+}
+
+.ybv-chan-dot {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--copper-2);
+}
+
+.ybv-chan-dot.is-live {
+  border-color: var(--ybv-sage);
+  background: var(--ybv-sage);
+}
+
+/* A slow ring: the channel is up. */
+.ybv-chan-dot.is-live::after {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ybv-sage);
+  animation: ybv-ring 2.4s var(--ease-out-quint) 2s infinite;
+}
+
+@keyframes ybv-ring {
+  from { transform: scale(1); opacity: 0.7; }
+  to { transform: scale(2.8); opacity: 0; }
+}
+
+/* ── Pause control, on the photograph's corner ──────────────────────── */
+
+.ybv-toggle {
+  position: absolute;
+  z-index: 4;
+  right: 0.9rem;
+  top: 5.5rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--r-pill);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform var(--dur-instant) var(--ease-out-expo);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) 1.6s both;
+}
+
+.ybv-toggle:hover {
+  transform: scale(1.05);
+}
+
+.ybv-toggle:active {
+  transform: scale(0.95);
+}
+
+/* The pause button stills everything, not just the thread. The channel
+   card keeps its entrance running so a press never freezes it half-risen. */
+.ybv.is-paused .ybv-drift,
+.ybv.is-paused .lx-pv-sheen,
+.ybv.is-paused .ybv-typing i,
+.ybv.is-paused .ybv-chan-dot.is-live::after {
+  animation-play-state: paused;
+}
+
+.ybv.is-paused .ybv-chan {
+  animation-play-state: running, paused;
+}
+
+/* ── Narrower columns ───────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .ybv {
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .ybv-toast-pos {
+    right: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .ybv {
+    padding: 5.25rem 0 1.5rem;
+  }
+
+  .ybv-frame {
+    width: 72%;
+    bottom: 12%;
+  }
+
+  .ybv-phone-pos {
+    width: 84%;
+    min-width: 0;
+  }
+
+  .ybv-toast-pos {
+    top: 0.6rem;
+  }
+
+  .ybv-chan-pos {
+    display: none;
+  }
+
+  /* The phone fills most of the width here, so the control steps off
+     the photograph into the strip beside the phone's foot. */
+  .ybv-toggle {
+    top: auto;
+    bottom: 1.5rem;
+    right: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}

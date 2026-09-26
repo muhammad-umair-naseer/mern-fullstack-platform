@@ -4,8 +4,8 @@ description: What a Pakistani department really asks for, why coordinators now c
 date: 2026-08-28
 tags: [internships, students, careers]
 targetQuery: internship certificate for university submission
-image: /blog/internship-certificate-your-university-will-accept.webp
-imageAlt: "Official accredited software internship certificate on illuminated glass pedestal"
+image: /blog/covers/internship-certificate-your-university-will-accept.webp
+imageAlt: "A hand signing a printed letter on a light wooden desk"
 ---
 
 Most departments want four things, not one: a certificate on company letterhead stating your role and the exact start and end dates, a signed recommendation or completion letter from your supervisor, whatever evaluation proforma the department itself hands out, and some way for a coordinator to confirm the company is real and that you were actually there.

@@ -1,148 +1,160 @@
 /* ════════════════════════════════════════════════════════════════════
-   Premium cross-cutting polish — Luxury White & Orange Design
+   Shared section furniture: headings, view-all links, the white CTA.
    ════════════════════════════════════════════════════════════════════ */
 
-/* ── Editorial section heading ─────────────────────────────────────── */
+/* ── Section heading ───────────────────────────────────────────────── */
 .section-head {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 2.75rem;
+  margin-bottom: clamp(2.5rem, 1.8rem + 2.4vw, 4rem);
 }
+
+.section-head--start {
+  align-items: flex-start;
+  text-align: left;
+}
+
 .section-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.95rem;
-  margin-bottom: 1rem;
-  border-radius: 999px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #c2410c;
-  background: rgba(249, 115, 22, 0.08);
-  border: 1px solid rgba(249, 115, 22, 0.25);
-}
-.section-eyebrow-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #f97316;
-  box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.6);
+  gap: 0.75rem;
+  margin-bottom: 1.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
 }
 
-/* Gradient underline accent beneath section titles */
+.section-eyebrow::before,
+.section-eyebrow::after {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.section-head--start .section-eyebrow::after {
+  display: none;
+}
+
 .section-head .section-title,
 .section-head .courses-title,
 .section-head .testimonials-title {
-  position: relative;
-  margin-bottom: 1.1rem;
-  color: #000000 !important;
-  font-weight: 800 !important;
-}
-.section-subtitle,
-.courses-subtitle {
-  color: #000000 !important;
-  font-weight: 500 !important;
-}
-.section-head .section-title::after,
-.section-head .courses-title::after,
-.section-head .testimonials-title::after {
-  content: "";
-  display: block;
-  width: 68px;
-  height: 4px;
-  margin: 0.9rem auto 0;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #ea580c, #f97316, #fdba74);
+  font-family: var(--font-display);
+  font-weight: 400 !important;
+  font-size: var(--text-h2);
+  line-height: 1;
+  letter-spacing: -0.018em;
+  margin-bottom: 1.25rem;
+  color: var(--ink) !important;
+  max-width: 18ch;
 }
 
-/* ── Preview cards: gradient top-accent on hover ───────────────────── */
+.section-subtitle,
+.courses-subtitle {
+  color: var(--ink-3) !important;
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+  line-height: 1.65;
+  max-width: 58ch;
+}
+
+/* ── Preview cards ─────────────────────────────────────────────────── */
 .service-preview-card,
 .course-preview-card {
   position: relative;
 }
-.service-preview-card::before,
-.course-preview-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3.5px;
-  border-radius: 14px 14px 0 0;
-  background: linear-gradient(90deg, #ea580c, #f97316, #fdba74);
-  opacity: 0;
-  transform: scaleX(0.4);
-  transform-origin: left;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 3;
-}
-.service-preview-card:hover::before,
-.course-preview-card:hover::before {
-  opacity: 1;
-  transform: scaleX(1);
-}
 
-/* ── Testimonials: quotation flourish + gradient avatar ring ───────── */
-.testimonial-card { position: relative; overflow: hidden; background: #ffffff !important; }
-.testimonial-card .card-body { position: relative; }
-.testimonial-card .card-body::before {
-  content: "\201C";
-  position: absolute;
-  top: -18px;
-  left: 14px;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 5.5rem;
-  line-height: 1;
-  color: rgba(249, 115, 22, 0.18);
-  pointer-events: none;
-}
-.testimonial-card .avatar-wrap {
-  display: inline-block;
-  padding: 3px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ff6b00, #f97316, #fdba74);
-}
-.testimonial-card .testimonial-img {
-  display: block;
-  border: 2px solid #ffffff;
-}
-
-/* ── View-all buttons: luxury orange fill ───────────────────────────────── */
+/* ── View-all link: an outlined pill ───────────────────────────────── */
 .btn-view-all {
-  position: relative;
-  border: 1.5px solid #f97316 !important;
-  color: #ea580c !important;
-  background: #ffffff !important;
-  font-weight: 600 !important;
-  padding: 10px 24px !important;
-  border-radius: 10px !important;
-  transition: all 0.2s ease !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line-strong) !important;
+  color: var(--ink) !important;
+  background: transparent !important;
+  font-weight: 500 !important;
+  padding: 0.8rem 1.5rem !important;
+  border-radius: var(--r-pill) !important;
+  text-decoration: none;
+  transition:
+    border-color var(--dur-base) var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo) !important;
 }
 .btn-view-all:hover,
 .btn-view-all:focus-visible {
-  color: #ffffff !important;
-  background: linear-gradient(135deg, #ff6b00, #f97316) !important;
-  border-color: transparent !important;
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4) !important;
-  transform: translateY(-2px);
+  border-color: var(--ink) !important;
+  background: var(--paper) !important;
 }
 
-/* ── Solid white CTA ── */
+/* ── White CTA, used on sand panels ───────────────────────────────── */
 .btn-cta-white {
-  background: #ffffff !important;
-  color: #ea580c !important;
-  border: 1.5px solid #f97316 !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line-strong) !important;
+  box-shadow: none !important;
 }
 .btn-cta-white:hover {
-  background: linear-gradient(135deg, #ff6b00, #f97316) !important;
-  color: #ffffff !important;
-  box-shadow: 0 12px 30px rgba(249, 115, 22, 0.35) !important;
+  background: var(--ink) !important;
+  color: var(--ivory) !important;
+  border-color: var(--ink) !important;
 }
 
-@media (max-width: 768px) {
-  .section-head { margin-bottom: 2rem; }
+/* ── Typographic course cover (courses without artwork) ────────────── */
+.lx-cover {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 12rem;
+  padding: 1.25rem 1.4rem;
+  overflow: hidden;
+  background: var(--sand);
+}
+
+.lx-cover-mark {
+  position: absolute;
+  right: -0.08em;
+  top: -0.18em;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 8.5rem;
+  line-height: 1;
+  color: var(--copper-2);
+  opacity: 0.16;
+  pointer-events: none;
+  user-select: none;
+  transition: transform 1.2s var(--ease-out-expo);
+}
+
+.group:hover .lx-cover-mark {
+  transform: translate3d(-6px, 4px, 0);
+}
+
+.lx-cover-title {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  max-width: 14ch;
+}
+
+/* ── Legacy artwork ────────────────────────────────────────────────────
+   The course, service and blog covers are neon illustrations from the dark
+   theme. Until they are re-shot, this pulls them into the palette: most of
+   the saturation out, a warm cast in. Hover restores them, so the picture is
+   never lost, only quietened. */
+.lx-art {
+  filter: saturate(0.4) sepia(0.3) contrast(0.95) brightness(1.06);
+  transition: filter 0.8s var(--ease-out-expo), transform 1.2s var(--ease-out-expo) !important;
+}
+
+.group:hover .lx-art,
+a:hover .lx-art,
+a:focus-visible .lx-art {
+  filter: saturate(0.9) sepia(0.08) contrast(1) brightness(1.02);
 }

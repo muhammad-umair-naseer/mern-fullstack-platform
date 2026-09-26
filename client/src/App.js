@@ -4,8 +4,8 @@ import Navbar from './components/Navbar';
 import RequireAuth from './components/RequireAuth';
 import { AuthProvider } from './context/AuthContext';
 import Footer from './components/Footer';
-import AnimatedBackground from './components/AnimatedBackground';
-import './App.css';
+import RouteTransition from './components/RouteTransition';
+import SilkBackdrop from './components/SilkBackdrop';
 import './Pages.css';
 import './theme-cosmic.css';
 import './premium.css';
@@ -53,10 +53,17 @@ export default function App() {
       {/* Must sit inside Router: it reads the current location. */}
       <ScrollToTop />
       <AuthProvider>
-      <AnimatedBackground />
       <div className="App">
+        <SilkBackdrop />
         <Navbar />
-        <Suspense fallback={<div className="py-16 text-center">Loading…</div>}>
+        <RouteTransition>
+        <Suspense
+          fallback={
+            <div className="lx-route-loading" role="status" aria-label="Loading page">
+              <span />
+            </div>
+          }
+        >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -105,6 +112,7 @@ export default function App() {
             <Route path="/learn/:slug/final" element={<RequireAuth><FinalExam /></RequireAuth>} />
           </Routes>
         </Suspense>
+        </RouteTransition>
         <Footer />
       </div>
       </AuthProvider>

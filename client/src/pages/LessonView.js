@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowDown, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { api } from '../lib/api';
 import Markdown from '../learn/Markdown';
 import ProgressBar from '../learn/ProgressBar';
@@ -195,18 +196,18 @@ const LessonView = () => {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-[60vh] grid place-items-center">
-        <div className="h-10 w-10 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
+      <div className="lx-route-loading" role="status" aria-label="Loading the topic">
+        <span />
       </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-black">{error}</h1>
-        <Link to={`/learn/${slug}`} className="mt-4 inline-block text-orange-600 font-bold hover:underline">
-          Back to the course
+      <main className="cx-lv-error">
+        <h1>{error}</h1>
+        <Link to={`/learn/${slug}`} className="lx-link">
+          <ArrowLeft size={15} aria-hidden="true" /> Back to the course
         </Link>
       </main>
     );
@@ -217,55 +218,66 @@ const LessonView = () => {
   // replays the swap instead of substituting the text in place.
   const footerState = !read ? 'read' : quizPassed ? 'next' : 'gate';
 
+  const pad = (n) => String(n).padStart(2, '0');
+  const nextLabel = lesson.next ? 'Next topic' : 'Finish chapter';
+
   return (
-    <main className="cx-lv text-black min-h-screen">
-      <div ref={headerRef} className="cx-lv-bar sticky top-0 z-40">
-        {/* Reading position within this topic. Decorative for a screen reader:
-            the course ProgressBar below carries the announced progress. */}
-        <div className="cx-lv-read" aria-hidden="true">
-          <span className="cx-lv-read-fill" />
+    <main className="cx-lv">
+      <div ref={headerRef} className="cx-lv-bar">
+        <div className="cx-lv-bar-inner">
+          <Link to={`/learn/${slug}`} className="cx-lv-back">
+            <ArrowLeft size={14} aria-hidden="true" />
+            <span>{lesson.courseTitle}</span>
+          </Link>
+          <ProgressBar percent={percent} className="cx-lv-course" />
+          <span className="cx-lv-count">
+            <span className="visually-hidden">Lesson </span>
+            {lesson.index}
+            <span className="cx-lv-count-of"> / {lesson.totalLessons}</span>
+          </span>
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 py-3">
-          <div className="flex items-center justify-between gap-4 text-sm font-semibold text-black">
-            <Link to={`/learn/${slug}`} className="text-black hover:text-orange-600 shrink-0 font-bold">
-              ← {lesson.courseTitle}
-            </Link>
-            <span className="text-black font-bold shrink-0">
-              Lesson {lesson.index} of {lesson.totalLessons}
-            </span>
-          </div>
-          <ProgressBar percent={percent} className="mt-2.5" />
+        {/* Reading position within this topic. Decorative for a screen reader:
+            the course ProgressBar above carries the announced progress. */}
+        <div className="cx-lv-read" aria-hidden="true">
+          <span className="cx-lv-read-fill" />
         </div>
       </div>
 
       <article className="cx-lv-sheet">
         <header className="cx-lv-head">
-          <p className="cx-lv-in cx-lv-eyebrow" style={{ '--i': 0 }}>
-            Chapter {lesson.chapterPosition} · {lesson.chapterTitle}
-          </p>
-          <h1 className="cx-lv-in cx-lv-title" style={{ '--i': 1 }}>
-            {lesson.title}
+          <span className="lx-label cx-lv-in cx-lv-eyebrow" style={{ '--i': 0 }}>
+            <span className="lx-label-num">Chapter {pad(lesson.chapterPosition)}</span>
+            <span className="cx-lv-chapter">{lesson.chapterTitle}</span>
+          </span>
+          <h1 className="cx-lv-title" aria-label={lesson.title}>
+            <span className="lx-line" aria-hidden="true" style={{ '--i': 0 }}>
+              <span>{lesson.title}</span>
+            </span>
           </h1>
-          <p className="cx-lv-in cx-lv-meta" style={{ '--i': 2 }}>
-            <span className="cx-lv-dot" aria-hidden="true" />
-            {lesson.minutes} min read
+          <p className="cx-lv-in cx-lv-meta" style={{ '--i': 3 }}>
+            <span>{lesson.minutes} min read</span>
             <span className="cx-lv-sep" aria-hidden="true" />
-            Topic {lesson.index} of {lesson.totalLessons}
+            <span>
+              Topic {lesson.index} of {lesson.totalLessons}
+            </span>
+            {quizPassed && (
+              <span className="cx-lv-done">
+                <Check size={12} aria-hidden="true" /> Finished
+              </span>
+            )}
           </p>
         </header>
 
-        <div ref={bodyRef} className="cx-lv-in cx-lv-body" style={{ '--i': 3 }}>
+        <div ref={bodyRef} className="cx-lv-in cx-lv-body" style={{ '--i': 4 }}>
           <Markdown>{lesson.body}</Markdown>
         </div>
 
-        <div className="cx-lv-foot flex flex-wrap items-center justify-between gap-4">
+        <div className="cx-lv-foot">
           {lesson.prev ? (
-            <Link
-              to={`/learn/${slug}/lesson/${lesson.prev.id}`}
-              className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition"
-            >
-              ← Previous
+            <Link to={`/learn/${slug}/lesson/${lesson.prev.id}`} className="btn lx-btn-ghost cx-lv-prev">
+              <ArrowLeft size={15} aria-hidden="true" />
+              Previous
             </Link>
           ) : (
             <span />
@@ -277,26 +289,31 @@ const LessonView = () => {
           <div key={footerState} className={acted ? 'cx-lv-swap' : undefined}>
             {!read ? (
               <button
+                type="button"
                 onClick={handleRead}
                 disabled={saving}
-                className={`cx-lv-press px-6 py-3 rounded-lg font-semibold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60 transition${
-                  pressing ? ' is-pressing' : ''
-                }`}
+                className={`btn lx-btn cx-lv-press${pressing ? ' is-pressing' : ''}`}
               >
-                {saving ? 'Saving…' : "I've read this →"}
+                {saving ? 'Saving…' : "I've read this"}
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <Check size={15} />
+                </span>
               </button>
             ) : quizPassed ? (
               <button
+                type="button"
                 onClick={goNext}
-                className={`px-6 py-3 rounded-lg font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition${
-                  acted ? ' cx-lv-celebrate' : ''
-                }`}
+                className={`btn lx-btn cx-lv-next${acted ? ' cx-lv-celebrate' : ''}`}
               >
-                {lesson.next ? 'Next topic →' : 'Finish chapter →'}
+                {nextLabel}
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <ArrowRight size={15} />
+                </span>
               </button>
             ) : (
-              <span className="text-sm text-amber-700">
+              <span className="cx-lv-gate">
                 Pass the check below to continue
+                <ArrowDown size={14} aria-hidden="true" />
               </span>
             )}
           </div>
@@ -312,10 +329,9 @@ const LessonView = () => {
               setQuizPassed(true);
             }}
             onContinue={goNext}
-            continueLabel={lesson.next ? 'Next topic →' : 'Finish chapter →'}
+            continueLabel={nextLabel}
           />
         )}
-
       </article>
     </main>
   );

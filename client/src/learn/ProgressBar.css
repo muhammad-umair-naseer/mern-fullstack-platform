@@ -12,10 +12,13 @@
 
 .cx-pb {
   position: relative;
-  /* The track used to be bg-white/10, which was invisible once the product
-     moved to light surfaces: the bar read as a stray coloured pill floating on
-     nothing. It owns its own track colour now, so it works on any ground. */
-  background: rgba(15, 36, 68, 0.1);
+  height: 6px;
+  border-radius: var(--r-pill, 999px);
+  overflow: hidden;
+  /* The bar owns its track colour, so it reads on glass, ivory or paper: a
+     warm hairline-weight groove rather than a grey pill. */
+  background: rgba(22, 19, 15, 0.08);
+  box-shadow: inset 0 1px 1px rgba(22, 19, 15, 0.06);
 }
 
 /* The fill is always full width; how full the bar *looks* is --cx-pb-value,
@@ -23,6 +26,9 @@
 .cx-pb-fill {
   position: relative;
   width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--copper-3, #7E3B1B), var(--copper, #9A4A22) 55%, var(--copper-2, #B8612E));
   overflow: hidden; /* clips the sheen to the filled portion */
   transform-origin: left center;
   transform: scaleX(var(--cx-pb-value, 0));

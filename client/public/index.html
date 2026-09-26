@@ -8,11 +8,20 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07090f" />
+    <meta name="theme-color" content="#FAF8F4" />
+    <!-- The site is light by design. "only light" stops Chrome's automatic dark
+         mode from inverting it into a flat dark grey, and darkreader-lock asks
+         the Dark Reader extension to leave it alone. -->
+    <meta name="color-scheme" content="only light" />
+    <meta name="darkreader-lock" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Instrument Serif sets display type, Geist carries the interface and body,
+         Geist Mono the small labels. Poppins is the logo's lettering (navbar lockup) and Space Grotesk
+         the footer's company line; the last three families
+         belong to the certificate sheet. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Great+Vibes&family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Space+Grotesk:wght@500&family=Poppins:wght@600&family=Great+Vibes&family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,600&display=swap"
       rel="stylesheet"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />

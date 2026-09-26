@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { api } from '../lib/api';
 import Quiz from '../learn/Quiz';
+import LearnHero from '../learn/LearnHero';
+import { learnPhotos } from '../learn/photos';
+import '../learn/Learn.css';
 
 const ChapterQuiz = () => {
   const { slug, chapterId } = useParams();
   const [payload, setPayload] = useState(null);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
+  const [errorStatus, setErrorStatus] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -22,6 +27,7 @@ const ChapterQuiz = () => {
       } catch (err) {
         if (!cancelled) {
           setError(err.message);
+          setErrorStatus(err.status || 0);
           setStatus('error');
         }
       }
@@ -42,39 +48,45 @@ const ChapterQuiz = () => {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-[60vh] grid place-items-center">
-        <div className="h-10 w-10 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
+      <div className="lx-route-loading" role="status" aria-label="Loading the quiz">
+        <span />
       </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-black">{error}</h1>
-        <Link to={`/learn/${slug}`} className="mt-4 inline-block text-orange-600 font-bold hover:underline">
-          Back to the course
+      <main className="lp-error">
+        {/* 403 is the quiz's gate; anything else is a real failure. */}
+        <h1>{errorStatus === 403 ? 'Not open yet.' : 'Could not open the quiz.'}</h1>
+        <p>{error}</p>
+        <Link to={`/learn/${slug}`} className="lx-link">
+          <ArrowLeft size={15} aria-hidden="true" /> Back to the course
         </Link>
       </main>
     );
   }
 
-  return (
-    <main className="max-w-3xl mx-auto px-6 py-10 bg-white text-black min-h-screen">
-      <Link to={`/learn/${slug}`} className="text-sm font-bold text-black hover:text-orange-600 transition">
-        ← Back to the course
-      </Link>
-      <p className="mt-4 text-xs font-bold text-orange-600 uppercase tracking-wider">
-        Chapter {payload.chapter.position} quiz
-      </p>
-      <h1 className="mt-1 text-3xl font-extrabold text-black">{payload.chapter.title}</h1>
-      <p className="mt-2 text-black font-medium leading-relaxed">
-        A practice check that does not affect your certificate. You get instant feedback and can
-        retake it as often as you like.
-      </p>
+  const count = payload.questions.length;
+  const position = String(payload.chapter.position).padStart(2, '0');
 
-      <div className="mt-8">
-        <Quiz questions={payload.questions} onSubmit={submit} submitLabel="Check my answers" />
+  return (
+    <main className="lp">
+      <div className="lp-wrap">
+        <LearnHero
+          back={{ to: `/learn/${slug}`, label: 'Back to the course' }}
+          index={position}
+          label={`Chapter ${payload.chapter.position} quiz`}
+          title={payload.chapter.title}
+          lede="A practice check. It never touches your certificate."
+          meta={['Instant feedback', 'Unlimited retakes']}
+          photo={learnPhotos.chapterQuiz}
+          chips={[{ value: String(count), label: count === 1 ? 'question' : 'questions' }]}
+        />
+
+        <div className="lp-narrow">
+          <Quiz questions={payload.questions} onSubmit={submit} submitLabel="Check my answers" />
+        </div>
       </div>
     </main>
   );

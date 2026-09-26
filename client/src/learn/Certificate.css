@@ -1,0 +1,671 @@
+/* ==========================================================================
+   Certificate of completion
+   --------------------------------------------------------------------------
+   One fixed 1123x794 sheet (A4 landscape at 96dpi). Everything on it is
+   placed in sheet pixels so the screen preview, the PDF and the paper print
+   are the same composition. The ornaments live in CertificateFrame.js.
+   ========================================================================== */
+
+.cxc-page {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding: 40px 16px 56px;
+  --cxc-paper: #fefdfa;
+  --cxc-navy: #0d2750;
+  --cxc-gold: #a8804b;
+  --cxc-gold-line: #c9a15a;
+  --cxc-orange: #e8630a;
+  --cxc-serif: "Cormorant Garamond", "Instrument Serif", Georgia, serif;
+  --cxc-script: "Pinyon Script", "Great Vibes", cursive;
+  --cxc-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@media (min-width: 640px) {
+  .cxc-page {
+    padding-inline: 24px;
+  }
+}
+
+/* --- page shell ------------------------------------------------------------
+   A verified mark and two actions above the sheet, one quiet line below. */
+
+.cxc-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
+  margin-bottom: 26px;
+}
+
+.cxc-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--ink-2);
+}
+
+.cxc-verified-mark {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  overflow: visible;
+}
+
+.cxc-verified-mark circle {
+  fill: var(--copper-tint);
+  stroke: var(--copper);
+  stroke-width: 1.2;
+}
+
+.cxc-verified-mark path {
+  fill: none;
+  stroke: var(--copper);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16;
+}
+
+.cxc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* On a phone the two actions share one full-width row. */
+@media (max-width: 479px) {
+  .cxc-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+  .cxc-actions .btn {
+    padding-inline: 1.05rem;
+  }
+}
+
+/* The disc holds a download arrow, so it steps down rather than turning. */
+.cxc-page .lx-btn:hover .lx-btn-disc,
+.cxc-page .lx-btn:focus-visible .lx-btn-disc {
+  transform: translate3d(0, 2px, 0);
+}
+
+.cxc-hint {
+  margin: 26px 0 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+
+/* Unknown code. */
+.cxc-missing {
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: clamp(5rem, 12vh, 8rem) 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.cxc-missing-title {
+  margin: 0;
+  font-size: var(--text-h2);
+  line-height: 1;
+}
+
+.cxc-missing-lede {
+  margin: 0 0 6px;
+  color: var(--ink-3);
+}
+
+.cxc-missing > * {
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) both;
+}
+.cxc-missing > :nth-child(2) { animation-delay: 80ms; }
+.cxc-missing > :nth-child(3) { animation-delay: 160ms; }
+.cxc-missing > :nth-child(4) { animation-delay: 240ms; }
+
+/* Scaled preview. The scale is measured in CertificateView and handed down as
+   --cxc-scale; the box keeps the scaled height so the page flows around it. */
+.cxc-scaler {
+  position: relative;
+  width: 100%;
+  height: calc(794px * var(--cxc-scale, 1));
+}
+
+.cxc-sheet {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1123px;
+  height: 794px;
+  overflow: hidden;
+  transform: translateX(-50%) scale(var(--cxc-scale, 1));
+  transform-origin: top center;
+  background: var(--cxc-paper);
+  color: var(--cxc-navy);
+  font-family: var(--cxc-sans);
+  font-variant-numeric: lining-nums;
+  box-shadow: 0 24px 60px rgba(13, 39, 80, 0.22);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.cxc-sheet *,
+.cxc-sheet *::before,
+.cxc-sheet *::after {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.cxc-sheet p,
+.cxc-sheet h1 {
+  margin: 0;
+}
+
+.cxc-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* --- header -------------------------------------------------------------- */
+
+.cxc-logo {
+  position: absolute;
+  left: 58px;
+  top: 44px;
+  height: 91px;
+  width: auto;
+}
+
+.cxc-secp {
+  position: absolute;
+  left: 163px;
+  top: 40px;
+  height: 91px;
+  width: auto;
+}
+
+.cxc-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 101px;
+  font-family: var(--cxc-serif);
+  font-size: 87px;
+  font-weight: 600;
+  font-synthesis: none;
+  line-height: 1;
+  letter-spacing: 0.028em;
+  text-align: center;
+  color: var(--cxc-navy);
+}
+
+.cxc-subtitle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+}
+
+.cxc-subtitle p {
+  font-family: var(--cxc-serif);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.035em;
+  color: var(--cxc-gold);
+  white-space: nowrap;
+}
+
+.cxc-id {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 232px;
+  font-family: var(--cxc-serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.055em;
+  text-align: center;
+  color: var(--cxc-navy);
+  white-space: nowrap;
+}
+
+/* --- ribbon -------------------------------------------------------------- */
+
+.cxc-ribbon {
+  position: absolute;
+  left: 353px;
+  top: 262px;
+  width: 417px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cxc-ribbon-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cxc-ribbon span {
+  position: relative;
+  margin-top: -3px;
+  font-family: var(--cxc-serif);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+/* --- recipient ----------------------------------------------------------- */
+
+.cxc-name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 327px;
+  height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--cxc-script);
+  font-size: 90px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--cxc-gold);
+  /* Pinyon ships one hairline weight; a fine outline brings it up to the
+     weight of the rest of the sheet and prints as a vector like the fill. */
+  -webkit-text-stroke: 1.3px var(--cxc-gold);
+  text-shadow: 2.5px 2px 0 rgba(168, 128, 75, 0.3);
+  white-space: nowrap;
+}
+
+.cxc-name span {
+  display: inline-block;
+}
+
+.cxc-name-rule {
+  position: absolute;
+  left: 236px;
+  top: 443px;
+}
+
+/* --- body copy ----------------------------------------------------------- */
+
+.cxc-copy {
+  --cxc-copy: 18.9px;
+  position: absolute;
+  left: 211px;
+  width: 701px;
+  top: 459px;
+  height: 138px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: var(--cxc-copy);
+  line-height: 1.32;
+  letter-spacing: -0.014em;
+  color: var(--cxc-navy);
+  text-align: center;
+}
+
+.cxc-body,
+.cxc-note {
+  max-width: 628px;
+  font-size: inherit;
+  line-height: 1.32;
+  text-wrap: wrap;
+  font-weight: 400;
+  color: var(--cxc-navy);
+}
+
+.cxc-body strong {
+  font-weight: 700;
+  color: var(--cxc-navy);
+}
+
+.cxc-copy-rule {
+  flex: none;
+  margin: 11px 0 5px;
+}
+
+/* --- verification row ---------------------------------------------------- */
+
+.cxc-qr {
+  position: absolute;
+  left: 314px;
+  top: 608px;
+  width: 94px;
+  height: 94px;
+  line-height: 0;
+}
+
+.cxc-stamp {
+  position: absolute;
+  left: 505px;
+  top: 598px;
+  height: 112px;
+  width: auto;
+}
+
+.cxc-signatory {
+  position: absolute;
+  left: 826px;
+  width: 220px;
+  top: 548px;
+  text-align: center;
+}
+
+.cxc-signature {
+  height: 100px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom: 1.2px solid var(--cxc-gold-line);
+}
+
+.cxc-signature img {
+  height: 84px;
+  width: auto;
+  margin-bottom: 8px;
+  object-fit: contain;
+}
+
+.cxc-sign-fallback {
+  font-family: var(--cxc-script);
+  font-size: 36px;
+  line-height: 1;
+  padding-bottom: 10px;
+  color: var(--cxc-navy);
+}
+
+.cxc-sign-name {
+  padding-top: 9px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--cxc-navy);
+}
+
+.cxc-sign-title {
+  padding-top: 1px;
+  font-size: 14.6px;
+  line-height: 1.25;
+  color: var(--cxc-navy);
+}
+
+.cxc-sign-company {
+  padding-top: 1px;
+  font-size: 14.6px;
+  line-height: 1.25;
+  color: var(--cxc-orange);
+  white-space: nowrap;
+}
+
+.cxc-footer {
+  position: absolute;
+  left: 291px;
+  width: 650px;
+  top: 734px;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--cxc-navy);
+  white-space: nowrap;
+}
+
+/* --- entrance ---------------------------------------------------------------
+   Screen only, and only on this page (HeroReel draws the same frame). The
+   sheet lifts in, the frame gathers from its corners, the lettering sets in
+   reading order, the name is written on, the seal is pressed and the
+   signature drawn. Every rule animates towards the resting style, so reduced
+   motion and print both land on the finished sheet. */
+
+@keyframes cxc-lift {
+  from { opacity: 0; transform: translate3d(0, 28px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cxc-wave-tr {
+  from { opacity: 0; transform: translate(70px, -60px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cxc-wave-bl {
+  from { opacity: 0; transform: translate(-70px, 60px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cxc-draw {
+  from { stroke-dashoffset: 3710; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes cxc-tick {
+  from { stroke-dashoffset: 16; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes cxc-set {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cxc-unfurl {
+  from { clip-path: inset(0 50% 0 50%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes cxc-extend {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes cxc-write {
+  /* Both edges start left of the box, so the swash that overhangs it stays
+     hidden until the pen reaches it. */
+  from { clip-path: inset(-40% 106% -40% -6%); }
+  to { clip-path: inset(-40% -6% -40% -6%); }
+}
+@keyframes cxc-rule {
+  from { transform: scaleX(0); }
+  to { transform: none; }
+}
+@keyframes cxc-press {
+  0% { opacity: 0; transform: scale(1.28) rotate(-9deg); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes cxc-sign {
+  from { clip-path: inset(-10% 104% -10% -4%); }
+  to { clip-path: inset(-10% -4% -10% -4%); }
+}
+@keyframes cxc-underline {
+  from { border-bottom-color: transparent; }
+}
+@keyframes cxc-sheen {
+  0% { transform: translate3d(-160%, 0, 0) skewX(-18deg); }
+  22%, 100% { transform: translate3d(300%, 0, 0) skewX(-18deg); }
+}
+
+.cxc-bar > * {
+  animation: lx-rise 800ms var(--ease-out-expo) both;
+}
+.cxc-bar > :nth-child(2) { animation-delay: 90ms; }
+.cxc-verified-mark path {
+  animation: cxc-tick 700ms var(--ease-out-quint) 500ms both;
+}
+
+.cxc-page .cxc-scaler {
+  animation: cxc-lift 1100ms var(--ease-out-expo) 80ms both;
+}
+
+.cxc-page .cxc-wave {
+  animation: cxc-wave-tr 1500ms var(--ease-out-expo) 260ms both;
+}
+.cxc-page .cxc-wave--bl {
+  animation-name: cxc-wave-bl;
+  animation-delay: 360ms;
+}
+.cxc-page .cxc-keyline {
+  stroke-dasharray: 3710;
+  animation: cxc-draw 2200ms var(--ease-in-out) 300ms both;
+}
+.cxc-page .cxc-sprig {
+  animation: lx-fade 900ms var(--ease-out-quint) 1500ms both;
+}
+
+.cxc-page .cxc-logo,
+.cxc-page .cxc-secp {
+  animation: cxc-set 900ms var(--ease-out-expo) 420ms both;
+}
+.cxc-page .cxc-secp { animation-delay: 500ms; }
+.cxc-page .cxc-title {
+  animation: cxc-set 1000ms var(--ease-out-expo) 520ms both;
+}
+.cxc-page .cxc-subtitle p {
+  animation: lx-fade 900ms var(--ease-out-quint) 700ms both;
+}
+.cxc-page .cxc-subtitle svg {
+  animation: cxc-extend 1000ms var(--ease-out-expo) 760ms both;
+}
+.cxc-page .cxc-id {
+  animation: lx-fade 900ms var(--ease-out-quint) 860ms both;
+}
+.cxc-page .cxc-ribbon-shape {
+  animation: cxc-unfurl 900ms var(--ease-out-expo) 900ms both;
+}
+.cxc-page .cxc-ribbon span {
+  animation: lx-fade 700ms var(--ease-out-quint) 1150ms both;
+}
+.cxc-page .cxc-name span {
+  animation: cxc-write 1700ms cubic-bezier(0.45, 0.05, 0.35, 1) 1150ms both;
+}
+.cxc-page .cxc-name-rule {
+  animation: cxc-rule 1200ms var(--ease-out-expo) 1400ms both;
+}
+.cxc-page .cxc-copy {
+  animation: cxc-set 1000ms var(--ease-out-expo) 1700ms both;
+}
+.cxc-page .cxc-qr {
+  animation: cxc-set 900ms var(--ease-out-expo) 2000ms both;
+}
+.cxc-page .cxc-stamp {
+  animation: cxc-press 800ms var(--ease-out-expo) 2150ms both;
+}
+.cxc-page .cxc-signature {
+  animation: cxc-underline 900ms var(--ease-out-quint) 1900ms both;
+}
+.cxc-page .cxc-signature > * {
+  animation: cxc-sign 1200ms cubic-bezier(0.45, 0.05, 0.35, 1) 2050ms both;
+}
+.cxc-page .cxc-sign-name,
+.cxc-page .cxc-sign-title,
+.cxc-page .cxc-sign-company,
+.cxc-page .cxc-footer {
+  animation: lx-fade 900ms var(--ease-out-quint) 2350ms both;
+}
+.cxc-page .cxc-footer { animation-delay: 2500ms; }
+
+/* One slow band of light across the foil, then a long rest. */
+.cxc-page .cxc-sheet::after {
+  content: "";
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: 0;
+  width: 38%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 250, 235, 0) 0%,
+    rgba(255, 250, 235, 0.26) 50%,
+    rgba(255, 250, 235, 0) 100%
+  );
+  mix-blend-mode: screen;
+  transform: translate3d(-160%, 0, 0) skewX(-18deg);
+  animation: cxc-sheen 11s var(--ease-in-out) 2900ms infinite;
+}
+
+/* The site lays a faint grain over every page. The certificate is a
+   document preview, so its paper should read as it prints. */
+body:has(.cxc-page)::after {
+  display: none;
+}
+
+/* --- print ----------------------------------------------------------------
+   One A4 landscape page with nothing but the sheet on it. The shell is hidden
+   from here as well as from the shared theme, so the certificate stays clean
+   even if that file changes. */
+
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+@media print {
+  html:has(.cxc-page),
+  body:has(.cxc-page) {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  body:has(.cxc-page) .navbar,
+  body:has(.cxc-page) .footer,
+  body:has(.cxc-page) .lx-ambient,
+  body:has(.cxc-page)::after {
+    display: none !important;
+  }
+
+  .cxc-page {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Print the finished sheet whatever moment of the entrance it is in. */
+  .cxc-page *,
+  .cxc-page *::before,
+  .cxc-page *::after {
+    animation: none !important;
+  }
+
+  .cxc-page .cxc-sheet::after,
+  .cxc-bar,
+  .cxc-hint {
+    display: none !important;
+  }
+
+  .cxc-scaler {
+    width: 297mm;
+    height: 210mm;
+    overflow: hidden;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .cxc-sheet {
+    left: 0;
+    width: 297mm;
+    height: 210mm;
+    transform: none;
+    box-shadow: none;
+  }
+}

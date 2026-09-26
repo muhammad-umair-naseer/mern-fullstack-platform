@@ -1,18 +1,146 @@
-/* Lesson body chrome: the bar above a code sample, and the scroll box around a
-   wide table. Everything here is presentation only; the markdown itself is
-   still styled by the prose classes on the wrapper. */
+/* Lesson and blog bodies.
+ *
+ * The typography for rendered markdown, set against the house tokens: the text
+ * face for reading, the display serif for section headings, copper for links
+ * and list markers, and a quoted aside set on sand rather than indented. Code
+ * blocks stay dark, because dark is what code is read on, but a warm dark that
+ * belongs with ivory and copper rather than a navy one.
+ *
+ * premium.css pins .prose colours with !important; everything here works with
+ * those rather than against them.
+ */
 
 @import './motion.css';
+
+/* --- text ----------------------------------------------------------------- */
+
+.cx-md {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.cx-md p {
+  margin: 0 0 1.25em;
+}
+
+.cx-md h2,
+.cx-md .cx-md-h2 {
+  margin: 2.2em 0 0.6em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 1.45rem + 1vw, 2.35rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+
+.cx-md h3,
+.cx-md .cx-md-h3 {
+  margin: 1.9em 0 0.5em;
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+
+.cx-md h4 {
+  margin: 1.6em 0 0.4em;
+  font-size: 1.02rem;
+  color: var(--ink);
+}
+
+.cx-md a {
+  text-decoration: underline;
+  text-decoration-color: rgba(154, 74, 34, 0.35);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: text-decoration-color var(--dur-base) var(--ease-out-expo);
+}
+
+.cx-md a:hover {
+  text-decoration-color: currentColor;
+}
+
+.cx-md strong {
+  color: var(--ink);
+}
+
+/* Typography's default wraps inline code in literal backticks; the copper
+   chip already says "this is code". */
+.cx-md code::before,
+.cx-md code::after {
+  content: none !important;
+}
+
+.cx-md ul,
+.cx-md ol {
+  margin: 0 0 1.35em;
+  padding-left: 1.3em;
+}
+
+.cx-md li {
+  margin: 0.4em 0;
+  padding-left: 0.25em;
+}
+
+.cx-md ul > li::marker {
+  color: var(--copper);
+}
+
+.cx-md ol > li::marker {
+  color: var(--copper);
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+/* A quoted aside is the "watch out for this" of a lesson, so it is set apart
+   on sand with a copper rule rather than merely indented. */
+.cx-md blockquote {
+  margin: 1.7em 0;
+  padding: 0.9em 1.2em;
+  border-left: 2px solid var(--copper);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: var(--glass-sand);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.cx-md blockquote p:first-of-type::before,
+.cx-md blockquote p:last-of-type::after {
+  content: none;
+}
+
+.cx-md blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.cx-md hr {
+  margin: 2.6em 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.cx-md img {
+  border-radius: var(--r-md);
+}
 
 /* --- code blocks --------------------------------------------------------- */
 
 .cx-md .cx-code {
   position: relative;
   margin: 1.6em 0;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   overflow: hidden;
-  border: 1px solid #1e293b;
-  background: #0f172a;
+  border: 1px solid #2A241E;
+  background: #1F1B17;
+  box-shadow:
+    0 1px 2px rgba(22, 19, 15, 0.08),
+    0 20px 40px -24px rgba(22, 19, 15, 0.5);
 }
 
 .cx-md .cx-code-bar {
@@ -20,53 +148,85 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 7px 10px 7px 14px;
-  background: #111d33;
-  border-bottom: 1px solid #1e293b;
+  min-height: 40px;
+  padding: 6px 10px 6px 16px;
+  background: #181511;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .cx-md .cx-code-lang {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #7f9dc4;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #CDB29A;
 }
 
 .cx-md .cx-code-copy {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   padding: 4px 11px;
   border-radius: 999px;
-  color: #b9cbe4;
-  background: rgba(255, 255, 255, 0.06);
+  color: #E9DFD3;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
   cursor: pointer;
   /* Colour only: this sits inside a scrolling article, so it must not move
      anything around it. */
   transition: background var(--cx-dur-fast) var(--cx-ease-out),
-              color var(--cx-dur-fast) var(--cx-ease-out);
+              color var(--cx-dur-fast) var(--cx-ease-out),
+              border-color var(--cx-dur-fast) var(--cx-ease-out);
 }
 
 .cx-md .cx-code-copy:hover {
-  background: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
 
 .cx-md .cx-code-copy:focus-visible {
-  outline: 2px solid #f97316;
+  outline: 2px solid var(--copper-2);
   outline-offset: 2px;
 }
 
-/* The bar already carries the border and the radius, so the pre inside drops
+/* The block already carries the border and the radius, so the pre inside drops
    both rather than drawing a second frame. */
 .cx-md .cx-code pre {
   margin: 0;
+  padding: 1.1em 1.35em 1.25em;
   border: 0;
   border-radius: 0;
-  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+
+/* Copy feedback. Colour only, so the bar never reflows mid article. */
+.cx-md .cx-code-copy.is-copied {
+  background: rgba(143, 173, 132, 0.2);
+  border-color: rgba(143, 173, 132, 0.5);
+  color: #C5DDB9;
+}
+
+.cx-md .cx-code-copy.is-failed {
+  background: rgba(220, 168, 131, 0.18);
+  border-color: rgba(220, 168, 131, 0.45);
+  color: #F0CDB2;
+}
+
+/* Inline code is a bordered copper chip, and that styling was reaching into
+   fenced blocks too: because `code` inside `pre` is an inline box, its border
+   fragmented across every line and drew a box around each one. The block owns
+   its own frame, so the inner code element carries no decoration at all. */
+.cx-md .cx-code pre code,
+.cx-md .cx-code pre code * {
+  border: 0 !important;
+  padding: 0;
+  border-radius: 0;
+  background: transparent !important;
+  font-weight: 400 !important;
+  color: inherit;
 }
 
 /* --- tables -------------------------------------------------------------- */
@@ -74,54 +234,57 @@
 .cx-md .cx-md-table {
   margin: 1.6em 0;
   overflow-x: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .cx-md .cx-md-table table {
   margin: 0;
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.92rem;
 }
 
 .cx-md .cx-md-table th,
 .cx-md .cx-md-table td {
   padding: 10px 14px;
   text-align: left;
+  /* Prose cells wrap so a sentence is never cut off at the table's edge;
+     only the short header labels and inline code stay on one line. */
+  white-space: normal;
+  min-width: 7rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.cx-md .cx-md-table thead th,
+.cx-md .cx-md-table td code {
   white-space: nowrap;
 }
 
+@media (max-width: 560px) {
+  .cx-md .cx-md-table table {
+    font-size: 0.84rem;
+  }
+  .cx-md .cx-md-table th,
+  .cx-md .cx-md-table td {
+    padding: 9px 10px;
+    min-width: 6rem;
+  }
+  .cx-md .cx-md-table thead th {
+    white-space: normal;
+  }
+}
+
 .cx-md .cx-md-table thead th {
-  background: #f8fafc;
+  background: var(--glass-sand);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--ink) !important;
 }
 
 .cx-md .cx-md-table tbody tr:last-child td {
   border-bottom: 0;
-}
-
-/* Copy feedback. Colour only, so the bar never reflows mid article. */
-.cx-md .cx-code-copy.is-copied {
-  background: rgba(16, 185, 129, 0.22);
-  border-color: rgba(16, 185, 129, 0.5);
-  color: #6ee7b7;
-}
-
-.cx-md .cx-code-copy.is-failed {
-  background: rgba(245, 158, 11, 0.18);
-  border-color: rgba(245, 158, 11, 0.45);
-  color: #fcd34d;
-}
-
-/* Inline code is a bordered orange chip, and that styling was reaching into
-   fenced blocks too: because `code` inside `pre` is an inline box, its border
-   fragmented across every line and drew a box around each one. The block owns
-   its own frame, so the inner code element carries no decoration at all. */
-.cx-md .cx-code pre code,
-.cx-md .cx-code pre code * {
-  border: 0;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  font-weight: 500;
-  color: inherit;
 }

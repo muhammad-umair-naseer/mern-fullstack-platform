@@ -3,45 +3,153 @@
 /* Chapter quiz and final exam.
  *
  * Same surface, two stakes: a practice check and the exam that issues the
- * certificate. The motion is deliberately quieter than TopicQuiz's — this
- * component is rendered on its own page with its own heading, so it does not
- * need to announce itself. It only needs to bring the learner in, show them how
- * far through they are, and land the result.
+ * certificate. Set like a printed paper laid on glass: numbered questions in
+ * mono, lettered options, the prompt in the text face and the verdict in the
+ * display serif. The motion brings the learner in, shows how far through
+ * they are, and lands the result; nothing else moves.
  *
- * Everything here animates transform and opacity. The single exception is the
- * one-shot ring on the result badge, which is motion.css's cxPulseRingGreen on
- * one 44px element. Every effect is switched off at the bottom of this file
- * under prefers-reduced-motion.
+ * Everything here animates transform and opacity, except the one-shot rings
+ * from motion.css on single small elements. Every effect is switched off at
+ * the bottom of this file under prefers-reduced-motion.
  */
 
-/* --- answering ------------------------------------------------------------ */
+.cx-qz {
+  display: grid;
+  gap: 1.1rem;
+  /* A retake brings the paper back into view; clear the sticky navigation. */
+  scroll-margin-top: calc(var(--nav-h, 76px) + 1.25rem);
+}
 
-/* Rows lift toward the reader on hover and hold the pick with a tick that pops
-   in. The tick keeps its slot in the flex row at all times, so appearing costs
-   no reflow. */
+/* --- questions ------------------------------------------------------------ */
+
+.cx-qz-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.cx-qz-q {
+  position: relative;
+  padding: clamp(1.25rem, 1rem + 1vw, 1.9rem);
+  border-radius: var(--r-md);
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit);
+  transition: background-color var(--dur-base) var(--ease-out-expo);
+}
+
+/* An answered question steps up to the stronger glass, so the page reads as
+   a paper filling in. */
+.cx-qz-q.is-answered {
+  background: var(--glass-strong);
+}
+
+.cx-qz-q fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.cx-qz-prompt {
+  display: flex;
+  gap: 0.9rem;
+  align-items: baseline;
+  width: 100%;
+  margin-bottom: 1.1rem;
+  font-size: clamp(1.02rem, 0.98rem + 0.25vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.cx-qz-num {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--copper);
+  transition: color var(--dur-base) var(--ease-out-expo);
+}
+
+.cx-qz-options {
+  display: grid;
+  gap: 0.55rem;
+}
+
+/* The radio stays in the document for keyboard and screen reader; the lettered
+   disc is what the eye reads. */
+.cx-qz-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
 .cx-qz-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem 0.75rem 0.75rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--ink-2);
+  cursor: pointer;
   transition:
-    transform var(--cx-dur-fast) var(--cx-ease-out),
-    border-color var(--cx-dur-fast) var(--cx-ease-out),
-    background-color var(--cx-dur-fast) var(--cx-ease-out);
+    transform var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo);
 }
 
 .cx-qz-option:hover {
-  transform: translateX(3px);
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.72);
+  transform: translate3d(3px, 0, 0);
 }
 
-.cx-qz-option:focus-within {
-  outline: 2px solid rgba(234, 88, 12, 0.55);
+/* Keyboard focus only: a mouse click focuses the radio too, and a ring on
+   top of the picked state would read as a second selection. */
+.cx-qz-option:has(.cx-qz-input:focus-visible) {
+  outline: 2px solid var(--copper);
   outline-offset: 2px;
+}
+
+.cx-qz-letter {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  background: rgba(255, 255, 255, 0.6);
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo),
+    color var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-slow) var(--cx-ease-pop);
+}
+
+.cx-qz-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.98rem;
+  line-height: 1.45;
 }
 
 .cx-qz-tick {
   flex: 0 0 auto;
-  margin-left: auto;
-  align-self: center;
-  color: #ea580c;
-  font-size: 0.95rem;
-  font-weight: 800;
+  color: var(--copper);
+  font-size: 0.9rem;
+  font-weight: 600;
   line-height: 1;
   opacity: 0;
   transform: scale(0.4);
@@ -50,25 +158,82 @@
     opacity var(--cx-dur-fast) var(--cx-ease-out);
 }
 
+.cx-qz-option.is-picked {
+  border-color: rgba(154, 74, 34, 0.55);
+  background: rgba(245, 230, 216, 0.72);
+  color: var(--ink);
+}
+
+.cx-qz-option.is-picked .cx-qz-letter {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ivory);
+  transform: scale(1.06);
+}
+
 .cx-qz-option.is-picked .cx-qz-tick {
   opacity: 1;
   transform: scale(1);
 }
 
-/* --- progress ------------------------------------------------------------- */
+/* --- the dock --------------------------------------------------------------- */
 
-/* Answered / total, as a bar rather than only a number in the button label.
-   The fill is scaled, never widthed, so the whole thing stays on the
-   compositor. The white ring is static — it is there so the bar stays legible
-   while it sits over scrolling content. */
+/* Sticky at the foot of the viewport while the paper scrolls under it: the
+   count, the bar and the one action, on frosted glass so it never collides
+   with an option passing beneath. */
+.cx-qz-dock {
+  position: sticky;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 20;
+  margin-top: 0.4rem;
+}
+
+.cx-qz-dock-inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.6rem 0.6rem 0.6rem 1.25rem;
+  border-radius: var(--r-pill);
+  background: rgba(250, 246, 238, 0.82);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 1px rgba(22, 19, 15, 0.04),
+    0 14px 36px rgba(22, 19, 15, 0.12);
+}
+
+.cx-qz-dock-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.cx-qz-dock-n {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.cx-qz-dock-of {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+
+/* Answered / total. The fill is scaled, never widthed, so it stays on the
+   compositor. */
 .cx-qz-progress {
   position: relative;
-  height: 6px;
-  margin: 0 0 10px;
-  border-radius: 999px;
+  height: 4px;
+  border-radius: var(--r-pill);
   overflow: hidden;
-  background: rgba(15, 36, 68, 0.1);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.92);
+  background: rgba(22, 19, 15, 0.08);
 }
 
 .cx-qz-progress-fill {
@@ -76,7 +241,7 @@
   height: 100%;
   width: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #ea580c, #fb923c);
+  background: linear-gradient(90deg, var(--copper-3), var(--copper-2));
   transform: scaleX(var(--cx-qz-p, 0));
   transform-origin: left center;
   transition: transform var(--cx-dur) var(--cx-ease-out);
@@ -94,95 +259,255 @@
   background: linear-gradient(
     100deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.9) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   transform: translateX(-100%);
   animation: cxSheen var(--cx-dur-slow) var(--cx-ease-out) both;
 }
 
-/* --- buttons -------------------------------------------------------------- */
+/* --- buttons ------------------------------------------------------------------ */
 
 .cx-qz-btn {
-  transition:
-    transform var(--cx-dur-fast) var(--cx-ease-out),
-    background-color var(--cx-dur-fast) var(--cx-ease-out),
-    opacity var(--cx-dur-fast) var(--cx-ease-out);
+  white-space: nowrap;
 }
 
-.cx-qz-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+.cx-qz-btn:disabled {
+  cursor: not-allowed;
+  background: rgba(22, 19, 15, 0.55);
+  border-color: transparent;
 }
 
-.cx-qz-btn:active:not(:disabled) {
-  transform: translateY(0);
+.cx-qz-btn:disabled::before {
+  transform: scaleX(0) !important;
 }
 
-/* --- the result ----------------------------------------------------------- */
+.cx-qz-btn:disabled .lx-btn-disc {
+  opacity: 0.55;
+  transform: none !important;
+}
+
+/* The moment every question is answered the submit becomes the primary thing
+   on the page: one copper ring, once. */
+.cx-qz-dock-inner.is-complete .cx-qz-submit:not(:disabled) {
+  animation: cxPulseRing 1.4s var(--cx-ease-out) 1;
+}
+
+.cx-qz-again {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.6rem;
+}
+
+.cx-qz-error {
+  margin: 0;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(162, 71, 46, 0.3);
+  background: var(--cx-wrong-tint);
+  color: var(--cx-wrong);
+  font-size: 0.92rem;
+}
+
+/* --- the result --------------------------------------------------------------- */
 
 .cx-qz-result {
   position: relative;
   overflow: hidden;
+  /* Brought into view on submit; clear the sticky navigation. */
+  scroll-margin-top: calc(var(--nav-h, 76px) + 1.25rem);
+  padding: clamp(2rem, 1.5rem + 2vw, 3.25rem) 1.5rem;
+  border-radius: var(--r-lg);
+  text-align: center;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit), var(--shadow-raised);
 }
 
-/* The number is the moment. Overshoot it, and colour it: green or amber tells
-   the learner the verdict before a word is read. */
+/* A soft wash of the verdict colour from the top, so the card is legible as
+   pass or fail before a word is read. */
+.cx-qz-result::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 70% at 50% 0%, var(--cx-qz-wash, transparent), transparent 70%);
+}
+
+.cx-qz-result.is-pass { --cx-qz-wash: rgba(79, 107, 69, 0.12); }
+.cx-qz-result.is-fail { --cx-qz-wash: rgba(154, 74, 34, 0.1); }
+
+.cx-qz-result > * {
+  position: relative;
+}
+
 .cx-qz-score {
-  animation: cxPop var(--cx-dur-slow) var(--cx-ease-pop) both;
-  animation-delay: 90ms;
+  margin: 0.4rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, 3rem + 6vw, 7.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  animation: cxPop var(--cx-dur-slow) var(--cx-ease-pop) 90ms both;
 }
 
-.cx-qz-result.is-pass .cx-qz-score { color: #0f7a4d; }
-.cx-qz-result.is-fail .cx-qz-score { color: #b0632a; }
+.cx-qz-score-unit {
+  font-size: 0.5em;
+  margin-left: 0.04em;
+  color: var(--ink-3);
+}
+
+.cx-qz-result.is-pass .cx-qz-score { color: var(--cx-right); }
+.cx-qz-result.is-fail .cx-qz-score { color: var(--copper); }
+
+.cx-qz-scoreline {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+}
+
+.cx-qz-verdict {
+  margin: 0.6rem auto 0;
+  max-width: 32ch;
+  font-size: 1.05rem;
+  color: var(--ink-2);
+}
 
 .cx-qz-badge {
   display: inline-grid;
   place-items: center;
   width: 44px;
   height: 44px;
-  margin-bottom: 12px;
   border-radius: 50%;
-  color: #fff;
-  font-size: 1.25rem;
-  font-weight: 800;
+  color: var(--ivory);
+  font-size: 1.15rem;
+  font-weight: 600;
   line-height: 1;
   animation: cxPop var(--cx-dur) var(--cx-ease-pop) both;
 }
 
-/* A tick that pops then rings out once, against an amber retry mark that
-   shakes once. Different colour, different glyph, different movement — the
-   verdict is legible from across the room. */
+/* A tick that pops then rings out once, against a retry mark that shakes
+   once. Different colour, different glyph, different movement. */
 .cx-qz-result.is-pass .cx-qz-badge {
-  background: linear-gradient(135deg, #10b981, #047857);
+  background: var(--cx-right);
   animation:
     cxPop var(--cx-dur) var(--cx-ease-pop) both,
     cxPulseRingGreen 1.5s var(--cx-ease-out) 300ms 1;
 }
 
 .cx-qz-result.is-fail .cx-qz-badge {
-  background: linear-gradient(135deg, #f59e0b, #b45309);
+  background: var(--copper);
   animation:
     cxPop var(--cx-dur) var(--cx-ease-pop) both,
     cxNudge 420ms var(--cx-ease-in-out) 320ms 1;
 }
 
-/* Review rows arrive after the score has landed, in order, so the eye is led
-   down the list instead of meeting all of it at once. */
+/* --- review ------------------------------------------------------------------- */
+
+.cx-qz-review {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
 .cx-qz-rev {
+  position: relative;
+  padding: 1.1rem 1.25rem 1.15rem;
+  border-radius: var(--r-md);
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit);
   animation: cxRise var(--cx-dur) var(--cx-ease-out) both;
   animation-delay: calc(var(--i, 0) * var(--cx-stagger) + 240ms);
 }
 
-/* --- the celebration ------------------------------------------------------ */
+/* The verdict as a rule down the left edge, inside the glass. */
+.cx-qz-rev::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--cx-qz-rule, var(--line-strong));
+}
+
+.cx-qz-rev.is-right { --cx-qz-rule: var(--cx-right); }
+.cx-qz-rev.is-wrong { --cx-qz-rule: var(--cx-wrong); }
+
+.cx-qz-rev-q {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  margin: 0;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.cx-qz-rev-num {
+  margin-right: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: var(--ink-4);
+}
+
+.cx-qz-mark {
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ivory);
+  transform: translateY(2px);
+}
+
+.cx-qz-rev.is-right .cx-qz-mark { background: var(--cx-right); }
+.cx-qz-rev.is-wrong .cx-qz-mark { background: var(--cx-wrong); }
+
+.cx-qz-rev-body {
+  margin: 0.55rem 0 0 2.1rem;
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.92rem;
+  color: var(--ink-3);
+}
+
+.cx-qz-rev-body p {
+  margin: 0;
+}
+
+.cx-qz-good { color: var(--cx-right); font-weight: 500; }
+.cx-qz-bad  { color: var(--cx-wrong); font-weight: 500; }
+
+.cx-qz-why {
+  margin-top: 0.4rem !important;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--r-xs);
+  background: var(--glass-sand);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* --- the celebration ---------------------------------------------------------- */
 
 /* A pass on the final exam issues a certificate, so it earns something. Seven
-   small marks drift up from the badge and fade. No canvas, no library, no
-   confetti storm: transform and opacity on seven spans, done in under two
-   seconds, gone. */
+   small marks drift up from the badge and fade. Transform and opacity on seven
+   spans, done in under two seconds, gone. */
 .cx-qz-cheer {
   position: absolute;
   left: 50%;
-  top: 46px;
+  top: calc(clamp(2rem, 1.5rem + 2vw, 3.25rem) + 22px);
   width: 0;
   height: 0;
   pointer-events: none;
@@ -196,7 +521,7 @@
   height: 6px;
   margin: -3px 0 0 -3px;
   border-radius: 1px;
-  background: #059669;
+  background: var(--cx-right);
   opacity: 0;
   animation: cxQuizSpark 1250ms var(--cx-ease-out) calc(var(--i, 0) * 55ms + 200ms) both;
 }
@@ -207,15 +532,34 @@
   100% { opacity: 0; transform: translate(var(--x, 0), var(--y, -44px)) scale(1) rotate(var(--r, 160deg)); }
 }
 
-.cx-qz-spark:nth-child(1) { --i: 0; --x: -62px; --y: -34px; --r: 140deg; background: #d97706; }
+.cx-qz-spark:nth-child(1) { --i: 0; --x: -62px; --y: -34px; --r: 140deg; background: var(--copper-2); }
 .cx-qz-spark:nth-child(2) { --i: 1; --x: -38px; --y: -50px; --r: -120deg; }
-.cx-qz-spark:nth-child(3) { --i: 2; --x: -14px; --y: -58px; --r: 200deg; background: #d97706; }
+.cx-qz-spark:nth-child(3) { --i: 2; --x: -14px; --y: -58px; --r: 200deg; background: var(--copper-2); }
 .cx-qz-spark:nth-child(4) { --i: 3; --x:   4px; --y: -62px; --r: -160deg; }
-.cx-qz-spark:nth-child(5) { --i: 4; --x:  26px; --y: -54px; --r: 130deg; background: #d97706; }
+.cx-qz-spark:nth-child(5) { --i: 4; --x:  26px; --y: -54px; --r: 130deg; background: var(--copper-2); }
 .cx-qz-spark:nth-child(6) { --i: 5; --x:  48px; --y: -44px; --r: -180deg; }
-.cx-qz-spark:nth-child(7) { --i: 6; --x:  68px; --y: -30px; --r: 150deg; background: #d97706; }
+.cx-qz-spark:nth-child(7) { --i: 6; --x:  68px; --y: -30px; --r: 150deg; background: var(--copper-2); }
 
-/* --- the one place this file's motion is switched off --------------------- */
+/* --- narrow screens ------------------------------------------------------------- */
+
+@media (max-width: 560px) {
+  .cx-qz-dock-inner {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "count bar"
+      "submit submit";
+    gap: 0.6rem 0.9rem;
+    padding: 0.7rem;
+    border-radius: var(--r-md);
+  }
+  .cx-qz-dock-count { grid-area: count; padding-left: 0.4rem; }
+  .cx-qz-progress { grid-area: bar; }
+  .cx-qz-submit { grid-area: submit; width: 100%; }
+  .cx-qz-option { padding-right: 0.8rem; }
+  .cx-qz-rev-body { margin-left: 0; }
+}
+
+/* --- the one place this file's motion is switched off --------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .cx-qz-score,
@@ -223,13 +567,14 @@
   .cx-qz-result.is-pass .cx-qz-badge,
   .cx-qz-result.is-fail .cx-qz-badge,
   .cx-qz-rev,
-  .cx-qz-progress.is-complete::after {
+  .cx-qz-progress.is-complete::after,
+  .cx-qz-dock-inner.is-complete .cx-qz-submit:not(:disabled) {
     animation: none;
   }
 
   /* The celebration does not run at all. */
   .cx-qz-cheer { display: none; }
 
-  .cx-qz-option:hover,
-  .cx-qz-btn:hover:not(:disabled) { transform: none; }
+  .cx-qz-option:hover { transform: none; }
+  .cx-qz-option.is-picked .cx-qz-letter { transform: none; }
 }

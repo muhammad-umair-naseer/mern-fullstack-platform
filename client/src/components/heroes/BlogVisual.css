@@ -1,0 +1,354 @@
+/* ── BlogVisual: a sketch on the desk, a deck of titles laid over it ─────
+   The photograph opens first (300ms), the deck rises onto it (800ms), then
+   the front card's copper rule starts filling. When it is full the card
+   lifts off and the next title comes forward. Transform and opacity only. */
+
+.bv {
+  --bv-dwell: 4.2s;
+  --bv-card-h: 12.5rem;
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  margin-left: auto;
+  aspect-ratio: 1 / 1.04;
+}
+
+/* ── The photograph ─────────────────────────────────────────────────── */
+
+.bv-frame {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 74%;
+  height: 84%;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--sand);
+  box-shadow: var(--shadow-float);
+  animation: lx-frame-open 1.5s var(--ease-out-expo) 300ms both;
+}
+
+.bv-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+/* A slow drift across the sketch, like light moving over a desk. */
+.bv-drift {
+  position: absolute;
+  inset: -4%;
+  animation: bv-drift 22s var(--ease-in-out) 2.4s infinite alternate;
+}
+
+.bv-drift img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: lx-film-settle 2s var(--ease-out-expo) 300ms both;
+}
+
+@keyframes bv-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-2.5%, 1.5%, 0) scale(1.06); }
+}
+
+/* ── Topic index: which shelf the front card came from ──────────────── */
+
+.bv-topics {
+  position: absolute;
+  left: 0;
+  top: 12%;
+  z-index: 2;
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 1rem 1.2rem;
+  list-style: none;
+  border-radius: var(--r-md);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--ink-4);
+  animation:
+    lx-rise 1s var(--ease-out-expo) 1s both,
+    lx-float 7s ease-in-out 2.4s infinite alternate;
+}
+
+.bv-topics li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: color var(--dur-slow) var(--ease-out-quint);
+}
+
+.bv-topics li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--copper-2);
+  transform: scale(0);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.bv-topics li.is-on {
+  color: var(--ink);
+}
+
+.bv-topics li.is-on::before {
+  transform: scale(1);
+}
+
+/* ── The deck ───────────────────────────────────────────────────────── */
+
+.bv-deck {
+  position: absolute;
+  left: 0;
+  bottom: 4%;
+  width: 80%;
+  height: var(--bv-card-h);
+  animation: lx-rise 1.1s var(--ease-out-expo) 800ms both;
+}
+
+.bv .bv-card {
+  position: absolute;
+  inset: 0;
+  padding: 1.25rem 1.4rem 1.1rem;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.86);
+  transform-origin: 50% 0;
+  transition:
+    transform 900ms var(--ease-out-expo),
+    opacity 700ms var(--ease-out-quint);
+}
+
+/* Front, then two cards peeking out above it. */
+.bv-card[data-pos="0"] {
+  z-index: 3;
+  transform: none;
+  opacity: 1;
+}
+
+.bv-card[data-pos="1"] {
+  z-index: 2;
+  transform: translate3d(0, -14px, 0) scale(0.94);
+  opacity: 1;
+}
+
+.bv-card[data-pos="2"] {
+  z-index: 1;
+  transform: translate3d(0, -28px, 0) scale(0.88);
+  opacity: 0.85;
+  animation: bv-enter 900ms var(--ease-out-expo) backwards;
+}
+
+/* The card that has been read lifts off the pile. */
+.bv .bv-card[data-pos="out"] {
+  z-index: 4;
+  transform: translate3d(-6%, -80%, 0) rotate(-5deg) scale(1.02);
+  opacity: 0;
+  transition:
+    transform 1s var(--ease-out-quint),
+    opacity 500ms var(--ease-in-out) 120ms;
+}
+
+@keyframes bv-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -48px, 0) scale(0.8);
+  }
+}
+
+.bv-card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition:
+    opacity 500ms var(--ease-out-quint) 340ms,
+    transform 800ms var(--ease-out-expo) 340ms;
+}
+
+.bv-card[data-pos="1"] .bv-card-inner,
+.bv-card[data-pos="2"] .bv-card-inner {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition-duration: 200ms;
+  transition-delay: 0ms;
+}
+
+.bv-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+
+.bv-card-cat {
+  color: var(--copper);
+}
+
+.bv-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0.7rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.05rem + 1vw, 1.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.bv-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: auto 0 0;
+  padding-top: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1;
+  color: var(--ink-3);
+}
+
+/* The reading rule: the deck's clock. */
+.bv-rule {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  overflow: hidden;
+  border-radius: var(--r-pill);
+  background: var(--line);
+}
+
+.bv-rule-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--copper-2);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.bv-card[data-pos="0"] .bv-rule-fill {
+  animation: bv-progress var(--bv-dwell) linear forwards paused;
+}
+
+.bv.is-running .bv-card[data-pos="0"] .bv-rule-fill {
+  animation-play-state: running;
+}
+
+/* Hovering the deck holds the current title. Only where hover is real: on a
+   touch screen a tap leaves :hover stuck and the deck would never move on. */
+@media (hover: hover) {
+  .bv.is-running .bv-deck:hover .bv-card[data-pos="0"] .bv-rule-fill {
+    animation-play-state: paused;
+  }
+}
+
+/* The pause button stills everything, not just the deck. The index keeps
+   its entrance running so a press during it never freezes it half-risen. */
+.bv.is-paused .bv-drift,
+.bv.is-paused .lx-pv-sheen {
+  animation-play-state: paused;
+}
+
+.bv.is-paused .bv-topics {
+  animation-play-state: running, paused;
+}
+
+.bv-card[data-pos="out"] .bv-rule-fill {
+  transform: scaleX(1);
+}
+
+@keyframes bv-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* ── Pause control, on the photograph's corner ──────────────────────── */
+
+.bv-toggle {
+  position: absolute;
+  right: 0.9rem;
+  bottom: calc(16% + 0.9rem);
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--r-pill);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform var(--dur-instant) var(--ease-out-expo);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) 1.6s both;
+}
+
+.bv-toggle:hover {
+  transform: scale(1.05);
+}
+
+.bv-toggle:active {
+  transform: scale(0.95);
+}
+
+/* A narrow split column: the deck keeps its height while the square
+   shrinks, so the index would sit on the back cards. A taller box and the
+   index at the top keep them apart. */
+@media (min-width: 901px) and (max-width: 1199px) {
+  .bv {
+    aspect-ratio: 1 / 1.14;
+  }
+
+  .bv-topics {
+    top: 2%;
+  }
+}
+
+@media (max-width: 900px) {
+  .bv {
+    --bv-card-h: 11.5rem;
+    max-width: 30rem;
+    margin-inline: auto;
+    aspect-ratio: 1 / 1.08;
+  }
+
+  .bv-frame {
+    width: 78%;
+    height: 80%;
+  }
+
+  .bv-deck {
+    width: 88%;
+    bottom: 2%;
+  }
+
+  .bv .bv-card {
+    padding: 1.05rem 1.15rem 0.95rem;
+  }
+
+  /* The deck is wider here and reaches the photo's lower corner, so the
+     control moves to the top corner, clear of the cards. */
+  .bv-toggle {
+    top: 0.75rem;
+    bottom: auto;
+    right: 0.75rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .bv-topics {
+    display: none;
+  }
+}

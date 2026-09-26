@@ -1,3 +1,616 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===========================================================================
+   Cortexis — the design system
+
+   Warm ivory ground, warm near-black ink, one burnished copper accent.
+   Instrument Serif sets display type, Geist carries everything else.
+
+   Every colour, radius, duration and easing on the site should come from the
+   tokens below. A value typed inline somewhere else is a decision nobody made.
+   ========================================================================= */
+
+:root {
+  /* Ground and surfaces */
+  --ivory: #FAF8F4;
+  --paper: #FFFFFF;
+  --sand: #F2EDE4;
+  --sand-2: #E9E2D6;
+
+  /* Ink. Every step clears WCAG AA on ivory: 17.5, 10.9, 6.7 and 5.3 to 1. */
+  --ink: #16130F;
+  --ink-2: #3D3833;
+  --ink-3: #5E574F;
+  --ink-4: #6E665E;
+
+  /* Copper. --copper is the text-safe step (5.9:1); --copper-2 is for large
+     type, rules and fills only (4.1:1). */
+  --copper: #9A4A22;
+  --copper-2: #B8612E;
+  --copper-3: #7E3B1B;
+  --copper-tint: #F5E6D8;
+
+  --line: rgba(22, 19, 15, 0.1);
+  --line-strong: rgba(22, 19, 15, 0.22);
+
+  /* Glass over the silk background */
+  --glass: rgba(255, 253, 249, 0.62);
+  --glass-strong: rgba(255, 253, 249, 0.8);
+  --glass-sand: rgba(242, 237, 228, 0.55);
+  --glass-edge: rgba(255, 255, 255, 0.78);
+  --glass-lit:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 1px rgba(22, 19, 15, 0.03),
+    0 8px 24px rgba(22, 19, 15, 0.05);
+
+  /* Type */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-display: clamp(3.1rem, 1.35rem + 6.4vw, 8.4rem);
+  --text-h1: clamp(2.6rem, 1.5rem + 3.9vw, 5.25rem);
+  --text-h2: clamp(2.2rem, 1.35rem + 2.9vw, 4.25rem);
+  --text-h3: clamp(1.2rem, 1.05rem + 0.45vw, 1.45rem);
+
+  /* Radius: sized by the element, never one value for everything */
+  --r-xs: 4px;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 28px;
+  --r-pill: 999px;
+
+  /* Elevation: a background step and a hairline first; shadow only when an
+     element genuinely floats. Layered from one light source. */
+  --shadow-raised:
+    0 1px 1px rgba(22, 19, 15, 0.03),
+    0 2px 4px rgba(22, 19, 15, 0.03),
+    0 8px 20px rgba(22, 19, 15, 0.04);
+  --shadow-float:
+    0 1px 1px rgba(22, 19, 15, 0.04),
+    0 4px 8px rgba(22, 19, 15, 0.04),
+    0 16px 32px rgba(22, 19, 15, 0.06),
+    0 32px 64px rgba(22, 19, 15, 0.05);
+
+  /* Motion. Duration is chosen by the size of the change, never per component. */
+  --dur-instant: 90ms;
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 420ms;
+  --dur-hero: 1100ms;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-panel: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+
+  --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 3rem);
+  --measure: 66ch;
+  --nav-h: 76px;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: var(--ivory);
+  color-scheme: only light;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  background-color: var(--ivory);
+  overflow-x: hidden;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Instrument Serif ships one weight. Without this, every `font-bold` on an h1
+   would make the browser smear a fake bold over it. */
+h1,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: -0.012em;
+  line-height: 1.04;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--copper-tint);
+  color: var(--ink);
+}
+
+/* No border-radius here: browsers already draw the outline along the
+   element's own corners, and a fixed 4px squared off every pill. */
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
+}
+
+[id] {
+  scroll-margin-top: calc(var(--nav-h) + 16px);
+}
+
+.page-container {
+  min-height: calc(100vh - var(--nav-h) - 260px);
+  padding-top: 20px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Type helpers ────────────────────────────────────────────────────── */
+
+.lx-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-display);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.lx-h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-h2);
+  line-height: 1;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+}
+
+.lx-italic,
+h1 em,
+h2 em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--copper);
+}
+
+.lx-lede {
+  font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--ink-3);
+  max-width: 54ch;
+}
+
+/* A numbered label: "01  Services". Sentence case, not tracked capitals. */
+.lx-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+.lx-label-num {
+  color: var(--copper);
+}
+.lx-label::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  align-self: center;
+  background: var(--line-strong);
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+
+.lx-wrap {
+  width: 100%;
+  max-width: 1360px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.lx-rule {
+  height: 1px;
+  border: 0;
+  background: var(--line);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────
+   One primary per view. The fill is ink; copper wipes across it on hover
+   from the left, and the arrow disc steps forward. Press goes in, not up. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: var(--r-pill);
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition:
+    color var(--dur-base) var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-instant) var(--ease-out-expo);
+}
+
+.btn:active {
+  transform: translate3d(0, 1px, 0) scale(0.985);
+}
+
+.btn-primary,
+.btn-orange,
+.lx-btn {
+  background: var(--ink);
+  color: var(--ivory) !important;
+  border-color: var(--ink);
+}
+
+.btn-primary::before,
+.btn-orange::before,
+.lx-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--copper);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.btn-primary:hover::before,
+.btn-primary:focus-visible::before,
+.btn-orange:hover::before,
+.btn-orange:focus-visible::before,
+.lx-btn:hover::before,
+.lx-btn:focus-visible::before {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.btn-primary:hover,
+.btn-orange:hover,
+.lx-btn:hover {
+  border-color: var(--copper);
+}
+
+.btn-secondary,
+.lx-btn-ghost {
+  background: transparent;
+  color: var(--ink) !important;
+  border-color: var(--line-strong);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus-visible,
+.lx-btn-ghost:hover,
+.lx-btn-ghost:focus-visible {
+  border-color: var(--ink);
+  background: var(--paper);
+}
+
+/* The arrow disc that sits at the end of a primary pill. */
+.lx-btn-disc {
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  margin: -0.45rem -0.95rem -0.45rem 0.1rem;
+  border-radius: 50%;
+  background: var(--ivory);
+  color: var(--ink);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+.lx-btn:hover .lx-btn-disc,
+.lx-btn:focus-visible .lx-btn-disc,
+.btn-primary:hover .lx-btn-disc {
+  transform: translate3d(3px, 0, 0) rotate(-45deg);
+}
+
+/* An inline text link whose underline wipes in from the left. */
+.lx-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: none;
+  padding-bottom: 2px;
+}
+.lx-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0.35);
+  transform-origin: left center;
+  opacity: 0.5;
+  transition:
+    transform var(--dur-slow) var(--ease-out-expo),
+    opacity var(--dur-base) var(--ease-out-expo);
+}
+.lx-link:hover::after,
+.lx-link:focus-visible::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+.lx-link svg {
+  transition: transform var(--dur-base) var(--ease-out-expo);
+}
+.lx-link:hover svg,
+.lx-link:focus-visible svg {
+  transform: translate3d(3px, 0, 0);
+}
+
+/* ── Cards ───────────────────────────────────────────────────────────── */
+
+/* Cards are frosted glass over the silk: a warm translucent tint, a lit top
+   edge and a white hairline. No backdrop blur; the silk is soft enough. */
+.card {
+  background-color: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit);
+  border-radius: var(--r-md);
+  transition:
+    border-color var(--dur-base) var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo),
+    box-shadow var(--dur-slow) var(--ease-out-expo);
+}
+
+.card:hover {
+  background-color: var(--glass-strong);
+}
+
+.service-card,
+.course-card,
+.internship-card,
+.blog-card {
+  height: 100%;
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--copper);
+}
+
+.team-img {
+  width: 100px;
+  height: 100px;
+  background-color: var(--sand);
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.testimonial-avatar {
+  width: 60px;
+  height: 60px;
+  background: var(--ink);
+  color: var(--ivory);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  margin: 0 auto 1rem;
+}
+
+/* ── Media ───────────────────────────────────────────────────────────────
+   Images live inside a fixed frame; on hover the picture moves, the frame
+   never does. */
+
+.lx-frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--sand);
+  isolation: isolate;
+}
+.lx-frame > img,
+.lx-frame > video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out-expo), filter 1.2s var(--ease-out-expo);
+}
+
+/* ── Utility Classes ─────────────────────────────────────────────────── */
+
+.text-center {
+  text-align: center;
+}
+
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+.mt-5 { margin-top: 3rem; }
+.my-5 { margin-top: 3rem; margin-bottom: 3rem; }
+.py-5 { padding-top: 3rem; padding-bottom: 3rem; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(6px); } }
+@keyframes zoomIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.96) }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1) }
+}
+@keyframes zoomOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1) }
+  to   { opacity: 0; transform: translate(-50%, -50%) scale(0.96) }
+}
+.animate-fadeIn { animation: fadeIn var(--dur-base) var(--ease-out-expo); }
+[data-state="open"].animate-fadeIn { animation: fadeIn var(--dur-fast) var(--ease-out-expo); }
+[data-state="closed"].animate-fadeOut { animation: fadeOut var(--dur-fast) var(--ease-in); }
+[data-state="open"].animate-zoomIn { animation: zoomIn var(--dur-base) var(--ease-out-expo); }
+[data-state="closed"].animate-zoomOut { animation: zoomOut var(--dur-fast) var(--ease-in); }
+
+/* ── Shared entrance choreography ─────────────────────────────────────
+   Used by the home hero and every PageHero. CSS keyframes rather than GSAP,
+   so the prerendered HTML reaches its end state with or without script. */
+
+/* Line masks: 105% so descenders clear the clip. */
+.lx-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.lx-line > span {
+  display: block;
+  animation: lx-line-in var(--dur-hero) var(--ease-out-expo) both;
+  animation-delay: calc(120ms + var(--i, 0) * 90ms);
+}
+
+@keyframes lx-line-in {
+  from { transform: translate3d(0, 105%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes lx-rise {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes lx-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lx-frame-open {
+  from { clip-path: inset(10% 7% 0% 7% round var(--r-lg)); }
+  to { clip-path: inset(0% 0% 0% 0% round var(--r-lg)); }
+}
+
+@keyframes lx-film-settle {
+  from { transform: scale(1.14); }
+  to { transform: scale(1); }
+}
+
+/* A slow light sweep across a photograph (.lx-pv-sheen and the hero visuals). */
+@keyframes lx-sheen {
+  0% { transform: translate3d(-60%, 0, 0); }
+  35%, 100% { transform: translate3d(60%, 0, 0); }
+}
+
+/* The gentle bob of floating glass chips. */
+@keyframes lx-float {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -10px, 0); }
+}
+
+
+/* ── Route loading ───────────────────────────────────────────────────── */
+
+.lx-route-loading {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+.lx-route-loading span {
+  display: block;
+  width: 120px;
+  height: 1px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.lx-route-loading span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--copper-2);
+  transform: translateX(-100%);
+  animation: lx-sweep 1.4s linear infinite;
+}
+@keyframes lx-sweep {
+  to { transform: translateX(100%); }
+}
+
+/* ── Reduced motion: a calmer second choreography, not a deleted one ─── */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  /* Loading spinners and pulses still run: they report state, not mood. */
+  *:not(.animate-spin):not(.animate-pulse),
+  *:not(.animate-spin):not(.animate-pulse)::before,
+  *:not(.animate-spin):not(.animate-pulse)::after {
+    animation-duration: 0.01ms !important;
+    /* Without this an entrance with fill "both" holds its start state for
+       its whole delay, then snaps to the end. */
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

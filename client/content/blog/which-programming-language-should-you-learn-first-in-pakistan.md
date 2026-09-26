@@ -4,8 +4,8 @@ description: Not a ranked list. What local software houses actually post for, wh
 date: 2026-08-28
 tags: [careers, learning, jobs]
 targetQuery: which programming language should i learn first in pakistan
-image: /blog/which-programming-language-should-you-learn-first-in-pakistan.webp
-imageAlt: "Futuristic 3D glowing programming language symbols along a developer learning roadmap"
+image: /blog/covers/which-programming-language-should-you-learn-first-in-pakistan.webp
+imageAlt: "A laptop showing code beside a stack of notebooks, sunlight on the wall"
 ---
 
 Start with JavaScript if you want a job at a software house here. Start with Python if you want data, automation, or the gentlest possible beginning. Both are correct, the gap between them is far smaller than the internet suggests, and the thing that will actually decide how this goes for you is whether you finish anything at all.

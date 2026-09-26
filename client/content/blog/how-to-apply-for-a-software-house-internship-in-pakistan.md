@@ -4,8 +4,8 @@ description: When to apply for summer, what a one page CV with no experience sho
 date: 2026-08-28
 tags: [internships, careers, students]
 targetQuery: how to apply for internship in a software house in pakistan
-image: /blog/how-to-apply-for-a-software-house-internship-in-pakistan.webp
-imageAlt: "Modern developer workspace with glowing laptop and software engineering portfolio"
+image: /blog/covers/how-to-apply-for-a-software-house-internship-in-pakistan.webp
+imageAlt: "A laptop, printed pages and a pen spread across a wooden desk"
 ---
 
 Apply between March and May for a summer place, send a one page CV with a link somebody can click, and use the company's own application form if it has one. Most of the outcome is decided before anyone reads your email: whether a slot is open, whether you applied early enough to be in the pile, and whether there is any evidence on the page that you have built something.

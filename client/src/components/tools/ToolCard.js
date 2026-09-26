@@ -1,53 +1,29 @@
 import React from 'react';
-import { isImplemented } from '../../data/tools';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import ToolIcon from '../../learn/ToolIcon';
 
 /**
- * One tool in the catalogue.
+ * One tool in the catalogue: a compact glass row with the icon, the name, one
+ * line of description and an arrow disc. The full description lives on the
+ * tool's own page, so the catalogue reads as a list of names, not paragraphs.
  *
  * Memoised because the catalogue re-renders on every filter change while almost
  * every card's props are unchanged. `tool` objects come from a module-level
  * constant, so their identity is stable and the default shallow compare is
- * enough — no custom comparator needed.
+ * enough.
  */
 const ToolCard = ({ tool }) => (
-  <Link
-    to={`/tools/${tool.slug}`}
-    data-card
-    className={`cx-tool bg-white p-5 shadow-card flex flex-col relative transition-all duration-300 ${
-      isImplemented(tool.slug) ? 'border-orange-500/40 ring-1 ring-orange-500/20 hover:border-orange-500 hover:shadow-orange-500/10' : ''
-    }`}
-  >
-    <span className="cx-tool-wash" aria-hidden="true" />
-
-    {isImplemented(tool.slug) && (
-      <span className="absolute top-4 right-4 text-[10px] font-extrabold tracking-wider px-2 py-0.5 rounded-full bg-orange-500 text-white shadow-sm flex items-center gap-1">
-        <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-        LIVE TOOL
-      </span>
-    )}
-
-    <div className="relative flex items-start gap-3">
-      <span
-        className={`cx-tool-icon grid place-items-center h-10 w-10 shrink-0 rounded-xl ${
-          isImplemented(tool.slug) ? 'bg-orange-500/10 text-orange-600' : 'bg-indigo-500/10 text-indigo-600'
-        }`}
-      >
-        <ToolIcon category={tool.category} className="h-5 w-5" />
-      </span>
-      <h3 className="text-base font-semibold text-slate-900 leading-snug pt-1.5 pr-14">{tool.name}</h3>
-    </div>
-
-    <p className="relative mt-3 text-sm text-slate-600 flex-1">{tool.description}</p>
-
-    <span
-      className={`relative mt-4 inline-flex items-center gap-1.5 text-sm font-bold ${
-        isImplemented(tool.slug) ? 'text-orange-600' : 'text-indigo-600'
-      }`}
-    >
-      {isImplemented(tool.slug) ? 'Launch Tool' : 'Open tool'}
-      <span className="cx-tool-arrow" aria-hidden="true">→</span>
+  <Link to={`/tools/${tool.slug}`} data-card className="cx-tool">
+    <span className="cx-tool-icon" aria-hidden="true">
+      <ToolIcon category={tool.category} className="h-[18px] w-[18px]" />
+    </span>
+    <span className="cx-tool-body">
+      <h3 className="cx-tool-name">{tool.name}</h3>
+      <span className="cx-tool-desc">{tool.description}</span>
+    </span>
+    <span className="cx-tool-go" aria-hidden="true">
+      <ArrowUpRight size={14} strokeWidth={1.6} />
     </span>
   </Link>
 );

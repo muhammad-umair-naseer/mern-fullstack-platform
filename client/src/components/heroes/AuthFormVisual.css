@@ -1,0 +1,591 @@
+/* ── AuthFormVisual ──────────────────────────────────────────────────
+   One clock with the headline: the photograph opens at 300ms (PhotoVisual
+   frame), the form card rises at 450ms, the certificate turns into place
+   at 900ms and signs itself at 1.6s, the chip rises at 1.1s. After that
+   only the decoration loops: the seal turns once every forty seconds, a
+   light crosses the certificate, the chip and certificate drift a few
+   pixels. The form itself stays put. */
+
+.lx-afv {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  padding: 6rem 0 3.75rem;
+}
+
+/* ── The photograph: the room behind the form ───────────────────────── */
+
+.lx-afv-photo-pos {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 68%;
+}
+
+.lx-afv-photo {
+  width: 100%;
+  height: 100%;
+}
+
+/* A touch warmer, so the window light sits with the silk. */
+.lx-afv-photo img {
+  filter: saturate(0.9) sepia(0.08) brightness(1.02);
+  object-position: 30% 50%;
+}
+
+/* ── The form card ──────────────────────────────────────────────────── */
+
+.lx-afv-card {
+  position: relative;
+  z-index: 3;
+  width: min(100%, 24rem);
+  padding: clamp(1.4rem, 1rem + 1.2vw, 2rem);
+  border-radius: var(--r-lg);
+  background: color-mix(in srgb, var(--ivory) 74%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  backdrop-filter: blur(22px) saturate(1.3);
+  border: 1px solid color-mix(in srgb, var(--paper) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--paper) 90%, transparent),
+    var(--shadow-float);
+  animation: lx-rise 1s var(--ease-out-expo) 450ms both;
+}
+
+.lx-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* The flex gap does the spacing; a global paragraph margin would add 16px
+   under every hint, message and link line. */
+.lx-auth-form p {
+  margin: 0;
+}
+
+.lx-auth-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.lx-auth-input {
+  display: block;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition:
+    border-color var(--dur-base) var(--ease-out-expo),
+    box-shadow var(--dur-base) var(--ease-out-expo);
+}
+
+.lx-auth-input::placeholder {
+  color: var(--ink-4);
+}
+
+.lx-auth-input:hover {
+  border-color: var(--ink-4);
+}
+
+.lx-auth-input:focus {
+  outline: none;
+  border-color: var(--copper);
+  box-shadow: 0 0 0 4px var(--copper-tint);
+}
+
+.lx-auth-form .lx-auth-hint {
+  margin-top: 0.45rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+.lx-auth-submit {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding-block: 0.95rem;
+}
+
+.lx-auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lx-auth-switch {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--ink-3);
+}
+
+.lx-auth-switch .lx-link {
+  color: var(--copper);
+}
+
+/* The switch lines under the code form hold buttons, not links; they read
+   as the same copper text with the same underline on hover. */
+.lx-auth-form .lx-auth-switch + .lx-auth-switch {
+  margin-top: -0.7rem;
+}
+
+.lx-auth-textbtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  color: var(--copper);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--copper) 35%, transparent);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: text-decoration-color var(--dur-base) var(--ease-out-expo);
+}
+
+.lx-auth-textbtn:hover,
+.lx-auth-textbtn:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+.lx-auth-textbtn:disabled {
+  color: var(--ink-4);
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+/* The six digits, spaced like the slots in the chip. */
+.lx-auth-code {
+  padding-block: 0.9rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1.45rem;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+}
+
+/* Inline-block keeps an address that fits on one line whole (no break at
+   its hyphen); one longer than the line still wraps instead of overflowing. */
+.lx-auth-email {
+  display: inline-block;
+  max-width: 100%;
+  font-weight: 500;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* Messages inside the card: a tinted hairline box, dark enough text to
+   read at 14px on the frosted card. */
+.lx-auth-alert {
+  padding: 0.75rem 0.95rem;
+  border: 1px solid;
+  border-radius: var(--r-sm);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  animation: lx-rise 0.5s var(--ease-out-expo) both;
+}
+
+.lx-auth-alert--error {
+  color: #9B2226;
+  border-color: rgba(155, 34, 38, 0.28);
+  background: rgba(155, 34, 38, 0.06);
+}
+
+.lx-auth-alert--ok {
+  color: #2F5D3A;
+  border-color: rgba(47, 93, 58, 0.28);
+  background: rgba(47, 93, 58, 0.06);
+}
+
+.lx-auth-alert--warn {
+  color: var(--copper-3);
+  border-color: color-mix(in srgb, var(--copper) 30%, transparent);
+  background: color-mix(in srgb, var(--copper-tint) 60%, transparent);
+}
+
+/* ── The certificate: what every course ends in ─────────────────────── */
+
+.lx-afv-cert-pos {
+  position: absolute;
+  z-index: 2;
+  left: -2.5rem;
+  bottom: -0.75rem;
+  width: 13rem;
+}
+
+.lx-afv-cert {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  aspect-ratio: 1.414 / 1;
+  padding: 1.05rem 1rem 0.7rem;
+  overflow: hidden;
+  border-radius: var(--r-xs);
+  background: var(--paper);
+  box-shadow: var(--shadow-float);
+  transform: rotate(-5deg);
+  animation:
+    lx-afv-cert-in 1.3s var(--ease-out-expo) 900ms both,
+    lx-afv-cert-bob 9s ease-in-out 2.4s infinite alternate;
+}
+
+/* The inner keyline every printed certificate carries. */
+.lx-afv-cert::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid color-mix(in srgb, var(--copper-2) 45%, transparent);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.lx-afv-cert-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.lx-afv-cert-sub {
+  margin-top: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--copper);
+}
+
+.lx-afv-cert-rule {
+  width: 58%;
+  height: 1px;
+  margin: 0.5rem 0 0.2rem;
+  background: var(--copper-2);
+  transform-origin: center;
+  animation: lx-afv-rule 1s var(--ease-out-expo) 1.4s both;
+}
+
+.lx-afv-sign {
+  position: relative;
+  width: 4.6rem;
+  height: 1.3rem;
+  overflow: hidden;
+}
+
+.lx-afv-sign svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* A strip of paper that slides off the signature, left to right, as if
+   the pen were writing it. */
+.lx-afv-sign-wipe {
+  position: absolute;
+  inset: -2px;
+  background: var(--paper);
+  transform: translate3d(105%, 0, 0);
+  animation: lx-afv-wipe 1.2s var(--ease-in-out) 1.6s both;
+}
+
+.lx-afv-cert-id {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-left: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-4);
+}
+
+.lx-afv-seal {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.45rem;
+  display: grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+}
+
+.lx-afv-seal-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: lx-afv-spin 40s linear infinite;
+}
+
+.lx-afv-seal-ring text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  fill: var(--copper);
+}
+
+.lx-afv-seal-core {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--copper-2);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px color-mix(in srgb, var(--copper-2) 45%, transparent);
+}
+
+/* A light that crosses the sheet once every eight seconds. */
+.lx-afv-cert-sheen {
+  position: absolute;
+  inset: -30% -70%;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    color-mix(in srgb, var(--copper-tint) 70%, transparent) 50%,
+    transparent 58%
+  );
+  transform: translate3d(-55%, 0, 0);
+  animation: lx-afv-sheen 8s var(--ease-in-out) 3s infinite;
+  pointer-events: none;
+}
+
+@keyframes lx-afv-cert-in {
+  from { opacity: 0; transform: translate3d(0, 28px, 0) rotate(-14deg) scale(0.92); }
+  to { opacity: 1; transform: rotate(-5deg); }
+}
+
+@keyframes lx-afv-cert-bob {
+  from { transform: rotate(-5deg); }
+  to { transform: translate3d(0, -8px, 0) rotate(-3.5deg); }
+}
+
+@keyframes lx-afv-rule {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes lx-afv-wipe {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(105%, 0, 0); }
+}
+
+@keyframes lx-afv-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes lx-afv-sheen {
+  0% { transform: translate3d(-55%, 0, 0); }
+  30%, 100% { transform: translate3d(55%, 0, 0); }
+}
+
+/* ── The chip: the step after the form ──────────────────────────────── */
+
+.lx-afv-chip-pos {
+  position: absolute;
+  z-index: 2;
+  top: 0.9rem;
+  left: -2rem;
+}
+
+.lx-afv-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.8rem 0.95rem 0.85rem;
+  border-radius: var(--r-md);
+  animation:
+    lx-rise 1s var(--ease-out-expo) 1.1s both,
+    lx-afv-float 7s ease-in-out 2.4s infinite alternate;
+}
+
+.lx-afv-chip-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1;
+  color: var(--ink-3);
+}
+
+.lx-afv-slots {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.lx-afv-slot {
+  display: grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 1.55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+}
+
+.lx-afv-dot {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.lx-afv-check {
+  display: grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-left: 0.3rem;
+  border-radius: 50%;
+  background: var(--copper);
+  color: var(--ivory);
+}
+
+.lx-afv-track {
+  position: relative;
+  width: 9.5rem;
+  height: 3px;
+  margin: 0.2rem 0 0.1rem;
+  border-radius: var(--r-pill);
+  background: var(--line-strong);
+}
+
+.lx-afv-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--copper-2);
+  transform-origin: left center;
+  transform: scaleX(0.62);
+  animation: lx-afv-fill 1.8s var(--ease-out-expo) 1.6s both;
+}
+
+/* A full-width runner whose right edge carries the marker, so the marker
+   travels with a transform rather than a left offset. */
+.lx-afv-runner {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(-38%, 0, 0);
+  animation: lx-afv-run 1.8s var(--ease-out-expo) 1.6s both;
+}
+
+.lx-afv-runner::before,
+.lx-afv-runner::after {
+  content: "";
+  position: absolute;
+  right: -0.3rem;
+  top: 50%;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-top: -0.3rem;
+  border-radius: 50%;
+}
+
+.lx-afv-runner::after {
+  background: var(--copper);
+  box-shadow: 0 0 0 3px var(--paper);
+}
+
+.lx-afv-runner::before {
+  border: 1px solid var(--copper-2);
+  animation: lx-afv-ping 2.8s var(--ease-out-quint) 3.4s infinite;
+}
+
+@keyframes lx-afv-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(0.62); }
+}
+
+@keyframes lx-afv-run {
+  from { transform: translate3d(-100%, 0, 0); }
+  to { transform: translate3d(-38%, 0, 0); }
+}
+
+@keyframes lx-afv-ping {
+  0% { opacity: 0.9; transform: scale(1); }
+  70%, 100% { opacity: 0; transform: scale(3.4); }
+}
+
+@keyframes lx-afv-float {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -9px, 0); }
+}
+
+/* ── Mid widths: the column is barely wider than the card, so the photo
+   and certificate lean out into the gutter to stay in view. ─────────── */
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  .lx-afv-card {
+    width: min(100%, 21.5rem);
+  }
+
+  .lx-afv-photo-pos {
+    left: -2.5rem;
+    width: 74%;
+  }
+
+  .lx-afv-cert-pos {
+    left: -5rem;
+    width: 11.5rem;
+  }
+
+  .lx-afv-chip-pos {
+    left: -4rem;
+  }
+}
+
+/* ── Narrow: the photograph becomes a band the card rises out of ──────── */
+
+@media (max-width: 900px) {
+  .lx-afv {
+    display: block;
+    padding: 8.5rem 0 0;
+  }
+
+  .lx-afv-photo-pos {
+    right: 0;
+    bottom: auto;
+    width: auto;
+    height: 13rem;
+  }
+
+  /* The band shows only its top half above the card: frame the laptop
+     and the coffee rather than the window frame. */
+  .lx-afv-photo img {
+    object-position: 40% 60%;
+  }
+
+  .lx-afv-card {
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .lx-afv-cert-pos {
+    left: auto;
+    bottom: auto;
+    right: -0.25rem;
+    top: -1.5rem;
+    width: 10.5rem;
+  }
+
+  .lx-afv-chip-pos {
+    top: 1rem;
+    left: 1rem;
+  }
+}
+
+/* Hidden rather than removed on phones: toggling display would restart
+   every entrance inside the chip whenever the width crossed this line. */
+@media (max-width: 600px) {
+  .lx-afv-chip-pos {
+    visibility: hidden;
+  }
+}

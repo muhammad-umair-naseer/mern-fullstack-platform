@@ -1,0 +1,197 @@
+/* ── Studio reel: a pinned horizontal gallery ──────────────────────── */
+
+.lx-reel {
+  --reel-progress: 0;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1.75rem, 1rem + 2.5vw, 3rem);
+  padding: clamp(3rem, 2rem + 3vw, 5rem) 0;
+}
+
+.lx-reel-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 1rem 2rem;
+}
+
+.lx-reel-head .lx-label {
+  grid-column: 1 / -1;
+}
+
+.lx-reel-head h2 {
+  margin: 0;
+}
+
+/* Frame counter over a hairline that fills with the scroll. */
+.lx-reel-meta {
+  display: grid;
+  justify-items: end;
+  gap: 0.7rem;
+  margin-bottom: 0.9rem;
+}
+
+.lx-reel-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+}
+
+.lx-reel-now::before {
+  content: attr(data-now);
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--copper);
+}
+
+.lx-reel-progress {
+  position: relative;
+  display: block;
+  width: clamp(120px, 14vw, 220px);
+  height: 1px;
+  background: var(--line-strong);
+  overflow: hidden;
+}
+
+.lx-reel-progress span {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(var(--reel-progress));
+  transform-origin: left center;
+}
+
+.lx-reel-track {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1rem, 0.5rem + 1.5vw, 2rem);
+  list-style: none;
+  margin: 0;
+  /* Starts level with the heading: the same inset .lx-wrap gets from its
+     1360px cap, and never less than the gutter. */
+  padding: 0 max(var(--gutter), calc((100% - 1360px) / 2 + var(--gutter)));
+  width: max-content;
+  will-change: transform;
+}
+
+.lx-reel-item figure {
+  margin: 0;
+}
+
+.lx-reel-frame {
+  position: relative;
+  overflow: hidden;
+  height: clamp(18rem, 52vh, 34rem);
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-md);
+  background: var(--sand);
+  box-shadow: var(--shadow-raised);
+}
+
+.lx-reel-item.is-wide .lx-reel-frame {
+  aspect-ratio: 3 / 2;
+  height: clamp(15rem, 44vh, 29rem);
+}
+
+/* Wider than its frame so the drift never shows an edge. max-width has to be
+   lifted: the global img reset caps it at 100%, which left a sand strip down
+   the right side of every frame. */
+.lx-reel-img {
+  position: absolute;
+  top: 0;
+  left: -8%;
+  width: 116%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lx-reel-item figcaption {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+}
+
+.lx-reel-item figcaption span {
+  color: var(--copper);
+}
+
+/* Phones and reduced motion: a swipeable row, no pin. Frames are sized so
+   the next one always peeks in from the edge, which is the swipe cue. */
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+  .lx-reel {
+    min-height: 0;
+  }
+
+  /* Snaps to the same inset as the padding, so on a wide screen under
+     reduced motion the first frame still lines up with the heading. */
+  .lx-reel-track {
+    width: auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(var(--gutter), calc((100% - 1360px) / 2 + var(--gutter)));
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+  }
+
+  .lx-reel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The row runs edge to edge inside a clipped section, so the focus ring
+     sits inside it rather than outside where it would be cut off. */
+  .lx-reel-track:focus-visible {
+    outline-offset: -2px;
+    border-radius: var(--r-md);
+  }
+
+  .lx-reel-item {
+    scroll-snap-align: start;
+    flex: none;
+  }
+
+  .lx-reel-frame {
+    height: clamp(15rem, 62vw, 22rem);
+  }
+
+  .lx-reel-item.is-wide .lx-reel-frame {
+    height: clamp(12.5rem, 50vw, 18rem);
+  }
+
+  .lx-reel-img {
+    left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 620px) {
+  .lx-reel-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lx-reel-meta {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.25rem 0 0;
+  }
+
+  .lx-reel-progress {
+    width: 96px;
+  }
+}

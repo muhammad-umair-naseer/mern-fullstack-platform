@@ -1,9 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import { POSTS } from '../data/blog.generated';
 import PostCard, { CATEGORY } from '../components/PostCard';
+import PageHero from '../components/PageHero';
+import { useGridReveal } from '../hooks/useGridReveal';
+import BlogVisual from '../components/heroes/BlogVisual';
 import Seo from '../seo/Seo';
 import { breadcrumbs, itemList } from '../seo/schema';
 import { SITE } from '../seo/site';
+
+const labelOf = (p) => (CATEGORY[p.category] || {}).label || 'Notes';
+
+// The hero's deck of titles, in the order the grid lists them.
+const DECK = POSTS.map((p) => ({ slug: p.slug, title: p.title, label: labelOf(p), minutes: p.minutes }));
 
 const Blog = () => {
   const [cat, setCat] = useState('All');
@@ -12,7 +20,7 @@ const Blog = () => {
   const categories = useMemo(() => {
     const seen = [];
     POSTS.forEach((p) => {
-      const label = (CATEGORY[p.category] || {}).label || 'Notes';
+      const label = labelOf(p);
       if (!seen.includes(label)) seen.push(label);
     });
     return ['All', ...seen];
@@ -22,14 +30,14 @@ const Blog = () => {
     () =>
       cat === 'All'
         ? POSTS
-        : POSTS.filter((p) => ((CATEGORY[p.category] || {}).label || 'Notes') === cat),
+        : POSTS.filter((p) => labelOf(p) === cat),
     [cat]
   );
 
-  const [lead, ...rest] = filtered;
+  const gridRef = useGridReveal([filtered]);
 
   return (
-    <main className="bg-gray-50 text-gray-800 min-h-screen">
+    <main className="text-ink-2 min-h-screen">
       <Seo
         title="Writing on software, search and free tools"
         description={`Straight answers from the ${SITE.name} team on building software, what it costs, learning to code, and the tools we give away free.`}
@@ -40,56 +48,54 @@ const Blog = () => {
         ]}
       />
 
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-14 md:py-16">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-orange-600">
-            From the team
-          </p>
-          <h1 className="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight text-black">
-            Writing
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-600">
-            What things cost, what actually works, and where the honest answer is no. Written by
-            the people who build it.
-          </p>
-        </div>
-      </header>
+      <PageHero
+        label="Writing"
+        lines={['Plain answers,', <em>written down.</em>]}
+        lede="What things cost, what works, and when the answer is no."
+        actions={[{ href: '#posts', label: 'Start reading', primary: true }]}
+        visual={<BlogVisual posts={DECK} />}
+      />
 
-      <div className="border-b border-slate-200 bg-white/70">
-        <div className="mx-auto max-w-6xl px-6 py-4 flex flex-wrap gap-2">
+      <section id="posts" className="lx-wrap pt-0 pb-20 md:pb-28" aria-labelledby="posts-heading">
+        <h2 id="posts-heading" className="visually-hidden">All posts</h2>
+
+        <div
+          role="group"
+          aria-label="Filter by topic"
+          className="lx-glass rounded-full p-1.5 flex gap-1 w-fit max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           {categories.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setCat(c)}
               aria-pressed={cat === c}
-              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+              className={`h-10 px-4 rounded-full focus-visible:rounded-full focus-visible:outline-offset-0 text-sm whitespace-nowrap border transition-colors duration-200 ${
                 cat === c
-                  ? 'bg-orange-600 text-white'
-                  : 'border border-slate-300 bg-white text-slate-700 hover:border-orange-400 hover:text-orange-700'
+                  ? 'bg-ink text-ivory border-ink'
+                  : 'bg-transparent text-ink-2 border-transparent hover:border-[color:var(--line-strong)] hover:bg-white/60'
               }`}
             >
               {c}
             </button>
           ))}
         </div>
-      </div>
 
-      <section className="mx-auto max-w-6xl px-6 py-12">
-        {!filtered.length ? (
-          <p className="text-slate-600">Nothing here yet.</p>
-        ) : (
-          <div className="grid gap-7">
-            <PostCard post={lead} featured />
-            {rest.length > 0 && (
-              <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-                {rest.map((p) => (
-                  <PostCard key={p.slug} post={p} />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <div ref={gridRef} className="mt-6 md:mt-10">
+          {!filtered.length ? (
+            <p className="text-ink-3">Nothing here yet.</p>
+          ) : (
+            // The newest post takes two columns and two rows; with twelve posts
+            // that leaves every row of the grid full.
+            <div className="grid gap-6 lg:gap-7 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((p, i) => (
+                <div key={p.slug} className={i === 0 ? 'sm:col-span-2 lg:row-span-2 grid' : 'grid'}>
+                  <PostCard post={p} featured={i === 0} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     </main>
   );

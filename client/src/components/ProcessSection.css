@@ -1,100 +1,134 @@
-/* Process Section Component Styles */
-.process-section {
-  padding: 80px 0;
-  background: #fafbfc;
-  border-top: 1px solid rgba(15, 23, 42, 0.06);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-  position: relative;
+/* ── Process: a held left column, the steps passing on the right ────── */
+
+.lx-process {
+  padding: clamp(3rem, 2rem + 3vw, 5rem) 0 clamp(3.5rem, 2rem + 4vw, 6rem);
 }
 
-.process-grid {
+.lx-process-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  margin-top: 48px;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(2.5rem, 1rem + 6vw, 8rem);
+  align-items: start;
+}
+
+/* The aside has to run the full height of the steps, or the sticky block
+   inside it has no room to hold: with the grid's align-items: start it was
+   only as tall as its own content, so the heading and photo scrolled away
+   with everything else. */
+.lx-process-aside {
+  align-self: stretch;
+}
+
+.lx-process-sticky {
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+.lx-process-sticky .lx-label {
+  margin-bottom: 1.5rem;
+}
+
+.lx-process-sticky h2 {
+  margin: 0 0 1.25rem;
+}
+
+.lx-process-photo {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-raised);
+}
+
+/* Taller than the frame so the scroll drift never shows an edge. */
+.lx-process-drift {
+  position: absolute;
+  inset: -7% 0;
+}
+
+.lx-process-drift img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.lx-steps {
   position: relative;
+  padding-left: clamp(1.5rem, 1rem + 2vw, 3rem);
 }
 
-.process-card {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 18px;
-  padding: 28px 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.process-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--step-color, #f97316);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
-}
-
-.process-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.process-num {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #cbd5e1;
-  letter-spacing: -0.02em;
-  transition: color 0.3s ease;
-}
-
-.process-card:hover .process-num {
-  color: var(--step-color, #f97316);
-}
-
-.process-icon-wrap {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--step-color, #f97316);
-  transition: transform 0.25s ease;
-}
-
-.process-card:hover .process-icon-wrap {
-  transform: scale(1.1);
-  background: #ffffff;
-}
-
-.process-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 10px;
-}
-
-.process-desc {
-  font-size: 0.88rem;
-  color: #64748b;
-  line-height: 1.6;
+.lx-steps-list {
+  list-style: none;
   margin: 0;
+  padding: 0;
 }
 
-@media (max-width: 992px) {
-  .process-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.lx-steps-rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
 }
 
-@media (max-width: 576px) {
-  .process-grid {
+.lx-steps-progress {
+  position: absolute;
+  inset: 0;
+  background: var(--copper-2);
+  transform-origin: top center;
+}
+
+.lx-step {
+  display: grid;
+  grid-template-columns: clamp(4.5rem, 3rem + 4vw, 8rem) minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: clamp(2.25rem, 1.75rem + 2vw, 3.75rem) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.lx-step:first-of-type {
+  padding-top: 0;
+}
+
+.lx-step-num {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 2rem + 3vw, 5.5rem);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  opacity: 0.18;
+  transition:
+    opacity var(--dur-slow) var(--ease-out-expo),
+    color var(--dur-slow) var(--ease-out-expo);
+}
+
+.lx-step.is-current .lx-step-num {
+  color: var(--copper);
+  opacity: 1;
+}
+
+.lx-step-title {
+  margin: 0.25rem 0 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 1.5rem + 1.2vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -0.012em;
+}
+
+.lx-step-desc {
+  margin: 0;
+  color: var(--ink-3);
+  max-width: 46ch;
+}
+
+@media (max-width: 960px) {
+  .lx-process-grid {
     grid-template-columns: 1fr;
   }
-  .process-section {
-    padding: 60px 0;
+
+  .lx-process-sticky {
+    position: static;
   }
 }

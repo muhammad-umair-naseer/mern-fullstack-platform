@@ -1,0 +1,66 @@
+{
+  "license": "Unsplash License (https://unsplash.com/license): free to use, attribution appreciated",
+  "note": "Blog covers. Each file is the Unsplash photo cropped to 1600x900 (16:9, the card aspect) and encoded to WebP. One photo per post; none is reused elsewhere on the site.",
+  "covers": {
+    "are-free-online-certificates-worth-anything.webp": {
+      "photographer": "Art Lasovsky",
+      "profile": "https://unsplash.com/@artlasovsky",
+      "photo": "https://unsplash.com/photos/gold-fountain-pen-on-white-8XddFc6NkBY"
+    },
+    "how-to-apply-for-a-software-house-internship-in-pakistan.webp": {
+      "photographer": "2H Media",
+      "profile": "https://unsplash.com/@2hmedia",
+      "photo": "https://unsplash.com/photos/a-laptop-computer-sitting-on-top-of-a-wooden-desk-3q4V539j_bw"
+    },
+    "how-to-automate-whatsapp-order-confirmation-for-cod.webp": {
+      "photographer": "Compagnons",
+      "profile": "https://unsplash.com/@sigmund",
+      "photo": "https://unsplash.com/photos/a-person-holding-a-brown-paper-bag-on-top-of-a-table-mErtCMDgUEM"
+    },
+    "instagram-comment-to-dm-without-manychat.webp": {
+      "photographer": "Samuell Morgenstern",
+      "profile": "https://unsplash.com/@photos_muka",
+      "photo": "https://unsplash.com/photos/a-person-taking-a-picture-with-a-cell-phone-YnuHOJ0uYq8"
+    },
+    "internship-certificate-your-university-will-accept.webp": {
+      "photographer": "Cytonn Photography",
+      "profile": "https://unsplash.com/@cytonn_photography",
+      "photo": "https://unsplash.com/photos/person-writing-on-white-paper-GJao3ZTX9gU"
+    },
+    "is-it-safe-to-upload-pdf-to-online-compressor.webp": {
+      "photographer": "SHAN LU",
+      "profile": "https://unsplash.com/@toyamakanna",
+      "photo": "https://unsplash.com/photos/white-envelope-with-brown-stamp-j0VL_haSyhM"
+    },
+    "what-a-mobile-app-really-costs-in-pakistan.webp": {
+      "photographer": "Hal Gatewood",
+      "profile": "https://unsplash.com/@halacious",
+      "photo": "https://unsplash.com/photos/illustration-of-smartphone-application-screenshots-weRQAu9TA-A"
+    },
+    "what-a-website-actually-costs-in-pakistan.webp": {
+      "photographer": "Sora Sagano",
+      "profile": "https://unsplash.com/@sorasagano",
+      "photo": "https://unsplash.com/photos/silver-imac-on-brown-wooden-desk-3BMIntVUsjQ"
+    },
+    "whatsapp-chatbot-for-islamabad-real-estate-agents.webp": {
+      "photographer": "Clay Banks",
+      "profile": "https://unsplash.com/@claybanks",
+      "photo": "https://unsplash.com/photos/modern-a-frame-living-room-with-forest-view-oIx5RmkC9Ow"
+    },
+    "whatsapp-green-tick-pakistan-what-actually-qualifies.webp": {
+      "photographer": "Vitaly Gariev",
+      "profile": "https://unsplash.com/@silverkblack",
+      "photo": "https://unsplash.com/photos/fashion-designer-on-the-phone-working-on-a-laptop-kk4J92iaSBk"
+    },
+    "which-programming-language-should-you-learn-first-in-pakistan.webp": {
+      "photographer": "Emile Perron",
+      "profile": "https://unsplash.com/@emilep",
+      "photo": "https://unsplash.com/photos/macbook-pro-showing-programming-language-xrVDYZRGdw4"
+    },
+    "will-whatsapp-ban-my-number-for-using-a-bot.webp": {
+      "photographer": "Mehrpouya H",
+      "profile": "https://unsplash.com/@mehrpouya",
+      "photo": "https://unsplash.com/photos/a-person-looking-at-the-phone-48pVIPcloXA"
+    }
+  }
+}

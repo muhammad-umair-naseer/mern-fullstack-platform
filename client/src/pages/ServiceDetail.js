@@ -1,11 +1,43 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CheckCircle2, Package, ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, KeyRound } from 'lucide-react';
 import { serviceBySlug, relatedServices } from '../data/services';
-import { serviceImage } from '../data/serviceImages';
+import { serviceImage, serviceHeroPhoto } from '../data/serviceImages';
+import PageHero from '../components/PageHero';
+import ServiceDetailVisual from '../components/heroes/ServiceDetailVisual';
+import { photos } from '../assets/lux';
+import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import Seo from '../seo/Seo';
 import { breadcrumbs, organization } from '../seo/schema';
 import { SITE, absolute } from '../seo/site';
+
+// Each service opens on its own photograph: the tall crop of the same picture
+// its card and share image use (data/serviceImages.js).
+const heroPhoto = (slug) => serviceHeroPhoto(slug) || photos.serviceWeb;
+
+// The service's own name as the headline, its last word set in the italic.
+const headline = (title) => {
+  const words = title.split(' ');
+  if (words.length < 2) return [<em key="t">{title}</em>];
+  return [words.slice(0, -1).join(' '), <em key="t">{words[words.length - 1]}</em>];
+};
+
+// The hero carries one short line; the full description stays in the meta
+// description and the structured data.
+const LEDE = {
+  'custom-software-development': 'Tailored software that scales with your operations.',
+  'ai-automation': 'AI agents, automation and custom LLM workflows.',
+  'saas-platform-development': 'Multi-tenant SaaS, secure and built to scale.',
+  'web-development': 'Custom web apps and responsive websites.',
+  'mobile-app-development': 'Native and cross-platform apps for iOS and Android.',
+  'wordpress-development': 'Custom themes, plugins and WooCommerce sites.',
+  'ui-ux-design': 'Intuitive, accessible interfaces, designed around users.',
+  'digital-marketing': 'Data-driven marketing that widens your reach.',
+  'e-commerce-solutions': 'Online stores with secure payments and inventory.',
+  'c-development': 'Fast applications, system software and games in C++.',
+  'python-development': 'Python for the web, automation and data.',
+  'ai-ml-solutions': 'Machine learning that automates work and finds insight.',
+};
 
 /**
  * One service, one URL.
@@ -19,14 +51,16 @@ import { SITE, absolute } from '../seo/site';
 const ServiceDetail = () => {
   const { slug } = useParams();
   const service = serviceBySlug(slug);
+  const revealRef = useRevealOnScroll();
+  const relatedRef = useRevealOnScroll();
 
   if (!service) {
     return (
       <main className="max-w-3xl mx-auto px-6 py-24 text-center">
         <Seo title="Service not found" description="That service is not listed." path={`/services/${slug}`} noindex />
-        <h1 className="text-2xl font-bold text-black">We do not list that service</h1>
-        <Link to="/services" className="mt-4 inline-block font-bold text-orange-600 hover:underline">
-          See everything we do
+        <h1 className="lx-h2">We do not list <em>that service.</em></h1>
+        <Link to="/services" className="lx-link mt-6">
+          See everything we do <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </main>
     );
@@ -35,7 +69,7 @@ const ServiceDetail = () => {
   const related = relatedServices(service.slug);
 
   return (
-    <main className="bg-gray-50 text-gray-800 min-h-screen">
+    <main className="text-ink min-h-screen">
       <Seo
         title={`${service.title} in Islamabad`}
         description={`${service.description} Built in Islamabad by ${SITE.name}.`.slice(0, 154)}
@@ -62,82 +96,77 @@ const ServiceDetail = () => {
         ]}
       />
 
-      <header className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 text-white">
-        <div className="max-w-5xl mx-auto px-6 py-16 md:py-20">
-          <Link to="/services" className="text-sm text-indigo-100/80 hover:text-white">
-            &larr; All services
-          </Link>
-          <p className="mt-4 text-xs font-bold uppercase tracking-wider text-indigo-100/90">
-            {service.category}
-          </p>
-          <h1 className="mt-2 text-3xl md:text-4xl font-extrabold tracking-tight">{service.title}</h1>
-          <p className="mt-4 max-w-2xl text-lg text-indigo-100/90">{service.description}</p>
-          <Link
-            to="/contact"
-            className="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 font-semibold text-indigo-700 shadow-lg transition hover:bg-indigo-50"
-          >
-            Talk to us about this <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </header>
+      <div className="lx-sd-hero">
+        <PageHero
+          back={{ to: '/services', label: 'All services' }}
+          label={service.category}
+          lines={headline(service.title)}
+          lede={LEDE[service.slug] || service.description}
+          actions={[{ to: '/contact', label: 'Talk to us about this', primary: true }]}
+          visual={<ServiceDetailVisual photo={heroPhoto(service.slug)} deliverables={service.deliverables} />}
+        />
+      </div>
 
-      <section className="max-w-5xl mx-auto px-6 py-14 grid md:grid-cols-2 gap-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-card">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-black">
-            <CheckCircle2 className="h-5 w-5 text-emerald-600" /> What this covers
-          </h2>
-          <ul className="mt-4 space-y-3">
-            {service.features.map((f) => (
-              <li key={f} className="flex gap-2.5 text-black font-medium">
-                <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" />
-                {f}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <section ref={revealRef} className="svd" aria-label={`${service.title}: scope and deliverables`}>
+        <div className="lx-wrap svd-grid">
+          <div className="svd-covers">
+            <span className="lx-label" data-reveal>What this covers</span>
+            <ol className="svd-rows">
+              {service.features.map((f, i) => (
+                <li key={f} className="svd-row" data-reveal>
+                  <span className="svd-row-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="svd-row-text">{f}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-card">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-black">
-            <Package className="h-5 w-5 text-indigo-600" /> What you get
-          </h2>
-          <ul className="mt-4 space-y-3">
-            {service.deliverables.map((d) => (
-              <li key={d} className="flex gap-2.5 text-black font-medium">
-                <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
-                {d}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-5 text-sm text-slate-600">
-            The code and the documentation are yours. We hand over a repository you own, not
-            access to something we keep.
-          </p>
+          <div className="svd-get" data-reveal>
+            <span className="lx-label">What you get</span>
+            <ul className="svd-get-list">
+              {service.deliverables.map((d) => (
+                <li key={d}>
+                  <span className="svd-tick" aria-hidden="true"><Check size={13} strokeWidth={2.4} /></span>
+                  {d}
+                </li>
+              ))}
+            </ul>
+            <p className="svd-own">
+              <KeyRound size={14} strokeWidth={1.75} aria-hidden="true" /> The repository and docs are yours.
+            </p>
+          </div>
         </div>
       </section>
 
       {related.length > 0 && (
-        <section className="max-w-5xl mx-auto px-6 pb-16">
-          <h2 className="text-2xl font-extrabold text-black">Often needed alongside</h2>
-          <div className="mt-6 grid sm:grid-cols-3 gap-4">
-            {related.map((r) => (
-              <Link
-                key={r.slug}
-                to={`/services/${r.slug}`}
-                className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <p className="text-xs font-bold uppercase tracking-wide text-orange-600">{r.category}</p>
-                <h3 className="mt-1 font-bold text-black group-hover:text-orange-700">{r.title}</h3>
-                <p className="mt-2 text-sm font-medium text-black leading-relaxed">{r.description}</p>
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-8 flex flex-wrap items-center gap-3 text-sm font-bold">
-            <Link to="/services" className="text-orange-700 hover:underline">All services</Link>
-            <span className="text-slate-300" aria-hidden="true">·</span>
-            <Link to="/courses" className="text-orange-700 hover:underline">Learn it yourself, free</Link>
-            <span className="text-slate-300" aria-hidden="true">·</span>
-            <Link to="/contact" className="text-orange-700 hover:underline">Get a quote</Link>
+        <section ref={relatedRef} className="svd-related" aria-labelledby="svd-related-title">
+          <div className="lx-wrap">
+            <div className="svd-related-head">
+              <h2 id="svd-related-title" className="svd-related-title" data-reveal>
+                Often needed <em>alongside.</em>
+              </h2>
+              <nav className="svd-links" aria-label="More from Cortexis" data-reveal>
+                <Link to="/services" className="lx-link">All services</Link>
+                <Link to="/courses" className="lx-link">Learn it free</Link>
+                <Link to="/contact" className="lx-link">Get a quote <ArrowRight size={15} aria-hidden="true" /></Link>
+              </nav>
+            </div>
+            <ul className="svd-cards">
+              {related.map((r) => (
+                <li key={r.slug} data-reveal>
+                  <Link to={`/services/${r.slug}`} className="svd-card">
+                    <div className="svd-card-frame lx-frame" data-reveal-media>
+                      <img src={serviceImage(r.slug)} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+                      <span className="svd-card-cat">{r.category}</span>
+                    </div>
+                    <div className="svd-card-body">
+                      <h3 className="svd-card-title">{r.title}</h3>
+                      <span className="svd-card-cta" aria-hidden="true"><ArrowUpRight size={17} /></span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       )}

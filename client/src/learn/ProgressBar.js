@@ -1,11 +1,11 @@
 import React from 'react';
 import './ProgressBar.css';
 
-/* Same props, same aria, same size and colours as before. The one change is the
-   property that moves: the fill scales on the compositor instead of animating
-   its width, which used to force layout on every frame for every bar on screen.
-   The 0–1 scale factor is handed to CSS as a custom property so the mount
-   animation and the value transition can share it. */
+/* Same props and aria as before. The fill scales on the compositor instead of
+   animating its width, and its colour, height and track now live in
+   ProgressBar.css (copper on a warm hairline track) rather than in utility
+   classes. The 0–1 scale factor is handed to CSS as a custom property so the
+   mount animation and the value transition can share it. */
 const ProgressBar = ({ percent, className = '' }) => {
   const value = Math.min(100, Math.max(0, Number(percent) || 0));
 
@@ -15,14 +15,14 @@ const ProgressBar = ({ percent, className = '' }) => {
 
   return (
     <div
-      className={`cx-pb h-2 rounded-full overflow-hidden ${className}`}
+      className={`cx-pb ${className}`}
       role="progressbar"
       aria-valuenow={percent}
       aria-valuemin={0}
       aria-valuemax={100}
     >
       <div
-        className={`cx-pb-fill ${state} h-full rounded-full bg-gradient-to-r from-indigo-500 to-sky-500`}
+        className={`cx-pb-fill ${state}`}
         style={{ '--cx-pb-value': String(value / 100) }}
       >
         {value > 0 && <span className="cx-pb-sheen" aria-hidden="true" />}

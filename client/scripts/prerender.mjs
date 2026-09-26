@@ -241,10 +241,11 @@ const renderRoute = async (route) => {
         await frame();
       }
       window.scrollTo(0, document.documentElement.scrollHeight);
-      // Two frames for the last trigger to settle, then let any scrub with
-      // smoothing catch up to its end value.
+      // Two frames for the last trigger to settle, then let the slowest
+      // entrance (image reveals run 1.3s) and any smoothed scrub reach their
+      // end values.
       await frame();
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 1500));
     });
 
     const html = await page.evaluate(() => {

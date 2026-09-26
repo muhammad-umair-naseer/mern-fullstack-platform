@@ -13,7 +13,7 @@ gsap.registerPlugin(useGSAP);
  */
 export function useIntroTimeline(selector = '[data-intro]', opts = {}) {
   const scope = useRef(null);
-  const { y = 26, duration = 0.65, stagger = 0.12, delay = 0.05 } = opts;
+  const { y = 18, duration = 1, stagger = 0.08, delay = 0.05 } = opts;
 
   useGSAP(
     () => {
@@ -26,16 +26,35 @@ export function useIntroTimeline(selector = '[data-intro]', opts = {}) {
       // element's natural position (no leftover transform) even if React
       // StrictMode double-invokes the effect and interrupts the tween.
       mm.add('(prefers-reduced-motion: no-preference)', () => {
+        // A page title rises out of a mask instead of fading: it wipes open
+        // from its own baseline while travelling up, like type being set.
+        const titles = items.filter((el) => el.tagName === 'H1');
+        const rest = items.filter((el) => el.tagName !== 'H1');
+        if (titles.length) {
+          gsap.fromTo(
+            titles,
+            { clipPath: 'inset(0% 0% 100% 0%)', y: 36 },
+            {
+              clipPath: 'inset(0% 0% -10% 0%)',
+              y: 0,
+              duration: 1.3,
+              ease: 'expo.out',
+              delay,
+              clearProps: 'clipPath,transform',
+            }
+          );
+        }
+        if (!rest.length) return;
         gsap.fromTo(
-          items,
+          rest,
           { opacity: 0, y },
           {
             opacity: 1,
             y: 0,
             duration,
-            ease: 'power3.out',
+            ease: 'expo.out',
             stagger,
-            delay,
+            delay: delay + (titles.length ? 0.2 : 0),
             overwrite: 'auto',
             clearProps: 'transform',
           }

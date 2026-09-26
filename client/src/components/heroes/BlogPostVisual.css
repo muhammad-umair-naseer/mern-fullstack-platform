@@ -1,0 +1,304 @@
+/* ── BlogPost hero: tighter than the house hero ────────────────────────
+   An article title is a sentence, not a six-word line, and the reader came
+   for the text below it. So: less padding, no minimum height, a smaller
+   headline and a wider copy column. Scoped to .bph, the wrapper BlogPost
+   puts round PageHero, so no other page is touched. */
+
+.bph .lx-ph {
+  padding: clamp(1.5rem, 0.75rem + 2.4vw, 3.25rem) 0 clamp(1.25rem, 0.75rem + 1.6vw, 2.5rem);
+}
+
+.bph .lx-wrap {
+  max-width: 1240px;
+}
+
+.bph .lx-ph-back {
+  margin-bottom: 1.1rem;
+}
+
+.bph .lx-ph-label {
+  margin-bottom: clamp(1rem, 0.8rem + 0.6vw, 1.5rem);
+}
+
+.bph .lx-ph-title {
+  font-size: clamp(2.25rem, 1.3rem + 3vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.024em;
+  text-wrap: balance;
+}
+
+.bph .lx-ph-meta {
+  margin-top: clamp(1.25rem, 1rem + 0.8vw, 1.9rem);
+}
+
+@media (min-width: 901px) {
+  .bph .lx-ph--split .lx-ph-grid {
+    min-height: 0;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: clamp(2rem, 0.5rem + 4vw, 5rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .bph .lx-ph--split .lx-ph-grid {
+    gap: 2rem;
+  }
+}
+
+/* The header used to open the sheet; now the sheet opens on whatever comes
+   first (the contents box), so its own top margin would double the sheet's
+   padding. */
+.bph + .cx-lv-sheet > :first-child {
+  margin-top: 0;
+}
+
+/* ── BlogPostVisual: the cover on its mat, the reading time on a dial ───
+   One clock: frame opens at 300ms (house keyframe), the mat draws out from
+   behind it from 650ms, the dial chip rises at 950ms and its arc sweeps to
+   the minutes from 1.15s. After that only slow things move: the photo's
+   drift, the sheen, the chip's float. */
+
+.bpv {
+  position: relative;
+  padding: 0 1.5rem 1.5rem 0;
+}
+
+/* The mat: a hairline sheet offset behind the photograph. Its reveal runs
+   from the top-left corner, so the visible L of it draws along. */
+.bpv-mat {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  right: 0;
+  bottom: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  background: var(--glass-sand);
+  animation: bpv-mat 1.6s var(--ease-out-expo) 650ms both;
+}
+
+@keyframes bpv-mat {
+  from { clip-path: inset(0 100% 100% 0 round var(--r-lg)); }
+  to { clip-path: inset(0 0 0 0 round var(--r-lg)); }
+}
+
+.bpv-frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-lg);
+  background: var(--sand);
+  box-shadow: var(--shadow-float);
+  animation: lx-frame-open 1.5s var(--ease-out-expo) 300ms both;
+}
+
+.bpv-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+/* Three layers so no two animations share a transform: GSAP writes the
+   scroll drift on .bpv-drift, CSS runs the slow drift on .bpv-kb, and the
+   image itself settles on arrival. */
+.bpv-drift {
+  position: absolute;
+  left: 0;
+  top: -6%;
+  width: 100%;
+  height: 112%;
+}
+
+.bpv-kb {
+  position: absolute;
+  inset: 0;
+  animation: bpv-kb 24s var(--ease-in-out) 2.4s infinite alternate;
+}
+
+@keyframes bpv-kb {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-2%, 1%, 0) scale(1.07); }
+}
+
+.bpv-kb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: lx-film-settle 2s var(--ease-out-expo) 300ms both;
+}
+
+/* ── The reading-time dial ──────────────────────────────────────────── */
+
+.bpv-chip {
+  position: absolute;
+  left: -1.25rem;
+  bottom: 3.25rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0.75rem 1.2rem 0.75rem 0.75rem;
+  border-radius: var(--r-md);
+  animation:
+    lx-rise 1s var(--ease-out-expo) 950ms both,
+    lx-float 7s ease-in-out 2.6s infinite alternate;
+}
+
+.bpv-dial {
+  flex: 0 0 auto;
+  width: 3.25rem;
+  height: 3.25rem;
+  overflow: visible;
+}
+
+.bpv-ticks {
+  fill: none;
+  stroke: var(--ink-4);
+  stroke-width: 2.5;
+  stroke-dasharray: 0.35 4.65;
+  stroke-dashoffset: 0.175;
+  opacity: 0.45;
+  transform: rotate(-90deg);
+  transform-origin: 24px 24px;
+}
+
+.bpv-track {
+  fill: rgba(255, 255, 255, 0.55);
+  stroke: var(--line);
+  stroke-width: 3;
+}
+
+/* The minutes, as a share of an hour, from twelve o'clock. */
+.bpv-arc {
+  fill: none;
+  stroke: var(--copper-2);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: var(--m) 60;
+  transform: rotate(-90deg);
+  transform-origin: 24px 24px;
+  animation: bpv-arc 1.6s var(--ease-out-expo) 1.15s both;
+}
+
+@keyframes bpv-arc {
+  from { stroke-dasharray: 0 60; }
+}
+
+.bpv-hand {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transform: rotate(var(--deg));
+  transform-origin: 24px 24px;
+  animation: bpv-hand 1.6s var(--ease-out-expo) 1.15s both;
+}
+
+@keyframes bpv-hand {
+  from { transform: rotate(0deg); }
+}
+
+.bpv-pin {
+  fill: var(--copper);
+}
+
+.bpv-chip-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bpv-chip-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.bpv-chip-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--ink-3);
+}
+
+@media (max-width: 900px) {
+  .bpv {
+    max-width: 36rem;
+    padding: 0 1rem 1rem 0;
+  }
+
+  .bpv-mat {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .bpv-chip {
+    left: 0.75rem;
+    bottom: 1.75rem;
+    padding: 0.6rem 1rem 0.6rem 0.6rem;
+  }
+
+  .bpv-dial {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .bpv-chip-value {
+    font-size: 1.7rem;
+  }
+}
+
+/* Off screen, the loops rest (BlogPostVisual toggles .is-resting). */
+.bpv.is-resting .bpv-kb,
+.bpv.is-resting .lx-pv-sheen,
+.bpv.is-resting .bpv-chip {
+  animation-play-state: paused;
+}
+
+/* Reduced motion: the photo still opens and the chip still arrives (the
+   house rule makes both instant), but the mat, the dial and the slow drift
+   start where they finish, so nothing lands a second after the rest. */
+@media (prefers-reduced-motion: reduce) {
+  .bpv-mat,
+  .bpv-kb,
+  .bpv-arc,
+  .bpv-hand {
+    animation: none;
+  }
+}
+
+/* ── Read next, under the article ───────────────────────────────────── */
+
+.bp-next {
+  margin-top: clamp(2.5rem, 2rem + 1.5vw, 3.5rem);
+  padding-top: clamp(1.75rem, 1.4rem + 1vw, 2.5rem);
+  border-top: 1px solid var(--line);
+}
+
+.bp-next-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 1.5rem + 1.2vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+}
+
+.bp-next-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
+}
+
+@media (min-width: 640px) {
+  .bp-next-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

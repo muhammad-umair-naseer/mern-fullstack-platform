@@ -1,20 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, RotateCcw } from 'lucide-react';
+import useCountUp from './useCountUp';
+import bringIntoView from './bringIntoView';
 import './Quiz.css';
 
 // Seven marks for the pass celebration. Their positions live in Quiz.css so the
 // component stays a component; this is only how many of them there are.
 const CHEER = [0, 1, 2, 3, 4, 5, 6];
 
+// Options are lettered, the way a printed paper is.
+const LETTERS = 'ABCDEFGH';
+
 // A stagger that keeps going forever stops reading as a sequence and starts
 // reading as a wait, so the index is capped and later items share the last step.
 const step = (i, max) => Math.min(i, max);
 
+const pad = (n) => String(n).padStart(2, '0');
+
+// The score counts up to its value. The real number is given to assistive tech
+// once, rather than every frame of the count.
+const Score = ({ percent }) => {
+  const shown = useCountUp(percent, { duration: 1000, delay: 180 });
+  return (
+    <p className="cx-qz-score">
+      <span aria-hidden="true">{shown}</span>
+      <span className="cx-qz-score-unit" aria-hidden="true">%</span>
+      <span className="visually-hidden">{percent}%</span>
+    </p>
+  );
+};
+
 // Shared by chapter quizzes and the final exam.
-const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark }) => {
+//
+// anchorRef (optional) is what to bring into view when a result lands. It
+// defaults to the result card; the final exam passes the block that also holds
+// its "Certificate issued" panel, so the learner sees both at once.
+const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark, anchorRef }) => {
   const [answers, setAnswers] = useState(() => questions.map(() => -1));
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const rootRef = useRef(null);
+  const resultRef = useRef(null);
+  const settleRef = useRef(() => {});
+
+  // Presentation only. The submit is pressed at the foot of a long paper, and
+  // swapping the paper for the result leaves the score far above the viewport.
+  // Bring the verdict to the learner (bringIntoView explains the care taken).
+  useEffect(() => {
+    if (!result) return undefined;
+    return bringIntoView(anchorRef?.current || resultRef.current);
+  }, [result, anchorRef]);
+
+  useEffect(() => () => settleRef.current(), []);
 
   const answered = answers.filter((a) => a >= 0).length;
   const allAnswered = answered === questions.length;
@@ -34,21 +72,20 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
     }
   };
 
+  // A retake starts at question one, not at the foot of the old review.
   const retry = () => {
     setResult(null);
     setAnswers(questions.map(() => -1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    settleRef.current();
+    settleRef.current = bringIntoView(rootRef.current);
   };
 
   if (result) {
     return (
-      <div className="space-y-6">
+      <div className="cx-qz" ref={rootRef}>
         <div
-          className={`cx-qz-result cx-anim-card rounded-2xl p-6 border text-center ${
-            result.passed
-              ? 'is-pass bg-emerald-50 border-emerald-300'
-              : 'is-fail bg-amber-50 border-amber-300'
-          }`}
+          ref={resultRef}
+          className={`cx-qz-result cx-anim-card ${result.passed ? 'is-pass' : 'is-fail'}`}
         >
           <span className="cx-qz-badge" aria-hidden="true">
             {result.passed ? '✓' : '↻'}
@@ -62,96 +99,99 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
             </span>
           )}
 
-          <p className="cx-qz-score text-5xl font-black text-black">{result.percent}%</p>
-          <p className="mt-2 text-black font-bold text-base">
+          <Score percent={result.percent} />
+          <p className="cx-qz-scoreline">
             {result.score} of {result.total} correct
             {passMark ? ` · ${passMark}% needed to pass` : ''}
           </p>
-          <p className={`mt-3 font-extrabold text-lg ${result.passed ? 'text-emerald-700' : 'text-amber-800'}`}>
-            {result.passed ? '🎉 Passed' : 'Not passed yet — review and try again'}
+          <p className="cx-qz-verdict">
+            {result.passed ? 'Passed.' : 'Not passed yet. Review the answers and try again.'}
           </p>
         </div>
 
-        <ol className="space-y-4">
+        <ol className="cx-qz-review">
           {result.review.map((r, i) => (
             <li
               key={r.id}
               style={{ '--i': step(i, 9) }}
-              className={`cx-qz-rev cx-contain rounded-xl border p-5 ${
-                r.right ? 'border-emerald-300 bg-emerald-50/40' : 'border-rose-300 bg-rose-50/40'
-              }`}
+              className={`cx-qz-rev cx-contain ${r.right ? 'is-right' : 'is-wrong'}`}
             >
-              <p className="font-bold text-black text-base">
-                {i + 1}. {r.prompt}
-              </p>
-              <p className="mt-2 text-sm text-black font-medium">
-                Your answer:{' '}
-                <span className={`font-bold ${r.right ? 'text-emerald-700' : 'text-rose-700'}`}>
-                  {r.your >= 0 ? r.options[r.your] : 'Not answered'}
+              <p className="cx-qz-rev-q">
+                <span className="cx-qz-mark" aria-hidden="true">
+                  {r.right ? '✓' : '✕'}
+                </span>
+                <span>
+                  <span className="cx-qz-rev-num">{pad(i + 1)}</span>
+                  {r.prompt}
                 </span>
               </p>
-              {!r.right && (
-                <p className="mt-1 text-sm text-black font-medium">
-                  Correct answer: <span className="text-emerald-700 font-bold">{r.options[r.correct]}</span>
+              <div className="cx-qz-rev-body">
+                <p>
+                  Your answer:{' '}
+                  <span className={r.right ? 'cx-qz-good' : 'cx-qz-bad'}>
+                    {r.your >= 0 ? r.options[r.your] : 'Not answered'}
+                  </span>
                 </p>
-              )}
-              {r.explanation && (
-                <p className="mt-3 text-sm text-black font-medium border-l-4 border-orange-500 pl-3 bg-orange-50/50 py-1 rounded-r">
-                  {r.explanation}
-                </p>
-              )}
+                {!r.right && (
+                  <p>
+                    Correct answer: <span className="cx-qz-good">{r.options[r.correct]}</span>
+                  </p>
+                )}
+                {r.explanation && <p className="cx-qz-why">{r.explanation}</p>}
+              </div>
             </li>
           ))}
         </ol>
 
-        <button
-          onClick={retry}
-          style={{ '--i': step(result.review.length, 10) }}
-          className="cx-qz-btn cx-anim-rise w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 shadow-lg"
-        >
-          Try again
-        </button>
+        <div className="cx-qz-again cx-anim-rise" style={{ '--i': step(result.review.length, 10) }}>
+          <button type="button" onClick={retry} className="btn lx-btn cx-qz-btn">
+            Try again
+            <span className="lx-btn-disc" aria-hidden="true">
+              <RotateCcw size={14} />
+            </span>
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="cx-qz" ref={rootRef}>
       {error && (
-        <p role="alert" className="cx-anim-rise rounded-xl bg-rose-50 border border-rose-300 text-rose-700 px-4 py-3 text-sm font-bold">
+        <p role="alert" className="cx-qz-error cx-anim-rise">
           {error}
         </p>
       )}
 
-      <ol className="space-y-6">
+      <ol className="cx-qz-list">
         {questions.map((q, qi) => (
           <li
             key={q.id}
             style={{ '--i': step(qi, 7) }}
-            className="cx-anim-card cx-contain bg-white rounded-2xl shadow-card border border-slate-200 p-6"
+            className={`cx-qz-q cx-anim-card cx-contain${answers[qi] >= 0 ? ' is-answered' : ''}`}
           >
             <fieldset>
-              <legend className="font-bold text-black text-lg mb-4">
-                {qi + 1}. {q.prompt}
+              <legend className="cx-qz-prompt">
+                <span className="cx-qz-num">{pad(qi + 1)}</span>
+                <span>{q.prompt}</span>
               </legend>
-              <div className="space-y-2.5">
+              <div className="cx-qz-options">
                 {q.options.map((opt, oi) => (
                   <label
                     key={oi}
-                    className={`cx-qz-option flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer ${
-                      answers[qi] === oi
-                        ? 'is-picked border-orange-500 bg-orange-50/70 ring-1 ring-orange-400'
-                        : 'border-slate-200 hover:bg-slate-50'
-                    }`}
+                    className={`cx-qz-option${answers[qi] === oi ? ' is-picked' : ''}`}
                   >
                     <input
                       type="radio"
                       name={`q-${q.id}`}
                       checked={answers[qi] === oi}
                       onChange={() => choose(qi, oi)}
-                      className="mt-1 text-orange-600 focus:ring-orange-500"
+                      className="cx-qz-input"
                     />
-                    <span className="text-black font-semibold text-sm sm:text-base leading-snug">{opt}</span>
+                    <span className="cx-qz-letter" aria-hidden="true">
+                      {LETTERS[oi] || oi + 1}
+                    </span>
+                    <span className="cx-qz-text">{opt}</span>
                     <span className="cx-qz-tick" aria-hidden="true">✓</span>
                   </label>
                 ))}
@@ -161,34 +201,44 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark })
         ))}
       </ol>
 
-      <div className="sticky bottom-4">
-        {/* How far through the learner is, without them having to read the
-            button label to find out. */}
-        <div
-          className={`cx-qz-progress ${allAnswered ? 'is-complete' : ''}`}
-          role="progressbar"
-          aria-label="Questions answered"
-          aria-valuemin={0}
-          aria-valuemax={questions.length}
-          aria-valuenow={answered}
-        >
-          <span
-            className="cx-qz-progress-fill"
-            style={{ '--cx-qz-p': questions.length ? answered / questions.length : 0 }}
-          />
-        </div>
+      {/* The dock: how far through the learner is, and the one action. */}
+      <div className="cx-qz-dock">
+        <div className={`cx-qz-dock-inner${allAnswered ? ' is-complete' : ''}`}>
+          <div className="cx-qz-dock-count" aria-hidden="true">
+            <span className="cx-qz-dock-n">{answered}</span>
+            <span className="cx-qz-dock-of">/ {questions.length} answered</span>
+          </div>
 
-        <button
-          onClick={submit}
-          disabled={!allAnswered || busy}
-          className="cx-qz-btn w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-        >
-          {busy
-            ? 'Grading…'
-            : allAnswered
-            ? submitLabel
-            : `Answer all questions (${answered}/${questions.length})`}
-        </button>
+          <div
+            className={`cx-qz-progress ${allAnswered ? 'is-complete' : ''}`}
+            role="progressbar"
+            aria-label="Questions answered"
+            aria-valuemin={0}
+            aria-valuemax={questions.length}
+            aria-valuenow={answered}
+          >
+            <span
+              className="cx-qz-progress-fill"
+              style={{ '--cx-qz-p': questions.length ? answered / questions.length : 0 }}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!allAnswered || busy}
+            className="btn lx-btn cx-qz-btn cx-qz-submit"
+          >
+            {busy
+              ? 'Grading…'
+              : allAnswered
+              ? submitLabel
+              : `${questions.length - answered} left to answer`}
+            <span className="lx-btn-disc" aria-hidden="true">
+              <ArrowUpRight size={15} />
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );

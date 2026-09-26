@@ -1,10 +1,14 @@
 import React, { Suspense } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { toolBySlug, toolsIn, CATEGORIES, COMPLEXITY, isImplemented, NEW_TOOLKIT_SLUGS } from '../data/tools';
 import { toolSeo } from '../data/toolSeo';
 import { toolFaqs } from '../data/toolFaqs';
 import { toolArticle } from '../data/toolArticles';
-import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import PageHero from '../components/PageHero';
+import ToolDetailVisual from '../components/heroes/ToolDetailVisual';
+import ToolCard from '../components/tools/ToolCard';
+import '../learn/ToolCard.css';
 import Seo from '../seo/Seo';
 import { breadcrumbs, softwareApplication, faq } from '../seo/schema';
 import ToolkitRunner from '../components/tools/ToolkitRunner';
@@ -68,33 +72,72 @@ import WebsiteScreenshotJpg from '../components/tools/WebsiteScreenshotJpg';
 import WebsiteScreenshotPng from '../components/tools/WebsiteScreenshotPng';
 import ConverterHub from '../components/tools/ConverterHub';
 
-const TONE = {
-  emerald: 'bg-emerald-500/12 text-emerald-700 ring-emerald-600/25',
-  amber: 'bg-amber-500/12 text-amber-700 ring-amber-600/25',
-  orange: 'bg-orange-500/12 text-orange-700 ring-orange-600/25',
-  rose: 'bg-rose-500/12 text-rose-700 ring-rose-600/25',
-  crimson: 'bg-red-600/12 text-red-800 ring-red-700/25',
+// The hero's one line under the headline. Most descriptions already fit in
+// twelve words and are used as they are; these are the longer ones, cut down
+// by hand so nothing they say is lost or overstated.
+const SHORT_LEDE = {
+  'pdf-word': 'Convert a PDF to editable Word, and Word back to PDF.',
+  'pdf-jpg': 'Turn PDF pages into JPGs, or JPGs into a PDF.',
+  'pdf-unlock': 'Unlock a PDF you already have the password for.',
+  'pdf-txt-html-rtf-odt': 'Extract PDF text into TXT, HTML, RTF or ODT.',
+  'pdf-ebook': 'Convert a PDF into an EPUB, FB2, Markdown or HTML e-book.',
+  'pdf-spreadsheet-suite': 'Extract PDF tables into XLSX, XLS, ODS, CSV, TSV or HTML.',
+  'image-compressor': 'Shrink JPG and WebP images with a quality slider.',
+  'image-converter': 'Convert images to PNG, JPG, WebP, GIF or PDF.',
+  'rotate-flip-image': 'Rotate an image by any angle, or flip it.',
+  'ebook-converter': 'Build an EPUB from text, Markdown or HTML, or unpack one.',
+  'vector-converter': 'Export SVG to PNG, JPG or WebP, or resize an SVG.',
+  'website-png-screenshot': 'Capture a webpage as a PNG from its URL.',
+  'website-jpg-screenshot': 'Capture a webpage as a JPG from its URL.',
+  'save-web-as-pdf': 'Turn a webpage into a text-searchable PDF from its URL.',
+  'colour-picker': 'Pick a colour from an image or screen, in HEX and RGB.',
+  'pdf-bookmarks': 'View, edit or build the bookmarks outline of a PDF.',
+  'heic-to-jpg': 'Convert iPhone HEIC/HEIF photos to JPG or PNG.',
+  'm4a-to-mp3': 'Convert M4A audio and voice memos to WAV or AAC, with trimming.',
+  'sql-csv': 'Turn CSV into SQL INSERT statements, or SQL dumps into CSV.',
+  'archive-to-zip': 'Repack TAR, TAR.GZ, TGZ and GZ archives into ZIP files.',
+  'jwt-decoder': 'Decode a JWT, check its expiry and verify its signature.',
 };
+
+const ledeFor = (tool) =>
+  SHORT_LEDE[tool.slug] || (tool.description.split(/\s+/).length <= 12 ? tool.description : undefined);
+
+// The tool's name as two headline lines, the second in italic. The break goes
+// where the two halves are closest in length, with a pull towards a natural
+// pause: after an arrow, "to", "as", "&" or "/".
+function headline(name) {
+  const w = name.split(/\s+/);
+  if (w.length === 1) return [<em key="em">{name}</em>];
+  let best = null;
+  for (let k = 1; k < w.length; k += 1) {
+    const a = w.slice(0, k).join(' ');
+    const b = w.slice(k).join(' ');
+    const score = Math.max(a.length, b.length) - (/^(→|↔|to|as|&|\/)$/i.test(w[k - 1]) ? 8 : 0);
+    if (!best || score < best.score) best = { a, b, score };
+  }
+  return [best.a, <em key="em">{best.b}</em>];
+}
 
 export default function ToolDetail() {
   const { slug } = useParams();
-  const introRef = useIntroTimeline();
   const tool = toolBySlug(slug);
 
   if (!tool) {
     return (
-      <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">No such tool</h1>
-        <p className="mt-3 text-slate-600">That tool is not in the catalogue.</p>
-        <Link to="/tools" className="mt-6 inline-block text-orange-600 font-semibold hover:underline">
-          Back to all tools
-        </Link>
+      <main>
+        <PageHero
+          align="center"
+          label="Free tools"
+          lines={['No such', <em key="t">tool.</em>]}
+          lede="That tool is not in the catalogue."
+          actions={[{ to: '/tools', label: 'All free tools', primary: true }]}
+        />
       </main>
     );
   }
 
   const category = CATEGORIES.find((c) => c.id === tool.category);
-  const meta = COMPLEXITY[tool.complexity];
+  const complexity = COMPLEXITY[tool.complexity];
   // The tool's neighbours in its category, wrapping round, rather than the
   // first six: with a fixed first six, every page linked to the same handful
   // and tools further down the list were never linked from anywhere. Taking
@@ -118,6 +161,9 @@ export default function ToolDetail() {
   // violation, and an unbuilt tool renders no guide.
   const faqs = live ? toolFaqs(tool.slug) : [];
   const Article = live ? toolArticle(tool.slug) : null;
+  const lines = headline(tool.name);
+  // A long line gets a smaller headline rather than a third line.
+  const longest = Math.max(...lines.map((l) => (typeof l === 'string' ? l : l.props.children).length));
 
   const renderToolComponent = () => {
     if (NEW_TOOLKIT_SLUGS && NEW_TOOLKIT_SLUGS.has(tool.slug)) {
@@ -262,26 +308,20 @@ export default function ToolDetail() {
         break;
     }
     return (
-      <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 text-center border border-slate-200">
-        <span className="inline-grid place-items-center h-14 w-14 rounded-2xl bg-indigo-500/10 text-indigo-600 text-2xl mx-auto">
-          ⏳
-        </span>
-        <h2 className="mt-5 text-2xl font-bold text-slate-900">Tool in Active Development</h2>
-        <p className="mt-2 text-slate-600 max-w-xl mx-auto text-sm leading-relaxed">
-          This tool is planned on our roadmap. When it ships it will be completely free with enterprise security,
-          zero account requirements, and zero watermarks. Tell us if you need this tool prioritized.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link
-            to="/contact"
-            className="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-md transition"
-          >
+      <div className="lx-tool-soon">
+        <span className="lx-label">Roadmap</span>
+        <h2 className="lx-tool-soon-title">
+          Coming <em>soon.</em>
+        </h2>
+        <p className="lx-tool-soon-lede">Free, no account and no watermark when it ships.</p>
+        <div className="lx-tool-soon-actions">
+          <Link to="/contact" className="btn lx-btn">
             Request this tool
+            <span className="lx-btn-disc" aria-hidden="true">
+              <ArrowUpRight size={15} />
+            </span>
           </Link>
-          <Link
-            to="/tools"
-            className="px-6 py-3 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 transition"
-          >
+          <Link to="/tools" className="lx-link">
             Browse all tools
           </Link>
         </div>
@@ -325,82 +365,46 @@ export default function ToolDetail() {
           ...(faqs.length ? [faq(faqs)] : []),
         ]}
       />
-      {/* Header Banner */}
-      <header className="relative isolate">
-        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white">
-          <div ref={introRef} className="max-w-5xl mx-auto px-6 py-14 md:py-18">
-            <Link to="/tools" data-intro className="text-sm text-slate-300 hover:text-white transition flex items-center gap-1">
-              ← Back to all free tools
-            </Link>
-            <div data-intro className="mt-4 flex flex-wrap items-center gap-2.5">
-              <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-400 text-emerald-950 shadow-sm">
-                FREE FOR EVERYONE
-              </span>
-              {live && (
-                <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-orange-500 text-white shadow-sm flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                  PRO UTILITY SUITE
-                </span>
-              )}
-              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/10 text-white">
-                {category?.label || 'Utility'}
-              </span>
-              {!live && (
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${TONE[meta?.tone] || ''}`}
-                >
-                  {meta?.label} to build
-                </span>
-              )}
-            </div>
-            <h1 data-intro className="mt-4 text-3xl md:text-5xl font-extrabold tracking-tight text-white">
-              {tool.name}
-            </h1>
-            <p data-intro className="mt-3 text-base md:text-lg max-w-2xl text-slate-300">
-              {tool.description}
-            </p>
-          </div>
-        </div>
-      </header>
+      <div className={longest > 16 ? 'tdh tdh--long' : 'tdh'}>
+        <PageHero
+          back={{ to: '/tools', label: 'All free tools' }}
+          label={category?.label || 'Utility'}
+          lines={lines}
+          lede={ledeFor(tool)}
+          meta={!live && complexity ? [`${complexity.label} to build`] : undefined}
+          actions={
+            live
+              ? [{ href: '#tool', label: 'Use the tool', primary: true }, ...(Article ? [{ href: '#guide', label: 'Read the guide' }] : [])]
+              : [{ to: '/contact', label: 'Request this tool', primary: true }]
+          }
+          visual={<ToolDetailVisual tool={tool} count={peers.length} />}
+        />
+      </div>
 
       {/* Main Tool Content */}
-      <section className="max-w-5xl mx-auto px-6 -mt-8 relative z-10">
+      <section id="tool" className="lx-tool-ui max-w-5xl mx-auto px-6 relative z-10 scroll-mt-24">
         {renderToolComponent()}
 
         {/* The long-form guide, keyed by slug rather than mounted inside the
             tool. One component can serve several URLs and each URL needs its
             own guide, or they all carry the same text. */}
         {Article && (
-          <Suspense fallback={null}>
-            <Article />
-          </Suspense>
+          <div id="guide" className="scroll-mt-24">
+            <Suspense fallback={null}>
+              <Article />
+            </Suspense>
+          </div>
         )}
 
-        {/* Related Tools */}
+        {/* Related tools: the same compact rows as the catalogue. */}
         {related.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-xl font-bold text-slate-900 mb-6">
-              Related {category?.label || 'Pro'} Tools
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3 mb-5">
+              <span className="lx-label">More {category?.label || ''} tools</span>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {related.map((r) => (
-                <Link
-                  key={r.id}
-                  to={`/tools/${r.slug}`}
-                  className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md border border-slate-200/80 hover:border-orange-400/40 transition block group"
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-bold text-slate-900 text-sm group-hover:text-orange-600 transition">
-                      {r.name}
-                    </h3>
-                    {isImplemented(r.slug) && (
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">
-                        LIVE
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1 text-xs text-slate-500 line-clamp-2">{r.description}</p>
-                </Link>
+                <ToolCard key={r.id} tool={r} />
               ))}
             </div>
           </div>

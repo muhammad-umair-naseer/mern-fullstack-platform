@@ -1,0 +1,104 @@
+/* ── Learn with us: a tall plate with a smaller one drifting over it ── */
+
+.lx-academy {
+  padding: clamp(3rem, 2rem + 3vw, 5.5rem) 0 clamp(3.5rem, 2rem + 4vw, 6rem);
+}
+
+.lx-academy-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  gap: clamp(3rem, 1rem + 7vw, 9rem);
+  align-items: center;
+}
+
+.lx-academy-media {
+  position: relative;
+  padding-bottom: 12%;
+}
+
+.lx-academy-main {
+  aspect-ratio: 4 / 5;
+  width: 82%;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-raised);
+}
+
+/* Taller than the frame so the scroll drift never shows an edge. The inset
+   over it travels further, which is where the depth comes from. */
+.lx-academy-drift {
+  position: absolute;
+  inset: -6% 0;
+}
+
+.lx-academy-drift img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.lx-academy-inset {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+}
+
+.lx-academy-inset-frame {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-sm);
+  outline: 10px solid var(--ivory);
+  box-shadow: var(--shadow-float);
+}
+
+.lx-academy-copy .lx-label {
+  margin-bottom: 1.5rem;
+}
+
+.lx-academy-copy h2 {
+  margin: 0 0 1.5rem;
+}
+
+.lx-academy-facts {
+  margin: 0 0 2.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.lx-academy-facts > div {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.lx-academy-facts dt {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--copper);
+}
+
+.lx-academy-facts dd {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.lx-academy-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem 2rem;
+}
+
+@media (max-width: 960px) {
+  .lx-academy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lx-academy-media {
+    max-width: 560px;
+  }
+}

@@ -1,70 +1,74 @@
+/* ── Bar ─────────────────────────────────────────────────────────────── */
+
 .navbar {
   position: sticky;
   top: 0;
   z-index: 999;
-  height: 76px;
+  height: var(--nav-h);
   display: flex;
   align-items: center;
-  background: rgba(7, 14, 30, 0.85);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
+  background: rgba(250, 248, 244, 0);
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--dur-slow) var(--ease-out-expo),
+    border-color var(--dur-slow) var(--ease-out-expo);
 }
 
-/* animated luxury orange underline bar */
-.navbar::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2.5px;
-  background: linear-gradient(90deg, #ea580c, #f97316, #fdba74, #f97316, #ea580c);
-  background-size: 200% 100%;
-  animation: navUnderline 4s linear infinite;
+.navbar.is-scrolled {
+  background: rgba(250, 248, 244, 0.86);
+  border-bottom-color: var(--line);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
-@keyframes navUnderline {
-  0% { background-position: 0% 0; }
-  100% { background-position: 200% 0; }
+
+/* backdrop-filter makes the bar a containing block for fixed children, which
+   would trap the full-screen menu sheet inside a 76px strip. */
+.navbar.is-open {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--ivory);
+  border-bottom-color: transparent;
 }
 
 .nav-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 76px;
+  justify-content: space-between;
+  gap: 1.5rem;
   width: 100%;
-  max-width: 1380px;
+  max-width: 1360px;
+  height: var(--nav-h);
   margin: 0 auto;
-  padding: 0 24px;
-  gap: 20px;
+  padding-inline: var(--gutter);
 }
 
-/* Logo */
+/* ── Wordmark ────────────────────────────────────────────────────────
+   Set to match the official logo file (public/cortexis-logo.png): the mark,
+   then "CORTEXIS" in geometric capitals running purple into blue, over
+   "SOLUTION HUB Pvt Ltd" in the logo's orange. The colours are sampled from
+   that file, not approximated, and there is no glow: the logo has none.
+   Poppins SemiBold is loaded for this lockup alone. */
+
 .nav-logo {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 .nav-logo-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
-  width: 48px;
-  filter: drop-shadow(0 0 16px rgba(249, 115, 22, 0.65));
-  transition: transform 200ms ease, filter 200ms ease;
+  height: 44px;
+  width: 44px;
+  transition: transform var(--dur-base) var(--ease-out-expo);
 }
 .nav-logo-badge img { height: 100%; width: 100%; object-fit: contain; }
 .nav-logo:hover .nav-logo-badge {
-  transform: translateY(-1px) scale(1.08);
-  filter: drop-shadow(0 0 22px rgba(249, 115, 22, 0.9));
+  transform: translateY(-1px);
 }
 .nav-logo-wrap {
   display: flex;
@@ -72,176 +76,255 @@
   line-height: 1;
 }
 .nav-logo-text {
-  font-size: 1.55rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  background: linear-gradient(135deg, #ffffff 40%, #ffedd5 70%, #f97316 100%);
-  background-size: 200% auto;
+  font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #482c80 0%, #1c488c 55%, #186ca8 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
 }
 .nav-logo-sub {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 0.64rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #fb923c;
-  margin-top: 3px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #d8843c;
+  margin-top: 4px;
+  white-space: nowrap;
 }
 
-/* Center-aligned Glass Pill Navigation Menu */
-.nav-menu {
+
+/* ── Links ───────────────────────────────────────────────────────────── */
+
+.nav-menu ul {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
+  gap: clamp(0.9rem, 0.2rem + 1.1vw, 1.7rem);
   list-style: none;
   margin: 0;
-  padding: 4px 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  padding: 0;
 }
 
 .nav-link {
   position: relative;
-  color: #f1f5f9;
-  text-decoration: none;
-  padding: 7px 13px;
-  border-radius: 999px;
+  display: inline-block;
+  padding: 0.35rem 0;
   font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  transition: color 180ms ease, background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  font-weight: 450;
+  color: var(--ink-2);
+  text-decoration: none;
   white-space: nowrap;
-}
-.nav-link:hover {
-  color: #ffffff;
-  background: rgba(249, 115, 22, 0.25);
-  box-shadow: 0 2px 10px rgba(249, 115, 22, 0.3);
-  transform: translateY(-1px);
-}
-.nav-link:focus-visible {
-  outline: none;
-  background: rgba(249, 115, 22, 0.3);
+  transition: color var(--dur-fast) var(--ease-out-expo);
 }
 
-/* Right Side Actions */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--ink);
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.nav-link.active {
+  color: var(--ink);
+}
+
+/* The current page carries a copper point above its label. */
+.nav-link.active::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--copper-2);
+}
+
+.nav-sheet-foot {
+  display: none;
+}
+
+/* ── Actions ─────────────────────────────────────────────────────────── */
+
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 1.25rem;
   flex-shrink: 0;
 }
 
-.nav-auth-link {
-  color: #e2e8f0;
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 8px 12px;
-  border-radius: 999px;
-}
-.nav-auth-link:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* Luxury Orange CTA Button */
-.nav-cta {
-  color: #ffffff !important;
-  background: linear-gradient(135deg, #ff6b00 0%, #f97316 50%, #ea580c 100%) !important;
-  background-size: 200% 100%;
-  font-size: 0.9rem;
-  font-weight: 700 !important;
-  border-radius: 999px;
-  padding: 9px 20px;
-  text-decoration: none;
-  white-space: nowrap;
-  box-shadow: 0 4px 18px rgba(249, 115, 22, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
-}
-.nav-cta:hover {
-  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important;
-  box-shadow: 0 8px 26px rgba(249, 115, 22, 0.7) !important;
-  transform: translateY(-2px);
-}
-
-/* Mobile toggle */
-.nav-icon {
-  display: none;
-  color: #ffffff;
-  background: transparent;
+.nav-aux {
+  background: none;
   border: 0;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 8px;
-}
-.nav-icon:focus-visible {
-  outline: 2px solid #f97316;
-  outline-offset: 2px;
-}
-.bar {
-  display: block;
-  width: 24px;
-  height: 2.5px;
-  margin: 5px 0;
-  background-color: #ffffff;
-  transition: transform 200ms ease, opacity 200ms ease;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out-expo);
 }
 
-/* Responsive drawer */
-@media screen and (max-width: 1080px) {
-  .nav-icon { display: block; order: 3; }
+.nav-aux:hover,
+.nav-aux:focus-visible {
+  color: var(--ink);
+}
+
+.nav-cta {
+  padding: 0.7rem 1.3rem 0.7rem 1.35rem;
+  font-size: 0.88rem;
+}
+
+/* ── Menu button ─────────────────────────────────────────────────────── */
+
+.nav-icon {
+  display: none;
+  position: relative;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav-icon .bar {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  height: 1.5px;
+  background: var(--ink);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.nav-icon .bar:nth-child(1) { top: 18px; }
+.nav-icon .bar:nth-child(2) { top: 24px; }
+
+.navbar.is-open .nav-icon .bar:nth-child(1) { transform: translateY(3px) rotate(45deg); }
+.navbar.is-open .nav-icon .bar:nth-child(2) { transform: translateY(-3px) rotate(-45deg); }
+
+html.lx-lock {
+  overflow: hidden;
+}
+
+/* ── Compact widths: the links become a full-screen sheet ───────────── */
+
+@media (max-width: 1180px) {
+  .nav-aux { display: none; }
+}
+
+@media (max-width: 1080px) {
+  .nav-icon { display: block; }
   .nav-actions { display: none; }
+
   .nav-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 100%;
-    position: absolute;
-    top: 76px;
-    left: -110%;
+    justify-content: space-between;
+    padding: calc(var(--nav-h) + 2rem) var(--gutter) calc(2rem + env(safe-area-inset-bottom));
+    background: var(--ivory);
+    visibility: hidden;
     opacity: 0;
-    border-radius: 0 0 20px 20px;
-    background: rgba(7, 14, 30, 0.97);
-    backdrop-filter: blur(24px);
-    border-top: 1px solid rgba(249, 115, 22, 0.3);
-    border-bottom: 1px solid rgba(249, 115, 22, 0.3);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-    transition: left 240ms ease, opacity 240ms ease;
-    padding: 16px 20px 24px;
+    transition:
+      opacity var(--dur-slow) var(--ease-out-expo),
+      visibility 0s linear var(--dur-slow);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
-  .nav-menu.active {
-    left: 0;
+
+  .navbar.is-open .nav-menu {
+    visibility: visible;
     opacity: 1;
+    transition: opacity var(--dur-slow) var(--ease-out-expo), visibility 0s;
   }
-  .nav-link {
-    padding: 12px 20px;
+
+  .nav-menu ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+  }
+
+  .nav-menu li {
     width: 100%;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-menu .nav-link {
     display: block;
-    border-radius: 10px;
-    color: #e2e8f0;
+    width: 100%;
+    padding: 0.55rem 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.4rem + 3vw, 2.8rem);
+    line-height: 1.1;
+    color: var(--ink);
+    transform: translate3d(0, 105%, 0);
+    transition: transform var(--dur-slow) var(--ease-out-expo);
+  }
+
+  .navbar.is-open .nav-menu .nav-link {
+    transform: none;
+    transition-delay: calc(var(--i, 0) * 40ms + 60ms);
+  }
+
+  .nav-menu .nav-link::after { display: none; }
+
+  .nav-menu .nav-link.active::before {
+    top: 50%;
+    left: auto;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0;
+  }
+
+  .nav-sheet-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 2rem;
+  }
+
+  .nav-sheet-aux {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
     font-size: 1rem;
+    color: var(--ink-2);
+    text-decoration: none;
   }
 }
 
-/* Prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .nav-link, .nav-logo-badge { transition: none; }
-  .nav-menu { transition: none; }
-}
-
-/* The underline sweep loops forever, which is exactly the kind of motion
-   someone with a vestibular disorder asks the browser to stop. */
-@media (prefers-reduced-motion: reduce) {
-  .navbar::after {
-    animation: none;
+  .nav-menu .nav-link {
+    transform: none !important;
   }
 }

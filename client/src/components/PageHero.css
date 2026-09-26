@@ -1,0 +1,235 @@
+/* ── PageHero: the opening of every inner page ─────────────────────────
+   Transparent: the house background shows through. The choreography runs on
+   one clock: label 0ms, headline lines from 120ms, lede 520ms, actions
+   620ms, visual opening from 300ms over 1.4s. */
+
+.lx-ph {
+  position: relative;
+  padding: clamp(2.5rem, 1.5rem + 4vw, 6rem) 0 clamp(3rem, 2rem + 4vw, 6.5rem);
+}
+
+.lx-ph-grid {
+  display: grid;
+  gap: clamp(2.5rem, 1rem + 5vw, 6rem);
+  align-items: center;
+}
+
+.lx-ph--split .lx-ph-grid {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  min-height: min(72vh, 44rem);
+}
+
+.lx-ph--center .lx-ph-copy {
+  max-width: 54rem;
+  margin-inline: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Its own row, sized to its text, so it never shares a line with the label. */
+.lx-ph-back {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out-expo);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) both;
+}
+
+.lx-ph-back:hover,
+.lx-ph-back:focus-visible {
+  color: var(--ink);
+}
+
+.lx-ph-label {
+  margin-bottom: clamp(1.25rem, 1rem + 0.8vw, 1.9rem);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) both;
+}
+
+.lx-ph--center .lx-ph-label::after {
+  content: "";
+  width: 28px;
+  height: 1px;
+  align-self: center;
+  background: var(--line-strong);
+}
+
+.lx-ph-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 1.4rem + 5.2vw, 7rem);
+  line-height: 0.95;
+  letter-spacing: -0.028em;
+  color: var(--ink);
+}
+
+.lx-ph-title em {
+  font-style: italic;
+  color: var(--copper);
+  letter-spacing: -0.02em;
+}
+
+.lx-ph-lede {
+  margin: clamp(1.25rem, 1rem + 1vw, 2rem) 0 0;
+  max-width: 34ch;
+  font-size: clamp(1.05rem, 0.98rem + 0.35vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--ink-3);
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 520ms both;
+}
+
+.lx-ph-meta {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 580ms both;
+}
+
+.lx-ph--center .lx-ph-meta {
+  justify-content: center;
+}
+
+.lx-ph-meta li {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-2);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.lx-ph-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem 1.75rem;
+  margin-top: clamp(1.75rem, 1.4rem + 1.2vw, 2.75rem);
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 620ms both;
+}
+
+.lx-ph-visual {
+  position: relative;
+  animation: lx-fade 1.2s var(--ease-out-quint) 300ms both;
+}
+
+@media (max-width: 900px) {
+  .lx-ph--split .lx-ph-grid {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+}
+
+/* ── Glass: the shared frosted surface ──────────────────────────────── */
+
+/* Warm tint and no saturate(): over a photo's sky, saturation boosted the
+   blue and turned the glass cool grey. */
+.lx-glass {
+  background: rgba(250, 246, 238, 0.58);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 1px rgba(22, 19, 15, 0.04),
+    0 10px 30px rgba(22, 19, 15, 0.08);
+}
+
+/* ── PhotoVisual ─────────────────────────────────────────────────────── */
+
+.lx-pv {
+  position: relative;
+  margin: 0;
+  padding: 1.25rem 1.25rem 2rem 2rem;
+}
+
+.lx-pv-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--sand);
+  box-shadow: var(--shadow-float);
+  animation: lx-frame-open 1.5s var(--ease-out-expo) 300ms both;
+}
+
+/* A thin glass edge inside the frame. */
+.lx-pv-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+.lx-pv-drift {
+  position: absolute;
+  left: 0;
+  top: -7%;
+  width: 100%;
+  height: 114%;
+}
+
+.lx-pv-drift img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  animation: lx-film-settle 2s var(--ease-out-expo) 300ms both;
+}
+
+/* A slow light sweep across the photograph, once every nine seconds. */
+.lx-pv-sheen {
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 250, 240, 0.35) 50%, transparent 60%);
+  transform: translate3d(-60%, 0, 0);
+  animation: lx-sheen 9s var(--ease-in-out) 2.2s infinite;
+  pointer-events: none;
+}
+
+.lx-pv-chip {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--r-md);
+  min-width: 8.5rem;
+  animation:
+    lx-rise 1s var(--ease-out-expo) calc(900ms + var(--i, 0) * 140ms) both,
+    lx-float 7s ease-in-out calc(2s + var(--i, 0) * 1.3s) infinite alternate;
+}
+
+.lx-pv-chip--0 { left: 0; bottom: 14%; }
+.lx-pv-chip--1 { right: 0; top: 10%; }
+.lx-pv-chip--2 { right: 8%; bottom: 0; }
+
+.lx-pv-chip-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.lx-pv-chip-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+
+@media (max-width: 900px) {
+  .lx-pv {
+    padding: 0.75rem 0.75rem 1.5rem 1rem;
+  }
+}

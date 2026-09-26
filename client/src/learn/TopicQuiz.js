@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { ArrowRight, ArrowUpRight, RotateCcw } from 'lucide-react';
 import { api } from '../lib/api';
+import bringIntoView from './bringIntoView';
 import './TopicQuiz.css';
+
+// Options are lettered, the way a printed paper is.
+const LETTERS = 'ABCDEFGH';
+const pad = (n) => String(n).padStart(2, '0');
 
 /**
  * The check at the end of a topic.
@@ -18,7 +24,17 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const resultRef = useRef(null);
+  const sectionRef = useRef(null);
+  const settleRef = useRef(() => {});
+
+  useEffect(() => () => settleRef.current(), []);
+
+  // Presentation only. The check's own heading and the score (or, on a retry,
+  // question one) are brought into view once the page has settled.
+  const settle = () => {
+    settleRef.current();
+    settleRef.current = bringIntoView(sectionRef.current);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -59,10 +75,7 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
       });
       setResult(data);
       if (data.passed) onPassed?.();
-      // Let the result render before scrolling to it.
-      requestAnimationFrame(() =>
-        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      );
+      settle();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -73,17 +86,22 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
   const retry = () => {
     setResult(null);
     setAnswers(questions.map(() => -1));
+    settle();
   };
 
   if (state === 'none' || state === 'loading') return null;
   if (state === 'error') {
-    return <p className="mt-8 text-sm text-rose-600">{error}</p>;
+    return <p className="cx-tq-error cx-tq-error--alone">{error}</p>;
   }
 
+  const complete = answered === questions.length;
+
   return (
-    <section className="cx-tq mt-12" aria-label="Topic check">
+    <section ref={sectionRef} className="cx-tq" aria-label="Topic check">
       <div className="cx-tq-head">
-        <span className="cx-tq-badge" aria-hidden="true">✓</span>
+        <span className="cx-tq-badge" aria-hidden="true">
+          <span>?</span>
+        </span>
         <div>
           <h2 className="cx-tq-title">Check yourself</h2>
           <p className="cx-tq-sub">
@@ -101,8 +119,8 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
               <li key={question.id} className="cx-tq-q" style={{ '--i': qi }}>
                 <fieldset>
                   <legend className="cx-tq-prompt">
-                    <span className="cx-tq-num">{qi + 1}</span>
-                    {question.prompt}
+                    <span className="cx-tq-num">{pad(qi + 1)}</span>
+                    <span>{question.prompt}</span>
                   </legend>
                   <div className="cx-tq-options">
                     {question.options.map((opt, oi) => (
@@ -116,8 +134,10 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
                           checked={answers[qi] === oi}
                           onChange={() => choose(qi, oi)}
                         />
-                        <span className="cx-tq-dot" aria-hidden="true" />
-                        <span>{opt}</span>
+                        <span className="cx-tq-dot" aria-hidden="true">
+                          {LETTERS[oi] || oi + 1}
+                        </span>
+                        <span className="cx-tq-text">{opt}</span>
                       </label>
                     ))}
                   </div>
@@ -126,22 +146,24 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
             ))}
           </ol>
 
-          <button
-            onClick={submit}
-            disabled={answered !== questions.length || busy}
-            className="cx-tq-submit"
-          >
-            {busy
-              ? 'Checking…'
-              : answered === questions.length
-              ? 'Check my answers'
-              : `${answered} of ${questions.length} answered`}
-          </button>
+          <div className={`cx-tq-actions${complete ? ' is-complete' : ''}`}>
+            <button
+              type="button"
+              onClick={submit}
+              disabled={!complete || busy}
+              className="btn lx-btn cx-tq-submit"
+            >
+              {busy ? 'Checking…' : complete ? 'Check my answers' : `${answered} of ${questions.length} answered`}
+              <span className="lx-btn-disc" aria-hidden="true">
+                <ArrowUpRight size={15} />
+              </span>
+            </button>
+          </div>
         </>
       )}
 
       {result && (
-        <div ref={resultRef} className={`cx-tq-result ${result.passed ? 'is-pass' : 'is-fail'}`}>
+        <div className={`cx-tq-result ${result.passed ? 'is-pass' : 'is-fail'}`}>
           <div className="cx-tq-score">
             <span className="cx-tq-scorenum">{result.percent}%</span>
             <span className="cx-tq-scorelabel">
@@ -160,7 +182,7 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
               <li key={r.id} className={r.right ? 'is-right' : 'is-wrong'} style={{ '--i': i }}>
                 <p className="cx-tq-reviewq">
                   <span className="cx-tq-mark" aria-hidden="true">{r.right ? '✓' : '✕'}</span>
-                  {r.prompt}
+                  <span>{r.prompt}</span>
                 </p>
                 {!r.right && (
                   <p className="cx-tq-correct">
@@ -172,16 +194,24 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
             ))}
           </ol>
 
-          {result.passed ? (
-            // Carrying on from here saves scrolling back past the whole quiz.
-            <button onClick={onContinue} className="cx-tq-submit cx-tq-continue">
-              {continueLabel}
-            </button>
-          ) : (
-            <button onClick={retry} className="cx-tq-submit">
-              Try again
-            </button>
-          )}
+          <div className="cx-tq-actions">
+            {result.passed ? (
+              // Carrying on from here saves scrolling back past the whole quiz.
+              <button type="button" onClick={onContinue} className="btn lx-btn cx-tq-continue">
+                {continueLabel}
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <ArrowRight size={15} />
+                </span>
+              </button>
+            ) : (
+              <button type="button" onClick={retry} className="btn lx-btn cx-tq-submit">
+                Try again
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <RotateCcw size={14} />
+                </span>
+              </button>
+            )}
+          </div>
         </div>
       )}
     </section>

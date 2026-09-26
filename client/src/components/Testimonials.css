@@ -1,135 +1,173 @@
-/* Container */
-.testimonials-container {
-  padding: 80px 0;
-  background: transparent;
+/* ── Things we've built: a tall plate beside two stacked ones ──────── */
+
+/* The sand tint fades in and out rather than starting on a hard line, so
+   the silk behind the page reads straight through the section edges. */
+.lx-work {
+  padding: clamp(3.5rem, 2.5rem + 3.5vw, 6rem) 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--glass-sand) 16%,
+    var(--glass-sand) 84%,
+    transparent 100%
+  );
 }
 
-/* Headings */
-.testimonials-title {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #090e17;
-  text-align: center;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.5rem;
-}
-.testimonials-subtitle {
-  text-align: center;
-  color: #475569;
-  margin-bottom: 2.5rem;
-}
-
-/* Grid list reset */
-.testimonials-row {
+.lx-work-list {
   list-style: none;
-  padding-left: 0;
   margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2rem, 1rem + 2vw, 3rem) clamp(1.25rem, 0.5rem + 2vw, 2.5rem);
 }
 
-/* Card */
-.testimonial-card {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 16px;
-  padding: 22px 18px 16px;
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 8px 24px rgba(15, 23, 42, 0.05);
-  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
-  position: relative;
-  overflow: hidden;
-  background: #ffffff !important;
-}
-.testimonial-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3.5px;
-  background: linear-gradient(90deg, #ea580c 0%, #f97316 50%, #fdba74 100%);
-  opacity: 0.9;
-}
-.testimonial-card:hover,
-.testimonial-card:focus-within {
-  transform: translateY(-4px);
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.04),
-    0 16px 36px rgba(249, 115, 22, 0.14);
-  border-color: rgba(249, 115, 22, 0.35);
+.lx-work-cell:first-child {
+  grid-row: span 2;
 }
 
-/* Avatar */
-.avatar-wrap {
-  display: inline-flex;
-  padding: 3px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ff6b00, #f97316, #fdba74);
-  margin-bottom: 12px;
-}
-.testimonial-img {
-  width: 78px;
-  height: 78px;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
-  background: #f1f5f9;
-  border: 2px solid #ffffff;
-}
-
-/* Star Rating */
-.testimonial-rating {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin: 10px 0 14px;
-}
-
-.star-icon.filled {
-  fill: #f59e0b;
-  color: #f59e0b;
-}
-
-/* Quote */
-.testimonial-quote {
-  color: #334155;
-  line-height: 1.65;
-  font-size: 0.95rem;
-  margin: 0 auto;
-  max-width: 520px;
-  quotes: "“" "”" "‘" "’";
-}
-
-/* Name/company/location */
-.testimonial-card .card-footer {
+.lx-work-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--r-md);
+}
+
+.lx-work-frame {
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-raised);
+}
+
+/* The flagship's frame takes whatever height the two cards beside it make,
+   so the columns always finish level. */
+.lx-work-cell:first-child .lx-work-frame {
+  aspect-ratio: auto;
+  flex: 1 1 auto;
+  min-height: 24rem;
+}
+
+/* Taller than the frame so the scroll drift never shows an edge. */
+.lx-work-drift {
+  position: absolute;
+  inset: -7% 0;
+}
+
+.lx-work-drift img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  filter: saturate(0.86);
+  transition:
+    transform 1.2s var(--ease-out-expo),
+    filter 1.2s var(--ease-out-expo);
+}
+
+.lx-work-card:hover .lx-work-drift img,
+.lx-work-card:focus-visible .lx-work-drift img {
+  transform: scale(1.04);
+  filter: saturate(1);
+}
+
+.lx-work-num {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--glass-edge);
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--copper);
+}
+
+.lx-work-body {
+  padding-top: 1.35rem;
+}
+
+.lx-work-name {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 1.4rem + 1.3vw, 2.7rem);
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+
+.lx-work-desc {
+  margin: 0 0 1.1rem;
+  max-width: 44ch;
+  font-size: 0.95rem;
+  color: var(--ink-3);
+}
+
+.lx-work-go {
+  display: inline-flex;
   align-items: center;
-  gap: 3px;
-  border-top: 1px solid rgba(15, 23, 42, 0.06);
-  padding-top: 14px;
-  background: transparent;
-}
-
-.testimonial-name {
-  color: #090e17;
-  font-weight: 700;
-  font-size: 1.05rem;
-}
-
-.testimonial-role {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--cx-orange, #f97316);
-}
-
-.testimonial-location {
-  font-size: 0.78rem;
+  gap: 0.75rem;
+  font-size: 0.92rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--ink);
 }
 
-.text-muted { color: #64748b !important; }
+.lx-work-disc {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    color var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo);
+}
 
-/* Reduced motion */
+.lx-work-disc svg {
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.lx-work-card:hover .lx-work-disc,
+.lx-work-card:focus-visible .lx-work-disc {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ivory);
+}
+
+.lx-work-card:hover .lx-work-disc svg,
+.lx-work-card:focus-visible .lx-work-disc svg {
+  transform: rotate(45deg);
+}
+
+@media (max-width: 900px) {
+  .lx-work-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lx-work-cell:first-child {
+    grid-row: auto;
+  }
+
+  .lx-work-cell:first-child .lx-work-frame {
+    aspect-ratio: 4 / 3;
+    flex: none;
+    min-height: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .testimonial-card { transition: none; }
+  .lx-work-drift img,
+  .lx-work-disc,
+  .lx-work-disc svg {
+    transition: none;
+  }
 }
-

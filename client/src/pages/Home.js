@@ -4,6 +4,8 @@ import TechMarquee from '../components/TechMarquee';
 import ValueProposition from '../components/ValueProposition';
 import ServicesPreview from '../components/ServicesPreview';
 import ProcessSection from '../components/ProcessSection';
+import Academy from '../components/Academy';
+import Gallery from '../components/Gallery';
 import CtaBanner from '../components/CtaBanner';
 import Testimonials from '../components/Testimonials';
 import Seo from '../seo/Seo';
@@ -20,11 +22,13 @@ const Home = () => {
       />
       <Hero />
       <TechMarquee />
-      <ValueProposition />
       <ServicesPreview />
+      <ValueProposition />
+      <Gallery />
       <ProcessSection />
-      <CtaBanner />
+      <Academy />
       <Testimonials />
+      <CtaBanner />
     </div>
   );
 };

@@ -1,14 +1,58 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import ProgressBar from '../learn/ProgressBar';
-// The shared motion vocabulary: easings, durations and the .cx-anim-* helpers.
-import '../learn/motion.css';
+import PhotoVisual from '../components/PhotoVisual';
+import useCountUp from '../learn/useCountUp';
+import { learnPhotos } from '../learn/photos';
+import { courseCover } from '../data/courseCovers';
+// PhotoVisual's frame, drift and chips are styled alongside PageHero.
+import '../components/PageHero.css';
+import '../learn/Learn.css';
 
 // A long list should not take a minute to arrive, so the stagger stops
 // compounding after the first screenful.
 const STAGGER_CAP = 8;
+
+// The course's initials: the cover for a course that has no photograph yet.
+const initials = (title = '') =>
+  title
+    .replace(/[^A-Za-z0-9 &+#]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w && !/^(the|and|for|with|of|to|a|an|&)$/i.test(w))
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('');
+
+// Presentation only: which of four states a course is in, and how to say it.
+// 100% of topics does not by itself open the final exam (the last chapter quiz
+// may still be unpassed, and /learn/my does not report the exam gate), so that
+// state says what is known rather than promising the exam is open.
+const statusOf = (c) => {
+  if (c.certificate) return { key: 'certified', label: `Certified · ${c.certificate.score}%` };
+  if (c.percent === 100) return { key: 'ready', label: 'All topics done' };
+  if (c.percent > 0) return { key: 'active', label: 'In progress' };
+  return { key: 'new', label: 'Not started' };
+};
+
+const Stat = ({ value, label, delay }) => {
+  const shown = useCountUp(value, { delay });
+  return (
+    <div className="lp-stat">
+      <span className="lp-stat-value" aria-hidden="true">
+        {shown}
+      </span>
+      <span className="lp-stat-label" aria-hidden="true">
+        {label}
+      </span>
+      <span className="visually-hidden">
+        {value} {label}
+      </span>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -35,113 +79,183 @@ const Dashboard = () => {
     };
   }, []);
 
+  const firstName = user?.name?.split(' ')[0];
+
+  // Totals for the hero. Derived from what /learn/my already returns.
+  const totals = useMemo(() => {
+    const done = courses.reduce((n, c) => n + (c.completed || 0), 0);
+    const all = courses.reduce((n, c) => n + (c.total || 0), 0);
+    return {
+      courses: courses.length,
+      topics: done,
+      certificates: courses.filter((c) => c.certificate).length,
+      overall: all ? Math.round((done / all) * 100) : 0,
+    };
+  }, [courses]);
+
+  const hasCourses = status === 'ready' && courses.length > 0;
+  const isEmpty = status === 'ready' && courses.length === 0;
+
   return (
-    <main className="max-w-5xl mx-auto px-6 py-12">
-      <h1 className="cx-anim-rise text-3xl font-extrabold text-slate-900">
-        Welcome back, {user?.name?.split(' ')[0]}
-      </h1>
-      <p className="cx-anim-rise mt-2 text-slate-600" style={{ '--i': '1' }}>
-        Your enrolled courses and progress.
-      </p>
+    <main className="lp">
+      <div className="lp-wrap">
+        <header className="lp-hero">
+          <div className="lp-hero-copy">
+            <span className="lx-label lp-label">
+              <span className="lx-label-num">01</span>
+              My learning
+            </span>
 
-      {status === 'loading' && (
-        <div className="mt-16 grid place-items-center">
-          <div className="h-10 w-10 rounded-full border-2 border-indigo-500/30 border-t-indigo-400 animate-spin" />
-        </div>
-      )}
+            <h1 className="lp-title" aria-label={`Welcome back${firstName ? `, ${firstName}` : ''}.`}>
+              <span className="lx-line" aria-hidden="true" style={{ '--i': 0 }}>
+                <span>Welcome back{firstName ? ',' : '.'}</span>
+              </span>
+              {firstName && (
+                <span className="lx-line" aria-hidden="true" style={{ '--i': 1 }}>
+                  <span>
+                    <em>{firstName}.</em>
+                  </span>
+                </span>
+              )}
+            </h1>
 
-      {status === 'error' && (
-        <p className="cx-anim-rise mt-10 text-slate-600">Could not load your courses. Please refresh.</p>
-      )}
+            <p className="lp-lede">
+              {isEmpty
+                ? 'Every course is free, and so is the certificate.'
+                : 'Pick up exactly where you left off.'}
+            </p>
 
-      {status === 'ready' && courses.length === 0 && (
-        <div className="cx-anim-card cx-contain mt-10 bg-white rounded-2xl shadow-card p-10 text-center">
-          <p className="text-lg font-semibold text-slate-900">You have not enrolled yet</p>
-          <p className="mt-2 text-slate-600">Every course is free, including the certificate.</p>
-          <Link
-            to="/courses"
-            className="mt-6 inline-block px-6 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700"
-          >
-            Browse courses
-          </Link>
-        </div>
-      )}
+            {hasCourses && (
+              <div className="lp-stats">
+                <Stat value={totals.courses} label={totals.courses === 1 ? 'course' : 'courses'} delay={650} />
+                <Stat value={totals.topics} label="topics done" delay={760} />
+                <Stat
+                  value={totals.certificates}
+                  label={totals.certificates === 1 ? 'certificate' : 'certificates'}
+                  delay={870}
+                />
+              </div>
+            )}
+          </div>
 
-      {status === 'ready' && courses.length > 0 && (
-        <div className="mt-8 space-y-4">
-          {courses.map((c, index) => {
-            // Presentation only — it changes nothing about what is fetched or
-            // where anything links.
-            const earned = Boolean(c.certificate);
-            const step = String(Math.min(index, STAGGER_CAP));
+          <div className="lp-hero-visual">
+            <PhotoVisual
+              photo={learnPhotos.dashboard}
+              ratio="5 / 4"
+              chips={hasCourses ? [{ value: `${totals.overall}%`, label: 'overall progress' }] : []}
+            />
+          </div>
+        </header>
 
-            return (
-              <article
-                key={c.id}
-                // --i places the card in the stagger, and is inherited by the
-                // progress bar inside it so the two arrive together.
-                style={{ '--i': step }}
-                className={`cx-anim-card cx-contain rounded-2xl shadow-card p-6 ${
-                  earned
-                    ? 'bg-gradient-to-br from-emerald-50 to-white ring-1 ring-emerald-600/25'
-                    : 'bg-white'
-                }`}
-              >
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <h2 className="text-lg font-semibold text-slate-900">{c.title}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
-                      {c.category} · {c.duration}
-                    </p>
-                  </div>
-                  {earned ? (
-                    // The one moment on this page worth marking: it lands after
-                    // its card has settled.
-                    <span
-                      className="cx-anim-pop shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-700 ring-1 ring-emerald-600/30"
-                      style={{ animationDelay: 'calc(var(--i, 0) * var(--cx-stagger) + var(--cx-dur))' }}
-                    >
-                      <span aria-hidden="true">★</span>
-                      Certified · {c.certificate.score}%
-                    </span>
-                  ) : (
-                    <span className="shrink-0 text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-700 ring-1 ring-indigo-500/25">
-                      In progress
-                    </span>
-                  )}
-                </div>
+        {status === 'loading' && (
+          <div className="lp-state lx-route-loading" role="status" aria-label="Loading your courses">
+            <span />
+          </div>
+        )}
 
-                <div className="mt-4">
-                  <div className="flex justify-between text-sm text-slate-600 mb-2">
-                    <span>
-                      {c.completed}/{c.total} lessons
-                    </span>
-                    <span className="font-semibold">{c.percent}%</span>
-                  </div>
-                  <ProgressBar percent={c.percent} />
-                </div>
+        {status === 'error' && (
+          <p className="cx-anim-rise lp-state">Could not load your courses. Please refresh.</p>
+        )}
 
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <Link
-                    to={`/learn/${c.slug}`}
-                    className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700"
+        {isEmpty && (
+          <div className="cx-anim-card lp-glass lp-empty">
+            <h2 className="lp-empty-title">Nothing enrolled yet.</h2>
+            <p>Choose a course and your progress will live here.</p>
+            <Link to="/courses" className="btn lx-btn">
+              Browse courses
+              <span className="lx-btn-disc" aria-hidden="true">
+                <ArrowUpRight size={15} />
+              </span>
+            </Link>
+          </div>
+        )}
+
+        {hasCourses && (
+          <section aria-labelledby="lp-courses-heading">
+            <div className="lp-section-head">
+              <h2 id="lp-courses-heading" className="lp-section-title">
+                Your courses
+              </h2>
+              <span className="lp-section-count">{courses.length} enrolled</span>
+            </div>
+
+            <ul className="lp-courses">
+              {courses.map((c, index) => {
+                // Presentation only — it changes nothing about what is fetched
+                // or where anything links.
+                const state = statusOf(c);
+                const step = String(Math.min(index, STAGGER_CAP));
+                // The same photograph the course wears in the catalogue, so a
+                // learner recognises it at a glance.
+                const cover = courseCover(c.slug);
+
+                return (
+                  <li
+                    key={c.id}
+                    // --i places the card in the stagger, and is inherited by
+                    // the progress bar inside it so the two arrive together.
+                    style={{ '--i': step }}
+                    className="lp-course lp-glass cx-anim-card cx-contain"
                   >
-                    {c.percent === 100 ? 'Review course' : 'Continue learning'}
-                  </Link>
-                  {c.certificate && (
-                    <Link
-                      to={`/certificate/${c.certificate.code}`}
-                      className="px-5 py-2.5 rounded-lg border border-emerald-600/40 text-emerald-700 text-sm font-semibold hover:bg-emerald-600/10"
-                    >
-                      View certificate
-                    </Link>
-                  )}
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      )}
+                    <div className={`lp-cover${cover ? ' has-photo' : ''}`} aria-hidden="true">
+                      {cover ? (
+                        <img src={cover.src} alt="" loading="lazy" decoding="async" />
+                      ) : (
+                        <span className="lp-cover-mark">{initials(c.title)}</span>
+                      )}
+                    </div>
+
+                    <div className="lp-course-info">
+                      <h3 className="lp-course-title">{c.title}</h3>
+                      <div className="lp-course-meta">
+                        <span className={`lp-status is-${state.key}`}>
+                          <span className="lp-status-dot" aria-hidden="true" />
+                          {state.label}
+                        </span>
+                        <span>
+                          {c.category} · {c.duration}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="lp-course-progress">
+                      <div className="lp-course-numbers">
+                        <span className="lp-course-percent">{c.percent}%</span>
+                        <span className="lp-course-count">
+                          {c.completed} of {c.total} topics
+                        </span>
+                      </div>
+                      <ProgressBar percent={c.percent} />
+                    </div>
+
+                    <div className="lp-course-actions">
+                      <Link to={`/learn/${c.slug}`} className="btn lx-btn">
+                        {c.percent === 100
+                          ? 'Review course'
+                          : c.percent === 0
+                          ? 'Start course'
+                          : 'Continue learning'}
+                        <span className="lx-btn-disc" aria-hidden="true">
+                          <ArrowUpRight size={15} />
+                        </span>
+                      </Link>
+                      {c.certificate ? (
+                        <Link to={`/certificate/${c.certificate.code}`} className="lx-link">
+                          View certificate <ArrowRight size={15} aria-hidden="true" />
+                        </Link>
+                      ) : c.percent === 100 ? (
+                        <Link to={`/learn/${c.slug}/final`} className="lx-link">
+                          Take the final exam <ArrowRight size={15} aria-hidden="true" />
+                        </Link>
+                      ) : null}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+      </div>
     </main>
   );
 };

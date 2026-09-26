@@ -4,8 +4,8 @@ description: A comment fires a webhook, your server sends the DM. The real cost 
 date: 2026-08-28
 tags: [instagram, automation, api]
 targetQuery: instagram comment to dm automation without manychat
-image: /blog/instagram-comment-to-dm-without-manychat.webp
-imageAlt: "3D Instagram automation concept with glowing comment bubbles and direct messages"
+image: /blog/covers/instagram-comment-to-dm-without-manychat.webp
+imageAlt: "Two hands holding up a phone to photograph a sunlit field"
 ---
 
 You can build this yourself, and the mechanic is smaller than you would expect. Instagram sends your server a webhook when someone comments on your post, and your server answers that comment with a private message. That is the whole trick, and it is a few hundred lines of code.

@@ -1,0 +1,119 @@
+/* ── Article contents: warm glass, numbered rows ───────────────────── */
+
+.cx-toc {
+  margin: 2rem 0;
+  padding: 1.1rem 0.6rem 0.6rem;
+  border-radius: var(--r-lg);
+  background: var(--glass-sand);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit);
+}
+
+.cx-toc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.cx-toc .cx-toc-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cx-toc-count {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--copper);
+}
+
+.cx-toc-list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+}
+
+.cx-toc-list li {
+  margin: 0;
+}
+
+.cx-toc-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 0;
+  border-radius: var(--r-md);
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    color var(--dur-base) var(--ease-out-expo);
+}
+
+.cx-toc-row:hover,
+.cx-toc-row:focus-visible {
+  background: var(--glass-strong);
+  color: var(--ink);
+}
+
+.cx-toc-num {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--copper);
+}
+
+.cx-toc-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.cx-toc-go {
+  align-self: center;
+  color: var(--copper);
+  opacity: 0;
+  transform: translate3d(-4px, -4px, 0);
+  transition:
+    opacity var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.cx-toc-row:hover .cx-toc-go,
+.cx-toc-row:focus-visible .cx-toc-go {
+  opacity: 1;
+  transform: none;
+}
+
+/* The chosen heading glows copper for a moment after the scroll. */
+.cx-toc-flash {
+  border-radius: var(--r-xs);
+  animation: cx-toc-flash 1.6s var(--ease-out-quint) 0.35s both;
+}
+
+@keyframes cx-toc-flash {
+  0% { background-color: transparent; box-shadow: 0 0 0 0 transparent; }
+  20% { background-color: var(--copper-tint); box-shadow: 0 0 0 8px var(--copper-tint); }
+  100% { background-color: transparent; box-shadow: 0 0 0 8px transparent; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cx-toc-list li {
+    animation: lx-rise var(--dur-hero) var(--ease-out-expo) both;
+    animation-delay: calc(200ms + var(--i, 0) * 50ms);
+  }
+}

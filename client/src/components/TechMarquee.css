@@ -1,113 +1,92 @@
-/* Tech Marquee Component Styles */
-.tech-marquee-wrapper {
-  padding: 42px 0 36px;
-  background: linear-gradient(180deg, rgba(250, 251, 252, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
-  border-top: 1px solid rgba(15, 23, 42, 0.06);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-  overflow: hidden;
-  position: relative;
+/* ── What we work in: a slow ink marquee between two hairlines ──────── */
+
+.lx-marquee {
+  padding: clamp(2.5rem, 2rem + 2vw, 4rem) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
-.tech-marquee-header {
-  text-align: center;
-  margin-bottom: 24px;
-  padding: 0 20px;
-}
-
-.tech-marquee-eyebrow {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--cx-orange, #f97316);
-  margin-bottom: 6px;
-}
-
-.tech-marquee-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-
-.tech-marquee-track-container {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
+.lx-marquee-head {
   display: flex;
-  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem 3rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
 
-.tech-marquee-track {
+.lx-marquee-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+
+.lx-marquee-track-wrap {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+.lx-marquee-track {
   display: flex;
   width: max-content;
-  animation: techMarqueeScroll 38s linear infinite;
-  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  animation: lx-marquee 90s linear infinite;
 }
 
-.tech-marquee-track:hover {
+.lx-marquee-track-wrap:hover .lx-marquee-track {
   animation-play-state: paused;
 }
 
-.tech-marquee-item {
-  display: flex;
+.lx-marquee-item {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 20px;
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 9999px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  cursor: default;
-  user-select: none;
-}
-
-.tech-marquee-item:hover {
-  transform: translateY(-2px);
-  border-color: rgba(249, 115, 22, 0.4);
-  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.1);
-}
-
-.tech-icon {
-  font-size: 1.35rem;
-  flex-shrink: 0;
-}
-
-.tech-name {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #1e293b;
+  gap: 0.7rem;
+  padding: 0 clamp(1.5rem, 1rem + 1.5vw, 2.75rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.15rem + 0.8vw, 1.9rem);
+  line-height: 1;
+  color: var(--ink);
   white-space: nowrap;
+  opacity: 0.55;
+  transition: opacity var(--dur-base) var(--ease-out-expo);
 }
 
-@keyframes techMarqueeScroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+.lx-marquee-item:hover {
+  opacity: 1;
 }
 
-@media (max-width: 768px) {
-  .tech-marquee-wrapper {
-    padding: 32px 0 28px;
+.lx-marquee-icon {
+  width: 0.8em;
+  height: 0.8em;
+  color: var(--ink);
+}
+
+@keyframes lx-marquee {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Under reduced motion the row stops and wraps into a still list. */
+@media (prefers-reduced-motion: reduce) {
+  .lx-marquee-track {
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1rem;
+    animation: none;
   }
-  .tech-marquee-title {
-    font-size: 1.1rem;
+
+  .lx-marquee-track-wrap {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
-  .tech-marquee-item {
-    padding: 8px 14px;
-    gap: 8px;
-  }
-  .tech-icon {
-    font-size: 1.15rem;
-  }
-  .tech-name {
-    font-size: 0.85rem;
+
+  .lx-marquee-item[aria-hidden="true"] {
+    display: none;
   }
 }

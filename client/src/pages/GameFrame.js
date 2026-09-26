@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import Seo from '../seo/Seo';
 
 const GAME_CONFIG = {
@@ -7,154 +7,276 @@ const GAME_CONFIG = {
     title: 'Gotcha Rush',
     port: 3001,
     tagline: 'Real-Time Code Prediction Quiz & Battle Arena',
-    color: '#f97316',
+    line: 'Predict the output',
   },
   typedash: {
     title: 'TypeDash',
     port: 4001,
     tagline: 'Real-Time Multiplayer Typing Sprint & Ghost Races',
-    color: '#0284c7',
+    line: 'Race the room',
   },
 };
 
+/* How long the frame may take before the loading state offers a way out. */
+const SLOW_MS = 9000;
+
+/*
+ * Scoped styles for the game host page. They use the site tokens from
+ * index.css and live here because this page owns no stylesheet of its own.
+ */
+const CSS = `
+.gf { --gf-bar: 68px; position: relative; padding: 0 var(--gutter) 28px; }
+.gf-bar { display: flex; align-items: center; gap: 16px; height: var(--gf-bar); max-width: 1360px; margin: 0 auto; }
+.gf-back { display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 12px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--ink); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: border-color var(--dur-base) var(--ease-out-expo), background-color var(--dur-base) var(--ease-out-expo); }
+.gf-back:hover { border-color: var(--ink); background: var(--paper); }
+.gf-back svg { width: 15px; height: 15px; transition: transform var(--dur-base) var(--ease-out-expo); }
+.gf-back:hover svg { transform: translate3d(-3px, 0, 0); }
+.gf-title { display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-right: auto; }
+.gf-title h1 { margin: 0; font-size: clamp(1.5rem, 1.2rem + 0.9vw, 2rem); line-height: 1; white-space: nowrap; }
+.gf-title h1 em { font-style: italic; color: var(--copper); }
+.gf-line { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-3); white-space: nowrap; }
+.gf-dot { position: relative; width: 7px; height: 7px; border-radius: 50%; background: #62805A; }
+.gf-dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid #62805A; animation: gf-ring 2.2s var(--ease-out-expo) infinite; }
+.gf-dot.is-wait { background: var(--copper-2); }
+.gf-dot.is-wait::after { border-color: var(--copper-2); }
+.gf-dot.is-off { background: #A5452F; }
+.gf-dot.is-off::after { display: none; }
+.gf-actions { display: flex; align-items: center; gap: 8px; }
+.gf-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line-strong); background: transparent; color: var(--ink); cursor: pointer; transition: border-color var(--dur-base) var(--ease-out-expo), background-color var(--dur-base) var(--ease-out-expo); }
+.gf-icon:hover { border-color: var(--ink); background: var(--paper); }
+.gf-icon svg { width: 17px; height: 17px; }
+.gf-icon.is-spin svg { animation: gf-spin 0.8s var(--ease-out-expo); }
+.gf-open { padding: 0.6rem 0.6rem 0.6rem 1.2rem; font-size: 0.9rem; }
+.gf-stage { position: relative; max-width: 1360px; height: calc(100svh - var(--nav-h) - var(--gf-bar) - 28px); min-height: 560px; margin: 0 auto; border-radius: 24px; overflow: hidden; background: var(--ivory); border: 1px solid var(--glass-edge); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--shadow-float); animation: gf-rise 0.9s var(--ease-out-expo) both; }
+.gf-stage:fullscreen { max-width: none; height: 100vh; border-radius: 0; border: 0; }
+.gf-stage:-webkit-full-screen { max-width: none; width: 100%; height: 100%; border-radius: 0; border: 0; }
+.gf-stage iframe { display: block; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity 0.6s var(--ease-out-expo); }
+.gf-stage.is-ready iframe { opacity: 1; }
+.gf-state { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; background: radial-gradient(60% 60% at 50% 45%, rgba(245, 230, 216, 0.7), rgba(250, 248, 244, 0) 70%), var(--ivory); transition: opacity 0.5s var(--ease-out-expo), visibility 0.5s; }
+.gf-state.is-gone { opacity: 0; visibility: hidden; pointer-events: none; }
+.gf-mark { position: relative; width: 76px; height: 76px; display: grid; place-items: center; }
+.gf-mark::before, .gf-mark::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 1px solid rgba(184, 97, 46, 0.35); animation: gf-ring 2s var(--ease-out-expo) infinite; }
+.gf-mark::after { animation-delay: 1s; border-color: rgba(22, 19, 15, 0.14); }
+.gf-mark svg { width: 64px; height: 64px; border-radius: 18px; box-shadow: 0 18px 36px -16px rgba(22, 19, 15, 0.55); animation: gf-float 3.2s var(--ease-in-out) infinite; }
+.gf-mark .gf-cursor { animation: gf-blink 1.1s steps(1) infinite; }
+.gf-state h2 { margin: 6px 0 0; font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.8rem); line-height: 1.05; }
+.gf-state p { margin: 0; max-width: 40ch; font-size: 0.95rem; color: var(--ink-3); }
+.gf-state code { white-space: nowrap; font-family: var(--font-mono); font-size: 0.82rem; padding: 3px 8px; border-radius: 6px; background: var(--sand); color: var(--ink); }
+.gf-bar-load { width: 160px; height: 2px; margin-top: 6px; border-radius: 2px; background: rgba(22, 19, 15, 0.08); overflow: hidden; }
+.gf-bar-load i { display: block; width: 40%; height: 100%; background: var(--copper-2); animation: gf-slide 1.4s var(--ease-in-out) infinite; }
+.gf-state-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 22px; margin-top: 8px; }
+.gf-off svg.gf-plug { width: 88px; height: 88px; }
+.gf-off .gf-plug .gf-spark { animation: gf-blink 1.6s steps(1) infinite; }
+.gf-missing { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 48px var(--gutter); text-align: center; }
+.gf-missing h1 { margin: 0; font-size: var(--text-h2); }
+.gf-missing p { margin: 0 0 8px; color: var(--ink-3); }
+@keyframes gf-rise { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
+@keyframes gf-ring { from { opacity: 0.55; transform: scale(0.7); } to { opacity: 0; transform: scale(1.6); } }
+@keyframes gf-float { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -6px, 0); } }
+@keyframes gf-blink { 50% { opacity: 0; } }
+@keyframes gf-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes gf-slide { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
+@media (max-width: 720px) {
+  .gf { --gf-bar: 60px; padding: 0 10px 10px; }
+  .gf-bar { gap: 8px; padding: 0 4px; }
+  .gf-back { width: 40px; padding: 0; justify-content: center; }
+  .gf-back span, .gf-line-text, .gf-open-label { display: none; }
+  .gf-title h1 { font-size: 1.45rem; }
+  .gf-open { width: 40px; height: 40px; min-height: 0; padding: 0; }
+  .gf-open .lx-btn-disc { margin: 0; background: transparent; color: var(--ivory); }
+  .gf-stage { height: calc(100svh - var(--nav-h) - var(--gf-bar) - 10px); min-height: 520px; border-radius: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gf *, .gf *::before, .gf *::after { animation: none !important; transition-duration: 0.01ms !important; }
+}
+`;
+
+function GameMark({ gameId }) {
+  if (gameId === 'gotcha-rush') {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="#16130F" />
+        <path d="M10 10l6 6-6 6" fill="none" stroke="#FAF8F4" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+        <path className="gf-cursor" d="M17.5 22.5h5.5" stroke="#B8612E" strokeWidth="2.4" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <rect width="32" height="32" rx="9" fill="#16130F" />
+      <path d="M8 20h10M8 15h16M8 10h7" stroke="#FAF8F4" strokeWidth="2.2" strokeLinecap="round" />
+      <path className="gf-cursor" d="M22 19v4" stroke="#B8612E" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default function GameFrame() {
   const { gameId } = useParams();
-  const navigate = useNavigate();
   const iframeRef = useRef(null);
-  const containerRef = useRef(null);
+  const stageRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [isSlow, setIsSlow] = useState(false);
+  const [spin, setSpin] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   const config = GAME_CONFIG[gameId];
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+  const gameUrl = config ? `http://${hostname}:${config.port}` : '';
 
+  // Ask the game server whether it is up. An opaque no-cors request resolves
+  // whenever anything answers and rejects when nothing is listening, which is
+  // the one thing an iframe's load event cannot tell us.
   useEffect(() => {
+    if (!config) return undefined;
     setIsLoaded(false);
     setHasError(false);
-  }, [gameId]);
+    setIsSlow(false);
+    let cancelled = false;
+    const ctrl = new AbortController();
+    const kill = setTimeout(() => ctrl.abort(), 6000);   // no answer in 6s counts as offline
+    fetch(`${gameUrl}/healthz`, { mode: 'no-cors', cache: 'no-store', signal: ctrl.signal })
+      .catch(() => { if (!cancelled) setHasError(true); })
+      .finally(() => clearTimeout(kill));
+    const slow = setTimeout(() => setIsSlow(true), SLOW_MS);
+    return () => { cancelled = true; ctrl.abort(); clearTimeout(kill); clearTimeout(slow); };
+  }, [gameId, gameUrl, attempt, config]);
+
+  // iPhone Safari has no element full screen, so the button only shows where it works
+  const [canFullscreen, setCanFullscreen] = useState(false);
+  useEffect(() => {
+    setCanFullscreen(Boolean(document.fullscreenEnabled || document.webkitFullscreenEnabled));
+    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement || document.webkitFullscreenElement));
+    document.addEventListener('fullscreenchange', onChange);
+    document.addEventListener('webkitfullscreenchange', onChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onChange);
+      document.removeEventListener('webkitfullscreenchange', onChange);
+    };
+  }, []);
+
+  const handleReload = useCallback(() => {
+    setSpin(false);
+    requestAnimationFrame(() => setSpin(true));
+    setAttempt((n) => n + 1);   // a new key remounts the iframe, which reloads the game
+  }, []);
+
+  const toggleFullscreen = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const inFull = document.fullscreenElement || document.webkitFullscreenElement;
+    const call = (fn, target) => { if (!fn) return; const r = fn.call(target); if (r && r.catch) r.catch(() => {}); };
+    if (!inFull) call(stage.requestFullscreen || stage.webkitRequestFullscreen, stage);
+    else call(document.exitFullscreen || document.webkitExitFullscreen, document);
+  };
 
   if (!config) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Game Not Found</h2>
-        <p className="text-slate-600 mb-6">The requested game does not exist.</p>
-        <Link
-          to="/games"
-          className="px-6 py-2.5 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors"
-        >
-          Return to Playground
+      <main className="gf-missing">
+        <style>{CSS}</style>
+        <span className="lx-label">Playground</span>
+        <h1>No game <em>here.</em></h1>
+        <p>That game does not exist.</p>
+        <Link to="/games" className="btn lx-btn">
+          Back to the playground
+          <span className="lx-btn-disc" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 16 16"><path d="M4.5 11.5l7-7M6 4.5h5.5V10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
         </Link>
-      </div>
+      </main>
     );
   }
 
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-  const gameUrl = `http://${hostname}:${config.port}`;
-
-  const handleReload = () => {
-    if (iframeRef.current) {
-      setIsLoaded(false);
-      iframeRef.current.src = gameUrl;
-    }
-  };
-
-  const toggleFullscreen = () => {
-    if (!containerRef.current) return;
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
-    } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
-    }
-  };
+  const ready = isLoaded && !hasError;
+  const dot = hasError ? 'is-off' : ready ? '' : 'is-wait';
 
   return (
-    <div className="bg-slate-950 text-white min-h-screen flex flex-col" ref={containerRef}>
+    <main className="gf">
+      <style>{CSS}</style>
       <Seo
         title={`${config.title} | Cortexis Playground`}
         description={config.tagline}
         path={`/games/${gameId}`}
       />
 
-      {/* Top Controller Bar */}
-      <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between gap-4 backdrop-blur sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/games')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition-colors"
-            title="Back to games catalog"
-          >
-            <span>←</span>
-            <span className="hidden sm:inline">Playground</span>
-          </button>
+      <div className="gf-bar">
+        <Link to="/games" className="gf-back" title="Back to the playground">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M12.5 8h-9M7 4.5L3.5 8 7 11.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <span>Playground</span>
+        </Link>
 
-          <div className="h-4 w-px bg-slate-700 hidden sm:block" />
-
-          <div>
-            <h1 className="text-sm font-bold flex items-center gap-2">
-              <span>{config.title}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            </h1>
-            <p className="text-[11px] text-slate-400 hidden md:block">{config.tagline}</p>
-          </div>
+        <div className="gf-title">
+          <h1>{config.title}</h1>
+          <span className="gf-line">
+            <i className={`gf-dot ${dot}`} aria-hidden="true" />
+            <span className="gf-line-text">{hasError ? 'Offline' : ready ? config.line : 'Connecting'}</span>
+          </span>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 hidden sm:inline">
-            :{config.port}
-          </span>
-
-          <button
-            onClick={handleReload}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
-            title="Reload game session"
-          >
-            ↻ Reload
+        <div className="gf-actions">
+          <button type="button" onClick={handleReload} className={`gf-icon ${spin ? 'is-spin' : ''}`} title="Reload the game" aria-label="Reload the game" onAnimationEnd={() => setSpin(false)}>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.5v3.2h-3.2" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
-
-          <button
-            onClick={toggleFullscreen}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
-            title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-          >
-            {isFullscreen ? '⤢ Minimize' : '⤡ Fullscreen'}
-          </button>
-
-          <a
-            href={gameUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition-colors flex items-center gap-1"
-          >
-            <span>Open Tab</span>
-            <span>↗</span>
+          {canFullscreen && <button type="button" onClick={toggleFullscreen} className="gf-icon" title={isFullscreen ? 'Exit full screen' : 'Full screen'} aria-label={isFullscreen ? 'Exit full screen' : 'Full screen'}>
+            {isFullscreen ? (
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 3.5V8H3.5M12 3.5V8h4.5M8 16.5V12H3.5M12 16.5V12h4.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            ) : (
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 8V3.5H8M16.5 8V3.5H12M3.5 12v4.5H8M16.5 12v4.5H12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            )}
+          </button>}
+          <a href={gameUrl} target="_blank" rel="noopener noreferrer" className="btn lx-btn gf-open" title="Open in a new tab">
+            <span className="gf-open-label">Open in a tab</span>
+            <span className="lx-btn-disc" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 16 16"><path d="M4.5 11.5l7-7M6 4.5h5.5V10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </span>
           </a>
         </div>
       </div>
 
-      {/* Embedded Game Iframe */}
-      <div className="relative flex-1 w-full h-[calc(100vh-50px)] bg-black overflow-hidden">
-        {!isLoaded && !hasError && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950 text-slate-400 z-10">
-            <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-            <p className="text-sm">Connecting to {config.title} on port {config.port}...</p>
-            <p className="text-xs text-slate-500 mt-1">
-              Ensure Docker Compose is running: <code className="text-emerald-400">docker compose up</code>
-            </p>
+      <div className={`gf-stage ${ready ? 'is-ready' : ''}`} ref={stageRef}>
+        <div className={`gf-state ${ready || hasError ? 'is-gone' : ''}`} role="status" aria-live="polite">
+          <div className="gf-mark"><GameMark gameId={gameId} /></div>
+          <h2>{config.title}</h2>
+          <div className="gf-bar-load" aria-hidden="true"><i /></div>
+          {isSlow && <p>Still starting. If it stays here, reload or open it in a tab.</p>}
+        </div>
+
+        {hasError && (
+          <div className="gf-state gf-off" role="alert">
+            <svg className="gf-plug" viewBox="0 0 88 88" aria-hidden="true">
+              <circle cx="44" cy="44" r="40" fill="#F5E6D8" />
+              <path d="M22 50h12a6 6 0 0 0 6-6v-6H28v6a6 6 0 0 0-6 6z" fill="#16130F" />
+              <path d="M31 38v-7M37 38v-7" stroke="#16130F" strokeWidth="2.6" strokeLinecap="round" />
+              <path d="M66 38H54a6 6 0 0 0-6 6v6h12v-6a6 6 0 0 0 6-6z" fill="none" stroke="#16130F" strokeWidth="2.4" strokeLinejoin="round" />
+              <path className="gf-spark" d="M44 28l-2 6h4l-2 6" fill="none" stroke="#B8612E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M18 50c-5 0-8 3-8 8M70 38c5 0 8-3 8-8" fill="none" stroke="#16130F" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
+            <h2>The game is <em>offline.</em></h2>
+            <p>Start the game server, then try again: <code>docker compose up</code></p>
+            <div className="gf-state-actions">
+              <button type="button" onClick={handleReload} className="btn lx-btn">
+                Try again
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <svg width="13" height="13" viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.5v3.2h-3.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </span>
+              </button>
+              <Link to="/games" className="lx-link">Back to the playground</Link>
+            </div>
           </div>
         )}
 
         <iframe
+          key={attempt}
           ref={iframeRef}
           src={gameUrl}
           title={config.title}
-          className="w-full h-full border-0"
           allow="autoplay; fullscreen; clipboard-read; clipboard-write; microphone"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
           onLoad={() => setIsLoaded(true)}
           onError={() => setHasError(true)}
         />
       </div>
-    </div>
+    </main>
   );
 }

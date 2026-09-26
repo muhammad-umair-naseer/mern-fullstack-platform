@@ -1,0 +1,625 @@
+/* The learning pages: dashboard, chapter quiz and final exam.
+ *
+ * These are app screens rather than marketing pages, so the hero is compact
+ * (the learner came here to carry on, not to be sold to) but it still opens
+ * the way the rest of the site does: a mono label, a serif headline rising
+ * out of its line masks, one short line of lede, and a photograph in a glass
+ * frame on the right (PhotoVisual). Everything below the hero is glass over
+ * the silk, never an opaque slab.
+ *
+ * The house choreography (lx-line, lx-rise, lx-fade) and tokens come from
+ * index.css; the learning motion vocabulary from motion.css.
+ */
+
+@import './motion.css';
+
+/* --- page -------------------------------------------------------------- */
+
+.lp {
+  position: relative;
+  /* The footer opens with its own generous margin, so the page ends tight. */
+  padding: clamp(1.5rem, 0.8rem + 2.4vw, 3.25rem) 0 clamp(2.5rem, 2rem + 2vw, 4rem);
+  color: var(--ink-2);
+}
+
+.lp-wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.lp-narrow {
+  max-width: 46rem;
+  margin-inline: auto;
+  /* The final exam brings this block into view when its result lands. */
+  scroll-margin-top: calc(var(--nav-h) + 1.25rem);
+}
+
+/* --- hero -------------------------------------------------------------- */
+
+.lp-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2rem, 1rem + 4vw, 5rem);
+  align-items: center;
+  padding-bottom: clamp(2rem, 1.2rem + 2.6vw, 4rem);
+}
+
+.lp-hero-copy {
+  min-width: 0;
+}
+
+.lp-back {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out-expo);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) both;
+}
+
+.lp-back svg {
+  transition: transform var(--dur-base) var(--ease-out-expo);
+}
+
+.lp-back:hover,
+.lp-back:focus-visible {
+  color: var(--ink);
+}
+
+.lp-back:hover svg,
+.lp-back:focus-visible svg {
+  transform: translate3d(-3px, 0, 0);
+}
+
+.lp-label {
+  margin-bottom: clamp(1.1rem, 0.9rem + 0.7vw, 1.6rem);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) both;
+}
+
+.lp-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.7rem, 1.5rem + 4vw, 5.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.026em;
+  color: var(--ink);
+}
+
+.lp-title em {
+  font-style: italic;
+  color: var(--copper);
+  letter-spacing: -0.02em;
+}
+
+/* Long course titles (the final exam) step down a size so they hold to two
+   or three lines rather than five. */
+.lp-title--long {
+  font-size: clamp(2.4rem, 1.4rem + 3.1vw, 4.4rem);
+}
+
+.lp-lede {
+  margin: clamp(1.1rem, 0.9rem + 0.8vw, 1.6rem) 0 0;
+  max-width: 36ch;
+  font-size: clamp(1.02rem, 0.96rem + 0.3vw, 1.2rem);
+  line-height: 1.55;
+  color: var(--ink-3);
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 480ms both;
+}
+
+.lp-meta {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 560ms both;
+}
+
+.lp-meta li {
+  padding: 0.38rem 0.82rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-2);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.lp-hero-visual {
+  min-width: 0;
+  animation: lx-fade 1.2s var(--ease-out-quint) 240ms both;
+}
+
+@media (max-width: 900px) {
+  .lp-hero {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+/* --- section heading --------------------------------------------------- */
+
+.lp-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.lp-section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 1.4rem + 1.4vw, 2.6rem);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.lp-section-count {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+}
+
+/* --- glass surfaces ---------------------------------------------------- */
+
+.lp-glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit);
+  border-radius: var(--r-md);
+}
+
+/* --- stats (dashboard) ------------------------------------------------- */
+
+.lp-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(1.6rem, 1.2rem + 1.4vw, 2.5rem);
+  max-width: 30rem;
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 600ms both;
+}
+
+.lp-stat {
+  padding: 0.2rem 1.1rem 0.2rem 0;
+}
+
+.lp-stat + .lp-stat {
+  padding-left: 1.1rem;
+  border-left: 1px solid var(--line);
+}
+
+.lp-stat-value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 1.7rem + 1.2vw, 2.8rem);
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-stat-label {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+
+/* --- course rows (dashboard) ------------------------------------------- */
+
+.lp-courses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.lp-course {
+  position: relative;
+  display: grid;
+  /* The actions column is a fixed width so the progress bars line up from
+     row to row, whatever each row's button says. */
+  grid-template-columns: 7.5rem minmax(0, 1.25fr) minmax(0, 1fr) 12.5rem;
+  align-items: center;
+  gap: clamp(1rem, 0.6rem + 1.4vw, 2rem);
+  padding: 1.1rem clamp(1.1rem, 0.8rem + 1vw, 1.6rem) 1.1rem 1.1rem;
+  /* The lift uses `translate`, not `transform`: the row's entrance animation
+     (cx-anim-card) fills with `both`, which pins `transform` for good once it
+     finishes, so a hover transform would never apply. */
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    box-shadow var(--dur-slow) var(--ease-out-expo),
+    translate var(--dur-slow) var(--ease-out-expo);
+}
+
+.lp-course:hover,
+.lp-course:focus-within {
+  background: var(--glass-strong);
+  box-shadow: var(--glass-lit), var(--shadow-raised);
+  translate: 0 -2px;
+}
+
+/* The course's own photograph, as it appears in the catalogue, easing in a
+   little closer on hover. A course without one falls back to its initials in
+   the display serif over a warm tint, with a copper hairline that draws
+   across on hover. */
+.lp-cover {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 7.5rem;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: var(--sand);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 2px rgba(22, 19, 15, 0.06);
+}
+
+.lp-cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.lp-course:hover .lp-cover img {
+  transform: scale(1.08);
+}
+
+.lp-cover-mark {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.lp-cover:not(.has-photo)::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 22%;
+  height: 1px;
+  background: var(--copper);
+  transform: scaleX(0.3);
+  transform-origin: left center;
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.lp-course:hover .lp-cover-mark {
+  transform: translate3d(0, -3px, 0);
+}
+
+.lp-course:hover .lp-cover::after {
+  transform: scaleX(1);
+}
+
+.lp-course-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.45rem, 1.2rem + 0.8vw, 1.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+.lp-course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+
+.lp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  color: var(--ink-2);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.lp-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-4);
+}
+
+.lp-status.is-active .lp-status-dot {
+  background: var(--copper-2);
+  animation: lpBreath 2.6s var(--cx-ease-in-out) infinite;
+}
+
+.lp-status.is-ready {
+  border-color: rgba(154, 74, 34, 0.35);
+  color: var(--copper-3);
+}
+
+.lp-status.is-ready .lp-status-dot {
+  background: var(--copper);
+}
+
+.lp-status.is-certified {
+  border-color: rgba(154, 74, 34, 0.45);
+  background: var(--copper-tint);
+  color: var(--copper-3);
+}
+
+@keyframes lpBreath {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(0.8); }
+}
+
+.lp-course-progress {
+  min-width: 0;
+}
+
+.lp-course-numbers {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.lp-course-percent {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-course-count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+
+.lp-course-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+}
+
+.lp-course-actions .btn {
+  padding: 0.7rem 1.25rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.lp-course-actions .lx-link {
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .lp-course {
+    grid-template-columns: 5.25rem minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "progress progress"
+      "actions actions";
+    row-gap: 1rem;
+  }
+  .lp-cover { grid-area: cover; width: 5.25rem; }
+  .lp-cover-mark { font-size: 1.8rem; }
+  .lp-course-info { grid-area: info; }
+  .lp-course-progress { grid-area: progress; }
+  .lp-course-actions {
+    grid-area: actions;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem 1.25rem;
+  }
+}
+
+/* --- empty state ------------------------------------------------------- */
+
+.lp-empty {
+  padding: clamp(2rem, 1.5rem + 2vw, 3.25rem);
+  text-align: center;
+}
+
+.lp-empty-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 1.5rem + 1.2vw, 2.5rem);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.lp-empty p {
+  margin: 0.75rem auto 0;
+  max-width: 34ch;
+  color: var(--ink-3);
+}
+
+.lp-empty .btn {
+  margin-top: 1.5rem;
+}
+
+/* --- loading and errors -------------------------------------------------- */
+
+.lp-state {
+  min-height: 40vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+/* Held to most of a screen and centred in it, so a locked quiz reads as a
+   deliberate stop rather than a page that failed to load, and the footer
+   does not ride up underneath three lines of text. */
+.lp-error {
+  max-width: 34rem;
+  min-height: calc(78vh - var(--nav-h));
+  margin: 0 auto;
+  padding: clamp(3rem, 2rem + 4vw, 6rem) var(--gutter);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.lp-error h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 1.6rem + 2vw, 3.2rem);
+  line-height: 1.02;
+  color: var(--ink);
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) both;
+}
+
+.lp-error p {
+  margin: 0.9rem 0 0;
+  color: var(--ink-3);
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 120ms both;
+}
+
+.lp-error .lx-link {
+  margin-top: 1.75rem;
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 220ms both;
+}
+
+/* --- the certificate issued panel (final exam) ------------------------- */
+
+.lp-issued {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.25rem 1.75rem;
+  margin: 0 0 2rem;
+  padding: 1.4rem 1.6rem;
+  background: var(--glass-strong);
+  border-color: rgba(154, 74, 34, 0.28);
+  overflow: hidden;
+  animation: cxRiseCard var(--cx-dur-slow) var(--cx-ease-out) both;
+}
+
+/* One slow copper light across the panel, once. */
+.lp-issued::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 35%, rgba(245, 230, 216, 0.9) 50%, transparent 65%);
+  transform: translate3d(-100%, 0, 0);
+  animation: lpSweep 1.6s var(--cx-ease-out) 500ms both;
+  pointer-events: none;
+}
+
+@keyframes lpSweep {
+  to { transform: translate3d(100%, 0, 0); }
+}
+
+.lp-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--copper-2), var(--copper) 55%, var(--copper-3));
+  color: var(--ivory);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.18), 0 6px 18px rgba(126, 59, 27, 0.28);
+  animation:
+    cxPop var(--cx-dur) var(--cx-ease-pop) 200ms both,
+    cxPulseRing 1.8s var(--cx-ease-out) 700ms 1;
+}
+
+.lp-issued-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 1.3rem + 0.9vw, 2.1rem);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.lp-issued-code {
+  display: inline-block;
+  margin-top: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+
+.lp-issued-code strong {
+  margin-left: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--r-xs);
+  background: var(--copper-tint);
+  color: var(--copper-3);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 640px) {
+  .lp-issued {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .lp-issued .btn {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+/* --- off ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-course,
+  .lp-cover-mark,
+  .lp-cover img,
+  .lp-cover::after {
+    transition: none;
+  }
+  .lp-course:hover .lp-cover img {
+    transform: scale(1.02);
+  }
+  .lp-course:hover,
+  .lp-course:focus-within {
+    translate: none;
+  }
+  .lp-course:hover .lp-cover-mark {
+    transform: none;
+  }
+  .lp-status.is-active .lp-status-dot,
+  .lp-issued::after,
+  .lp-seal {
+    animation: none;
+  }
+}

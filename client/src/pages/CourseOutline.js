@@ -1,11 +1,122 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, Award, Check, Lock } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import ProgressBar from '../learn/ProgressBar';
 import '../learn/CourseOutline.css';
+import PageHero from '../components/PageHero';
+import CourseOutlineVisual from '../components/heroes/CourseOutlineVisual';
+import { courseCover } from '../data/courseCovers';
+import { photos } from '../assets/lux';
 import Seo from '../seo/Seo';
 import { course as courseSchema, breadcrumbs } from '../seo/schema';
+
+const pad = (n) => String(n).padStart(2, '0');
+
+// Every course has its own photograph; one added before its photo gets the
+// house photograph of a student at a sunlit table.
+const coverOf = (course) => courseCover(course.slug) || courseCover(course.coverKey) || photos.learning;
+
+// Words a headline line should never end on, and the ones that introduce the
+// italic phrase ("Data Science with *Python*").
+const HANGS = /^(&|and|with|for|of|to|the|a|an|in|on)$/i;
+const LEADS = /^(&|and|with|for)$/i;
+
+/**
+ * The course's own title as the headline, set in two or three lines with its
+ * last phrase in the italic.
+ *
+ * The italic is the parenthesis if there is one ("Graphic Designing
+ * *(Photoshop + Illustrator)*"), else whatever follows the last "&", "and",
+ * "with" or "for" when that is a word or two ("Java & *Spring Boot*"), else
+ * the last word. Lines are chosen to keep the longest one short: no line ends
+ * on a small word, a colon always ends one, and the italic is kept whole
+ * unless splitting it saves a good deal of width. Returns the lines and the
+ * longest line's length, which sizes the type.
+ */
+const headline = (title) => {
+  const words = String(title).trim().split(/\s+/);
+  const n = words.length;
+  if (n === 1) return { lines: [<em>{words[0]}</em>], chars: words[0].length };
+
+  let em = n - 1;
+  const paren = words.findIndex((w) => w.startsWith('('));
+  if (paren > 0) {
+    em = paren;
+  } else {
+    for (let i = n - 2; i > 0; i -= 1) {
+      if (LEADS.test(words[i])) {
+        if (n - 1 - i <= 2) em = i + 1;
+        break;
+      }
+    }
+  }
+
+  const width = (a, b) => words.slice(a, b).join(' ').length;
+  const measure = (cuts) => {
+    let longest = 0;
+    let cost = 0;
+    for (let j = 0; j < cuts.length - 1; j += 1) {
+      const a = cuts[j];
+      const b = cuts[j + 1];
+      longest = Math.max(longest, width(a, b));
+      if (j < cuts.length - 2 && HANGS.test(words[b - 1])) cost += 50;
+      // "(Photoshop +" reads better than a line that opens on the plus.
+      if (/^[+/]$/.test(words[a])) cost += 1;
+      // "Digital Marketing / & SEO": the phrase before the italic breaks at
+      // its "&" or "with" rather than carrying it mid-line.
+      for (let w = a + 1; w < b; w += 1) if (LEADS.test(words[w])) cost += 5;
+      for (let w = a; w < b - 1; w += 1) if (/:$/.test(words[w])) cost += 50;
+      if (b > em && b < n && j < cuts.length - 2) cost += 4;
+    }
+    return { cuts, longest, score: longest + cost };
+  };
+
+  const best = (layouts) => layouts.map(measure).sort((x, y) => x.score - y.score)[0];
+  const two = [];
+  const three = [];
+  for (let a = 1; a < n; a += 1) {
+    two.push([0, a, n]);
+    for (let b = a + 1; b < n; b += 1) three.push([0, a, b, n]);
+  }
+  const pick2 = best(two);
+  const pick3 = three.length ? best(three) : null;
+  const pick = pick2.score <= 17 || !pick3 || pick2.score <= pick3.score ? pick2 : pick3;
+
+  const lines = [];
+  for (let j = 0; j < pick.cuts.length - 1; j += 1) {
+    const a = pick.cuts[j];
+    const b = pick.cuts[j + 1];
+    const plain = words.slice(a, Math.max(a, Math.min(b, em))).join(' ');
+    const italic = words.slice(Math.max(a, em), b).join(' ');
+    lines.push(
+      <>
+        {plain}
+        {plain && italic ? ' ' : ''}
+        {italic ? <em>{italic}</em> : null}
+      </>
+    );
+  }
+  return { lines, chars: pick.longest };
+};
+
+/**
+ * A lede of a dozen words at most: the summary's opening clause when it is
+ * that short, otherwise the plain facts.
+ */
+const ledeOf = (course) => {
+  let head = String(course.summary || '')
+    .split(/\s+[—–]\s+|:\s|;\s|\.\s|,\s(?=(?:then|so|but)\s)/)[0]
+    .replace(/[.,;:\s]+$/, '');
+  // ", and" ends the clause only when it is not closing a list: "Learn to
+  // build, evaluate, and distrust models" must not become "build, evaluate."
+  const and = head.search(/,\s(?=and\s)/);
+  if (and > -1 && !head.slice(0, and).includes(',')) head = head.slice(0, and);
+  const count = head.split(/\s+/).filter(Boolean).length;
+  if (count >= 4 && count <= 12) return `${head}.`;
+  return `${course.chapters.length} free chapters and a certificate anyone can verify.`;
+};
 
 /**
  * Counts from zero up to `target` once, then stays there.
@@ -52,6 +163,9 @@ const CourseOutline = () => {
   const [course, setCourse] = useState(null);
   const [status, setStatus] = useState('loading');
   const [enrolling, setEnrolling] = useState(false);
+  // Chapters a reader has opened or closed by hand; the rest follow the
+  // default (only the chapter they are in, or the first).
+  const [opened, setOpened] = useState({});
   const listRef = useRef(null);
 
   const load = useCallback(async () => {
@@ -97,10 +211,10 @@ const CourseOutline = () => {
     return () => observer.disconnect();
   }, [status, course]);
 
-  // A locked row refusing, once. Handled here rather than per row so the
-  // outline does not carry twelve chapters' worth of handlers.
   const shownPercent = useCountUp(course?.progress?.percent ?? 0);
 
+  // A locked row refusing, once. Handled here rather than per row so the
+  // outline does not carry twelve chapters' worth of handlers.
   const refuse = useCallback((event) => {
     const row = event.currentTarget;
     row.classList.remove('is-nudging');
@@ -123,19 +237,21 @@ const CourseOutline = () => {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-[60vh] grid place-items-center">
-        <div className="h-10 w-10 rounded-full border-2 border-indigo-500/30 border-t-indigo-400 animate-spin" />
+      <div className="lx-route-loading" role="status" aria-label="Loading the course">
+        <span />
       </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">Course not found</h1>
-        <Link to="/courses" className="mt-4 inline-block text-indigo-400 hover:underline">
-          Back to all courses
-        </Link>
+      <main className="min-h-screen">
+        <Seo title="Course not found" description="That course is not in the library." path={`/learn/${slug}`} noindex />
+        <PageHero
+          align="center"
+          lines={['That course', <em key="em">is not here.</em>]}
+          actions={[{ to: '/courses', label: 'See all free courses', primary: true }]}
+        />
       </main>
     );
   }
@@ -157,8 +273,37 @@ const CourseOutline = () => {
     allLessons.find((l) => !done.has(l.id) && lessonGate(l.id)?.unlocked !== false) ||
     allLessons[0];
 
+  // The hero card's route: each chapter cleared or not, how far into it the
+  // learner is, and which row they are on (a chapter, then the final, then
+  // the certificate).
+  const route = course.chapters.map((ch) => {
+    const finished = ch.lessons.filter((l) => done.has(l.id)).length;
+    const quizPassed = !(ch.quizCount > 0) || !!quizGate(ch.id)?.passed;
+    return {
+      title: ch.title,
+      done: enrolled && ch.lessons.length > 0 && finished === ch.lessons.length && quizPassed,
+      fraction: ch.lessons.length ? finished / ch.lessons.length : 0,
+    };
+  });
+  const firstOpen = route.findIndex((r) => !r.done);
+  const routeAt = progress?.certificate
+    ? route.length + 1
+    : firstOpen === -1
+    ? route.length
+    : firstOpen;
+
+  const { lines, chars } = headline(course.title);
+
+  // One chapter starts open: the one holding the learner's next topic, or
+  // the first. The rest are a scannable list of twelve titles.
+  const startId =
+    (enrolled && course.chapters.find((c) => c.lessons.some((l) => l.id === resumeLesson?.id))?.id) ||
+    course.chapters[0]?.id;
+  const isOpen = (id) => opened[id] ?? id === startId;
+  const allOpen = course.chapters.every((c) => isOpen(c.id));
+
   return (
-    <main className="text-slate-800">
+    <main className="text-ink-2">
       <Seo
         title={course.title}
         description={
@@ -177,108 +322,153 @@ const CourseOutline = () => {
           ]),
         ]}
       />
-      <header className="bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 text-white">
-        <div className="max-w-5xl mx-auto px-6 py-14">
-          <Link to="/courses" className="text-indigo-100/80 text-sm hover:text-white">
-            ← All courses
-          </Link>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-400 text-emerald-950">
-              FREE
-            </span>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/15">
-              {course.duration}
-            </span>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/15">
-              {course.level}
-            </span>
-          </div>
-          <h1 className="mt-4 text-3xl md:text-4xl font-extrabold">{course.title}</h1>
-          <p className="mt-3 text-indigo-100/90 max-w-2xl">{course.description || course.summary}</p>
 
-          <div className="mt-5 flex flex-wrap gap-5 text-sm text-indigo-100/90">
-            <span>{course.chapters.length} chapters</span>
-            <span>{allLessons.length} lessons</span>
-            <span>~{course.hours}h of reading</span>
-            <span>{course.finalCount}-question final exam</span>
-          </div>
-
+      {/* Keyed by course: a related-course link keeps this route mounted, and
+          without the key the next course would inherit the tour's step and
+          skip its own entrance. */}
+      <div className="lx-co-hero" key={course.slug} style={{ '--co-chars': chars }}>
+        <PageHero
+          back={{ to: '/courses', label: 'All courses' }}
+          label={course.category}
+          lines={lines}
+          lede={ledeOf(course)}
+          meta={['Free', course.duration, course.level].filter(Boolean)}
+          visual={
+            <CourseOutlineVisual
+              photo={coverOf(course)}
+              chapters={route}
+              mode={enrolled ? 'progress' : 'tour'}
+              current={routeAt}
+              certified={!!progress?.certificate}
+              note={
+                enrolled
+                  ? `${progress.completed}/${progress.total} topics`
+                  : `${allLessons.length} topics · ~${course.hours}h`
+              }
+            />
+          }
+        >
           {enrolled ? (
-            <div className="mt-7 max-w-md">
-              <div className="flex justify-between text-sm mb-2">
-                <span>Your progress</span>
-                <span className="font-semibold cx-co-percent">
-                  {progress.completed}/{progress.total} · {shownPercent}%
-                </span>
+            <>
+              <div className="lx-co-progress">
+                <div className="flex justify-between font-mono text-xs text-ink-3 mb-2.5">
+                  <span>Your progress</span>
+                  <span className="cx-co-percent text-ink">
+                    {progress.completed}/{progress.total} · {shownPercent}%
+                  </span>
+                </div>
+                <ProgressBar percent={progress.percent} />
               </div>
-              <ProgressBar percent={progress.percent} />
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Link
-                  to={`/learn/${slug}/lesson/${resumeLesson.id}`}
-                  className="px-6 py-3 rounded-full font-semibold bg-white text-indigo-700 hover:bg-indigo-50"
-                >
-                  {progress.completed === 0 ? 'Start learning' : 'Continue'}
+              <div className="lx-ph-actions">
+                <Link to={`/learn/${slug}/lesson/${resumeLesson.id}`} className="btn lx-btn">
+                  {progress.completed === 0
+                    ? 'Start learning'
+                    : progress.completed >= progress.total
+                    ? 'Review the course'
+                    : 'Continue'}
+                  <span className="lx-btn-disc" aria-hidden="true">
+                    <ArrowUpRight size={15} />
+                  </span>
                 </Link>
                 {progress.gates?.final?.unlocked && !progress.certificate && (
-                  <Link
-                    to={`/learn/${slug}/final`}
-                    className="px-6 py-3 rounded-full font-semibold ring-2 ring-white/80 hover:bg-white hover:text-indigo-700"
-                  >
-                    Take the final exam
+                  <Link to={`/learn/${slug}/final`} className="lx-link">
+                    Take the final exam <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                 )}
                 {progress.certificate && (
-                  <Link
-                    to={`/certificate/${progress.certificate.code}`}
-                    className="px-6 py-3 rounded-full font-semibold bg-emerald-400 text-emerald-950 hover:bg-emerald-300"
-                  >
-                    View your certificate
+                  <Link to={`/certificate/${progress.certificate.code}`} className="lx-link">
+                    View your certificate <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                 )}
               </div>
-            </div>
+            </>
           ) : (
-            <button
-              onClick={enroll}
-              disabled={enrolling}
-              className="mt-7 px-8 py-3 rounded-full font-semibold bg-white text-indigo-700 shadow-lg hover:bg-indigo-50 disabled:opacity-60"
-            >
-              {enrolling ? 'Enrolling…' : user ? 'Enrol free' : 'Sign up to start, free'}
-            </button>
+            <div className="lx-ph-actions">
+              <button type="button" onClick={enroll} disabled={enrolling} className="btn lx-btn disabled:opacity-60">
+                {enrolling ? 'Enrolling…' : user ? 'Enrol free' : 'Sign up to start, free'}
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <ArrowUpRight size={15} />
+                </span>
+              </button>
+              <a href="#syllabus" className="lx-link">
+                See the outline <ArrowRight size={16} aria-hidden="true" />
+              </a>
+            </div>
           )}
-        </div>
-      </header>
+        </PageHero>
+      </div>
 
-      <section className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-2xl font-extrabold text-black mb-6">Course outline</h2>
+      <section id="syllabus" className="max-w-5xl mx-auto px-6 pb-16 md:pb-24" aria-labelledby="syllabus-heading">
+        <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-5 mb-8 md:mb-12">
+          <div>
+            <span className="lx-label">
+              <span className="lx-label-num tabular">{pad(course.chapters.length)}</span>
+              Chapters
+            </span>
+            <h2 id="syllabus-heading" className="lx-h2 mt-5 mb-0">
+              Course <em>outline</em>
+            </h2>
+          </div>
+          <button
+            type="button"
+            className="lx-link md:mb-2"
+            aria-controls={course.chapters.map((c) => `co-ch-${c.id}`).join(' ')}
+            onClick={() => {
+              const next = !allOpen;
+              setOpened(Object.fromEntries(course.chapters.map((c) => [c.id, next])));
+            }}
+          >
+            {allOpen ? 'Fold every chapter' : 'Open every chapter'}
+          </button>
+        </div>
 
         <div ref={listRef} className="space-y-4">
           {course.chapters.map((ch) => {
             const chDone = ch.lessons.filter((l) => done.has(l.id)).length;
             const chState = gates?.chapters?.find((c) => c.id === ch.id);
+            const chLocked = chState && !chState.unlocked;
+            const chMinutes = ch.lessons.reduce((n, l) => n + (l.minutes || 0), 0);
+            const open = isOpen(ch.id);
             return (
-              <article
-                key={ch.id}
-                className="cx-co-chapter bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden"
-              >
-                <div className="p-6 border-b border-slate-200 bg-slate-50/50">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-bold text-orange-600 uppercase tracking-wide">
-                        Chapter {ch.position}
-                      </p>
-                      <h3 className="mt-1 text-lg font-bold text-black">{ch.title}</h3>
-                      {ch.summary && <p className="mt-1 text-black font-medium text-sm leading-relaxed">{ch.summary}</p>}
-                    </div>
-                    {enrolled && (
-                      <span className="shrink-0 text-sm font-bold text-black">
-                        {chState && !chState.unlocked ? '🔒 Locked' : `${chDone}/${ch.lessons.length}`}
-                      </span>
-                    )}
-                  </div>
-                </div>
+              <article key={ch.id} className={`cx-co-chapter cx-co-card${open ? ' is-open' : ''}`}>
+                <h3 className="m-0">
+                  <button
+                    type="button"
+                    className="cx-co-head"
+                    aria-expanded={open}
+                    aria-controls={`co-ch-${ch.id}`}
+                    onClick={() => setOpened((o) => ({ ...o, [ch.id]: !open }))}
+                  >
+                    <span aria-hidden="true" className="cx-co-num tabular">
+                      {pad(ch.position)}
+                    </span>
+                    <span className="cx-co-title">
+                      <span className="visually-hidden">Chapter {ch.position}: </span>
+                      {ch.title}
+                    </span>
+                    <span className="cx-co-facts tabular">
+                      {enrolled ? (
+                        chLocked ? (
+                          <>
+                            <Lock size={13} aria-hidden="true" /> Locked
+                          </>
+                        ) : (
+                          `${chDone}/${ch.lessons.length}`
+                        )
+                      ) : (
+                        <>
+                          {ch.lessons.length} topics
+                          <span className="cx-co-mins"> · {chMinutes} min</span>
+                        </>
+                      )}
+                    </span>
+                    <span className="cx-co-plus" aria-hidden="true" />
+                  </button>
+                </h3>
 
-                <ul className="divide-y divide-slate-200 bg-white">
+                <div id={`co-ch-${ch.id}`} className="cx-co-panel" hidden={!open}>
+                  {ch.summary && <p className="cx-co-summary">{ch.summary}</p>}
+                <ul className="divide-y divide-[color:var(--line)]">
                   {ch.lessons.map((l, li) => {
                     const gate = lessonGate(l.id);
                     const locked = enrolled && gate && !gate.unlocked;
@@ -293,38 +483,52 @@ const CourseOutline = () => {
 
                     const marker = (
                       <span
-                        className={`cx-co-mark ${isDone ? 'is-done' : ''} grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs font-bold ${
+                        className={`cx-co-mark ${isDone ? 'is-done' : ''} grid place-items-center h-6 w-6 shrink-0 rounded-full text-[11px] font-mono ${
                           isDone
                             ? 'bg-emerald-500 text-white'
                             : quizOwed
                             ? 'bg-amber-100 text-amber-700 border border-amber-400'
                             : locked
-                            ? 'bg-slate-200 text-slate-600'
-                            : 'border-2 border-orange-500 text-orange-600 font-bold'
+                            ? 'bg-slate-100 text-ink-3'
+                            : 'border border-orange-600 text-orange-600'
                         }`}
                       >
-                        {isDone ? '✓' : quizOwed ? '?' : locked ? '🔒' : l.position}
+                        {isDone ? (
+                          <>
+                            <Check size={13} strokeWidth={2.6} aria-hidden="true" />
+                            <span className="visually-hidden">Done</span>
+                          </>
+                        ) : quizOwed ? (
+                          '?'
+                        ) : locked ? (
+                          <>
+                            <Lock size={11} aria-hidden="true" />
+                            <span className="visually-hidden">Locked</span>
+                          </>
+                        ) : (
+                          l.position
+                        )}
                       </span>
                     );
 
                     const body = (
                       <>
                         {marker}
-                        <span className={`flex-1 font-semibold ${locked ? 'text-slate-500' : 'text-black'}`}>
+                        <span className={`flex-1 min-w-0 font-medium ${locked ? 'text-ink-3' : 'text-ink'}`}>
                           {l.title}
                           {quizOwed && (
-                            <span className="cx-co-pending ml-2 align-middle text-[11px] font-bold uppercase tracking-wide text-amber-700">
+                            <span className="cx-co-pending ml-2 align-middle font-mono text-[11px] text-amber-700">
                               quiz pending
                             </span>
                           )}
                         </span>
                         {enrolled && gate?.quizQuestionCount > 0 && (
-                          <span className="text-[11px] font-bold shrink-0 text-slate-500">
+                          <span className="font-mono text-[11px] shrink-0 text-ink-3">
                             {gate.quizQuestionCount}Q
                           </span>
                         )}
                         {isResume && <span className="cx-co-resume-tag">resume here</span>}
-                        <span className="text-xs text-black font-bold shrink-0">{l.minutes} min</span>
+                        <span className="font-mono text-xs text-ink-3 shrink-0 tabular">{l.minutes} min</span>
                       </>
                     );
 
@@ -332,16 +536,14 @@ const CourseOutline = () => {
                       return (
                         <li key={l.id} className="cx-co-row" style={{ '--i': li }}>
                           <div
-                            className={`flex items-center gap-3 px-6 py-3.5 opacity-70 bg-slate-50/30 ${
-                              locked ? 'cx-co-locked' : ''
-                            }`}
+                            className={`flex items-center gap-3 px-6 md:px-7 py-3.5 ${locked ? 'cx-co-locked opacity-70' : ''}`}
                             title={locked ? gate.reason : undefined}
                             onClick={locked ? refuse : undefined}
                           >
                             {body}
                           </div>
                           {locked && (
-                            <p className="px-6 pb-3 -mt-1.5 text-xs text-amber-700 font-semibold">{gate.reason}</p>
+                            <p className="px-6 md:px-7 pb-3 -mt-1.5 mb-0 text-xs text-amber-700 font-medium">{gate.reason}</p>
                           )}
                         </li>
                       );
@@ -355,7 +557,7 @@ const CourseOutline = () => {
                       >
                         <Link
                           to={`/learn/${slug}/lesson/${l.id}`}
-                          className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/50 transition"
+                          className="flex items-center gap-3 px-6 md:px-7 py-3.5 hover:bg-orange-50/60 transition-colors"
                         >
                           {body}
                         </Link>
@@ -371,25 +573,37 @@ const CourseOutline = () => {
                     const inner = (
                       <>
                         <span
-                          className={`grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs font-bold ${
+                          className={`grid place-items-center h-6 w-6 shrink-0 rounded-full text-xs font-mono ${
                             passed
                               ? 'bg-emerald-500 text-white'
                               : locked
-                              ? 'bg-slate-200 text-slate-600'
-                              : 'bg-orange-100 text-orange-700 border border-orange-300'
+                              ? 'bg-slate-100 text-ink-3'
+                              : 'bg-orange-100 text-orange-700'
                           }`}
                         >
-                          {passed ? '✓' : locked ? '🔒' : '?'}
+                          {passed ? (
+                            <>
+                              <Check size={13} strokeWidth={2.6} aria-hidden="true" />
+                              <span className="visually-hidden">Passed</span>
+                            </>
+                          ) : locked ? (
+                            <>
+                              <Lock size={11} aria-hidden="true" />
+                              <span className="visually-hidden">Locked</span>
+                            </>
+                          ) : (
+                            '?'
+                          )}
                         </span>
                         <span
-                          className={`flex-1 font-bold ${
-                            locked ? 'text-slate-500' : passed ? 'text-emerald-700' : 'text-orange-700'
+                          className={`flex-1 font-semibold ${
+                            locked ? 'text-ink-3' : passed ? 'text-emerald-700' : 'text-orange-700'
                           }`}
                         >
                           Chapter {ch.position} quiz
                           {passed && ' · passed'}
                         </span>
-                        <span className="text-xs text-black font-bold shrink-0">
+                        <span className="font-mono text-xs text-ink-3 shrink-0">
                           {ch.quizCount} questions
                         </span>
                       </>
@@ -399,15 +613,17 @@ const CourseOutline = () => {
                       <li key={`quiz-${ch.id}`} className="cx-co-row" style={{ '--i': ch.lessons.length }}>
                         {!enrolled || locked ? (
                           <>
-                            <div className="flex items-center gap-3 px-6 py-3.5 opacity-70 bg-slate-50/30">{inner}</div>
+                            <div className={`flex items-center gap-3 px-6 md:px-7 py-3.5 ${locked ? 'opacity-70' : ''}`}>
+                              {inner}
+                            </div>
                             {locked && (
-                              <p className="px-6 pb-3 -mt-1.5 text-xs text-amber-700 font-semibold">{gate.reason}</p>
+                              <p className="px-6 md:px-7 pb-3 -mt-1.5 mb-0 text-xs text-amber-700 font-medium">{gate.reason}</p>
                             )}
                           </>
                         ) : (
                           <Link
                             to={`/learn/${slug}/quiz/${ch.id}`}
-                            className="flex items-center gap-3 px-6 py-3.5 hover:bg-orange-50/50 transition"
+                            className="flex items-center gap-3 px-6 md:px-7 py-3.5 hover:bg-orange-50/60 transition-colors"
                           >
                             {inner}
                           </Link>
@@ -416,52 +632,69 @@ const CourseOutline = () => {
                     );
                   })()}
                 </ul>
+                </div>
               </article>
             );
           })}
         </div>
 
-        <div className="mt-8 bg-white rounded-2xl shadow-card p-6">
-          <div className="flex items-start gap-3">
-            <span
-              className={`grid place-items-center h-7 w-7 shrink-0 rounded-full text-sm ${
-                progress?.certificate
-                  ? 'bg-emerald-500 text-white'
-                  : gates?.final?.unlocked
-                  ? 'bg-indigo-500/20 text-indigo-300'
-                  : 'bg-white/5 text-slate-500'
-              }`}
-            >
-              {progress?.certificate ? '✓' : gates?.final?.unlocked ? '★' : '🔒'}
-            </span>
-            <div className="min-w-0">
-              <h3 className="text-lg font-semibold text-slate-900">
-                Final exam &amp; certificate
-              </h3>
-              <p className="mt-2 text-slate-600">
-                Work through the chapters in order. Each topic ends with a short check on that
-                topic, and passing it opens the next one. Clear every topic in a chapter to reach
-                the chapter quiz, and pass that to open the next chapter. Clear all{' '}
-                {course.chapters.length} chapters to unlock the {course.finalCount}-question
-                final exam. Score 70% or higher and your free
-                certificate is issued instantly, with a code anyone can verify. Retakes are
-                unlimited.
-              </p>
+        {/* The end of the route, shown as the four gates rather than a
+            paragraph describing them. */}
+        <div className="mt-8 cx-co-card p-6 md:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h3 className="mb-0 flex items-center gap-3 text-xl font-semibold text-ink">
+              <span
+                className={`grid place-items-center h-9 w-9 shrink-0 rounded-full ${
+                  progress?.certificate
+                    ? 'bg-emerald-500 text-white'
+                    : gates?.final?.unlocked
+                    ? 'bg-orange-600 text-white'
+                    : 'bg-orange-100 text-orange-700'
+                }`}
+              >
+                {progress?.certificate ? (
+                  <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+                ) : gates?.final?.unlocked || !enrolled ? (
+                  <Award size={17} strokeWidth={1.8} aria-hidden="true" />
+                ) : (
+                  <Lock size={15} aria-hidden="true" />
+                )}
+              </span>
+              Final exam &amp; certificate
+            </h3>
 
-              {enrolled && !gates?.final?.unlocked && (
-                <p className="mt-3 text-sm text-amber-300/90">🔒 {gates?.final?.reason}</p>
-              )}
-
-              {enrolled && gates?.final?.unlocked && !progress?.certificate && (
-                <Link
-                  to={`/learn/${slug}/final`}
-                  className="mt-4 inline-block px-5 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700"
-                >
-                  Take the final exam
-                </Link>
-              )}
-            </div>
+            {enrolled && gates?.final?.unlocked && !progress?.certificate && (
+              <Link to={`/learn/${slug}/final`} className="btn lx-btn">
+                Take the final exam
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <ArrowUpRight size={15} />
+                </span>
+              </Link>
+            )}
           </div>
+
+          <ol className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-xl border border-[color:var(--line)] bg-[color:var(--line)]">
+            {[
+              ['Topic checks', 'Each one opens the next topic'],
+              ['Chapter quizzes', 'Each one opens the next chapter'],
+              [`${course.finalCount}-question final`, 'Score 70% or higher'],
+              ['Certificate', 'Issued instantly, verifiable by code'],
+            ].map(([title, sub], i) => (
+              <li key={title} className="bg-ivory/90 p-4 md:p-5">
+                <span className="font-mono text-xs text-[color:var(--copper)] tabular">{pad(i + 1)}</span>
+                <p className="mt-2 mb-0 font-semibold text-ink leading-snug">{title}</p>
+                <p className="mt-1 mb-0 text-sm text-ink-3 leading-snug">{sub}</p>
+              </li>
+            ))}
+          </ol>
+
+          <p className="mt-4 mb-0 font-mono text-xs text-ink-3">Retakes are unlimited.</p>
+
+          {enrolled && !gates?.final?.unlocked && gates?.final?.reason && (
+            <p className="mt-3 mb-0 inline-flex items-center gap-2 text-sm text-amber-700 font-medium">
+              <Lock size={14} aria-hidden="true" /> {gates.final.reason}
+            </p>
+          )}
         </div>
       </section>
 
@@ -471,44 +704,61 @@ const CourseOutline = () => {
           by a single route and reads 23 shallow pages rather than a connected
           library. */}
       {course.related?.length > 0 && (
-        <section className="max-w-5xl mx-auto px-6 pb-16">
-          <h2 className="text-2xl font-extrabold text-black">Continue with</h2>
-          <p className="mt-2 text-black font-medium">
-            Free courses that pair well with {course.title}, each with a certificate.
-          </p>
-
-          <div className="mt-6 grid sm:grid-cols-2 gap-4">
-            {course.related.map((r) => (
-              <Link
-                key={r.slug}
-                to={`/learn/${r.slug}`}
-                className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <p className="text-xs font-bold uppercase tracking-wide text-orange-600">
-                  {r.category}
-                </p>
-                <h3 className="mt-1 text-lg font-bold text-black group-hover:text-orange-700">
-                  {r.title}
-                </h3>
-                <p className="mt-2 text-sm text-black font-medium leading-relaxed">{r.summary}</p>
-                <p className="mt-3 text-xs font-bold text-slate-500">
-                  {r.level} · {r.duration}
-                </p>
-              </Link>
-            ))}
+        <section className="max-w-5xl mx-auto px-6 pb-10 md:pb-14" aria-labelledby="related-heading">
+          <span className="lx-label">Next</span>
+          <h2 id="related-heading" className="lx-h2 mt-5 mb-0">
+            Continue <em>with</em>
+          </h2>
+          <div className="mt-8 grid sm:grid-cols-2 gap-5">
+            {course.related.map((r) => {
+              const cover = courseCover(r.slug);
+              return (
+                <Link
+                  key={r.slug}
+                  to={`/learn/${r.slug}`}
+                  className="group block overflow-hidden cx-co-card cx-co-related"
+                >
+                  {cover && (
+                    <span className="lx-frame block aspect-[16/9]">
+                      <img
+                        src={cover.src}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="group-hover:scale-[1.04]"
+                      />
+                    </span>
+                  )}
+                  <span className="block p-5 md:p-6">
+                    <span className="block font-mono text-xs text-[color:var(--copper)]">{r.category}</span>
+                    <span className="mt-2 block font-display text-3xl leading-tight text-ink">
+                      {r.title}
+                    </span>
+                    <span className="mt-4 flex items-center justify-between font-mono text-xs text-ink-3">
+                      <span>
+                        {r.level} · {r.duration}
+                      </span>
+                      <ArrowUpRight
+                        size={16}
+                        aria-hidden="true"
+                        className="text-ink transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </span>
+                  </span>
+                </Link>
+              );
+            })}
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-bold">
-            <Link to="/courses" className="text-orange-700 hover:underline">
-              Browse all free courses
+          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+            <Link to="/courses" className="lx-link">
+              Browse all free courses <ArrowRight size={16} aria-hidden="true" />
             </Link>
-            <span className="text-slate-300" aria-hidden="true">·</span>
-            <Link to="/internships" className="text-orange-700 hover:underline">
-              Apply for an internship
+            <Link to="/internships" className="lx-link">
+              Apply for an internship <ArrowRight size={16} aria-hidden="true" />
             </Link>
-            <span className="text-slate-300" aria-hidden="true">·</span>
-            <Link to="/services" className="text-orange-700 hover:underline">
-              Hire us to build something
+            <Link to="/services" className="lx-link">
+              Hire us to build something <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </div>
         </section>

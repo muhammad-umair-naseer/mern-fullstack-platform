@@ -1,0 +1,349 @@
+/* ── InternshipsVisual: the team photograph, a pass and a seal ──────────
+   The photograph is PhotoVisual (opens from 300ms). The pass rises onto its
+   lower-left corner at 950ms and the seal turns in on its upper-right at
+   1.2s. From 1.5s the pass's copper rule fills; when it is full the track
+   name rolls up out of its mask and the next one rises in. Transform and
+   opacity only. */
+
+.iv {
+  --iv-dwell: 2.8s;
+  --iv-foot: 4.1rem;
+  --iv-notch: 0.6rem;
+  --iv-pad: 1.25rem;
+  position: relative;
+  max-width: 34rem;
+  margin-left: auto;
+}
+
+/* Frame the writing hand and the watch, the photograph's sharp detail,
+   above the pass rather than under it. */
+.iv .lx-pv-drift img {
+  object-position: 35% 50%;
+}
+
+/* Positioning wrappers carry the pointer depth (GSAP writes their
+   transform); the elements inside carry the entrances. */
+.iv-seal-pos {
+  position: absolute;
+  right: -0.35rem;
+  top: 3%;
+  z-index: 2;
+}
+
+.iv-pass-pos {
+  position: absolute;
+  left: 0;
+  bottom: 7%;
+  z-index: 3;
+  width: min(21.5rem, 74%);
+}
+
+/* ── The seal ────────────────────────────────────────────────────────── */
+
+.iv .iv-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+  /* Denser than plain glass: the seal sits on the photograph's light. */
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  animation: iv-seal-in 1.2s var(--ease-out-expo) 1.2s both;
+}
+
+.iv-seal-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: iv-spin 36s linear 2.4s infinite;
+}
+
+.iv-seal-ring text {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  fill: var(--ink-2);
+}
+
+.iv-seal-mark {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--copper);
+  color: var(--paper);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 6px 16px rgba(126, 59, 27, 0.25);
+}
+
+@keyframes iv-seal-in {
+  from { opacity: 0; transform: scale(0.72) rotate(-50deg); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes iv-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── The pass ────────────────────────────────────────────────────────── */
+
+/* The shadow lives on a wrapper: the pass itself is masked (for the two
+   notches at the tear line), and a mask would clip its own box-shadow. */
+.iv-pass-shadow {
+  filter:
+    drop-shadow(0 2px 3px rgba(22, 19, 15, 0.05))
+    drop-shadow(0 18px 30px rgba(22, 19, 15, 0.1));
+  animation: lx-rise 1s var(--ease-out-expo) 950ms both;
+}
+
+.iv-pass {
+  position: relative;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  -webkit-mask-image:
+    radial-gradient(circle var(--iv-notch) at 0 calc(100% - var(--iv-foot)), transparent 96%, #000 100%),
+    radial-gradient(circle var(--iv-notch) at 100% calc(100% - var(--iv-foot)), transparent 96%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(circle var(--iv-notch) at 0 calc(100% - var(--iv-foot)), transparent 96%, #000 100%),
+    radial-gradient(circle var(--iv-notch) at 100% calc(100% - var(--iv-foot)), transparent 96%, #000 100%);
+  mask-composite: intersect;
+}
+
+.iv-pass-body {
+  padding: 1.15rem var(--iv-pad) 0;
+}
+
+.iv-pass-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--ink-3);
+}
+
+.iv-pass-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  color: var(--copper);
+}
+
+.iv-pass-of {
+  color: var(--ink-4);
+}
+
+/* A roll is a one-line mask worked like a slot reel: the outgoing item and
+   the incoming one travel together on the same curve, a line apart, so the
+   two never overlap inside the mask. The name follows the mono line by a
+   beat. */
+.iv-roll {
+  --iv-roll-delay: 0ms;
+  position: relative;
+  display: inline-block;
+  height: 1.2em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.iv-roll-item {
+  display: block;
+  white-space: nowrap;
+}
+
+.iv-roll-item.is-out {
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: iv-out 850ms var(--ease-panel) var(--iv-roll-delay) both;
+}
+
+.iv-roll-item.is-in {
+  animation: iv-in 850ms var(--ease-panel) var(--iv-roll-delay) both;
+}
+
+.iv-roll--name {
+  --iv-roll-delay: 90ms;
+  display: block;
+  height: 1.18em;
+  margin: 0.85rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 1.1rem + 0.8vw, 1.85rem);
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+.iv-roll--name .iv-roll-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes iv-out {
+  from { transform: none; }
+  to { opacity: 0.2; transform: translate3d(0, -110%, 0); }
+}
+
+@keyframes iv-in {
+  from { transform: translate3d(0, 110%, 0); }
+  to { transform: none; }
+}
+
+/* The clock. Full at rest, which is the prerendered, reduced-motion and
+   single-track state. */
+.iv-rule {
+  position: relative;
+  display: block;
+  height: 2px;
+  border-radius: var(--r-pill);
+  background: var(--line);
+  overflow: hidden;
+}
+
+.iv-rule-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--copper-2);
+  transform-origin: 0 50%;
+}
+
+.iv.is-cycling .iv-rule-fill {
+  animation: iv-fill var(--iv-dwell) linear both;
+}
+
+.iv.is-cycling .iv-rule-fill.is-first {
+  animation-delay: 1.5s;
+}
+
+.iv.is-cycling:not(.is-running) .iv-rule-fill {
+  animation-play-state: paused;
+}
+
+@keyframes iv-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* The perforation, level with the two notches cut into the edges. */
+.iv-tear {
+  display: block;
+  height: 0;
+  /* From just inside one notch to just inside the other, reaching back
+     through the body's side padding. */
+  margin: 1.15rem calc(var(--iv-notch) + 0.4rem - var(--iv-pad)) 0;
+  border-top: 1px dashed var(--line-strong);
+}
+
+.iv-fields {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  height: var(--iv-foot);
+  margin: 0;
+  padding-right: 2.75rem;
+}
+
+.iv-fields dt {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  line-height: 1.2;
+  color: var(--ink-4);
+}
+
+.iv-fields dd {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.iv-toggle {
+  position: absolute;
+  right: 1rem;
+  bottom: calc(var(--iv-foot) / 2 - 1rem);
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-out-expo),
+    color var(--dur-fast) var(--ease-out-expo),
+    transform var(--dur-instant) var(--ease-out-expo);
+}
+
+.iv-toggle:hover,
+.iv-toggle:focus-visible {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.iv-toggle:active {
+  transform: scale(0.94);
+}
+
+/* One press stills the whole visual. */
+.iv.is-paused .iv-seal-ring,
+.iv.is-paused .lx-pv-sheen {
+  animation-play-state: paused;
+}
+
+@media (max-width: 900px) {
+  .iv {
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .iv-pass-pos {
+    bottom: 6%;
+    width: min(19.5rem, 82%);
+  }
+
+  .iv .iv-seal {
+    width: 6.25rem;
+    height: 6.25rem;
+  }
+
+  .iv-seal-mark {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+/* Phones: a tighter footer, so the fee never runs under the pause button;
+   and on the narrowest a wider pass, so the longest track name keeps to one
+   line. */
+@media (max-width: 420px) {
+  .iv {
+    --iv-pad: 1rem;
+  }
+
+  .iv-fields {
+    gap: 1rem;
+  }
+
+  .iv-fields dd {
+    font-size: 0.84rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .iv-pass-pos {
+    width: 92%;
+  }
+}

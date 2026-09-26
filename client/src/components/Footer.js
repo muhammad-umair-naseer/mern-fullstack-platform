@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Linkedin } from "lucide-react";
 import { toolsBlurb } from "../data/tools";
+import { COURSE_COUNT } from "../data/catalogue";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -113,7 +114,7 @@ const Footer = () => {
 
       // ScrollTrigger measures a trigger's start and end once, at creation.
       // Here that is during hydration — before the lazily imported route above
-      // has resolved and before Space Grotesk has replaced the fallback face.
+      // has resolved and before the display face has replaced the fallback.
       // It therefore measures a document several thousand pixels shorter than
       // the real one and concludes the footer is already most of the way
       // through its reveal. The symptom is a footer stuck part-clipped that
@@ -127,8 +128,20 @@ const Footer = () => {
       //
       // refresh() recomputes every trigger on the page, so the reveal hook
       // used by other components gets the same correction for free.
+      //
+      // It also scrolls to the top and back while it measures, which cancels
+      // a smooth scroll in flight: an anchor, a "back to top", a quiz bringing
+      // its result into view. So it waits for the page to hold still for a
+      // frame, and stops waiting after about two seconds.
       let lastHeight = 0;
       let queued = 0;
+      const refreshWhenStill = (y, frames) => {
+        queued = requestAnimationFrame(() => {
+          const now = window.scrollY;
+          if (now !== y && frames < 120) refreshWhenStill(now, frames + 1);
+          else ScrollTrigger.refresh();
+        });
+      };
       const refresh = () => {
         const h = document.documentElement.scrollHeight;
         // Sub-pixel jitter from the scrub's own transform would otherwise
@@ -136,7 +149,7 @@ const Footer = () => {
         if (Math.abs(h - lastHeight) < 4) return;
         lastHeight = h;
         cancelAnimationFrame(queued);
-        queued = requestAnimationFrame(() => ScrollTrigger.refresh());
+        refreshWhenStill(window.scrollY, 0);
       };
 
       const observer = new ResizeObserver(refresh);
@@ -176,7 +189,7 @@ const Footer = () => {
         */}
         <p className="cx-ft-shout">
           <span>Build the</span>
-          <span>future with us.</span>
+          <span>future <em>with us.</em></span>
         </p>
 
         <div className="cx-ft-cta-row">
@@ -210,7 +223,7 @@ const Footer = () => {
           <div className="cx-ft-col">
             <h3 className="cx-ft-label">Learn</h3>
             <ul>
-              <li><Link to="/courses">All 23 free courses</Link></li>
+              <li><Link to="/courses">All {COURSE_COUNT} free courses</Link></li>
               <li><Link to="/learn/full-stack-web">Full-stack web</Link></li>
               <li><Link to="/learn/python-development">Python</Link></li>
               <li><Link to="/learn/wordpress-development">WordPress</Link></li>

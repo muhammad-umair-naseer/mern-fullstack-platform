@@ -1,25 +1,103 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { MessageSquareText, Clock, Sparkles, ArrowRight, ShieldCheck, Zap, Bot } from 'lucide-react';
-import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { BadgeCheck, CalendarCheck, KeyRound, ShoppingBag, Sparkles, UserRoundCheck } from 'lucide-react';
 import './YourBot.css';
 import Seo from '../seo/Seo';
 import { organization, breadcrumbs, faq as faqSchema } from '../seo/schema';
 import FaqSection from '../components/FaqSection';
+import PageHero from '../components/PageHero';
+import YourBotVisual from '../components/heroes/YourBotVisual';
 import { faqsFor } from '../data/faqs';
 
-const chips = [
-  { icon: Bot, label: 'AI Workflow Automation' },
-  { icon: MessageSquareText, label: 'Smart WhatsApp & Instagram Replies' },
-  { icon: Clock, label: '24/7 Uninterrupted Operations' },
-  { icon: Sparkles, label: 'Custom Brand Voice' },
+// The three jobs the hero's conversations play out, each with the reply
+// that closes it there.
+const JOBS = [
+  { icon: CalendarCheck, time: '10:42 am', title: 'Books the visit', ask: 'Can I book a visit on Saturday?', reply: 'Booked: Saturday at 4:00.' },
+  { icon: UserRoundCheck, time: '4:05 pm', title: 'Hands you the lead', ask: 'Do you deliver to Rawalpindi?', reply: 'Someone from our team will call you.' },
+  { icon: ShoppingBag, time: '2:14 am', title: 'Takes the order', ask: 'Are you open right now?', reply: 'I can take your order now.' },
 ];
 
-export default function YourBot() {
-  const ref = useIntroTimeline('[data-intro]', { y: 26, stagger: 0.1 });
+// What the questions below establish, as three short facts.
+const FACTS = [
+  { icon: BadgeCheck, text: 'Official Meta platform' },
+  { icon: KeyRound, text: 'Built for you, no monthly fee' },
+  { icon: Sparkles, text: 'Instagram in development' },
+];
+
+/**
+ * The three jobs as small conversations. The bubbles come in, typing dots
+ * first, once the row is in view. The start state is only applied once the
+ * script has run, so the prerendered page and reduced motion show every
+ * reply in place.
+ */
+function Jobs() {
+  const ref = useRef(null);
+  const [armed, setArmed] = useState(false);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    setArmed(true);
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '0px 0px -18% 0px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const state = armed ? (inView ? ' is-in' : ' is-armed') : '';
 
   return (
-    <main className="relative overflow-hidden bg-white text-slate-900 min-h-[calc(100vh-76px)]">
+    <section className={`yb-jobs${state}`} ref={ref} aria-labelledby="yb-jobs-title">
+      <div className="lx-wrap">
+        <header className="yb-jobs-head">
+          <span className="lx-label">What it does</span>
+          <h2 id="yb-jobs-title" className="yb-jobs-title">Working <em>while you sleep.</em></h2>
+        </header>
+        <ol className="yb-jobs-list">
+          {JOBS.map((j, i) => (
+            <li key={j.title} className="yb-job" style={{ '--i': i }}>
+              <div className="yb-job-top">
+                <span className="yb-job-icon" aria-hidden="true"><j.icon size={20} strokeWidth={1.6} /></span>
+                <span className="yb-job-time">{j.time}</span>
+              </div>
+              <h3 className="yb-job-title">{j.title}</h3>
+              <div className="yb-job-chat" aria-hidden="true">
+                <p className="yb-bubble yb-bubble--in">{j.ask}</p>
+                <span className="yb-dots"><i /><i /><i /></span>
+                <p className="yb-bubble yb-bubble--out">{j.reply}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <ul className="yb-facts">
+          {FACTS.map((f) => (
+            <li key={f.text}>
+              <f.icon size={15} strokeWidth={1.75} aria-hidden="true" /> {f.text}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+export default function YourBot() {
+  // The page also answers at /whatsapp-bot, the address Meta app review was
+  // first given; its policy links stay under whichever address was opened.
+  const { pathname } = useLocation();
+  const base = pathname.startsWith('/whatsapp-bot') ? '/whatsapp-bot' : '/your-bot';
+
+  return (
+    <main className="yb min-h-[calc(100vh-76px)]">
       <Seo
         title="WhatsApp and Instagram Automation for Business"
         description="Automate lead qualification, client onboarding and support across WhatsApp and Instagram. A custom AI assistant that answers instantly, books meetings, and hands real buyers to your team."
@@ -43,98 +121,41 @@ export default function YourBot() {
           faqSchema(faqsFor('/your-bot').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />
-      {/* Floating glows */}
-      <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-20 h-80 w-80 rounded-full bg-orange-500/10 blur-3xl animate-blob-slow" />
-      <div aria-hidden="true" className="pointer-events-none absolute top-1/3 -right-16 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl animate-blob" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-orange-500/5 blur-3xl" />
 
-      <section
-        ref={ref}
-        className="relative mx-auto grid min-h-[calc(100vh-76px)] max-w-7xl items-center gap-14 px-6 py-16 lg:grid-cols-2 lg:py-24"
-        aria-labelledby="wa-heading"
-      >
-        {/* ── Copy ─────────────────────────────────────────────────────── */}
-        <div>
-          <span
-            data-intro
-            className="inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1.5 text-sm font-bold text-orange-800 ring-1 ring-orange-300"
-          >
-            <Zap className="h-4 w-4 text-orange-600" />
-            AI &amp; Automation Platform
-          </span>
+      <PageHero
+        id="wa-heading"
+        label="Your Bot"
+        lines={['Every message,', <em key="em">answered.</em>]}
+        lede="A WhatsApp assistant that qualifies leads and books meetings, day and night."
+        actions={[
+          { to: '/contact', label: 'Get early access', primary: true },
+          { to: `${base}/privacy`, label: 'Data privacy' },
+        ]}
+        visual={<YourBotVisual />}
+      />
 
-          <h1
-            id="wa-heading"
-            data-intro
-            className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-black md:text-5xl lg:text-6xl"
-          >
-            Cortexis{' '}
-            <span className="bg-gradient-to-r from-[#ff6b00] via-[#f97316] to-[#ea580c] bg-clip-text text-transparent font-black">
-              Your Bot
-            </span>
-          </h1>
-          <p data-intro className="mt-3 font-mono text-xs uppercase tracking-[0.22em] text-orange-700 font-bold">
-            by Cortexis Solution Hub Pvt Ltd
-          </p>
+      <Jobs />
 
-          <p data-intro className="mt-6 max-w-xl text-lg leading-relaxed text-black font-medium">
-            Supercharge your business with intelligent AI automation, smart WhatsApp &amp; Instagram customer agents, and automated workflows that run 24/7. <span className="font-bold text-orange-600">Save hundreds of hours every month.</span>
-          </p>
+      <FaqSection page="/your-bot" title="Questions people ask before starting" />
 
-          <div data-intro className="mt-7 flex flex-wrap gap-2.5">
-            {chips.map((c, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-black font-bold border border-slate-200 shadow-sm"
-              >
-                <c.icon className="h-4 w-4 text-orange-600" />
-                {c.label}
-              </span>
-            ))}
-          </div>
-
-          <div data-intro className="mt-9 flex flex-wrap items-center gap-3">
-            <Link
-              to="/contact"
-              className="btn-primary inline-flex items-center gap-2 rounded-full px-7 py-3 font-bold text-white shadow-lg transition hover:-translate-y-0.5"
-            >
-              Get early access <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/your-bot/privacy"
-              className="btn-secondary inline-flex items-center gap-2 rounded-full px-6 py-3 font-bold"
-            >
-              <ShieldCheck className="h-4 w-4" /> Data privacy &amp; security
-            </Link>
+      <nav className="yb-legal" aria-label="Your Bot policies">
+        <div className="lx-wrap">
+          <div className="yb-legal-row">
+            <span className="lx-label">Policies</span>
+            <ul>
+              <li>
+                <Link className="lx-link" to={`${base}/privacy`}>Privacy policy</Link>
+              </li>
+              <li>
+                <Link className="lx-link" to={`${base}/terms`}>Terms of service</Link>
+              </li>
+              <li>
+                <Link className="lx-link" to={`${base}/data-deletion`}>Data deletion</Link>
+              </li>
+            </ul>
           </div>
         </div>
-
-        {/* ── Chat mockup ──────────────────────────────────────────────── */}
-        <div data-intro className="wa-stage">
-          <div className="wa-mock shadow-2xl border border-slate-200" role="img" aria-label="Preview of a customer conversation answered automatically by the Cortexis assistant across WhatsApp and Instagram">
-            <div className="wa-mock-header">
-              <span className="wa-avatar" aria-hidden="true">🤖</span>
-              <div className="wa-meta">
-                <p className="wa-name">Cortexis AI Assistant</p>
-                <p className="wa-status"><span className="wa-online-dot" /> online</p>
-              </div>
-              <span className="wa-badges">
-                <span className="wa-badge wa-badge-whatsapp">WhatsApp</span>
-                <span className="wa-badge wa-badge-instagram">Instagram</span>
-              </span>
-            </div>
-            <div className="wa-body">
-              <div className="wa-bubble wa-in">Hi! Can you automate our lead qualification and client onboarding? 🚀</div>
-              <div className="wa-bubble wa-out">Absolutely! Cortexis Automation Tools connect your CRM, WhatsApp &amp; database to process leads instantly 24/7. Want to schedule a demo? ⚡</div>
-              <div className="wa-bubble wa-in">Yes please, what are the plans?</div>
-              <div className="wa-bubble wa-typing" aria-label="Assistant is typing">
-                <span /><span /><span />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    <FaqSection page="/your-bot" title="Questions people ask before starting" />
+      </nav>
     </main>
   );
 }

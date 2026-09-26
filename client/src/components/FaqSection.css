@@ -7,18 +7,79 @@
 .cx-faq { max-width: 48rem; margin: 0 auto; padding: 56px 24px 72px; }
 
 .cx-faq-title {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #0b1a30;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 1.5rem + 1.2vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ink);
   letter-spacing: -0.015em;
   margin: 0 0 22px;
 }
 
-.cx-faq-list {
-  border-top: 1px solid rgba(15, 36, 68, 0.1);
+.cx-faq-title em {
+  font-style: italic;
+  color: var(--copper);
 }
 
-.cx-faq-item { border-bottom: 1px solid rgba(15, 36, 68, 0.1); }
+.cx-faq-list {
+  border-top: 1px solid var(--line);
+}
+
+/* The count under the title: a copper rule and a mono label. On a wide
+   screen the heading holds the left column while the questions run on the
+   right, so the section fills the page instead of sitting as a thin strip. */
+.cx-faq-count {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.cx-faq-count::before {
+  content: "";
+  width: 2.5rem;
+  height: 1px;
+  background: var(--copper);
+}
+
+@media (min-width: 1024px) {
+  .cx-faq:not(.cx-faq--inset) {
+    /* Same frame as .lx-wrap, so the heading lines up with the page above. */
+    max-width: 1360px;
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) minmax(0, 52rem);
+    column-gap: clamp(3rem, 8vw, 9rem);
+    align-items: start;
+    padding: 72px var(--gutter, 24px) 88px;
+  }
+  .cx-faq:not(.cx-faq--inset) > :not(.cx-faq-head) {
+    grid-column: 2;
+  }
+  .cx-faq:not(.cx-faq--inset) .cx-faq-head {
+    position: sticky;
+    top: calc(var(--nav-h, 72px) + 2rem);
+  }
+  .cx-faq:not(.cx-faq--inset) .cx-faq-count {
+    display: flex;
+  }
+}
+
+/* Set inside another sheet (a blog post): no page padding of its own. */
+.cx-faq--inset {
+  max-width: none;
+  padding: 1.5rem 0 0.5rem;
+}
+
+/* A way on from the questions, under the list. */
+.cx-faq-more {
+  margin-top: 1.5rem;
+}
+
+.cx-faq-item { border-bottom: 1px solid var(--line); }
 
 .cx-faq-q { margin: 0; font-size: 1rem; }
 
@@ -33,17 +94,17 @@
   border: 0;
   text-align: left;
   font: inherit;
-  font-weight: 700;
-  color: #0b1a30;
+  font-weight: 500;
+  color: var(--ink);
   cursor: pointer;
   /* Colour only: this list sits in a scrolling page and must not shift it. */
   transition: color var(--cx-dur-fast) var(--cx-ease-out);
 }
 
-.cx-faq-q button:hover { color: #c2410c; }
+.cx-faq-q button:hover { color: var(--copper-3); }
 
 .cx-faq-q button:focus-visible {
-  outline: 2px solid #ea580c;
+  outline: 2px solid var(--copper);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -65,7 +126,7 @@
   inset: 50% 0 auto 0;
   height: 2px;
   border-radius: 2px;
-  background: #ea580c;
+  background: var(--copper);
 }
 
 .cx-faq-mark::after {
@@ -80,7 +141,8 @@
 .cx-faq-a p {
   margin: 0;
   max-width: 62ch;
-  color: #24354f;
+  white-space: pre-line;
+  color: var(--ink-3);
   line-height: 1.7;
 }
 
@@ -91,5 +153,190 @@
   .is-open .cx-faq-a {
     transition: none;
     animation: none;
+  }
+}
+
+/* --- the FAQ page ---------------------------------------------------------
+   The same lists, gathered: a sticky index of topics on the left that follows
+   the reader, the folded questions on the right, each topic under a large
+   italic numeral. */
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 5.5rem);
+  align-items: start;
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.faq-index {
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+.faq-index ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid var(--line);
+}
+
+.faq-index a {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.7rem 0 0.7rem 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out-expo);
+}
+
+.faq-index a::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0.55rem;
+  bottom: 0.55rem;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--copper);
+  transform: scaleY(0);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.faq-index a:hover,
+.faq-index a.is-active {
+  color: var(--ink);
+}
+
+.faq-index a.is-active::before {
+  transform: scaleY(1);
+}
+
+.faq-index-n {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--copper);
+}
+
+.faq-index-count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-4);
+}
+
+.faq-groups {
+  min-width: 0;
+  max-width: 52rem;
+}
+
+.faq-group {
+  position: relative;
+  scroll-margin-top: calc(var(--nav-h) + 1.5rem);
+}
+
+.faq-group + .faq-group {
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+.faq-group-n {
+  position: absolute;
+  right: 0;
+  top: -0.6rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(3.5rem, 2.5rem + 3vw, 6rem);
+  line-height: 1;
+  color: var(--copper-2);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.faq-group .cx-faq-title {
+  padding-right: 5rem;
+}
+
+.faq-ask {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin-top: clamp(4rem, 8vw, 6rem);
+  padding: clamp(2.25rem, 5vw, 3.75rem) 1.5rem;
+  border-radius: var(--r-lg);
+  text-align: center;
+}
+
+.faq-ask-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 1.6rem + 2.6vw, 3.8rem);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.faq-ask-title em {
+  font-style: italic;
+  color: var(--copper);
+}
+
+.faq-ask-lede {
+  margin: 0 0 0.75rem;
+  color: var(--ink-3);
+}
+
+@media (max-width: 1023px) {
+  .faq-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  /* The index becomes a row of chips that scrolls sideways. */
+  .faq-index {
+    position: static;
+    margin-inline: calc(var(--gutter) * -1);
+  }
+
+  .faq-index ol {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.25rem var(--gutter);
+    border: 0;
+    scrollbar-width: none;
+  }
+
+  .faq-index ol::-webkit-scrollbar {
+    display: none;
+  }
+
+  .faq-index a {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    white-space: nowrap;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-pill);
+    background: var(--glass);
+  }
+
+  .faq-index a::before,
+  .faq-index-count {
+    display: none;
+  }
+
+  .faq-index a.is-active {
+    border-color: var(--ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-index a,
+  .faq-index a::before {
+    transition: none;
   }
 }

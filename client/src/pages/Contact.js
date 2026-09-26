@@ -1,13 +1,32 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Sparkles, Clock, ShieldCheck, Zap } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, ArrowUpRight, Check } from 'lucide-react';
 import API_BASE_URL from '../config';
-import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
+import PageHero from '../components/PageHero';
+import ContactVisual from '../components/heroes/ContactVisual';
+import { contactCity } from '../assets/unique';
 import Seo from '../seo/Seo';
 import { organization, breadcrumbs } from '../seo/schema';
 
+const islamabad = contactCity;
+
+// An email address may wrap before its "@" on a narrow screen, never inside
+// a word.
+const breakable = (value) => {
+  const at = value.indexOf('@');
+  if (at < 1) return value;
+  return (
+    <>
+      {value.slice(0, at)}
+      <wbr />
+      {value.slice(at)}
+    </>
+  );
+};
+
 const Contact = () => {
-  const introRef = useIntroTimeline();
+  const revealRef = useRevealOnScroll();
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [submitStatus, setSubmitStatus] = useState('');
   const [errors, setErrors] = useState({});
@@ -51,152 +70,159 @@ const Contact = () => {
     { icon: MapPin, label: 'Address', value: 'Islamabad, Pakistan', href: 'https://maps.google.com/?q=Islamabad' }
   ];
 
-  const perks = [
-    { icon: Clock, text: 'Reply within 1 business day' },
-    { icon: ShieldCheck, text: 'Your details stay private' },
-    { icon: Zap, text: 'Free, no-obligation scoping call' },
-  ];
+  const perks = ['Free scoping call', 'Details kept private'];
 
-  const inputBase = 'mt-1 w-full px-4 py-3 rounded-xl border transition focus:ring-4 focus:ring-brand-sky-400/60 outline-none';
+  const inputBase = 'mt-1 w-full px-4 py-3 rounded-xl border text-ink placeholder:text-ink-4 transition focus:border-orange-600 focus:ring-4 focus:ring-orange-200/70 outline-none';
+  const labelBase = 'block text-sm font-medium text-ink-2';
 
   return (
-    <main className="relative min-h-screen overflow-hidden text-slate-900">
+    <main className="relative min-h-screen overflow-x-clip text-ink">
       <Seo
         title="Contact Us"
         description="Start a project, ask about training, or apply for an internship. Tell us what you are building and the Cortexis engineering team in Islamabad will reply."
         path="/contact"
         schema={[organization(), breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }])]}
       />
-      {/* Floating glows */}
-      <div aria-hidden="true" className="pointer-events-none absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-brand-accent/20 blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-0 right-10 h-80 w-80 rounded-full bg-brand-magenta/15 blur-3xl" />
+      <PageHero
+        label="Contact"
+        lines={['Tell us what', <em key="em">you’re building.</em>]}
+        lede="Projects, training or internships. We reply within one business day."
+        actions={[
+          { href: '#contact-form', label: 'Write to us', primary: true },
+          { href: 'mailto:cortexis.solution.hub@gmail.com', label: 'Email us' },
+        ]}
+        visual={<ContactVisual />}
+      />
 
-      <section className="relative z-10 py-16 md:py-24">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-[460px_1fr] items-start gap-10 px-6">
-          {/* ── Rail ─────────────────────────────────────────────────── */}
-          <div className="relative">
-            <div className="sticky top-24 space-y-5">
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#070e1e] via-[#0b1a30] to-[#0f2744] p-8 text-white shadow-2xl border border-orange-500/30">
-                <div aria-hidden="true" className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-orange-500/10 blur-2xl" />
-                <div className="relative">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-orange-500/20 px-4 py-1.5 text-sm font-bold text-orange-300 ring-1 ring-orange-400/40 backdrop-blur">
-                    <Sparkles className="h-4 w-4 text-orange-400" /> Let’s talk
-                  </span>
-                  <h1 className="mt-5 text-3xl md:text-4xl font-extrabold leading-tight text-white">Contact Cortexis Solution Hub</h1>
-                  <p className="mt-3 text-slate-200 font-medium">Tell us about your goals. We reply within one business day (PKT) to make something remarkable together.</p>
-
-                  <ul className="mt-6 space-y-3">
-                    {perks.map((p, i) => (
-                      <li key={i} className="flex items-center gap-3 text-slate-100 font-medium">
-                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-orange-500/20 ring-1 ring-orange-400/30 text-orange-300">
-                          <p.icon className="h-4 w-4" />
-                        </span>
-                        <span className="text-sm">{p.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="grid gap-3">
-                {chips.map((c, i) => (
-                  <a key={i} href={c.href} className="group flex items-center gap-4 rounded-2xl bg-white p-4 shadow-card ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:ring-orange-400">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-glow">
-                      <c.icon className="h-5 w-5" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-xs uppercase tracking-wide text-slate-500 font-bold">{c.label}</p>
-                      <p className="truncate font-bold text-black group-hover:text-orange-600">{c.value}</p>
-                    </div>
-                  </a>
+      <section ref={revealRef} className="relative pb-24 md:pb-32" aria-label="Contact form and details">
+        <div className="lx-wrap grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,8fr)] lg:gap-10">
+          {/* ── Direct lines ─────────────────────────────────────────── */}
+          <aside className="order-2 grid min-w-0 grid-cols-1 gap-6 lg:order-1 lg:sticky lg:top-28" aria-label="Direct contact details">
+            <div data-reveal className="lx-contact-panel lx-contact-rail">
+              <span className="lx-label">Direct</span>
+              <ul className="mt-3">
+                {chips.map((c) => (
+                  <li key={c.label}>
+                    <a href={c.href} className="lx-contact-line">
+                      <span className="lx-contact-line-icon" aria-hidden="true">
+                        <c.icon size={18} strokeWidth={1.75} />
+                      </span>
+                      <span className="lx-contact-line-text">
+                        <span className="lx-contact-line-label">{c.label}</span>
+                        <span className="lx-contact-line-value">{breakable(c.value)}</span>
+                      </span>
+                      <ArrowUpRight size={16} className="lx-contact-line-arrow" aria-hidden="true" />
+                    </a>
+                  </li>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ── Form ─────────────────────────────────────────────────── */}
-          <section
-            ref={introRef}
-            className="relative rounded-3xl bg-white p-6 sm:p-9 shadow-cardLg ring-1 ring-slate-200"
-          >
-            <div className="mb-6" data-intro>
-              <span className="section-eyebrow"><span className="section-eyebrow-dot" /> Project brief</span>
-              <h2 className="mt-3 text-2xl font-extrabold text-black">Start the conversation</h2>
-              <p className="mt-1 text-black font-medium">Share your goals, users and timelines. The more context you give, the better.</p>
+              </ul>
+              <ul className="lx-contact-perks">
+                {perks.map((p) => (
+                  <li key={p}>
+                    <Check size={13} strokeWidth={2.4} aria-hidden="true" /> {p}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {submitStatus === 'success' && (
-              <div className="mb-5 flex items-center gap-3 rounded-xl bg-emerald-500/10 p-4 text-emerald-300 ring-1 ring-emerald-400/30" role="status">
-                <CheckCircle2 className="h-5 w-5 shrink-0" />
-                <span>Thanks! A specialist will reach out shortly.</span>
+            <figure className="lx-contact-city">
+              <div className="lx-frame lx-contact-city-frame" data-reveal-media>
+                <img src={islamabad.src} alt={islamabad.alt} loading="lazy" decoding="async" />
               </div>
-            )}
-            {submitStatus === 'error' && (
-              <div className="mb-5 flex items-center gap-3 rounded-xl bg-rose-500/10 p-4 text-rose-300 ring-1 ring-rose-400/30" role="alert">
-                <AlertCircle className="h-5 w-5 shrink-0" />
-                <span>Something went wrong. Please try again.</span>
-              </div>
-            )}
+              <figcaption className="lx-glass lx-contact-city-tag">Pakistan Monument, Islamabad</figcaption>
+            </figure>
+          </aside>
 
-            <form onSubmit={handleSubmit} className="space-y-6" data-intro noValidate>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-slate-700">Name *</label>
-                  <input
-                    id="name" name="name" value={formData.name} onChange={handleChange}
-                    placeholder="Ahsan Raza"
-                    className={`${inputBase} ${errors.name ? 'border-rose-400' : 'border-slate-300'}`}
-                  />
-                  {errors.name && <p className="mt-1 text-sm text-rose-400">{errors.name}</p>}
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email *</label>
-                  <input
-                    id="email" name="email" type="email" value={formData.email} onChange={handleChange}
-                    placeholder="ahsan.raza@gmail.com"
-                    className={`${inputBase} ${errors.email ? 'border-rose-400' : 'border-slate-300'}`}
-                  />
-                  {errors.email && <p className="mt-1 text-sm text-rose-400">{errors.email}</p>}
-                </div>
+          {/* ── Form ─────────────────────────────────────────────────────
+              The hero's "Write to us" lands on this wrapper, which never
+              moves: the panel inside rises on reveal, and a transformed
+              target would land 16px off. The next Tab is the Name field.
+              py-0 cancels the site-wide section padding in Pages.css. */}
+          <section id="contact-form" className="order-1 min-w-0 py-0 lg:order-2" aria-labelledby="contact-form-title">
+            <div data-reveal className="lx-contact-panel lx-contact-panel--form">
+              <div className="mb-8">
+                <span className="lx-label">Project brief</span>
+                <h2 id="contact-form-title" className="lx-contact-title">
+                  Start the <em>conversation.</em>
+                </h2>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-slate-700">Phone</label>
-                  <input
-                    id="phone" name="phone" value={formData.phone} onChange={handleChange}
-                    placeholder="+92 300 1234567"
-                    className={`${inputBase} border-slate-300`}
-                  />
+              {submitStatus === 'success' && (
+                <div className="mb-6 flex items-center gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800 ring-1 ring-emerald-200" role="status">
+                  <CheckCircle2 className="h-5 w-5 shrink-0" />
+                  <span>Thanks! A specialist will reach out shortly.</span>
                 </div>
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-slate-700">Subject</label>
-                  <input
-                    id="subject" name="subject" value={formData.subject} onChange={handleChange}
-                    placeholder="Website redesign inquiry"
-                    className={`${inputBase} border-slate-300`}
-                  />
+              )}
+              {submitStatus === 'error' && (
+                <div className="mb-6 flex items-center gap-3 rounded-xl bg-rose-50 p-4 text-rose-800 ring-1 ring-rose-200" role="alert">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  <span>Something went wrong. Please try again.</span>
                 </div>
-              </div>
+              )}
 
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message *</label>
-                <textarea
-                  id="message" name="message" rows="6" value={formData.message} onChange={handleChange}
-                  placeholder="Share scope, users, tech stack, and deadlines…"
-                  className={`${inputBase} ${errors.message ? 'border-rose-400' : 'border-slate-300'}`}
-                />
-                {errors.message && <p className="mt-1 text-sm text-rose-400">{errors.message}</p>}
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className={labelBase}>Name *</label>
+                    <input
+                      id="name" name="name" value={formData.name} onChange={handleChange}
+                      placeholder="Ahsan Raza" autoComplete="name"
+                      aria-invalid={errors.name ? true : undefined} aria-describedby={errors.name ? 'name-error' : undefined}
+                      className={`${inputBase} ${errors.name ? 'border-rose-500' : 'border-stone-300'}`}
+                    />
+                    {errors.name && <p id="name-error" className="mt-1 text-sm text-rose-700">{errors.name}</p>}
+                  </div>
+                  <div>
+                    <label htmlFor="email" className={labelBase}>Email *</label>
+                    <input
+                      id="email" name="email" type="email" value={formData.email} onChange={handleChange}
+                      placeholder="ahsan.raza@gmail.com" autoComplete="email"
+                      aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? 'email-error' : undefined}
+                      className={`${inputBase} ${errors.email ? 'border-rose-500' : 'border-stone-300'}`}
+                    />
+                    {errors.email && <p id="email-error" className="mt-1 text-sm text-rose-700">{errors.email}</p>}
+                  </div>
+                </div>
 
-              <button
-                disabled={isSubmitting}
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-accent to-brand-magenta px-7 py-3 font-semibold text-white shadow-glow transition hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70"
-              >
-                {isSubmitting ? 'Sending…' : <>Send Message <Send className="h-4 w-4" /></>}
-              </button>
-            </form>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="phone" className={labelBase}>Phone</label>
+                    <input
+                      id="phone" name="phone" value={formData.phone} onChange={handleChange}
+                      placeholder="+92 300 1234567" autoComplete="tel" inputMode="tel"
+                      className={`${inputBase} border-stone-300`}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="subject" className={labelBase}>Subject</label>
+                    <input
+                      id="subject" name="subject" value={formData.subject} onChange={handleChange}
+                      placeholder="Website redesign inquiry"
+                      className={`${inputBase} border-stone-300`}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="message" className={labelBase}>Message *</label>
+                  <textarea
+                    id="message" name="message" rows="6" value={formData.message} onChange={handleChange}
+                    placeholder="Share scope, users, tech stack, and deadlines…"
+                    aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? 'message-error' : undefined}
+                    className={`${inputBase} ${errors.message ? 'border-rose-500' : 'border-stone-300'}`}
+                  />
+                  {errors.message && <p id="message-error" className="mt-1 text-sm text-rose-700">{errors.message}</p>}
+                </div>
+
+                <button
+                  disabled={isSubmitting}
+                  type="submit"
+                  className="btn lx-btn disabled:cursor-wait disabled:opacity-70"
+                >
+                  {isSubmitting ? 'Sending…' : <>Send Message <span className="lx-btn-disc" aria-hidden="true"><Send size={14} /></span></>}
+                </button>
+              </form>
+            </div>
           </section>
         </div>
       </section>

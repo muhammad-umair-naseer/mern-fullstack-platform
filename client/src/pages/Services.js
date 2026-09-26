@@ -1,41 +1,109 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import { ArrowUpRight, Eye, GraduationCap, Search, Users, Wrench, X } from "lucide-react";
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
-import { useGridReveal } from '../hooks/useGridReveal';
 import { useModalIntro } from '../hooks/useModalIntro';
-
-
-import heroImg from "../assets/services/services-hero.webp";
+import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import { SERVICES } from '../data/services';
 import { serviceImage } from '../data/serviceImages';
+import { COURSE_COUNT } from '../data/catalogue';
 import Seo from '../seo/Seo';
 import { organization, breadcrumbs, faq as faqSchema } from '../seo/schema';
 import FaqSection from '../components/FaqSection';
+import PageHero from '../components/PageHero';
+import ServicesVisual from '../components/heroes/ServicesVisual';
 import { faqsFor } from '../data/faqs';
 
-
-
-
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const categories = ["All", "Development", "Design", "Marketing", "AI/ML"];
+
+// The headline counts the services, so it stays true when one is added.
+const NUMBER_WORDS = [
+  '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen',
+  'Eighteen', 'Nineteen', 'Twenty',
+];
+const serviceCount = NUMBER_WORDS[SERVICES.length] || String(SERVICES.length);
+const pad = (n) => String(n).padStart(2, '0');
+
+// Where else a visitor can start. Services linked nowhere except contact,
+// which wastes the page: a visitor deciding whether to hire us is also the
+// person who might take a course or send an intern.
+const FREE_ROUTES = [
+  { to: '/courses', icon: GraduationCap, title: 'Courses', meta: `${COURSE_COUNT} courses, with certificates` },
+  { to: '/internships', icon: Users, title: 'Internships', meta: 'Mentored real projects, no fee' },
+  { to: '/tools', icon: Wrench, title: 'Tools', meta: 'Converters and generators, no sign up' },
+];
+
+/**
+ * The catalogue reveals as it scrolls into view: each card's photograph opens
+ * upward while the picture settles, and the card rises under it. A filter
+ * change re-runs it, so the cards still in view come in straight away.
+ */
+function useCatalogueReveal(deps) {
+  const scope = useRef(null);
+  useGSAP(
+    () => {
+      const cards = gsap.utils.toArray('[data-card]', scope.current);
+      if (!cards.length) return;
+      const mm = gsap.matchMedia();
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.set(cards, { opacity: 0, y: 28 });
+        cards.forEach((c) => {
+          const frame = c.querySelector('.svc-card-frame');
+          const img = frame && frame.querySelector('img');
+          if (frame) gsap.set(frame, { clipPath: 'inset(100% 0% 0% 0%)' });
+          if (img) gsap.set(img, { scale: 1.14 });
+        });
+        ScrollTrigger.batch(cards, {
+          start: 'top 94%',
+          once: true,
+          onEnter: (batch) => {
+            gsap.to(batch, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.09, overwrite: true, clearProps: 'opacity,transform' });
+            batch.forEach((c, i) => {
+              const frame = c.querySelector('.svc-card-frame');
+              const img = frame && frame.querySelector('img');
+              if (frame) gsap.to(frame, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.out', delay: i * 0.09, clearProps: 'clipPath' });
+              if (img) gsap.to(img, { scale: 1, duration: 1.5, ease: 'expo.out', delay: i * 0.09, clearProps: 'transform' });
+            });
+          },
+        });
+      });
+      return () => mm.revert();
+    },
+    { dependencies: deps, scope, revertOnUpdate: true }
+  );
+  return scope;
+}
 
 export default function Services() {
   const [active, setActive] = useState(null);
   const [show, setShow] = useState(false);
   const closeBtnRef = useRef(null);
+  const openerRef = useRef(null);
 
-  const services = SERVICES.map((s) => ({ ...s, image: serviceImage(s.slug) }));
+  const services = SERVICES.map((s, i) => ({ ...s, n: i + 1, image: serviceImage(s.slug) }));
 
-  const introRef = useIntroTimeline();
   const panelRef = useModalIntro(show);
+  const altRef = useRevealOnScroll();
 
   const { q, setQ, cat, setCat, filtered } = useCatalogueFilter(
     services,
     (s) => [s.title, s.description, s.category]
   );
 
-  const gridRef = useGridReveal([filtered]);
+  const gridRef = useCatalogueReveal([filtered]);
+
+  const handleClose = () => {
+    setShow(false);
+    setActive(null);
+    document.body.style.overflow = "";
+    requestAnimationFrame(() => openerRef.current?.focus());
+  };
 
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && show && handleClose();
@@ -43,31 +111,16 @@ export default function Services() {
     return () => window.removeEventListener("keydown", onKey);
   }, [show]);
 
-  const handleOpen = (service) => {
+  const handleOpen = (service, e) => {
+    openerRef.current = e?.currentTarget || null;
     setActive(service);
     setShow(true);
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => closeBtnRef.current?.focus());
   };
 
-  const handleClose = () => {
-    setShow(false);
-    setActive(null);
-    document.body.style.overflow = "";
-  };
-
-  const backToServices = () => {
-    setShow(false);
-    setActive(null);
-    document.body.style.overflow = "";
-    setTimeout(() => {
-      const el = document.getElementById("services");
-      el?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
-  };
-
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 pt-0 mt-0 [padding-block-start:0!important] [margin-block-start:0!important]">
+    <main className="min-h-screen text-ink">
       <Seo
         title="Software Development and Consulting Services"
         description="Web and mobile development, AI and automation, cloud and DevOps, UI/UX design and technical training, delivered by an Islamabad based engineering team."
@@ -78,265 +131,173 @@ export default function Services() {
           faqSchema(faqsFor('/services').map((f) => ({ q: f.q, a: f.a }))),
         ]}
       />
-      {/* Hero with absolute gradient to cover any header gap */}
-      <section ref={introRef} id="services-hero" className="relative isolate -translate-y-px pt-[env(safe-area-inset-top)]"> <div className="absolute inset-0 -z-10 bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700" /> <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(255,255,255,0.08),transparent)]" aria-hidden="true" /> <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center text-white min-h-[clamp(24rem,40vh,34rem)] md:min-h-[clamp(30rem,48vh,40rem)] py-12"> {/* content */}
-          <div>
-            <h1
-              data-intro
-              className="mt-0 text-4xl md:text-5xl font-extrabold leading-tight tracking-tight"
-            >
-              Explore Our Services
-            </h1>
-            <p
-              data-intro
-              className="mt-4 text-indigo-100/90 text-lg max-w-xl"
-            >
-              Strategy, design, development and cloud. End to end solutions built to accelerate growth.
-            </p>
-            <div
-              data-intro
-              className="mt-6 flex flex-wrap gap-3"
-            >
-              <a
-                href="#services"
-                className="inline-flex items-center px-6 py-3 rounded-full font-semibold bg-white text-indigo-700 shadow-lg hover:bg-indigo-50"
-              >
-                View Services
-              </a>
-              <a
-                href="/contact"
-                className="inline-flex items-center px-6 py-3 rounded-full font-semibold ring-2 ring-white/80 text-white hover:bg-white hover:text-indigo-700"
-              >
-                Talk to Advisor
-              </a>
-            </div>
-          </div>
+      <PageHero
+        label="Services"
+        lines={[`${serviceCount} services,`, <em key="em">one studio.</em>]}
+        lede={'Strategy, design, development and cloud, end to end.'}
+        actions={[
+          { href: '#services', label: 'View services', primary: true },
+          { to: '/contact', label: 'Talk to an advisor' },
+        ]}
+        visual={<ServicesVisual services={SERVICES} />}
+      />
 
-          <img
-            data-intro
-            src={heroImg}
-            alt="Team collaborating on solutions"
-            className="rounded-2xl shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-      </section>
-
-      {/* Controls */}
-      <section className="max-w-7xl mx-auto px-6 mt-0">
-        <div className="rounded-2xl bg-white shadow-md p-4 md:p-5 grid md:grid-cols-[1fr_auto] gap-4">
-          <div className="relative">
-            <span className="absolute left-3 top-2.5 text-slate-400">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6" />
-              </svg>
-            </span>
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 border-slate-300"
-              placeholder="Search services, e.g. React, Cloud, SEO..."
-            />
-          </div>
-          <div className="flex gap-2 overflow-auto">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCat(c)}
-                className={`px-3 py-2 rounded-lg text-sm whitespace-nowrap border ${
-                  cat === c
-                    ? "bg-indigo-600 text-white border-indigo-600"
-                    : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Grid */}
-      <section ref={gridRef} id="services" className="max-w-7xl mx-auto px-6 py-14">
-        {filtered.length === 0 ? (
-          <p className="text-center text-slate-500">
-            No services match your filters. Try clearing search or picking another category.
-          </p>
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filtered.map((service, idx) => (
-                <article
-                  key={`${service.title}-${idx}`}
-                  data-card
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition flex flex-col"
+      {/* ── The catalogue ───────────────────────────────────────────── */}
+      <section id="services" className="svc-cat" aria-label="All services">
+        <div className="lx-wrap">
+          <div className="svc-bar">
+            <label className="svc-search">
+              <Search size={17} strokeWidth={1.75} aria-hidden="true" />
+              <span className="sr-only">Search services</span>
+              <input
+                type="search"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search, e.g. React, SEO"
+              />
+              {q && (
+                <button type="button" className="svc-clear" onClick={() => setQ('')} aria-label="Clear search">
+                  <X size={14} strokeWidth={2} aria-hidden="true" />
+                </button>
+              )}
+            </label>
+            <div className="svc-chips" role="group" aria-label="Filter by category">
+              {categories.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCat(c)}
+                  aria-pressed={cat === c}
+                  className={`svc-chip${cat === c ? ' is-on' : ''}`}
                 >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-48 object-cover transition-transform duration-500 hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                      {service.category}
-                    </div>
-                    <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
-                  </div>
-
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-lg font-semibold text-slate-900">{service.title}</h3>
-                    <p className="text-slate-600 mt-2 flex-1">{service.description}</p>
-                    {/* A real link, not only a modal trigger. The modal stays for quick
-                        browsing, but each service has a URL now, so a crawler can reach it
-                        and a person can send it to someone. */}
-                    <Link
-                      to={`/services/${service.slug}`}
-                      className="mt-5 block w-full rounded-lg bg-indigo-600 py-2.5 text-center font-medium text-white transition hover:bg-indigo-700"
-                    >
-                      Learn More
-                    </Link>
-                    <button
-                      onClick={() => handleOpen(service)}
-                      className="mt-2 w-full rounded-lg border border-slate-300 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                    >
-                      Quick look
-                    </button>
-                  </div>
-                </article>
+                  {c}
+                </button>
               ))}
             </div>
-          )}
-      </section>
+            <span className="svc-count" aria-live="polite">
+              <span className="tabular">{pad(filtered.length)}</span> / {pad(services.length)}
+            </span>
+          </div>
 
-      {/* Routes out of this page.
-          Services linked nowhere except contact, which wastes the page: a
-          visitor deciding whether to hire us is also the person who might take
-          a course or send an intern, and a crawler needs paths between these
-          sections to see them as one site. */}
-      <section className="max-w-7xl mx-auto px-6 pb-16">
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-card p-6 md:p-8">
-          <h2 className="text-2xl font-extrabold text-black">Not ready to start a project?</h2>
-          <p className="mt-2 text-black font-medium max-w-2xl">
-            There is more than one way to work with us. Learn the skills yourself, send us
-            someone to train, or use the free tools we have already built.
-          </p>
-          <div className="mt-5 grid sm:grid-cols-3 gap-4">
-            <Link
-              to="/courses"
-              className="group block rounded-xl border border-slate-200 p-5 transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <h3 className="font-bold text-black group-hover:text-orange-700">Free courses</h3>
-              <p className="mt-1 text-sm text-black font-medium">
-                Twenty three courses, twelve chapters each, with a verifiable certificate.
+          <div ref={gridRef}>
+            {filtered.length === 0 ? (
+              <p className="svc-empty">
+                Nothing matches. <button type="button" className="lx-link" onClick={() => { setQ(''); setCat('All'); }}>Show all services</button>
               </p>
-            </Link>
-            <Link
-              to="/internships"
-              className="group block rounded-xl border border-slate-200 p-5 transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <h3 className="font-bold text-black group-hover:text-orange-700">Free internships</h3>
-              <p className="mt-1 text-sm text-black font-medium">
-                Real projects in Islamabad, mentored by the engineers who ship them. Unpaid, and we never charge a fee.
-              </p>
-            </Link>
-            <Link
-              to="/tools"
-              className="group block rounded-xl border border-slate-200 p-5 transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <h3 className="font-bold text-black group-hover:text-orange-700">Free tools</h3>
-              <p className="mt-1 text-sm text-black font-medium">
-                Converters, formatters and generators, free and with no sign up.
-              </p>
-            </Link>
+            ) : (
+              <ul className="svc-grid">
+                {filtered.map((service) => (
+                  <li key={service.slug} data-card className="svc-card">
+                    {/* A real link, not only a modal trigger: each service has
+                        a URL, so a crawler can reach it and a person can send
+                        it to someone. alt is empty because the link is named
+                        by its title. */}
+                    <Link to={`/services/${service.slug}`} className="svc-card-link">
+                      <div className="svc-card-frame">
+                        <img src={service.image} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+                        <span className="svc-card-cat">{service.category}</span>
+                      </div>
+                      <div className="svc-card-body">
+                        <span className="svc-card-num" aria-hidden="true">{pad(service.n)}</span>
+                        <h3 className="svc-card-title">{service.title}</h3>
+                        <span className="svc-card-cta" aria-hidden="true"><ArrowUpRight size={18} /></span>
+                      </div>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={(e) => handleOpen(service, e)}
+                      className="svc-card-peek"
+                      aria-label={`Quick look: ${service.title}`}
+                    >
+                      <Eye size={17} strokeWidth={1.75} aria-hidden="true" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </section>
 
+      {/* ── Free ways in ─────────────────────────────────────────────── */}
+      <section ref={altRef} className="svc-alt" aria-labelledby="svc-alt-title">
+        <div className="lx-wrap">
+          <div className="svc-alt-panel">
+            <div className="svc-alt-head" data-reveal>
+              <span className="lx-label">Not ready to hire?</span>
+              <h2 id="svc-alt-title" className="svc-alt-title">Start <em>for free.</em></h2>
+            </div>
+            <ul className="svc-alt-list">
+              {FREE_ROUTES.map((r) => (
+                <li key={r.to} data-reveal>
+                  <Link to={r.to} className="svc-alt-row">
+                    <span className="svc-alt-icon" aria-hidden="true"><r.icon size={20} strokeWidth={1.6} /></span>
+                    <span className="svc-alt-name">Free {r.title.toLowerCase()}</span>
+                    <span className="svc-alt-meta">{r.meta}</span>
+                    <span className="svc-alt-arrow" aria-hidden="true"><ArrowUpRight size={18} /></span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      {/* Modal */}
-      {show && (
+      {/* ── Quick look ───────────────────────────────────────────────── */}
+      {show && active && (
         <div
-          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          className="svc-modal"
           onClick={(e) => e.target === e.currentTarget && handleClose()}
           role="dialog"
           aria-modal="true"
           aria-labelledby="service-title"
           aria-describedby="service-desc"
         >
-          <div
-            ref={panelRef}
-            className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
-          >
-            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center rounded-t-xl">
-              <h3 id="service-title" className="text-xl font-semibold">
-                {active?.title}
-              </h3>
+          <div ref={panelRef} className="svc-modal-panel">
+            <div className="svc-modal-frame">
+              <img src={active.image} alt="" />
+              <span className="svc-card-cat">{active.category}</span>
               <button
                 ref={closeBtnRef}
+                type="button"
                 onClick={handleClose}
-                className="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
+                className="svc-modal-close"
                 aria-label="Close service details"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X size={18} strokeWidth={1.75} aria-hidden="true" />
               </button>
             </div>
 
-            <div className="p-6">
-              <img
-                src={active?.image}
-                alt={active?.title}
-                className="w-full h-48 object-cover rounded-lg"
-                loading="lazy"
-              />
-              <p id="service-desc" className="mt-4 text-slate-700">
-                {active?.description}
-              </p>
+            <div className="svc-modal-body">
+              <h3 id="service-title" className="svc-modal-title">{active.title}</h3>
+              <p id="service-desc" className="svc-modal-desc">{active.description}</p>
 
-              <div className="mt-6 grid md:grid-cols-2 gap-6">
+              <div className="svc-modal-cols">
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-900 mb-2">Key Features</h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                    {active?.features?.map((f, i) => (
-                      <li key={i}>{f}</li>
-                    ))}
+                  <h4 className="svc-modal-h">Covers</h4>
+                  <ul className="svc-modal-list">
+                    {active.features?.map((f) => <li key={f}>{f}</li>)}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-900 mb-2">Sample Deliverables</h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                    {active?.deliverables?.map((d, i) => (
-                      <li key={i}>{d}</li>
-                    ))}
+                  <h4 className="svc-modal-h">You get</h4>
+                  <ul className="svc-modal-list">
+                    {active.deliverables?.map((d) => <li key={d}>{d}</li>)}
                   </ul>
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  to={active ? `/services/${active.slug}` : "/services"}
-                  className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
-                >
-                  Full details
+              <div className="svc-modal-actions">
+                <Link to={`/services/${active.slug}`} className="btn lx-btn">
+                  Full details <span className="lx-btn-disc" aria-hidden="true"><ArrowUpRight size={14} /></span>
                 </Link>
-                <Link to="/contact" className="px-5 py-2.5 rounded-lg border border-indigo-600 text-indigo-700 hover:bg-indigo-50">
-                  Discuss This Service
-                </Link>
-                <button
-                  type="button"
-                  onClick={backToServices}
-                  className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50"
-                >
-                  Back to Services
-                </button>
+                <Link to="/contact" className="lx-link">Discuss this service</Link>
               </div>
             </div>
           </div>
         </div>
       )}
       <FaqSection page="/services" title="Questions before you hire us" />
-    </div>
+    </main>
   );
 }

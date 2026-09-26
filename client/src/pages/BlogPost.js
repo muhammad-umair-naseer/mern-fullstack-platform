@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { POSTS, postBySlug } from '../data/blog.generated';
 import Markdown from '../learn/Markdown';
 import PostCard, { CATEGORY } from '../components/PostCard';
+import PageHero from '../components/PageHero';
+import BlogPostVisual from '../components/heroes/BlogPostVisual';
 import TableOfContents from '../components/blog/TableOfContents';
 import BlogFaq from '../components/blog/BlogFaq';
 import { parseBlogContent } from '../lib/blogParser';
@@ -19,6 +21,58 @@ const formatDate = (iso) =>
     timeZone: 'UTC',
   });
 
+// The title as headline lines, the last in italic. Three lines for anything
+// past a short title. The breaks keep the longest line short, but read like
+// a typesetter set them: a pause after a colon or comma is welcome, a line
+// may open on a preposition, and no line ends on "a", "the", "to" or "your"
+// or is left as a single word. Ties go to the more even set of lines.
+const ARTICLE = /^(a|an|the)$/i;
+const JOINER = /^(to|of|for|in|on|at|by|with|and|or)$/i;
+const OWNER = /^(my|your|our)$/i;
+
+function headline(title) {
+  const w = title.split(/\s+/);
+  const n = Math.min(title.length > 30 ? 3 : 2, w.length);
+  if (n < 2) return [<em key="em">{title}</em>];
+
+  // Cost of breaking after word k-1 (and so opening a line on word k).
+  const breakCost = (k) => {
+    const before = w[k - 1];
+    let cost = 0;
+    if (/[:,]$/.test(before)) cost -= 6;
+    else if (ARTICLE.test(before)) cost += 8;
+    else if (JOINER.test(before) || OWNER.test(before)) cost += 4;
+    if (JOINER.test(w[k])) cost -= 2;
+    return cost;
+  };
+
+  const cuts = [];
+  for (let a = 1; a < w.length; a += 1) {
+    if (n === 2) cuts.push([a]);
+    else for (let b = a + 1; b < w.length; b += 1) cuts.push([a, b]);
+  }
+  const laid = cuts.map((c) => {
+    const edges = [0, ...c, w.length];
+    const parts = edges.slice(1).map((end, i) => w.slice(edges[i], end).join(' '));
+    const lens = parts.map((p) => p.length);
+    const widest = Math.max(...lens);
+    const runts = n === 3 ? parts.filter((p) => !p.includes(' ')).length : 0;
+    return {
+      parts,
+      widest,
+      score: widest + runts * 5 + c.reduce((sum, k) => sum + breakCost(k), 0),
+      spread: lens.reduce((sum, l) => sum + l * l, 0),
+    };
+  });
+  // Good breaks may cost a little width, never a lot.
+  const narrowest = Math.min(...laid.map((o) => o.widest));
+  const best = laid
+    .filter((o) => o.widest <= narrowest + 6)
+    .reduce((a, b) => (b.score < a.score || (b.score === a.score && b.spread < a.spread) ? b : a));
+  const last = best.parts.pop();
+  return [...best.parts, <em key="em">{last}</em>];
+}
+
 const BlogPost = () => {
   const { slug } = useParams();
   const post = postBySlug(slug);
@@ -31,12 +85,13 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <main className="max-w-3xl mx-auto px-6 py-24 text-center">
+      <main className="min-h-screen">
         <Seo title="Post not found" description="That post is not here." path={`/blog/${slug}`} noindex />
-        <h1 className="text-2xl font-bold text-black">That post is not here</h1>
-        <Link to="/blog" className="mt-4 inline-block text-orange-600 font-bold hover:underline">
-          See everything we have written
-        </Link>
+        <PageHero
+          align="center"
+          lines={['That post', <em key="em">is not here.</em>]}
+          actions={[{ to: '/blog', label: 'See everything we have written', primary: true }]}
+        />
       </main>
     );
   }
@@ -73,56 +128,51 @@ const BlogPost = () => {
         ]}
       />
 
-      <article className="cx-lv-sheet">
-        <header className="cx-lv-head">
-          <p className="cx-lv-in cx-lv-eyebrow" style={{ '--i': 0 }}>
-            <Link to="/blog" className="hover:underline">Writing</Link>
-            {' · '}
-            {(CATEGORY[post.category] || { label: 'Notes' }).label}
-          </p>
-          <h1 className="cx-lv-in cx-lv-title" style={{ '--i': 1 }}>{post.title}</h1>
-          <p className="cx-lv-in cx-lv-meta" style={{ '--i': 2 }}>
-            <span className="cx-lv-dot" aria-hidden="true" />
-            {post.author}
-            <span className="cx-lv-sep" aria-hidden="true" />
-            {formatDate(post.date)}
-            <span className="cx-lv-sep" aria-hidden="true" />
-            {post.minutes} min read
-          </p>
-        </header>
-
-        {post.image && (
-          <div className="cx-lv-in my-8 rounded-2xl overflow-hidden shadow-xl border border-slate-200/80" style={{ '--i': 2.5 }}>
-            <img
-              src={post.image}
-              alt={post.imageAlt || post.title}
-              className="w-full h-auto max-h-[480px] object-cover rounded-2xl"
-              loading="eager"
-            />
-          </div>
-        )}
-
-        {/* Interactive Table of Contents Table at top of article */}
-        {toc.length > 0 && <TableOfContents items={toc} />}
-
-        {/* Cleaned Article Body */}
-        <div className="cx-lv-in cx-lv-body" style={{ '--i': 3 }}>
-          <Markdown>{cleanedBody}</Markdown>
+      {/* Keyed on the post: a Read next click keeps this route mounted, and
+          without a fresh tree the next post would appear with no entrance and
+          inherit the last post's open FAQ and contents state. */}
+      <article key={post.slug}>
+        <div className="bph">
+          <PageHero
+            back={{ to: '/blog', label: 'Writing' }}
+            label={(CATEGORY[post.category] || { label: 'Notes' }).label}
+            lines={headline(post.title)}
+            // The reading time sits on the cover's dial; without a cover it
+            // joins the date here.
+            meta={post.image ? [formatDate(post.date)] : [formatDate(post.date), `${post.minutes} min read`]}
+            visual={
+              post.image ? (
+                <BlogPostVisual src={post.image} alt={post.imageAlt || post.title} minutes={post.minutes} />
+              ) : undefined
+            }
+          />
         </div>
 
-        {/* Interactive FAQ Accordion Component at end of article */}
-        {faqs.length > 0 && <BlogFaq faqs={faqs} />}
+        <div className="cx-lv-sheet">
+          {/* Interactive Table of Contents Table at top of article */}
+          {toc.length > 0 && <TableOfContents items={toc} />}
 
-        {more.length > 0 && (
-          <div className="cx-lv-foot">
-            <h2 className="text-lg font-bold text-black">Read next</h2>
-            <div className="mt-5 grid gap-6 sm:grid-cols-2">
-              {more.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
-            </div>
+          {/* Cleaned Article Body */}
+          <div className="cx-lv-in cx-lv-body" style={{ '--i': 3 }}>
+            <Markdown>{cleanedBody}</Markdown>
           </div>
-        )}
+
+          {/* Interactive FAQ Accordion Component at end of article */}
+          {faqs.length > 0 && <BlogFaq faqs={faqs} />}
+
+          {more.length > 0 && (
+            <section className="bp-next" aria-labelledby="read-next">
+              <h2 id="read-next" className="bp-next-title">
+                Read <em>next</em>
+              </h2>
+              <div className="bp-next-grid">
+                {more.map((p) => (
+                  <PostCard key={p.slug} post={p} />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </article>
     </main>
   );

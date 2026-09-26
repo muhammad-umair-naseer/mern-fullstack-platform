@@ -1,11 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
-import SectionHeading from './SectionHeading';
+import { photos } from '../assets/lux';
 import './ServicesPreview.css';
-import webDevImg from '../assets/services/web-development.webp';
-import aiAutomationImg from '../assets/services/ai-automation.webp';
-import saasImg from '../assets/services/saas-platform-development.webp';
 
 /**
  * Home-page teaser for the twelve services.
@@ -18,40 +16,37 @@ import saasImg from '../assets/services/saas-platform-development.webp';
  * slugify() produces in data/services.js — keep them in sync if a title there
  * ever changes.
  *
- * The artwork is unchanged from the previous revision at the client's request.
- * If the first card's custom-software image should instead match the page it
- * now links to, serviceImage('web-development') in data/serviceImages.js already
- * has that asset.
+ * Laid out as three tall plates with the middle one dropped a step, so the row
+ * reads as a spread rather than a grid of equal cards.
  */
+const services = [
+  {
+    title: 'Web and mobile apps',
+    description: 'Portals, dashboards and booking systems.',
+    photo: photos.serviceWeb,
+    to: '/services/web-development',
+  },
+  {
+    title: 'AI automation',
+    description: 'WhatsApp bots, document extraction, LLM workflows.',
+    photo: photos.serviceAi,
+    to: '/services/ai-automation',
+  },
+  {
+    // The hyphen is held together so the title never breaks as "e-" / "commerce".
+    title: <>SaaS and <span className="lx-nowrap">e-commerce</span></>,
+    description: 'Multi-tenant platforms, billing and storefronts.',
+    photo: photos.serviceSaas,
+    to: '/services/saas-platform-development',
+  },
+];
+
 const ServicesPreview = () => {
   const scope = useRevealOnScroll();
-  const services = [
-    {
-      title: "Web and mobile applications",
-      description:
-        "Internal tools, customer portals, booking systems, dashboards, and the mobile apps that go with them. Built to your workflow and delivered with the code.",
-      image: webDevImg,
-      to: "/services/web-development"
-    },
-    {
-      title: "AI automation",
-      description:
-        "WhatsApp chatbots, document extraction, and LLM-powered workflows that take real, repetitive work off your team's plate.",
-      image: aiAutomationImg,
-      to: "/services/ai-automation"
-    },
-    {
-      title: "SaaS and e-commerce platforms",
-      description:
-        "From first version to paying customers: multi-tenant architecture, billing, admin panels, storefronts, and the unglamorous parts that make a product sellable.",
-      image: saasImg,
-      to: "/services/saas-platform-development"
-    }
-  ];
 
   return (
-    <section className="services-container" aria-labelledby="services-heading" ref={scope}>
-      <div className="container">
+    <section className="lx-services" aria-labelledby="services-heading" ref={scope}>
+      <div className="lx-wrap">
         {/*
           The brief's subtitle read "Every project gets a senior engineer, a
           written scope, and a weekly demo." The weekly demo and the seniority
@@ -59,44 +54,47 @@ const ServicesPreview = () => {
           project, and nothing in the repo or the company's own material backs
           either one, so both are dropped. What survives is what we hand over,
           which the per-service deliverables in data/services.js do evidence:
-          source code, documentation and a written spec. If a published,
-          contractual delivery cadence or staffing commitment ever exists, this
-          is the line to put it back into.
+          source code, documentation and a written spec.
         */}
-        <SectionHeading
-          id="services-heading"
-          eyebrow="Services"
-          title="What we build"
-          subtitle="Applications, automations and platforms built around the way you already work — handed over with the source code, the documentation and a written scope of what was built."
-        />
+        <header className="lx-section-head">
+          <span className="lx-label" data-reveal><span className="lx-label-num">01</span>What we build</span>
+          <h2 id="services-heading" className="lx-h2" data-reveal>
+            Built for you, <em>handed over whole.</em>
+          </h2>
+          <div className="lx-section-aside" data-reveal>
+            <p>Delivered with the source code and the documentation.</p>
+            <Link to="/services" className="lx-link">
+              All twelve services <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </div>
+        </header>
 
-        <ul className="services-row row" aria-label="Service cards">
-          {services.map((service, index) => {
-            const titleId = `service-title-${index}`;
-            return (
-              <li key={service.to} className="col-md-4 mb-4" data-reveal>
-                <Link to={service.to} className="card service-preview-card h-100 service-link" aria-labelledby={titleId}>
-                  <div className="service-media">
-                    {/* alt is empty on purpose: the link is already named by the
-                        card title via aria-labelledby, so alt text here would
-                        make a screen reader announce the card twice. */}
-                    <img src={service.image} className="card-img-top" alt="" loading="lazy" />
-                    <span className="visually-hidden">{service.title}</span>
+        <ul className="lx-plates">
+          {services.map((s, i) => (
+            <li key={s.to} className="lx-plate" data-reveal>
+              <Link to={s.to} className="lx-plate-link">
+                <div className="lx-frame lx-plate-frame" data-reveal-media>
+                  {/* The picture sits in a slightly taller layer that drifts
+                      against the scroll, so each plate moves at its own depth.
+                      alt is empty on purpose: the link is named by its title,
+                      so alt text here would make a screen reader announce the
+                      card twice. */}
+                  <div className="lx-plate-drift" data-parallax="5">
+                    <img src={s.photo.src} alt="" loading="lazy" decoding="async" width="900" height="1125" />
                   </div>
-                  <div className="card-body">
-                    <h3 id={titleId} className="card-title">{service.title}</h3>
-                    <p className="card-text">{service.description}</p>
-                    <span className="service-cta">Learn more</span>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
+                </div>
+                <div className="lx-plate-body">
+                  <span className="lx-plate-num" aria-hidden="true">0{i + 1}</span>
+                  <h3 className="lx-plate-title">{s.title}</h3>
+                  <p className="lx-plate-text">{s.description}</p>
+                  <span className="lx-plate-cta" aria-hidden="true">
+                    <ArrowUpRight size={18} />
+                  </span>
+                </div>
+              </Link>
+            </li>
+          ))}
         </ul>
-
-        <div className="text-center" data-reveal>
-          <Link to="/services" className="btn-view-all">All services</Link>
-        </div>
       </div>
     </section>
   );

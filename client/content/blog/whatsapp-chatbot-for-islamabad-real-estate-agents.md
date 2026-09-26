@@ -4,8 +4,8 @@ description: A bot can answer the same five questions all day and qualify a buye
 date: 2026-08-28
 tags: [whatsapp, automation, real-estate]
 targetQuery: whatsapp chatbot for real estate agents islamabad
-image: /blog/whatsapp-chatbot-for-islamabad-real-estate-agents.webp
-imageAlt: "Modern luxury villa architecture with integrated WhatsApp real estate chatbot interface"
+image: /blog/covers/whatsapp-chatbot-for-islamabad-real-estate-agents.webp
+imageAlt: "A bright A-frame living room with tall windows onto a forest"
 ---
 
 A WhatsApp bot can handle the first two minutes of almost every property enquiry you get: where it is, what size it is, what you are asking, whether it has possession, and whether it is still available. It cannot negotiate, cannot read a buyer the way you can on a call, and cannot close.

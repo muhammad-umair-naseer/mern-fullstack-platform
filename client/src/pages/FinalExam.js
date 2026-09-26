@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { api } from '../lib/api';
 import Quiz from '../learn/Quiz';
+import LearnHero from '../learn/LearnHero';
+import { learnPhotos } from '../learn/photos';
+import '../learn/Learn.css';
 
 const FinalExam = () => {
   const { slug } = useParams();
   const [payload, setPayload] = useState(null);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
+  const [errorStatus, setErrorStatus] = useState(0);
   const [certificate, setCertificate] = useState(null);
+  // The block holding the certificate panel and the quiz, brought into view
+  // when a result lands so a pass shows the panel and the score together.
+  const examRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -23,6 +31,7 @@ const FinalExam = () => {
       } catch (err) {
         if (!cancelled) {
           setError(err.message);
+          setErrorStatus(err.status || 0);
           setStatus('error');
         }
       }
@@ -35,67 +44,81 @@ const FinalExam = () => {
 
   const submit = async (answers) => {
     const { data } = await api(`/learn/final/${slug}`, { method: 'POST', body: { answers } });
-    if (data.certificate) setCertificate(data.certificate);
+    // A learner who already holds the certificate gets it back with a failed
+    // retake too; `earned` keeps the panel from announcing it as new.
+    if (data.certificate) setCertificate({ ...data.certificate, earned: data.passed });
     return data;
   };
 
   if (status === 'loading') {
     return (
-      <div className="min-h-[60vh] grid place-items-center">
-        <div className="h-10 w-10 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
+      <div className="lx-route-loading" role="status" aria-label="Loading the final exam">
+        <span />
       </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <main className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-black">Not so fast</h1>
-        <p className="mt-3 text-black font-medium">{error}</p>
-        <Link to={`/learn/${slug}`} className="mt-6 inline-block text-orange-600 font-bold hover:underline">
-          Back to the course
+      <main className="lp-error">
+        {/* 403 is the exam's gate; anything else is a real failure. */}
+        <h1>{errorStatus === 403 ? 'Not so fast.' : 'Could not open the exam.'}</h1>
+        <p>{error}</p>
+        <Link to={`/learn/${slug}`} className="lx-link">
+          <ArrowLeft size={15} aria-hidden="true" /> Back to the course
         </Link>
       </main>
     );
   }
 
+  const count = payload.questions.length;
+
   return (
-    <main className="max-w-3xl mx-auto px-6 py-10 bg-white text-black min-h-screen">
-      <Link to={`/learn/${slug}`} className="text-sm font-bold text-black hover:text-orange-600 transition">
-        ← Back to the course
-      </Link>
-
-      {certificate && (
-        <div className="mt-6 rounded-2xl border border-emerald-300 bg-emerald-50 p-6 text-center shadow-md">
-          <p className="text-2xl font-black text-emerald-800">🎉 Certificate issued!</p>
-          <p className="mt-2 text-black font-semibold">
-            Verification code: <span className="font-mono font-bold text-black bg-white px-2 py-0.5 rounded border border-emerald-200">{certificate.code}</span>
-          </p>
-          <Link
-            to={`/certificate/${certificate.code}`}
-            className="mt-4 inline-block px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-md"
-          >
-            View &amp; print your certificate
-          </Link>
-        </div>
-      )}
-
-      <p className="mt-6 text-xs font-bold text-orange-600 uppercase tracking-wider">
-        Final exam
-      </p>
-      <h1 className="mt-1 text-3xl font-extrabold text-black">{payload.course.title}</h1>
-      <p className="mt-2 text-black font-medium leading-relaxed">
-        {payload.questions.length} questions · {payload.passMark}% to pass · unlimited retakes. Pass
-        and your free certificate is issued automatically.
-      </p>
-
-      <div className="mt-8">
-        <Quiz
-          questions={payload.questions}
-          onSubmit={submit}
-          submitLabel="Submit final exam"
-          passMark={payload.passMark}
+    <main className="lp">
+      <div className="lp-wrap">
+        <LearnHero
+          back={{ to: `/learn/${slug}`, label: 'Back to the course' }}
+          label="Final exam"
+          title={payload.course.title}
+          lede="Pass, and your certificate is issued on the spot."
+          meta={[`${count} questions`, 'Unlimited retakes']}
+          photo={learnPhotos.finalExam}
+          chips={[{ value: `${payload.passMark}%`, label: 'to pass' }]}
         />
+
+        <div className="lp-narrow" ref={examRef}>
+          {certificate && (
+            <div className="lp-issued lp-glass" role="status">
+              <span className="lp-seal" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12.5l4.2 4.2L19 7" />
+                </svg>
+              </span>
+              <div>
+                <p className="lp-issued-title">
+                  {certificate.earned ? 'Certificate issued.' : 'Your certificate stands.'}
+                </p>
+                <span className="lp-issued-code">
+                  Verification code<strong>{certificate.code}</strong>
+                </span>
+              </div>
+              <Link to={`/certificate/${certificate.code}`} className="btn lx-btn">
+                View &amp; print
+                <span className="lx-btn-disc" aria-hidden="true">
+                  <ArrowUpRight size={15} />
+                </span>
+              </Link>
+            </div>
+          )}
+
+          <Quiz
+            questions={payload.questions}
+            onSubmit={submit}
+            submitLabel="Submit final exam"
+            passMark={payload.passMark}
+            anchorRef={examRef}
+          />
+        </div>
       </div>
     </main>
   );

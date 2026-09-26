@@ -1,79 +1,86 @@
 /* ===========================================================================
-   Cortexis Solution Hub — Luxury White, Dark Blue & Orange Theme
+   Cortexis — utility bridge
+
+   Pages across the site were written with Tailwind's slate, white and indigo
+   utilities against an older palette. The rules below translate those
+   utilities onto the ivory / ink / copper tokens in index.css, so a page
+   restyles without being rewritten. Where a rule is !important, it is because
+   a utility class is the thing being overridden.
    ========================================================================= */
 
 :root {
-  --cx-bg: #ffffff;
-  --cx-glass: #ffffff;
-  --cx-glass-strong: #ffffff;
-  --cx-raised: #ffffff;
-  --cx-border: rgba(15, 23, 42, 0.1);
-  --cx-border-strong: rgba(249, 115, 22, 0.4);
-  --cx-blur: saturate(150%) blur(16px);
-  --cx-highlight: 0 1px 2px rgba(0, 0, 0, 0.03);
-  --cx-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
-  --cx-shadow-lg: 0 16px 36px rgba(249, 115, 22, 0.14), 0 4px 12px rgba(0, 0, 0, 0.04);
-  --cx-text: #000000;
-  --cx-dim: #1e293b;
-  --cx-faint: #475569;
-  --cx-accent: #f97316;
-  --cx-orange: #f97316;
-  --cx-orange-dark: #ea580c;
-  --cx-navy-dark: #070e1e;
-  --cx-navy: #0a1426;
-}
-
-html {
-  background: #ffffff;
-}
-
-body {
-  background: #ffffff;
-  color: #000000;
+  /* Aliases kept for stylesheets that still read the old names. */
+  --cx-bg: var(--ivory);
+  --cx-glass: var(--paper);
+  --cx-glass-strong: var(--paper);
+  --cx-raised: var(--paper);
+  --cx-border: var(--line);
+  --cx-border-strong: var(--line-strong);
+  --cx-shadow: var(--shadow-raised);
+  --cx-shadow-lg: var(--shadow-float);
+  --cx-text: var(--ink);
+  --cx-dim: var(--ink-2);
+  --cx-faint: var(--ink-3);
+  --cx-accent: var(--copper);
+  --cx-orange: var(--copper);
+  --cx-orange-dark: var(--copper-3);
+  --cx-navy-dark: var(--ink);
+  --cx-navy: var(--ink-2);
 }
 
 main,
 .App {
-  color: #000000;
+  color: var(--ink-2);
   background: transparent;
 }
 
-/* --- Surfaces ---------------------------------------------------- */
+/* --- Surfaces ---------------------------------------------------------- */
 
 .bg-white {
-  background: #ffffff !important;
-  border: 1px solid var(--cx-border) !important;
-  box-shadow: var(--cx-shadow) !important;
+  background: var(--glass-strong) !important;
+  border: 1px solid var(--glass-edge) !important;
+  box-shadow: var(--glass-lit);
 }
 
 .bg-slate-50,
-.bg-gray-50 { background-color: #fafbfc !important; }
+.bg-gray-50 { background-color: var(--glass-sand) !important; }
+
+/* Whole pages drawn on bg-gray-50 sit on the ivory ground instead. */
+main.bg-slate-50,
+main.bg-gray-50 { background-color: transparent !important; }
+
+.bg-slate-100,
+.bg-gray-100 { background-color: var(--glass-sand) !important; }
 
 .text-slate-900,
 .text-slate-800,
 .text-gray-900,
 .text-gray-800 {
-  color: #000000 !important;
+  color: var(--ink) !important;
 }
 
 .text-slate-700,
 .text-slate-600,
 .text-gray-700,
 .text-gray-600 {
-  color: #0f172a !important;
+  color: var(--ink-2) !important;
 }
 
 .text-slate-500,
 .text-slate-400,
 .text-gray-500,
 .text-gray-400 {
-  color: #334155 !important;
+  color: var(--ink-3) !important;
 }
 
-.bg-slate-100,
-.bg-gray-100 { background-color: #f1f5f9 !important; }
+[class*="border-slate-1"],
+[class*="border-slate-2"],
+[class*="border-gray-1"],
+[class*="border-gray-2"] {
+  border-color: var(--line) !important;
+}
 
-/* Cards */
+/* Cards: paper on ivory, separated by a hairline rather than a shadow. */
 .card,
 .service-preview-card,
 .course-preview-card,
@@ -83,10 +90,10 @@ main,
 .internship-card,
 .blog-card,
 .team-card {
-  background: #ffffff !important;
-  border: 1px solid var(--cx-border) !important;
-  box-shadow: var(--cx-shadow) !important;
-  color: #000000 !important;
+  background: var(--glass) !important;
+  border: 1px solid var(--glass-edge) !important;
+  box-shadow: var(--glass-lit) !important;
+  color: var(--ink-2) !important;
 }
 
 .card:hover,
@@ -95,17 +102,16 @@ main,
 .internship-card:hover,
 .service-card:hover,
 .course-card:hover {
-  background: #ffffff !important;
-  border-color: var(--cx-border-strong) !important;
-  box-shadow: var(--cx-shadow-lg) !important;
+  background: var(--glass-strong) !important;
+  box-shadow: var(--glass-lit), var(--shadow-raised) !important;
 }
 
 .blog-card .card-footer {
-  background: #ffffff !important;
-  border-top-color: var(--cx-border) !important;
+  background: var(--paper) !important;
+  border-top-color: var(--line) !important;
 }
 
-/* --- Typography - Solid Black for Courses and Body ----------------------- */
+/* --- Typography -------------------------------------------------------- */
 
 .section-title,
 .courses-title,
@@ -116,39 +122,45 @@ main,
 .card-title,
 .service-preview-card .card-title,
 .course-preview-card .card-title,
-.testimonial-name { color: #000000 !important; }
+.testimonial-name { color: var(--ink) !important; }
 
 .section-subtitle,
 .courses-subtitle,
-.testimonials-subtitle { color: #000000 !important; font-weight: 500; }
+.testimonials-subtitle { color: var(--ink-3) !important; }
 
 .card-text,
 .service-preview-card .card-text,
 .course-preview-card .card-text,
 .course-card p,
 .testimonial-quote,
-.card-body p { color: #000000 !important; font-weight: 500; }
+.card-body p { color: var(--ink-3) !important; }
 
 .card-body,
 .card-title,
 .card-text { color: inherit !important; }
 
-/* --- Forms --------------------------------------------------------------- */
+/* --- Forms ------------------------------------------------------------- */
 
 .form-control {
-  background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #000000 !important;
+  background: var(--paper) !important;
+  border: 1px solid var(--line-strong) !important;
+  color: var(--ink) !important;
 }
-.form-control::placeholder { color: #64748b !important; }
+.form-control::placeholder { color: var(--ink-4) !important; }
 .form-control:focus {
-  border-color: var(--cx-orange) !important;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25) !important;
+  border-color: var(--ink) !important;
+  box-shadow: 0 0 0 3px rgba(154, 74, 34, 0.16) !important;
 }
 
-.focus\:ring-brand-sky-400\/60:focus { --tw-ring-color: rgba(249, 115, 22, 0.45) !important; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus,
+select:focus,
+textarea:focus {
+  --tw-ring-color: rgba(154, 74, 34, 0.28) !important;
+}
 
-/* --- Sections ------------------------------------------------------------ */
+.focus\:ring-brand-sky-400\/60:focus { --tw-ring-color: rgba(154, 74, 34, 0.28) !important; }
+
+/* --- Sections ---------------------------------------------------------- */
 
 .services-container,
 .courses-container,
@@ -157,212 +169,179 @@ main,
 .page-container,
 .bg-light { background: transparent !important; }
 
-/* --- Hero bands ---------------------------------------------------------- */
+/* --- Page headers ----------------------------------------------------------
+   Every inner page opens with a band that was once an indigo gradient
+   (`from-indigo-700 via-sky-700 to-blue-700`). Full-width bands become an
+   editorial header on the ivory ground, closed by a hairline; the rounded
+   ones further down a page become sand panels. The Services page draws its
+   band as an absolutely positioned sibling, hence the #services-hero rules.
+   ------------------------------------------------------------------------ */
 
+/* Transparent, so the house backdrop (components/Ambient) shows through,
+   and closed by a hairline that draws itself in from the left. */
 [class*="from-indigo-700"],
-[class*="from-brand-indigo-700"] {
-  background-image: linear-gradient(
-    135deg,
-    rgba(255, 107, 0, 0.08) 0%,
-    rgba(249, 115, 22, 0.05) 50%,
-    rgba(255, 255, 255, 0.95) 100%
-  ) !important;
-  backdrop-filter: saturate(150%) blur(18px);
-  -webkit-backdrop-filter: saturate(150%) blur(18px);
-  border-bottom: 1px solid rgba(249, 115, 22, 0.15);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  color: #000000 !important;
+[class*="from-brand-indigo-700"],
+header[class*="from-slate-9"] {
+  background-image: none !important;
+  background-color: transparent !important;
+  color: var(--ink) !important;
+  border: 0 !important;
 }
 
-#services-hero > [class*="from-indigo-700"] {
-  background-image: linear-gradient(
-    135deg,
-    rgba(255, 107, 0, 0.08) 0%,
-    rgba(249, 115, 22, 0.05) 50%,
-    rgba(255, 255, 255, 0.95) 100%
-  ) !important;
+:is([class*="from-indigo-700"], [class*="from-brand-indigo-700"], header[class*="from-slate-9"]):not([class*="rounded"])::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line-strong);
+  transform-origin: left center;
+  animation: lx-draw 1.6s var(--ease-out-expo) 0.35s both;
 }
 
-/* Text utilities inside the hero banner */
-[class*="from-indigo-700"] .text-white:not([class*="bg-gradient"]):not([class*="bg-indigo"]):not([class*="bg-brand"]):not([class*="bg-emerald"]),
-[class*="from-brand-indigo-700"] .text-white:not([class*="bg-gradient"]):not([class*="bg-indigo"]):not([class*="bg-brand"]):not([class*="bg-emerald"]) {
-  color: #000000 !important;
+/* The Services band is an absolutely positioned layer; the rest need a
+   positioning context for the drawn rule. */
+:is([class*="from-indigo-700"], [class*="from-brand-indigo-700"], header[class*="from-slate-9"]):not(.absolute) {
+  position: relative;
 }
 
-[class*="from-indigo-700"] [class*="text-indigo-100"],
+@keyframes lx-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+[class*="from-indigo-700"][class*="rounded"],
+[class*="from-brand-indigo-700"][class*="rounded"] {
+  background-color: var(--glass-sand) !important;
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit);
+}
+
+/* The radial "sheen" layered over the Services band. */
+#services-hero > [class*="radial-gradient"] {
+  display: none;
+}
+
+/* Display-scale serif for the page title. */
+[class*="from-indigo-700"] h1,
+[class*="from-brand-indigo-700"] h1,
+#services-hero h1 {
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  font-size: var(--text-h1) !important;
+  line-height: 1 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--ink) !important;
+}
+
+[class*="from-indigo-700"] h2,
+[class*="from-brand-indigo-700"] h2 {
+  color: var(--ink) !important;
+}
+
+[class*="from-indigo-700"] .text-white:not([class*="bg-"]),
+[class*="from-brand-indigo-700"] .text-white:not([class*="bg-"]),
+#services-hero .text-white:not([class*="bg-"]) {
+  color: var(--ink) !important;
+}
+
+[class*="from-indigo-700"] p,
+[class*="from-brand-indigo-700"] p,
+[class*="from-indigo-700"] [class*="text-indigo-1"],
 [class*="from-indigo-700"] [class*="text-white/"],
-[class*="from-brand-indigo-700"] [class*="text-indigo-100"] { color: #1e293b !important; }
+[class*="from-brand-indigo-700"] [class*="text-indigo-1"],
+#services-hero p,
+#services-hero [class*="text-indigo-1"],
+#services-hero [class*="text-white/"] {
+  color: var(--ink-3) !important;
+}
 
-/* Primary CTA pill - Luxury Orange */
+/* Breadcrumb and small links inside a header */
+[class*="from-indigo-700"] nav a,
+[class*="from-brand-indigo-700"] nav a {
+  color: var(--ink-3) !important;
+}
+[class*="from-indigo-700"] nav a:hover,
+[class*="from-brand-indigo-700"] nav a:hover {
+  color: var(--ink) !important;
+}
+
+/* Primary pill inside a header: ink. */
+.bg-white.text-indigo-700,
 [class*="from-indigo-700"] .bg-white.text-indigo-700,
-[class*="from-brand-indigo-700"] .bg-white.text-indigo-700,
-.bg-white.text-indigo-700 {
-  background: linear-gradient(135deg, #ff6b00 0%, #f97316 50%, #ea580c 100%) !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.35) !important;
+#services-hero .bg-white.text-indigo-700 {
+  background: var(--ink) !important;
+  color: var(--ivory) !important;
+  border: 1px solid var(--ink) !important;
+  box-shadow: none !important;
+  transition: background-color var(--dur-base) var(--ease-out-expo), border-color var(--dur-base) var(--ease-out-expo);
 }
+.bg-white.text-indigo-700:hover,
 [class*="from-indigo-700"] .bg-white.text-indigo-700:hover,
-[class*="from-brand-indigo-700"] .bg-white.text-indigo-700:hover,
-.bg-white.text-indigo-700:hover {
-  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important;
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.5) !important;
+#services-hero .bg-white.text-indigo-700:hover {
+  background: var(--copper) !important;
+  border-color: var(--copper) !important;
 }
 
-/* Secondary outline pill */
+/* Secondary outline pill. */
 [class*="from-indigo-700"] [class*="ring-white"],
 #services-hero [class*="ring-white"] {
-  --tw-ring-color: rgba(249, 115, 22, 0.5) !important;
-  color: #ea580c !important;
-  background: #ffffff !important;
-  border: 1px solid #f97316 !important;
+  --tw-ring-color: transparent !important;
+  color: var(--ink) !important;
+  background: transparent !important;
+  border: 1px solid var(--line-strong) !important;
+  transition: border-color var(--dur-base) var(--ease-out-expo), background-color var(--dur-base) var(--ease-out-expo);
 }
 [class*="from-indigo-700"] [class*="ring-white"]:hover,
 #services-hero [class*="ring-white"]:hover {
-  background: #f97316 !important;
-  color: #ffffff !important;
+  background: var(--paper) !important;
+  border-color: var(--ink) !important;
+  color: var(--ink) !important;
 }
 
-#services-hero .text-white:not([class*="bg-gradient"]):not([class*="bg-indigo"]):not([class*="bg-brand"]):not([class*="bg-white"]) {
-  color: #000000 !important;
-}
-#services-hero [class*="text-indigo-100"],
-#services-hero [class*="text-white/"] {
-  color: #1e293b !important;
-}
-#services-hero .bg-white.text-indigo-700 {
-  background: linear-gradient(135deg, #ff6b00 0%, #f97316 50%, #ea580c 100%) !important;
-  color: #ffffff !important;
-}
-
+/* Translucent chips inside a header. */
 [class*="from-indigo-700"] [class*="bg-white/"],
 #services-hero [class*="bg-white/"] {
-  background-color: rgba(249, 115, 22, 0.08) !important;
-  color: #c2410c !important;
-}
-[class*="from-indigo-700"] [class*="ring-white/"],
-#services-hero [class*="ring-white/"] {
-  --tw-ring-color: rgba(249, 115, 22, 0.3) !important;
+  background-color: var(--paper) !important;
+  color: var(--ink-2) !important;
+  border: 1px solid var(--line);
 }
 
-/* ---------------------------------------------------------------------------
-   Certificate sheet
-   ------------------------------------------------------------------------- */
-.cx-cert-sheet {
-  position: relative;
-  width: 1123px;
-  height: 794px;
-  background: #ffffff !important;
-  border: none !important;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25) !important;
-  overflow: hidden;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  font-family: "Space Grotesk", system-ui, sans-serif;
-}
-
-.cx-cert-scaler {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-@media (max-width: 1200px) {
-  .cx-cert-scaler { height: calc(794px * 0.78); }
-  .cx-cert-sheet { transform: scale(0.78); transform-origin: top center; }
-}
-@media (max-width: 940px) {
-  .cx-cert-scaler { height: calc(794px * 0.58); }
-  .cx-cert-sheet { transform: scale(0.58); transform-origin: top center; }
-}
-@media (max-width: 700px) {
-  .cx-cert-scaler { height: calc(794px * 0.40); }
-  .cx-cert-sheet { transform: scale(0.40); transform-origin: top center; }
-}
-@media (max-width: 480px) {
-  .cx-cert-scaler { height: calc(794px * 0.30); }
-  .cx-cert-sheet { transform: scale(0.30); transform-origin: top center; }
-}
-
-.cx-cert-sheet .bg-white {
-  background: #ffffff !important;
-  border: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-.cx-cert-qr {
-  border: 2px solid #f97316 !important;
-  background: #ffffff !important;
-  padding: 5px;
-}
-
-.cx-cert-script {
-  font-family: "Pinyon Script", "Great Vibes", cursive;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-}
-.cx-cert-name {
-  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
-  font-style: italic;
-  font-weight: 600;
-  letter-spacing: 0.005em;
-}
-
-.cx-cert-ribbon {
-  position: relative;
-  background: #f97316;
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    calc(100% - 17px) 50%,
-    100% 100%,
-    0 100%,
-    17px 50%
-  );
-}
-.cx-cert-sign {
-  font-family: "Great Vibes", "Playfair Display", cursive;
-  font-weight: 400;
-}
-
-.cx-cert-sheet,
-.cx-cert-sheet * {
-  text-shadow: none !important;
-}
-
-@page {
-  size: A4 landscape;
-  margin: 0;
-}
 /* --- Course & Lesson Content High-Contrast Overrides ----------------- */
 
 .prose {
-  color: #000000 !important;
+  color: var(--ink-2) !important;
 }
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  color: #000000 !important;
-  font-weight: 800 !important;
+.prose h1, .prose h2 {
+  color: var(--ink) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.012em;
+}
+.prose h3, .prose h4, .prose h5, .prose h6 {
+  color: var(--ink) !important;
+  font-weight: 600 !important;
 }
 .prose p, .prose li, .prose ul, .prose ol, .prose td, .prose th, .prose blockquote {
-  color: #000000 !important;
-  font-weight: 500 !important;
+  color: var(--ink-2) !important;
 }
 .prose strong, .prose b {
-  color: #000000 !important;
-  font-weight: 800 !important;
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+}
+.prose a {
+  color: var(--copper) !important;
 }
 .prose code:not(pre code) {
-  color: #c2410c !important;
-  background-color: #fff7ed !important;
-  border: 1px solid #ffedd5 !important;
-  font-weight: 700 !important;
+  color: var(--copper-3) !important;
+  background-color: var(--copper-tint) !important;
+  border: 1px solid rgba(154, 74, 34, 0.14) !important;
+  font-weight: 500 !important;
 }
 .prose pre {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
+  background-color: #1F1B17 !important;
+  color: #F4EFE7 !important;
 }
 .prose pre code {
   color: #f8fafc !important;
@@ -370,19 +349,12 @@ main,
 }
 
 @media print {
-  .cx-cert-scaler {
-    height: auto !important;
-    display: block !important;
-  }
-  .cx-cert-sheet {
+  /* A print started while a page is still fading in would otherwise catch
+     it mid-transform and can spill the certificate onto a second page.
+     !important outranks the Web Animations effect RouteTransition runs. */
+  .lx-route {
+    opacity: 1 !important;
     transform: none !important;
-    box-shadow: none !important;
-    width: 1123px !important;
-    height: 794px !important;
-    page-break-after: avoid;
-  }
-  .cx-certificate {
-    max-width: none !important;
   }
 
   .navbar,
@@ -396,28 +368,6 @@ main,
   body,
   .App {
     background: #ffffff !important;
-  }
-
-  .cx-certificate {
-    padding: 0 !important;
-    margin: 0 auto !important;
-  }
-
-  .cx-certificate,
-  .cx-certificate .bg-white {
-    background: #ffffff !important;
-    border-color: #e2e8f0 !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-  .cx-certificate .text-slate-900,
-  .cx-certificate .text-slate-800 {
-    color: #000000 !important;
-  }
-  .cx-certificate .text-slate-600,
-  .cx-certificate .text-slate-500 {
-    color: #1e293b !important;
   }
 }
 
@@ -439,54 +389,132 @@ main,
 
    Scoped by background class rather than by component, so a new tool built to
    the same pattern is correct without anyone remembering this file exists.
+
+   The class must stand as its own token: at the start of the attribute or
+   after a space. A bare substring match also caught prefixed variants such as
+   `prose-pre:bg-slate-900` and `hover:bg-slate-800`, which turned every lesson
+   and blog paragraph #cbd5e1 on ivory. Opacity forms like bg-slate-900/90
+   still match, as they should.
    -------------------------------------------------------------------------- */
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h1,
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h2,
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h3,
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h4,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h1,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h2,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h3,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) h4 {
-  color: #f8fafc !important;
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h1,
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h2,
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h3,
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h4,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h1,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h2,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h3,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) h4 {
+  color: #F4EFE7 !important;
 }
 
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) p,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) p {
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) p,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) p {
   color: #cbd5e1 !important;
 }
 
 /* The muted utilities, restored to something legible on a dark ground
    rather than the #334155 the global rule pins them to. */
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-300,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-300 {
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-300,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-300 {
   color: #cbd5e1 !important;
 }
 
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-400,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-400 {
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-400,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-400 {
   color: #94a3b8 !important;
 }
 
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-500,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-500 {
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-500,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-slate-500 {
   color: #94a3b8 !important;
 }
 
 /* Accent text inside dark panels keeps its own hue — these are already
    chosen for a dark ground and the global rules were flattening them. */
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-white,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-white {
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-white,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-white {
   color: #ffffff !important;
 }
 
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-orange-400,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-orange-400 {
-  color: #fb923c !important;
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-orange-400,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-orange-400 {
+  color: #DCA883 !important;
 }
 
-[class*="bg-slate-8"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-emerald-400,
-[class*="bg-slate-9"]:not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-emerald-400 {
+:is([class^="bg-slate-8"], [class*=" bg-slate-8"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-emerald-400,
+:is([class^="bg-slate-9"], [class*=" bg-slate-9"]):not([class*="bg-white"]):not([class*="bg-slate-50"]) .text-emerald-400 {
   color: #34d399 !important;
 }
 
+
+/* ---------------------------------------------------------------------------
+   Light to the last pixel
+   ---------------------------------------------------------------------------
+   Three leftovers from the navy era, handled here once rather than page by
+   page:
+
+   1. Decorative colour blobs (a blurred, rounded, aria-hidden div) are
+      removed. They were ambience for a dark ground and read as smudges on
+      ivory.
+   2. Gradient-filled words become the site's one highlight treatment: the
+      display serif, italic, in copper.
+   3. Navy slabs (the Playground header, the contact card) become sand panels with ink type. Code blocks and tool
+      interfaces are not touched: their dark ground is functional.
+   ------------------------------------------------------------------------ */
+
+[aria-hidden="true"][class*="rounded-"][class*="blur-3xl"],
+[aria-hidden="true"][class*="rounded-"][class*="blur-2xl"] {
+  display: none !important;
+}
+
+[class*="bg-clip-text"][class*="text-transparent"] {
+  background: none !important;
+  -webkit-text-fill-color: currentColor;
+  color: var(--copper) !important;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+}
+
+[class*="from-slate-9"],
+[class*="from-[#070e1e]"] {
+  background: var(--glass-sand) !important;
+  background-image: none !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--glass-edge) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+:is([class*="from-slate-9"], [class*="from-[#070e1e]"]) :is(h1, h2, h3, h4, strong, .text-white) {
+  color: var(--ink) !important;
+}
+
+:is([class*="from-slate-9"], [class*="from-[#070e1e]"]) :is(p, li, [class*="text-slate-3"], [class*="text-slate-4"], [class*="text-white/"], [class*="text-indigo-1"], [class*="text-gray-3"]) {
+  color: var(--ink-3) !important;
+}
+
+:is([class*="from-slate-9"], [class*="from-[#070e1e]"]) :is([class*="bg-white/"], [class*="bg-slate-8"], [class*="bg-slate-9"]):not(pre):not(code) {
+  background: var(--paper) !important;
+  border-color: var(--line) !important;
+}
+
+:is([class*="from-slate-9"], [class*="from-[#070e1e]"]) [class*="border-white/"] {
+  border-color: var(--line) !important;
+}
+
+/* Solid dark action buttons become the ink pill used everywhere else. */
+a.bg-slate-900,
+button.bg-slate-900 {
+  background: var(--ink) !important;
+  color: var(--ivory) !important;
+  border-radius: var(--r-pill) !important;
+  box-shadow: none !important;
+}
+
+a.bg-slate-900:hover,
+button.bg-slate-900:hover {
+  background: var(--copper) !important;
+}

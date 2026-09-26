@@ -1,8 +1,12 @@
 import React from 'react';
-import './ProcessSection.css';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
-import SectionHeading from './SectionHeading';
-import { Compass, Cpu, CloudLightning, LineChart } from 'lucide-react';
+import { processPhoto } from '../assets/home';
+import './ProcessSection.css';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 /**
  * The four stages of a client engagement.
@@ -12,86 +16,112 @@ import { Compass, Cpu, CloudLightning, LineChart } from 'lucide-react';
  * Anything that needed a number we could not evidence was cut rather than
  * softened — see the per-step notes below.
  *
- * `color` feeds the `--step-color` custom property the card CSS reads for its
- * hover border, numeral and icon tint, so the four values must stay distinct.
- * The icons are unchanged from the previous revision: they belong to the
- * visual design, not to the copy.
+ * The heading and a photograph hold still on the left while the steps pass
+ * on the right, and a copper rule fills beside them in step with the scroll,
+ * so the reader always knows how far through the process they are.
  */
 const steps = [
   {
     num: '01',
-    icon: Compass,
     title: 'Scope',
     // "Fixed price for a fixed scope" was dropped: no pricing model is
     // documented anywhere in this repo. What survives is narrower and true —
     // the written scope states a cost, which says nothing about how we price.
-    desc: "A call, then a written scope: what we're building, what it costs, and when you'll see the first version. You sign off before we write a line of code.",
-    color: '#3b82f6',
+    desc: 'A call, then a written scope and cost. You sign off before any code.',
   },
   {
     num: '02',
-    icon: Cpu,
     // "Weekly demos" lost its cadence. The staging link and the demos are real
     // and observable; nothing in the repo or in any client agreement fixes them
     // to a seven-day rhythm. Restore "Weekly" only once a signed engagement
     // document commits to that interval.
     title: 'Build',
-    desc: "Demos on a staging link. You test real screens, not slides, and change direction while it's still cheap to.",
-    color: '#f97316',
+    desc: 'Real screens on a staging link, while changes are still cheap.',
   },
   {
     num: '03',
-    icon: CloudLightning,
     title: 'Launch',
     // Kept in full: every item is a thing that changes hands at hand-over, so
     // it is checkable on the day rather than a claim about the future.
-    desc: 'Deployment, domain, monitoring, and a hand-over walkthrough. You receive the repository, the credentials, and the documentation.',
-    color: '#8b5cf6',
+    desc: 'Deployment, then the repository, credentials and documentation.',
   },
   {
     num: '04',
-    icon: LineChart,
     title: 'Support',
     // Dropped: "a named engineer", "a response time in writing" and "a set
     // number of hours". No staffing plan, SLA or hours allowance exists to back
     // them, and each would be an individual promise to a paying customer. What
     // remains is the shape of the arrangement, which is accurate. These come
     // back the day a support contract template lands in the repo.
-    desc: 'An optional ongoing arrangement after launch, covering changes and improvements to what we built.',
-    color: '#10b981',
+    desc: 'Optional ongoing changes after launch.',
   },
 ];
 
 export default function ProcessSection() {
   const scope = useRevealOnScroll();
 
-  return (
-    <section className="process-section" ref={scope} aria-labelledby="process-heading">
-      <div className="container">
-        <SectionHeading
-          id="process-heading"
-          eyebrow="Process"
-          title="How a project runs"
-          subtitle="Four stages. Each one ends with something you can see."
-        />
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo(
+          '.lx-steps-progress',
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: 'none',
+            scrollTrigger: { trigger: '.lx-steps', start: 'top 70%', end: 'bottom 60%', scrub: 0.4 },
+          }
+        );
 
-        <div className="process-grid">
-          {steps.map((step, idx) => {
-            const Icon = step.icon;
-            return (
-              <div key={idx} className="process-card" data-reveal style={{ '--step-color': step.color }}>
-                <div className="process-card-header">
-                  <span className="process-num">{step.num}</span>
-                  <div className="process-icon-wrap">
-                    <Icon size={24} />
-                  </div>
-                </div>
-                <h3 className="process-title">{step.title}</h3>
-                <p className="process-desc">{step.desc}</p>
-                <div className="process-connector" aria-hidden="true" />
+        // The step crossing the reading line, a little below the middle of
+        // the screen, lights its numeral in copper while the rule fills.
+        gsap.utils.toArray('.lx-step', scope.current).forEach((step) => {
+          ScrollTrigger.create({
+            trigger: step,
+            start: 'top 62%',
+            end: 'bottom 62%',
+            toggleClass: 'is-current',
+          });
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope }
+  );
+
+  return (
+    <section className="lx-process" ref={scope} aria-labelledby="process-heading">
+      <div className="lx-wrap lx-process-grid">
+        <div className="lx-process-aside">
+          <div className="lx-process-sticky">
+            <span className="lx-label" data-reveal><span className="lx-label-num">03</span>Process</span>
+            <h2 id="process-heading" className="lx-h2" data-reveal>
+              How a project <em>runs.</em>
+            </h2>
+            <div className="lx-frame lx-process-photo" data-reveal-media>
+              <div className="lx-process-drift" data-parallax="5">
+                <img src={processPhoto.src} alt={processPhoto.alt} loading="lazy" decoding="async" width={processPhoto.w} height={processPhoto.h} />
               </div>
-            );
-          })}
+            </div>
+          </div>
+        </div>
+
+        <div className="lx-steps">
+          <span className="lx-steps-rail" aria-hidden="true">
+            <span className="lx-steps-progress" />
+          </span>
+          <ol className="lx-steps-list">
+          {steps.map((step) => (
+            <li key={step.num} className="lx-step" data-reveal>
+              <span className="lx-step-num tabular" aria-hidden="true">{step.num}</span>
+              <div>
+                <h3 className="lx-step-title">{step.title}</h3>
+                <p className="lx-step-desc">{step.desc}</p>
+              </div>
+            </li>
+          ))}
+          </ol>
         </div>
       </div>
     </section>

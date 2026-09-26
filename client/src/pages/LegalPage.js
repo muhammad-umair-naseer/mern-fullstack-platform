@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUp, ShieldCheck, FileText, Mail, ArrowRight } from 'lucide-react';
-import { useIntroTimeline } from '../hooks/useIntroTimeline';
+import gsap from 'gsap';
+import { ArrowUp, Mail, ArrowRight, ChevronDown } from 'lucide-react';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
+import bringIntoView from '../learn/bringIntoView';
+import PageHero from '../components/PageHero';
+import LegalPageVisual from '../components/heroes/LegalPageVisual';
 import Seo from '../seo/Seo';
 import { breadcrumbs } from '../seo/schema';
-
-const NAV_OFFSET = 96; // clears the 72px sticky navbar + breathing room
 
 /* Render one content block. Blocks keep pages declarative:
    { p } paragraph · { h } sub-heading · { list } bullet list (items are strings or
@@ -22,7 +23,7 @@ function Block({ block }) {
         {block.list.map((item, i) => (
           <li key={i} className="flex gap-3 text-slate-600 leading-relaxed">
             <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-brand-accent to-brand-magenta" />
-            <span>
+            <span className="min-w-0 break-words">
               {typeof item === 'string' ? (
                 item
               ) : (
@@ -104,12 +105,13 @@ function Block({ block }) {
   return <p className="my-3 text-slate-600 leading-relaxed">{block.p}</p>;
 }
 
-export default function LegalPage({ seo, kind = 'terms', title, subtitle, lastUpdated, sections, contactHref = '/contact', crossLink }) {
+// `subtitle` is still passed by the legal pages but no longer shown: the hero
+// keeps to a title, the revision date and the document itself.
+export default function LegalPage({ seo, kind = 'terms', title, lastUpdated, sections, contactHref = '/contact', crossLink }) {
   const cross = crossLink || {
     to: kind === 'privacy' ? '/terms' : '/privacy',
     label: kind === 'privacy' ? 'Terms & Conditions' : 'Privacy Policy',
   };
-  const heroRef = useIntroTimeline();
   const bodyRef = useRevealOnScroll('[data-reveal]', { y: 32, stagger: 0.08 });
 
   const [activeId, setActiveId] = useState(sections[0]?.id);
@@ -154,16 +156,76 @@ export default function LegalPage({ seo, kind = 'terms', title, subtitle, lastUp
     return () => observer.disconnect();
   }, [sections]);
 
+  // The phone-width contents list folds away once a section is picked, which
+  // changes the page height. The footer answers a height change with a
+  // ScrollTrigger refresh, and a refresh cancels a smooth scroll in flight,
+  // so the jump goes through bringIntoView, which re-issues it after each
+  // refresh. A section not yet revealed still sits 32px low (the reveal's
+  // start state), and scrollIntoView measures that offset, so it is cleared
+  // first: the section then only fades in where it lands.
+  const mobileTocRef = useRef(null);
+  const stopJump = useRef(() => {});
+  useEffect(() => () => stopJump.current(), []);
+
   const scrollTo = useCallback((id) => {
     const el = document.getElementById(id);
     if (!el) return;
-    const y = el.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
+    if (mobileTocRef.current) mobileTocRef.current.open = false;
+    gsap.set(el, { clearProps: 'transform' });
+    stopJump.current();
+    stopJump.current = bringIntoView(el);
     setActiveId(id);
   }, []);
 
-  const HeroIcon = kind === 'privacy' ? ShieldCheck : FileText;
+  const tocList = (
+    <ol className="space-y-1">
+      {sections.map((s, i) => {
+        const active = activeId === s.id;
+        return (
+          <li key={s.id}>
+            <button
+              type="button"
+              onClick={() => scrollTo(s.id)}
+              aria-current={active ? 'true' : undefined}
+              className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition ${
+                active ? 'bg-orange-50 ring-1 ring-orange-200 font-semibold' : 'hover:bg-slate-50'
+              }`}
+            >
+              <span
+                className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg font-mono text-[11px] transition ${
+                  active
+                    ? 'bg-orange-600 text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-500 group-hover:text-slate-800'
+                }`}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span
+                className={`leading-snug ${
+                  active ? 'text-orange-600' : 'text-slate-700 group-hover:text-slate-900'
+                }`}
+              >
+                {s.title}
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+
+  // The /your-bot/* pages are the Your Bot product's own policies, so their
+  // hero names the product; otherwise /privacy and /your-bot/privacy would
+  // open identically.
+  const isYourBot = Boolean(seo?.path?.startsWith('/your-bot'));
+  const owner = isYourBot ? 'Cortexis Your Bot' : 'Cortexis Solution Hub';
+
+  // The title's words become the headline's lines; the gradient word turns
+  // into the italic copper phrase and closes the sentence.
+  const heroLines = title.map((w, i) => {
+    const text = w.text.trim() + (i === title.length - 1 ? '.' : '');
+    return w.grad ? <em>{text}</em> : text;
+  });
 
   return (
     <main className="relative text-slate-900">
@@ -179,114 +241,57 @@ export default function LegalPage({ seo, kind = 'terms', title, subtitle, lastUp
           ])}
         />
       )}
-      {/* Reading-progress bar, sits above the navbar */}
-      <div className="fixed inset-x-0 top-0 z-[1000] h-[3px] bg-transparent" aria-hidden="true">
+      {/* Reading-progress bar, a copper hairline above the navbar */}
+      <div className="fixed inset-x-0 top-0 z-[1000] h-[2px]" aria-hidden="true">
         <div
-          className="h-full origin-left bg-grad-brand shadow-[0_0_16px_rgba(224,86,229,0.6)]"
-          style={{ transform: `scaleX(${progress})` }}
+          className="h-full origin-left"
+          style={{ transform: `scaleX(${progress})`, background: 'var(--copper)' }}
         />
       </div>
 
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section
-        ref={heroRef}
-        className="relative isolate overflow-hidden bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 py-24 md:py-28 text-white"
-        aria-labelledby="legal-hero-heading"
-      >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-24 -left-16 h-72 w-72 rounded-full bg-brand-accent/30 blur-3xl animate-blob-slow"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-brand-magenta/25 blur-3xl animate-blob"
-        />
-        <div className="relative mx-auto max-w-4xl px-6 text-center">
-          <span
-            data-intro
-            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 backdrop-blur"
-          >
-            <HeroIcon className="h-4 w-4" />
-            Legal Center
-          </span>
-          <h1
-            id="legal-hero-heading"
-            data-intro
-            className="mt-6 text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight"
-          >
-            {title.map((word, i) =>
-              word.grad ? (
-                <span key={i} className="bg-gradient-to-r from-[#ea580c] via-[#f97316] to-[#ff6b00] bg-clip-text text-transparent font-black">
-                  {word.text}
-                </span>
-              ) : (
-                <React.Fragment key={i}>{word.text}</React.Fragment>
-              )
-            )}
-          </h1>
-          <p data-intro className="mx-auto mt-5 max-w-2xl text-lg text-indigo-100/90">
-            {subtitle}
-          </p>
-          <div data-intro className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/25 backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
-              Last updated {lastUpdated}
-            </span>
-            <span className="rounded-full bg-white/10 px-4 py-1.5 text-sm text-white ring-1 ring-white/25 backdrop-blur">
-              {sections.length} sections
-            </span>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        id="legal-hero-heading"
+        label={isYourBot ? 'Your Bot' : 'Legal'}
+        lines={heroLines}
+        lede={`Last updated ${lastUpdated}.`}
+        actions={[
+          ...(sections[0] ? [{ href: `#${sections[0].id}`, label: 'Start reading', primary: true }] : []),
+          { to: cross.to, label: cross.label },
+        ]}
+        visual={<LegalPageVisual kind={kind} owner={owner} title={title} sections={sections} lastUpdated={lastUpdated} />}
+      />
 
-      {/* ── Body: sticky TOC + sections ──────────────────────────────── */}
-      <div ref={bodyRef} className="mx-auto max-w-7xl px-6 py-14 md:py-20">
-        <div className="grid gap-10 lg:grid-cols-[290px_1fr]">
-          {/* Table of contents */}
+      {/* ── Body: contents rail + sections ───────────────────────────────
+          Aligned to the hero's edges. The document column is capped so a
+          line of the legal text stays under about 80 characters. */}
+      <div ref={bodyRef} className="lx-wrap pt-2 pb-14 md:pb-20">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,17rem)_minmax(0,48rem)] lg:justify-between lg:gap-12">
+          {/* Contents: a sticky rail on wide screens, a folded list on phones */}
           <aside className="lg:sticky lg:top-24 lg:self-start" data-reveal>
+            <details
+              ref={mobileTocRef}
+              className="group/toc rounded-3xl bg-white shadow-cardLg ring-1 ring-slate-200 lg:hidden"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">On this page</span>
+                <span className="flex items-center gap-2 font-mono text-xs text-slate-500">
+                  {sections.length} sections
+                  <ChevronDown className="h-4 w-4 transition-transform duration-300 group-open/toc:rotate-180" aria-hidden="true" />
+                </span>
+              </summary>
+              <nav aria-label="On this page" className="px-2 pb-4">
+                {tocList}
+              </nav>
+            </details>
+
             <nav
               aria-label="On this page"
-              className="rounded-3xl bg-white p-6 shadow-cardLg ring-1 ring-slate-200"
+              className="hidden rounded-3xl bg-white p-6 shadow-cardLg ring-1 ring-slate-200 lg:block"
             >
               <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                 On this page
               </p>
-              <ol className="space-y-1">
-                {sections.map((s, i) => {
-                  const active = activeId === s.id;
-                  return (
-                    <li key={s.id}>
-                      <button
-                        type="button"
-                        onClick={() => scrollTo(s.id)}
-                        aria-current={active ? 'true' : undefined}
-                        className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition ${
-                          active ? 'bg-orange-50 ring-1 ring-orange-200 font-semibold' : 'hover:bg-slate-50'
-                        }`}
-                      >
-                        <span
-                          className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg text-[11px] font-bold transition ${
-                            active
-                              ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-sm'
-                              : 'bg-slate-100 text-slate-500 group-hover:text-slate-800'
-                          }`}
-                        >
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
-                        <span
-                          className={`leading-snug ${
-                            active
-                              ? 'font-bold text-orange-600'
-                              : 'text-slate-700 group-hover:text-slate-900'
-                          }`}
-                        >
-                          {s.title}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
+              {tocList}
             </nav>
           </aside>
 
@@ -297,60 +302,44 @@ export default function LegalPage({ seo, kind = 'terms', title, subtitle, lastUp
                 key={s.id}
                 id={s.id}
                 data-reveal
-                className="scroll-mt-24 rounded-3xl bg-white p-7 sm:p-9 shadow-cardLg ring-1 ring-slate-200"
+                className="scroll-mt-24 rounded-3xl bg-white p-6 sm:p-9 shadow-cardLg ring-1 ring-slate-200"
                 aria-labelledby={`${s.id}-heading`}
               >
-                <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-accent to-brand-magenta font-mono text-sm font-bold text-white shadow-glow">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-accent to-brand-magenta font-mono text-xs font-bold text-white shadow-glow sm:h-11 sm:w-11 sm:rounded-2xl sm:text-sm">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <h2
-                      id={`${s.id}-heading`}
-                      className="text-2xl font-bold tracking-tight text-slate-900"
-                    >
-                      {s.title}
-                    </h2>
-                    <div className="mt-1 h-px w-full bg-gradient-to-r from-brand-accent/40 via-brand-magenta/30 to-transparent" />
-                    <div className="mt-3">
-                      {s.blocks.map((b, bi) => (
-                        <Block key={bi} block={b} />
-                      ))}
-                    </div>
-                  </div>
+                  <h2
+                    id={`${s.id}-heading`}
+                    className="min-w-0 text-[1.65rem] leading-tight tracking-tight text-slate-900 sm:text-3xl"
+                  >
+                    {s.title}
+                  </h2>
+                </div>
+                {/* Below the heading the text keeps the full card width on
+                    phones and hangs from the heading's edge on wider screens. */}
+                <div className="mt-4 h-px bg-gradient-to-r from-brand-accent/40 via-brand-magenta/30 to-transparent sm:ml-[3.75rem]" />
+                <div className="mt-3 sm:pl-[3.75rem] sm:text-[1.0625rem]">
+                  {s.blocks.map((b, bi) => (
+                    <Block key={bi} block={b} />
+                  ))}
                 </div>
               </section>
             ))}
 
-            {/* Closing CTA */}
-            <section
-              data-reveal
-              className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-700 via-sky-700 to-blue-700 p-8 sm:p-10 text-center text-white"
-            >
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -top-16 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-brand-magenta/25 blur-3xl"
-              />
-              <div className="relative">
-                <h2 className="text-2xl md:text-3xl font-bold">Still have questions?</h2>
-                <p className="mx-auto mt-2 max-w-xl text-indigo-100/90">
-                  Our team is happy to clarify anything in this document. Reach out and we’ll respond within one business day.
-                </p>
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                  <Link
-                    to={contactHref}
-                    className="btn-cta-white inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold shadow-lg transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300"
-                  >
-                    <Mail className="h-4 w-4" /> Contact us
-                  </Link>
-                  <Link
-                    to={cross.to}
-                    className="inline-flex items-center gap-2 rounded-full bg-transparent px-6 py-3 font-semibold text-white ring-2 ring-white/60 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300"
-                  >
-                    {cross.label}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
+            {/* Closing note */}
+            <section data-reveal className="lx-glass rounded-3xl p-8 text-center sm:p-10">
+              <h2 className="text-3xl md:text-4xl">Still have questions?</h2>
+              <p className="mx-auto mt-3 max-w-xl text-[color:var(--ink-3)]">
+                Our team is happy to clarify anything in this document. Reach out and we’ll respond within one business day.
+              </p>
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
+                <Link to={contactHref} className="btn lx-btn">
+                  <Mail className="h-4 w-4" aria-hidden="true" /> Contact us
+                </Link>
+                <Link to={cross.to} className="lx-link">
+                  {cross.label} <ArrowRight size={16} aria-hidden="true" />
+                </Link>
               </div>
             </section>
           </div>

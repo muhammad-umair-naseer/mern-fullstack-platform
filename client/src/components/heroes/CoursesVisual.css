@@ -1,0 +1,755 @@
+/* ── CoursesVisual: a study photo, and a hand of course covers over it ──
+   The photograph opens first (300ms), the chip and seal rise (900ms), then
+   the fan deals open from a closed pile (from 900ms), front cover first.
+   After that the front cover's copper rule is the clock: when it is full
+   the whole hand turns one place to the left. Transform and opacity only. */
+
+.cv {
+  --cv-dwell: 3.6s;
+  --spread: 1;
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  margin-left: auto;
+  aspect-ratio: 1 / 1.1;
+  container-type: inline-size;
+}
+
+/* Layers are plain boxes: GSAP moves them against the pointer, so nothing
+   inside one may animate its own transform on the same node. */
+.cv-layer {
+  position: absolute;
+}
+
+.cv-layer--photo {
+  top: 0;
+  right: 0;
+  width: 76%;
+  height: 66%;
+}
+
+.cv-layer--count {
+  left: 0;
+  top: 25%;
+  z-index: 3;
+}
+
+.cv-layer--seal {
+  top: -4%;
+  right: -3%;
+  z-index: 3;
+}
+
+.cv-layer--fan {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64%;
+  z-index: 2;
+}
+
+/* ── The photograph ─────────────────────────────────────────────────── */
+
+.cv-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--sand);
+  box-shadow: var(--shadow-float);
+  animation: lx-frame-open 1.5s var(--ease-out-expo) 300ms both;
+}
+
+.cv-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+.cv-drift {
+  position: absolute;
+  inset: -4%;
+  animation: cv-drift 24s var(--ease-in-out) 2.4s infinite alternate;
+}
+
+.cv-drift img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 30%;
+  animation: lx-film-settle 2s var(--ease-out-expo) 300ms both;
+}
+
+@keyframes cv-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(2%, -1.5%, 0) scale(1.06); }
+}
+
+/* ── Count chip ─────────────────────────────────────────────────────── */
+
+.cv-count {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.9rem 1.15rem 0.85rem;
+  border-radius: var(--r-md);
+  animation:
+    lx-rise 1s var(--ease-out-expo) 900ms both,
+    lx-float 7s ease-in-out 2.2s infinite alternate;
+}
+
+.cv-count-value {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  line-height: 0.9;
+  color: var(--ink);
+}
+
+.cv-count-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  color: var(--ink-3);
+}
+
+/* ── Certificate seal: a ring of words turning round a medal ────────── */
+
+.cv-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 7.25rem;
+  height: 7.25rem;
+  border-radius: 50%;
+  color: var(--copper);
+  animation: lx-rise 1s var(--ease-out-expo) 1.05s both;
+}
+
+.cv-seal-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: cv-turn 36s linear infinite;
+}
+
+.cv-seal-ring text {
+  font-family: var(--font-mono);
+  font-size: 9.2px;
+  letter-spacing: 0.04em;
+  fill: var(--ink-2);
+}
+
+.cv-seal::before {
+  content: "";
+  position: absolute;
+  inset: 26%;
+  border-radius: 50%;
+  border: 1px solid rgba(154, 74, 34, 0.28);
+}
+
+.cv-seal-icon {
+  position: relative;
+}
+
+@keyframes cv-turn {
+  to { transform: rotate(360deg); }
+}
+
+/* ── The hand of covers ─────────────────────────────────────────────── */
+
+.cv-fan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cv-card {
+  --x: 0%;
+  --y: 0%;
+  --r: 0deg;
+  --s: 1;
+  position: absolute;
+  left: 46%;
+  bottom: 3%;
+  width: 36%;
+  margin-left: -18%;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--r-md);
+  transform-origin: 50% 100%;
+  transform:
+    translate3d(calc(var(--x) * var(--spread)), var(--y), 0)
+    rotate(calc(var(--r) * var(--spread)))
+    scale(var(--s));
+  box-shadow:
+    0 1px 1px rgba(22, 19, 15, 0.05),
+    0 6px 14px rgba(22, 19, 15, 0.07),
+    0 22px 40px rgba(22, 19, 15, 0.1);
+  transition:
+    transform 1.1s var(--ease-out-expo),
+    opacity 700ms var(--ease-out-quint);
+}
+
+/* A veil of ivory pushes the side covers back without touching their
+   colour; it lifts as a cover comes to the front. */
+.cv-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--ivory);
+  opacity: 0.2;
+  pointer-events: none;
+  transition: opacity 900ms var(--ease-out-quint);
+}
+
+.cv-card[data-pos="0"] {
+  --y: -7%;
+  z-index: 5;
+}
+
+.cv-card[data-pos="0"]::after {
+  opacity: 0;
+}
+
+.cv-card[data-pos="1"],
+.cv-card[data-pos="-1"] {
+  --y: 3%;
+  --s: 0.88;
+  z-index: 4;
+}
+
+.cv-card[data-pos="1"] { --x: 56%; --r: 7deg; }
+.cv-card[data-pos="-1"] { --x: -56%; --r: -7deg; }
+
+.cv-card[data-pos="2"],
+.cv-card[data-pos="-2"] {
+  --y: 14%;
+  --s: 0.76;
+  z-index: 3;
+}
+
+.cv-card[data-pos="2"] { --x: 98%; --r: 13deg; }
+.cv-card[data-pos="-2"] { --x: -98%; --r: -13deg; }
+
+.cv-card[data-pos="2"]::after,
+.cv-card[data-pos="-2"]::after {
+  opacity: 0.36;
+}
+
+/* The cover that has had its turn drops away to the left. */
+.cv-card[data-pos="out"] {
+  --x: -150%;
+  --y: 34%;
+  --r: -24deg;
+  --s: 0.66;
+  z-index: 2;
+  opacity: 0;
+  transition:
+    transform 1.1s var(--ease-out-quint),
+    opacity 600ms var(--ease-in-out);
+}
+
+/* On arrival the hand deals open from a closed pile, front cover first. */
+.cv.is-fresh .cv-card {
+  animation: cv-deal 1.3s var(--ease-out-expo) calc(900ms + var(--d, 0) * 120ms) backwards;
+}
+
+@keyframes cv-deal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22%, 0) rotate(0deg) scale(0.84);
+  }
+}
+
+/* After that, a new course comes in from the right. Only a newly mounted
+   cover ever holds this slot, so the animation runs once per card. */
+.cv:not(.is-fresh) .cv-card[data-pos="2"] {
+  animation: cv-enter 1.1s var(--ease-out-expo) backwards;
+}
+
+@keyframes cv-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(150%, 34%, 0) rotate(24deg) scale(0.66);
+  }
+}
+
+/* Hovering opens the hand a little wider and holds it. Only where hover is
+   real: on a touch screen a tap leaves :hover stuck. */
+@media (hover: hover) {
+  .cv-fan:hover {
+    --spread: 1.1;
+  }
+
+  .cv.is-running .cv-fan:hover .cv-card[data-pos="0"] .cv-rule-fill {
+    animation-play-state: paused;
+  }
+}
+
+/* ── Cover (shared with the catalogue grid) ─────────────────────────── */
+
+.cv-cover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 1rem 1.05rem 0.95rem;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 70% at 18% 0%, rgba(255, 255, 255, 0.5), transparent 62%),
+    linear-gradient(180deg, transparent 55%, rgba(154, 74, 34, 0.06)),
+    var(--tint, var(--sand));
+  color: var(--ink);
+}
+
+/* The hairline frame, inset like a printed border. */
+.cv-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0.45rem;
+  border: 1px solid rgba(154, 74, 34, 0.26);
+  border-radius: calc(var(--r-md) - 0.35rem);
+  pointer-events: none;
+}
+
+.cv-cover-top {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+
+.cv-cover-cat {
+  overflow: hidden;
+  color: var(--copper-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cv-cover-mark {
+  position: relative;
+  margin: auto 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 4.2rem;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: var(--copper-2);
+  opacity: 0.9;
+}
+
+/* The photograph window, inset under the top line. It settles as its
+   cover comes to the front of the hand. */
+.cv-cover-photo {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin-top: 0.6rem;
+  overflow: hidden;
+  border-radius: calc(var(--r-md) - 0.55rem);
+  background: var(--sand);
+}
+
+.cv-cover-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+  transition: transform 1.6s var(--ease-out-expo);
+}
+
+.cv-card[data-pos="0"] .cv-cover-photo img {
+  transform: scale(1);
+}
+
+.cv-cover-title {
+  position: relative;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.cv-cover-foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* Inside the hero the cover scales with the visual, not the viewport. */
+.cv .cv-cover {
+  padding: 3.1cqw 3.3cqw 3cqw;
+}
+
+.cv .cv-cover::before {
+  inset: 1.4cqw;
+}
+
+.cv .cv-cover-top {
+  font-size: max(0.56rem, 2cqw);
+}
+
+.cv .cv-cover-mark {
+  font-size: 13cqw;
+}
+
+.cv .cv-cover-title {
+  margin-top: 1.6cqw;
+  font-size: max(0.9rem, 4.1cqw);
+}
+
+.cv .cv-cover-photo {
+  margin-top: 2cqw;
+}
+
+.cv .has-photo .cv-cover-title {
+  -webkit-line-clamp: 2;
+  margin-top: 2.2cqw;
+  font-size: max(0.85rem, 3.7cqw);
+}
+
+.cv .cv-cover-foot {
+  margin-top: 2.2cqw;
+  gap: 2cqw;
+  font-size: max(0.54rem, 1.9cqw);
+}
+
+/* The reading rule: the fan's clock. Shown on the front cover only. */
+.cv-rule {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(154, 74, 34, 0.22);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out-quint);
+}
+
+.cv-card[data-pos="0"] .cv-rule {
+  opacity: 1;
+  transition-delay: 500ms;
+}
+
+.cv-rule-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--copper);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.cv-card[data-pos="0"] .cv-rule-fill {
+  animation: cv-progress var(--cv-dwell) linear forwards paused;
+}
+
+.cv.is-fresh .cv-card[data-pos="0"] .cv-rule-fill {
+  animation-delay: 1.6s;
+}
+
+.cv.is-running .cv-card[data-pos="0"] .cv-rule-fill {
+  animation-play-state: running;
+}
+
+/* Covers that have had their turn keep a full rule while it fades, so it
+   never snaps back to empty on the way out. */
+.cv-card[data-pos="-1"] .cv-rule-fill,
+.cv-card[data-pos="-2"] .cv-rule-fill,
+.cv-card[data-pos="out"] .cv-rule-fill {
+  transform: scaleX(1);
+}
+
+@keyframes cv-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* The pause button stills everything, not only the fan. The chip keeps its
+   entrance running so a press during it never freezes it half-risen. */
+.cv.is-paused .cv-drift,
+.cv.is-paused .lx-pv-sheen,
+.cv.is-paused .cv-seal-ring {
+  animation-play-state: paused;
+}
+
+.cv.is-paused .cv-count {
+  animation-play-state: running, paused;
+}
+
+/* ── Pause control, on the photograph's top corner ──────────────────── */
+
+.cv-toggle {
+  position: absolute;
+  top: 0.9rem;
+  left: calc(24% + 0.9rem);
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--r-pill);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform var(--dur-instant) var(--ease-out-expo);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) 1.6s both;
+}
+
+.cv-toggle:hover {
+  transform: scale(1.05);
+}
+
+.cv-toggle:active {
+  transform: scale(0.95);
+}
+
+/* ── Wide cover, for the catalogue grid ─────────────────────────────── */
+
+.cv-cover--wide {
+  padding: 1.1rem 1.25rem;
+}
+
+.cv-cover--wide .cv-cover-top {
+  font-size: 0.7rem;
+}
+
+.cv-cover--wide .cv-cover-mark {
+  position: absolute;
+  right: 1.6rem;
+  bottom: 0.35rem;
+  margin: 0;
+  font-size: 6.6rem;
+  line-height: 1;
+  opacity: 0.8;
+  transition: transform 1.2s var(--ease-out-expo);
+}
+
+.group:hover .cv-cover--wide .cv-cover-mark {
+  transform: translate3d(-6px, -3px, 0);
+}
+
+/* ── Catalogue cards ────────────────────────────────────────────────── */
+
+/* The lift uses `translate`, not `transform`: the grid reveal (GSAP) tweens
+   the card's transform, and a CSS transition on the same property made every
+   reveal frame chase the last one 700ms behind. */
+.cv-item {
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--glass-lit);
+  transition:
+    translate 700ms var(--ease-out-expo),
+    box-shadow 700ms var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo);
+}
+
+.cv-item:hover,
+.cv-item:focus-within {
+  background: var(--glass-strong);
+  box-shadow: var(--shadow-float);
+  translate: 0 -4px;
+}
+
+.cv-item:focus-within {
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
+}
+
+/* The whole card is the target, so its ring is the focus indicator; the
+   link's own ring inside it only doubled it. */
+.cv-item a:focus-visible {
+  outline: none;
+}
+
+.cv-item-media {
+  position: relative;
+  height: 12rem;
+  margin: 0.5rem 0.5rem 0;
+  overflow: hidden;
+  border-radius: calc(var(--r-lg) - 0.5rem);
+  background: var(--sand);
+}
+
+.cv-item-media > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out-expo);
+}
+
+.group:hover .cv-item-media > img {
+  transform: scale(1.04);
+}
+
+.cv-item-disc {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo),
+    color var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.group:hover .cv-item-disc,
+.group:focus-within .cv-item-disc {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ivory);
+  transform: rotate(45deg);
+}
+
+/* The tile that closes the grid: the turning seal and one line. It takes
+   whatever the last row leaves, so it lays out across or down. */
+.cv-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem 2.5rem;
+  min-height: 16rem;
+  padding: 2rem;
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--line-strong);
+  background: var(--glass-sand);
+}
+
+.cv-end .cv-seal {
+  flex: 0 0 auto;
+  animation: none;
+}
+
+.cv-end.is-off .cv-seal-ring {
+  animation-play-state: paused;
+}
+
+.cv-end-copy {
+  display: grid;
+  justify-items: start;
+  gap: 1.25rem;
+}
+
+.cv-end-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 1.6vw, 2.9rem);
+  line-height: 1.02;
+  color: var(--ink);
+}
+
+.cv-end-title em {
+  font-style: italic;
+  color: var(--copper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-end .cv-seal-ring {
+    animation: none;
+  }
+}
+
+/* ── Narrower columns ───────────────────────────────────────────────── */
+
+@media (min-width: 901px) and (max-width: 1199px) {
+  .cv {
+    aspect-ratio: 1 / 1.2;
+  }
+
+  .cv-layer--photo {
+    height: 62%;
+  }
+
+  .cv-layer--fan {
+    height: 58%;
+  }
+}
+
+@media (max-width: 900px) {
+  .cv {
+    max-width: 30rem;
+    margin-inline: auto;
+    aspect-ratio: 1 / 1.14;
+  }
+
+  .cv-layer--photo {
+    width: 80%;
+    height: 62%;
+  }
+
+  .cv-layer--seal {
+    top: -2%;
+    right: 0;
+  }
+
+  .cv-seal {
+    width: 5.75rem;
+    height: 5.75rem;
+  }
+
+  .cv-count {
+    padding: 0.7rem 0.9rem 0.65rem;
+  }
+
+  .cv-count-value {
+    font-size: 1.9rem;
+  }
+
+  .cv-card {
+    left: 50%;
+    width: 37%;
+    margin-left: -18.5%;
+  }
+
+  .cv-card[data-pos="1"] { --x: 50%; }
+  .cv-card[data-pos="-1"] { --x: -50%; }
+  .cv-card[data-pos="2"] { --x: 86%; }
+  .cv-card[data-pos="-2"] { --x: -86%; }
+
+  .cv-toggle {
+    left: calc(20% + 0.75rem);
+    top: 0.75rem;
+  }
+}
+
+/* Phones: close the hand a little so the outer covers' rotated corners
+   stay inside the page gutter instead of running to the screen edge. */
+@media (max-width: 520px) {
+  .cv-card[data-pos="1"] { --x: 46%; }
+  .cv-card[data-pos="-1"] { --x: -46%; }
+  .cv-card[data-pos="2"] { --x: 76%; }
+  .cv-card[data-pos="-2"] { --x: -76%; }
+}

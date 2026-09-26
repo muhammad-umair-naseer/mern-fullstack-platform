@@ -25,6 +25,14 @@
 
   /* One step of a stagger. Multiply by an element's --i. */
   --cx-stagger: 70ms;
+
+  /* Verdict colours for quizzes, chosen to sit with ivory and copper rather
+     than the stock traffic-light green and red: a muted sage for right, a
+     warm brick for wrong. */
+  --cx-right: #4F6B45;
+  --cx-right-tint: rgba(79, 107, 69, 0.1);
+  --cx-wrong: #A2472E;
+  --cx-wrong-tint: rgba(162, 71, 46, 0.08);
 }
 
 /* --- arrivals ------------------------------------------------------------ */
@@ -58,15 +66,16 @@
 
 /* A ring that expands and fades. Used to say "this is where you are". */
 @keyframes cxPulseRing {
-  0%   { box-shadow: 0 0 0 0 rgba(43, 107, 168, 0.45); }
-  70%  { box-shadow: 0 0 0 14px rgba(43, 107, 168, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(43, 107, 168, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(154, 74, 34, 0.4); }
+  70%  { box-shadow: 0 0 0 14px rgba(154, 74, 34, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(154, 74, 34, 0); }
 }
 
+/* Named for its history; it is the sage of a right answer now. */
 @keyframes cxPulseRingGreen {
-  0%   { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.45); }
-  70%  { box-shadow: 0 0 0 14px rgba(5, 150, 105, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(79, 107, 69, 0.42); }
+  70%  { box-shadow: 0 0 0 14px rgba(79, 107, 69, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(79, 107, 69, 0); }
 }
 
 /* A light sweep across a filled bar, so progress reads as live. */

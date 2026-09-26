@@ -1,0 +1,86 @@
+/* ── House background: silk in window light, fixed behind every page ─── */
+
+.App {
+  position: relative;
+  isolation: isolate;
+}
+
+.lx-silk {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  /* Painted at once, before (or without) WebGL: the same warm light as a
+     static gradient, then the shader fades in over it. */
+  background:
+    radial-gradient(120% 80% at 88% -12%, #FFFEFB 0%, rgba(255, 254, 251, 0) 62%),
+    radial-gradient(80% 70% at 6% 104%, #EFE4D4 0%, rgba(239, 228, 212, 0) 70%),
+    linear-gradient(112deg, #F5EFE6 0%, #FAF8F4 46%, #F3ECE2 100%);
+}
+
+.lx-silk-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 1.8s var(--ease-out-quint);
+}
+
+.lx-silk-canvas.is-on {
+  opacity: 1;
+}
+
+/* Phones and coarse pointers: two painted moments, drifted and cross-faded
+   on the compositor. */
+.lx-silk.is-lite .lx-silk-canvas {
+  transform: scale(1.16);
+}
+
+.lx-silk.is-lite:not(.is-still) .lx-silk-a {
+  animation: lx-silk-drift-a 34s var(--ease-in-out) infinite alternate;
+}
+
+.lx-silk.is-lite:not(.is-still) .lx-silk-b.is-on {
+  animation:
+    lx-silk-drift-b 26s var(--ease-in-out) infinite alternate,
+    lx-silk-fade 13s var(--ease-in-out) 2s infinite alternate;
+}
+
+@keyframes lx-silk-drift-a {
+  from { transform: scale(1.16) translate3d(-3%, -2%, 0); }
+  to { transform: scale(1.22) translate3d(3%, 2%, 0); }
+}
+
+@keyframes lx-silk-drift-b {
+  from { transform: scale(1.2) translate3d(3%, -1.5%, 0); }
+  to { transform: scale(1.16) translate3d(-3%, 2%, 0); }
+}
+
+@keyframes lx-silk-fade {
+  from { opacity: 1; }
+  to { opacity: 0.08; }
+}
+
+/* ── Paper grain over the whole site ─────────────────────────────────
+   A fixed, static noise tile at low alpha: no blend mode, so it composites
+   once instead of re-blending on every scroll frame. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.09  0 0 0 0 0.07  0 0 0 0 0.06  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+
+@media print {
+  .lx-silk,
+  body::after {
+    display: none !important;
+  }
+}

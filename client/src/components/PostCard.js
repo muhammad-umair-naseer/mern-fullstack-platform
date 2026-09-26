@@ -1,18 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import './PostCard.css';
 
-/** Display name and accent for each category, so a tag is never shown raw. */
+/** Display name for each category, so a tag is never shown raw. */
 export const CATEGORY = {
-  pdf: { label: 'Tools', tone: 'teal' },
-  whatsapp: { label: 'Automation', tone: 'green' },
-  instagram: { label: 'Automation', tone: 'violet' },
-  pricing: { label: 'Pricing', tone: 'amber' },
-  careers: { label: 'Careers', tone: 'blue' },
-  internships: { label: 'Internships', tone: 'orange' },
+  pdf: { label: 'Tools' },
+  whatsapp: { label: 'Automation' },
+  instagram: { label: 'Automation' },
+  pricing: { label: 'Pricing' },
+  careers: { label: 'Careers' },
+  internships: { label: 'Internships' },
 };
 
-const meta = (c) => CATEGORY[c] || { label: 'Notes', tone: 'blue' };
+const labelOf = (c) => (CATEGORY[c] || { label: 'Notes' }).label;
 
 const formatDate = (iso) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', {
@@ -30,41 +31,37 @@ const monogram = (title) =>
     .join('');
 
 /**
- * A post as a card.
+ * A post as a card: the photograph, the title in the display serif, and one
+ * mono line of facts. The excerpt lives on the post itself.
  *
- * Covers: a post can name an image in its frontmatter and it is used. Until
- * then the card draws its own from the category, which reads as a deliberate
- * design rather than a missing file. Swapping in real artwork later needs one
- * line of frontmatter and one file in public/blog.
+ * A post without artwork gets a drawn cover (its monogram on sand), so a
+ * missing file never reads as a hole.
  */
-const PostCard = ({ post, featured = false }) => {
-  const { label, tone } = meta(post.category);
+const PostCard = ({ post, featured = false }) => (
+  <article className={`cx-pc${featured ? ' is-featured' : ''}`} data-card>
+    <Link to={`/blog/${post.slug}`} className="cx-pc-link">
+      <div className="cx-pc-cover">
+        {post.image ? (
+          <img src={post.image} alt={post.imageAlt || ''} loading="lazy" decoding="async" />
+        ) : (
+          <span className="cx-pc-mono" aria-hidden="true">{monogram(post.title)}</span>
+        )}
+        <span className="cx-pc-cat">{labelOf(post.category)}</span>
+      </div>
 
-  return (
-    <article className={`cx-pc ${featured ? 'is-featured' : ''}`}>
-      <Link to={`/blog/${post.slug}`} className="cx-pc-link">
-        <div className={`cx-pc-cover tone-${tone}`}>
-          {post.image ? (
-            <img src={post.image} alt={post.imageAlt || post.title} loading="lazy" />
-          ) : (
-            <span className="cx-pc-mono" aria-hidden="true">{monogram(post.title)}</span>
-          )}
-        </div>
-
-        <div className="cx-pc-body">
-          <p className={`cx-pc-cat tone-${tone}`}>{label}</p>
-          <h3 className="cx-pc-title">{post.title}</h3>
-          <p className="cx-pc-excerpt">{post.description}</p>
-          <p className="cx-pc-meta">
-            <span className="cx-pc-author">{post.author}</span>
-            <span>{formatDate(post.date)}</span>
-            <span aria-hidden="true">&middot;</span>
-            <span>{post.minutes} min read</span>
-          </p>
-        </div>
-      </Link>
-    </article>
-  );
-};
+      <div className="cx-pc-body">
+        <h3 className="cx-pc-title">{post.title}</h3>
+        <span className="cx-pc-meta">
+          <span>{post.minutes} min read</span>
+          <span aria-hidden="true">&middot;</span>
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          <span className="cx-pc-disc" aria-hidden="true">
+            <ArrowUpRight size={15} />
+          </span>
+        </span>
+      </div>
+    </Link>
+  </article>
+);
 
 export default PostCard;

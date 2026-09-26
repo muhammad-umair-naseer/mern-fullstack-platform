@@ -28,18 +28,23 @@ const Item = ({ q, a, open, onToggle, id }) => (
  * Questions for one page, answered where the question actually arises.
  *
  * A visitor deciding whether to hire us should not have to leave the services
- * page to find out what a project costs.
+ * page to find out what a project costs. Every answer starts folded, so the
+ * section reads as a short list of questions; `items` ({ q, a }) replaces the
+ * page's own list where a caller brings its own (a blog post's questions).
  */
-const FaqSection = ({ page, title = 'Questions people ask', className = '' }) => {
-  const items = faqsFor(page);
+const FaqSection = ({ page, items: given, title = 'Questions people ask', className = '', children }) => {
+  const items = given || faqsFor(page);
   const base = useId();
-  const [open, setOpen] = useState(0);
+  const [open, setOpen] = useState(-1);
 
   if (!items.length) return null;
 
   return (
     <section className={`cx-faq ${className}`} aria-labelledby={`${base}-h`}>
-      <h2 id={`${base}-h`} className="cx-faq-title">{title}</h2>
+      <header className="cx-faq-head">
+        <h2 id={`${base}-h`} className="cx-faq-title">{title}</h2>
+        <p className="cx-faq-count">{String(items.length).padStart(2, '0')} questions</p>
+      </header>
       <div className="cx-faq-list">
         {items.map((item, i) => (
           <Item
@@ -52,6 +57,7 @@ const FaqSection = ({ page, title = 'Questions people ask', className = '' }) =>
           />
         ))}
       </div>
+      {children}
     </section>
   );
 };

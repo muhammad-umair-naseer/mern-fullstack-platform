@@ -1,0 +1,379 @@
+/* ── CourseOutlineVisual: the cover, the seal, and the route to the end ───
+   The photograph is PhotoVisual, set to the right. A glass seal turns over
+   its upper-left corner; a paper syllabus card lies across its lower-left
+   edge. In the card, four rows of the course show at a time: the current
+   row's copper rule fills, its mark ticks, and the list steps down one row. */
+
+.lx-cov {
+  position: relative;
+  padding-bottom: 7.5rem;
+}
+
+/* Positioning wrappers carry the pointer depth (GSAP writes their transform);
+   the elements inside carry the entrances, so the two never fight. */
+.lx-cov-photo {
+  margin-left: 13%;
+}
+
+.lx-cov-seal-pos {
+  position: absolute;
+  left: 3%;
+  top: 0.25rem;
+  z-index: 2;
+}
+
+.lx-cov-card-pos {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 3;
+  width: min(23.5rem, 72%);
+}
+
+/* ── The seal ────────────────────────────────────────────────────────── */
+
+.lx-cov-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  animation: lx-rise 1s var(--ease-out-expo) 1150ms both;
+}
+
+.lx-cov-seal-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: lx-cov-spin 32s linear infinite;
+}
+
+.lx-cov-seal-ring text {
+  font-family: var(--font-mono);
+  font-size: 9.2px;
+  letter-spacing: 0.06em;
+  fill: var(--ink-2);
+}
+
+.lx-cov-seal-icon {
+  color: var(--copper);
+}
+
+@keyframes lx-cov-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── The syllabus card ───────────────────────────────────────────────── */
+
+.lx-cov-card {
+  --row: 2.9rem;
+  padding: 1rem 1.15rem 0.95rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-edge);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--shadow-float);
+  animation: lx-rise 1s var(--ease-out-expo) 950ms both;
+}
+
+.lx-cov-head,
+.lx-cov-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1;
+  color: var(--ink-3);
+}
+
+.lx-cov-head {
+  justify-content: space-between;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.lx-cov-count {
+  color: var(--copper);
+}
+
+/* Four rows tall. The soft edges let rows arrive and leave rather than
+   being cut off. */
+.lx-cov-window {
+  position: relative;
+  height: calc(var(--row) * 4);
+  margin: 0.2rem 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 84%, transparent 100%);
+}
+
+/* At the end of the route nothing follows, and the certificate should read
+   whole. The change lands while the track is sliding, so it never pops. */
+.lx-cov.is-end .lx-cov-window {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%);
+}
+
+.lx-cov-track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  transform: translate3d(0, calc(var(--off, 0) * var(--row) * -1), 0);
+  transition:
+    transform 900ms var(--ease-out-expo),
+    opacity 420ms var(--ease-out-quint);
+}
+
+/* Between one tour and the next: out, back to the top unseen, and in. */
+.lx-cov.is-rewinding .lx-cov-track {
+  opacity: 0;
+  transition: opacity 360ms var(--ease-in);
+}
+
+.lx-cov-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  height: var(--row);
+}
+
+.lx-cov-mark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1;
+  color: var(--ink-3);
+  transition:
+    background-color var(--dur-slow) var(--ease-out-expo),
+    border-color var(--dur-slow) var(--ease-out-expo),
+    color var(--dur-slow) var(--ease-out-expo),
+    box-shadow var(--dur-slow) var(--ease-out-expo);
+}
+
+.lx-cov-row.is-active .lx-cov-mark {
+  border-color: var(--copper);
+  color: var(--copper);
+  box-shadow: 0 0 0 4px var(--copper-tint);
+}
+
+.lx-cov-row.is-done .lx-cov-mark {
+  border-color: var(--copper);
+  background: var(--copper);
+  color: var(--paper);
+}
+
+/* The tick lands with a small press, once, as the row is passed. */
+.lx-cov.is-moving .lx-cov-row.is-done .lx-cov-mark svg {
+  animation: lx-cov-tick 520ms var(--ease-out-expo) both;
+}
+
+@keyframes lx-cov-tick {
+  from { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+  to { opacity: 1; transform: none; }
+}
+
+.lx-cov-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  color: var(--ink-3);
+  transition: color var(--dur-slow) var(--ease-out-expo);
+}
+
+.lx-cov-row.is-active .lx-cov-name,
+.lx-cov-row.is-done .lx-cov-name {
+  color: var(--ink);
+}
+
+/* The end of the route is set in the display italic. */
+.lx-cov-row.is-cert .lx-cov-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--copper);
+}
+
+/* The rule under the current row. Still, it shows how far into that row
+   the learner is (the tour shows it part-filled); moving, it fills. */
+.lx-cov-fill {
+  position: absolute;
+  left: 2.45rem;
+  right: 0;
+  bottom: 0.3rem;
+  height: 1px;
+  background: var(--copper-2);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+/* Only progress mode eases the rule to its value; in the tour a passed row
+   simply lets go of it as the list steps on. */
+.lx-cov.is-progress .lx-cov-fill {
+  transition: transform var(--dur-hero) var(--ease-out-expo);
+}
+
+.lx-cov-row.is-active .lx-cov-fill {
+  transform: scaleX(var(--f, 0));
+}
+
+.lx-cov.is-tour .lx-cov-row.is-active .lx-cov-fill {
+  transform: scaleX(0.4);
+}
+
+.lx-cov.is-looping .lx-cov-row.is-active .lx-cov-fill {
+  animation: lx-cov-fill 1.7s var(--ease-in-out) 350ms both;
+}
+
+/* On arrival, the first rule waits until the card has landed. */
+.lx-cov.is-looping.is-fresh .lx-cov-row.is-active .lx-cov-fill {
+  animation-delay: 1.9s;
+}
+
+/* The certificate holds the stage a little longer before the tour repeats. */
+.lx-cov.is-looping .lx-cov-row.is-active.is-cert .lx-cov-fill {
+  animation-duration: 3.2s;
+}
+
+.lx-cov.is-looping.is-held .lx-cov-row.is-active .lx-cov-fill {
+  animation-play-state: paused;
+}
+
+@keyframes lx-cov-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Progress mode: the row the learner is on keeps a slow pulse, because
+   finding it after a week away is the point of the page. */
+.lx-cov.is-progress.is-moving .lx-cov-row.is-active:not(.is-done) .lx-cov-mark {
+  animation: lx-cov-pulse 2.8s var(--ease-out-quint) 2s infinite;
+}
+
+@keyframes lx-cov-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(154, 74, 34, 0.34); }
+  70%,
+  100% { box-shadow: 0 0 0 10px rgba(154, 74, 34, 0); }
+}
+
+.lx-cov-foot {
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+
+.lx-cov-rule {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  border-radius: var(--r-pill);
+  background: var(--line);
+  overflow: hidden;
+}
+
+.lx-cov-rule > span {
+  position: absolute;
+  inset: 0;
+  background: var(--copper-2);
+  transform-origin: 0 50%;
+  transform: scaleX(var(--p, 0));
+  transition: transform var(--dur-hero) var(--ease-out-expo);
+}
+
+/* ── Pause ───────────────────────────────────────────────────────────── */
+
+.lx-cov-toggle {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity var(--dur-base) var(--ease-out-expo);
+  animation: lx-fade var(--dur-slow) var(--ease-out-quint) 1.6s both;
+}
+
+.lx-cov-toggle:hover,
+.lx-cov-toggle:focus-visible {
+  opacity: 1;
+}
+
+.lx-cov.is-held .lx-cov-seal-ring,
+.lx-cov.is-held .lx-pv-sheen,
+.lx-cov.is-held .lx-cov-row.is-active .lx-cov-mark {
+  animation-play-state: paused;
+}
+
+/* ── The page's hero around it ───────────────────────────────────────────
+   The headline is the course's own title, set in two or three lines by the
+   page. Titles run from 12 to 46 characters, so the type is sized to the
+   longest line (--co-chars, set by the page) and never wraps inside a line
+   mask. */
+
+.lx-co-hero .lx-ph-copy {
+  container-type: inline-size;
+}
+
+.lx-co-hero .lx-ph-title {
+  font-size: min(clamp(3rem, 1.4rem + 5.2vw, 7rem), calc(100cqi / (var(--co-chars, 12) * 0.41)));
+}
+
+.lx-co-progress {
+  max-width: 24rem;
+  margin-top: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+  animation: lx-rise var(--dur-hero) var(--ease-out-expo) 600ms both;
+}
+
+.lx-co-progress + .lx-ph-actions {
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .lx-cov {
+    padding-bottom: 10.5rem;
+  }
+
+  .lx-cov-photo {
+    margin-left: 8%;
+  }
+
+  .lx-cov-card-pos {
+    width: min(23.5rem, 88%);
+  }
+
+  .lx-cov-seal {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  .lx-cov-seal-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .lx-cov-toggle {
+    top: 1.25rem;
+    right: 1.25rem;
+  }
+}

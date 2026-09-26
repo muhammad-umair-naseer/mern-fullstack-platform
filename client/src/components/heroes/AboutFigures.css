@@ -1,0 +1,468 @@
+/* ── AboutFigures: four numbers, no boxes ───────────────────────────── */
+
+.lx-af {
+  padding-block: clamp(3rem, 1.5rem + 5vw, 7rem);
+}
+
+.lx-af-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.5rem, 0.75rem + 2.5vw, 3.5rem);
+}
+
+.lx-af-item {
+  position: relative;
+  padding-top: 1.25rem;
+}
+
+/* The hairline over each figure, with a short copper lead that runs the
+   full width on hover. */
+.lx-af-rule {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: var(--line-strong);
+  transform-origin: left center;
+}
+
+.lx-af-rule::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.5px;
+  height: 2px;
+  background: var(--copper-2);
+  transform: scaleX(0.14);
+  transform-origin: left center;
+  transition: transform 0.9s var(--ease-out-expo);
+}
+
+.lx-af-item:hover .lx-af-rule::before {
+  transform: scaleX(1);
+}
+
+.lx-af-idx {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1;
+  color: var(--copper);
+}
+
+.lx-af-num {
+  margin: clamp(1.25rem, 0.75rem + 1.5vw, 2.25rem) 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(4rem, 1.9rem + 5.6vw, 8.25rem);
+  line-height: 1.1;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+.lx-af-digits {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+/* One digit's window: exactly one line tall, soft at the edges so digits
+   passing through fade rather than cut. */
+.lx-af-mask {
+  position: relative;
+  display: block;
+  height: 1.1em;
+  margin-right: -0.035em;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+
+.lx-af-sizer {
+  display: block;
+  visibility: hidden;
+}
+
+.lx-af-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Parked on the last step: the real digit. */
+  transform: translate3d(0, -90%, 0);
+}
+
+.lx-af-strip > span {
+  display: block;
+  height: 1.1em;
+}
+
+.lx-af-suffix {
+  display: block;
+  margin-left: 0.04em;
+  font-style: italic;
+  color: var(--copper-2);
+}
+
+.lx-af-label {
+  margin: 0.85rem 0 0;
+  max-width: 19ch;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+@media (max-width: 860px) {
+  .lx-af-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.75rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   The About page below the figures: drivers, then story and record.
+   No section paints a full-width ground: the silk shows through, and every
+   surface is a photograph or glass.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── What drives us: three tall plates ──────────────────────────────── */
+
+.lx-ad {
+  padding-block: clamp(3rem, 1.5rem + 5vw, 7rem) clamp(4rem, 2rem + 6vw, 9rem);
+}
+
+.lx-ad-head {
+  display: grid;
+  gap: 1.1rem;
+  margin-bottom: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
+}
+
+.lx-ad-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 0.5rem + 1.8vw, 2.25rem);
+  align-items: start;
+}
+
+/* The middle plate sits lower: an editorial stagger, not a grid of cards. */
+.lx-ad-plate:nth-child(2) {
+  margin-top: clamp(2rem, 1rem + 4vw, 5.5rem);
+}
+
+.lx-ad-plate {
+  position: relative;
+}
+
+.lx-ad-frame {
+  position: relative;
+  aspect-ratio: 7 / 10;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--sand);
+  box-shadow: var(--shadow-raised);
+  isolation: isolate;
+}
+
+/* Hover moves the picture, never the frame. The zoom sits on a wrapper so it
+   never fights the scroll drift GSAP writes on the image itself. */
+.lx-ad-zoom {
+  position: absolute;
+  inset: 0;
+  transition: transform 1.4s var(--ease-out-expo);
+}
+
+.lx-ad-plate:hover .lx-ad-zoom {
+  transform: scale(1.04);
+}
+
+.lx-ad-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1);
+}
+
+/* A slow light sweep across each plate, offset so they never flash
+   together. */
+.lx-ad-frame::after {
+  content: "";
+  position: absolute;
+  inset: -20% -60%;
+  z-index: 1;
+  pointer-events: none;
+  /* The same sweep as the hero photograph's (.lx-pv-sheen). */
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 250, 240, 0.3) 50%, transparent 60%);
+  transform: translate3d(-60%, 0, 0);
+  animation: lx-sheen 11s var(--ease-in-out) 1.5s infinite;
+}
+
+.lx-ad-plate:nth-child(2) .lx-ad-frame::after {
+  animation-delay: 5.1s;
+}
+
+.lx-ad-plate:nth-child(3) .lx-ad-frame::after {
+  animation-delay: 8.7s;
+}
+
+/* The glass caption floats over the foot of the picture. */
+.lx-ad-cap {
+  position: absolute;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.85rem;
+  align-items: baseline;
+  padding: 1rem 1.15rem 1.1rem;
+  border-radius: var(--r-md);
+}
+
+/* Firmer than the shared glass: over the darker parts of a photograph the
+   default tint greys out and the ink loses contrast. */
+.lx-ad-cap.lx-glass {
+  background: color-mix(in srgb, var(--ivory) 92%, transparent);
+}
+
+.lx-ad-idx {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--copper);
+}
+
+.lx-ad-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 1.2rem + 1vw, 2.2rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.lx-ad-text {
+  grid-column: 1 / -1;
+  margin: 0.55rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* Phones: the plates become a sideways row that snaps, one and a bit in
+   view, rather than three screens of scrolling. */
+@media (max-width: 760px) {
+  .lx-ad-row {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
+    /* Room for the frames' shadow, which the scroller would otherwise clip. */
+    padding-bottom: 1.75rem;
+    margin-bottom: -1.25rem;
+  }
+
+  .lx-ad-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lx-ad-plate {
+    scroll-snap-align: start;
+  }
+
+  .lx-ad-plate:nth-child(2) {
+    margin-top: 0;
+  }
+}
+
+/* ── Our story and the company record ───────────────────────────────── */
+
+/* The last section before the footer, so it keeps a longer tail. */
+.lx-as {
+  padding-block: clamp(2rem, 1rem + 4vw, 6rem) clamp(4rem, 2rem + 6vw, 9rem);
+}
+
+.lx-as-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(2rem, 1rem + 4.5vw, 6.5rem);
+  align-items: center;
+}
+
+.lx-as-media {
+  margin: 0;
+}
+
+.lx-as-frame {
+  position: relative;
+  aspect-ratio: 5 / 6;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--sand);
+  box-shadow: var(--shadow-float);
+}
+
+.lx-as-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1);
+}
+
+.lx-as-copy {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.lx-as-lede {
+  margin: 0;
+  max-width: 34ch;
+  font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+
+.lx-as-chips {
+  list-style: none;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.lx-as-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--r-pill);
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-lit);
+  font-size: 0.88rem;
+  color: var(--ink-2);
+}
+
+.lx-as-chip::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--copper-2);
+}
+
+.lx-as-record {
+  margin-top: clamp(2rem, 1.25rem + 2.5vw, 3.25rem);
+  padding: clamp(1.4rem, 1rem + 1.4vw, 2.1rem);
+  border-radius: var(--r-md);
+}
+
+.lx-as-record-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.2rem + 0.9vw, 2rem);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.lx-as-record-title em {
+  font-style: italic;
+  color: var(--copper);
+}
+
+.lx-as-facts {
+  margin: 1.35rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 2rem;
+}
+
+/* Each fact hangs under a hairline that draws itself in (the --rule GSAP
+   tweens); without script it is simply drawn. */
+.lx-as-fact {
+  --rule: 1;
+  position: relative;
+  padding-top: 0.8rem;
+}
+
+.lx-as-fact::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: var(--line-strong);
+  transform: scaleX(var(--rule));
+  transform-origin: left center;
+}
+
+.lx-as-fact dt {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-4);
+}
+
+.lx-as-fact dd {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.lx-as-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.lx-as-verify {
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: var(--copper);
+}
+
+@media (max-width: 900px) {
+  .lx-as-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lx-as-frame {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (max-width: 520px) {
+  .lx-as-facts {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Reduced motion: every loop holds still ─────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-ad-frame::after {
+    animation: none !important;
+  }
+
+  .lx-ad-frame::after {
+    opacity: 0;
+  }
+}

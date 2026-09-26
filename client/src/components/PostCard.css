@@ -1,121 +1,194 @@
-/* Post cards.
-   The cover is the whole reason these read as a magazine rather than a list,
-   so a post without artwork still gets one: a category tinted panel carrying
-   the title's monogram. It is drawn, not missing. */
-
-@import '../learn/motion.css';
+/* Post cards: a glass sheet with the photograph set into it, the title in the
+   display serif and one mono line of facts. Same family as the course cards,
+   so the blog and the catalogue read as one house. */
 
 .cx-pc {
-  background: #fff;
-  border: 1px solid rgba(15, 36, 68, 0.09);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 1px 2px rgba(13, 36, 64, .04), 0 18px 44px -28px rgba(13, 36, 64, .3);
-  transition: transform var(--cx-dur-fast) var(--cx-ease-out),
-              box-shadow var(--cx-dur-fast) var(--cx-ease-out);
-  contain: layout paint;
+  position: relative;
+  min-width: 0;
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--glass-lit);
+  /* `translate`, not `transform`: the grid reveal tweens transform. */
+  transition:
+    translate 700ms var(--ease-out-expo),
+    box-shadow 700ms var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo);
 }
 
-.cx-pc:hover { transform: translateY(-4px); box-shadow: 0 24px 50px -26px rgba(13, 36, 64, .42); }
-.cx-pc:focus-within { outline: 2px solid #ea580c; outline-offset: 3px; }
+.cx-pc:hover,
+.cx-pc:focus-within {
+  background: var(--glass-strong);
+  box-shadow: var(--shadow-float);
+  translate: 0 -4px;
+}
 
-.cx-pc-link { display: flex; flex-direction: column; height: 100%; text-decoration: none; }
+.cx-pc:focus-within {
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
+}
+
+.cx-pc-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
 .cx-pc-link:focus-visible { outline: none; }
 
 /* --- cover ---------------------------------------------------------------- */
 
 .cx-pc-cover {
   position: relative;
-  aspect-ratio: 16 / 9;
   display: grid;
   place-items: center;
+  aspect-ratio: 16 / 10;
+  margin: 0.5rem 0.5rem 0;
   overflow: hidden;
+  isolation: isolate;
+  border-radius: calc(var(--r-lg) - 0.5rem);
+  background: linear-gradient(150deg, var(--sand), var(--sand-2));
 }
 
-.cx-pc-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cx-pc-cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out-expo);
+}
+
+.cx-pc:hover .cx-pc-cover img,
+.cx-pc:focus-within .cx-pc-cover img {
+  transform: scale(1.045);
+}
 
 .cx-pc-mono {
-  font-size: clamp(2.4rem, 7vw, 3.4rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.18);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(3rem, 7vw, 4.5rem);
+  line-height: 1;
+  color: var(--copper-2);
 }
 
-/* A soft diagonal wash per category. Two stops, no image, nothing to load. */
-.tone-teal   { background: linear-gradient(135deg, #0f766e, #14b8a6); }
-.tone-green  { background: linear-gradient(135deg, #15803d, #22c55e); }
-.tone-violet { background: linear-gradient(135deg, #6d28d9, #a855f7); }
-.tone-amber  { background: linear-gradient(135deg, #b45309, #f59e0b); }
-.tone-blue   { background: linear-gradient(135deg, #1e40af, #3b82f6); }
-.tone-orange { background: linear-gradient(135deg, #c2410c, #f97316); }
+.cx-pc-cat {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 1;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
 
 /* --- body ----------------------------------------------------------------- */
 
-.cx-pc-body { display: flex; flex-direction: column; flex: 1; padding: 20px 22px 22px; }
-
-.cx-pc-cat {
-  margin: 0;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-.cx-pc-cat.tone-teal   { color: #0f766e; background: none; }
-.cx-pc-cat.tone-green  { color: #15803d; background: none; }
-.cx-pc-cat.tone-violet { color: #6d28d9; background: none; }
-.cx-pc-cat.tone-amber  { color: #b45309; background: none; }
-.cx-pc-cat.tone-blue   { color: #1e40af; background: none; }
-.cx-pc-cat.tone-orange { color: #c2410c; background: none; }
-
-.cx-pc-title {
-  margin: 9px 0 0;
-  font-size: 1.2rem;
-  font-weight: 800;
-  line-height: 1.28;
-  letter-spacing: -0.015em;
-  color: #0b1a30;
-  text-wrap: balance;
-}
-
-.cx-pc:hover .cx-pc-title { color: #c2410c; }
-
-.cx-pc-excerpt {
-  margin: 10px 0 0;
+.cx-pc-body {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  font-size: 0.94rem;
-  line-height: 1.6;
-  color: #3c4c66;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem 1.3rem;
+}
+
+.cx-pc .cx-pc-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.62rem;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
 }
 
 .cx-pc-meta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  margin: 18px 0 0;
-  padding-top: 14px;
-  border-top: 1px solid rgba(15, 36, 68, 0.08);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #6b7d96;
+  gap: 0.5rem;
+  margin-top: auto;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  white-space: nowrap;
 }
 
-.cx-pc-author { color: #0b1a30; font-weight: 700; }
+.cx-pc-disc {
+  display: inline-grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  margin-left: auto;
+  flex: 0 0 auto;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo),
+    color var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.cx-pc:hover .cx-pc-disc,
+.cx-pc:focus-within .cx-pc-disc {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ivory);
+  transform: rotate(45deg);
+}
 
 /* --- the featured one ----------------------------------------------------- */
 
-/* The newest post gets the full width and a side by side layout, so the page
-   opens on something rather than twelve equal tiles. */
-@media (min-width: 800px) {
-  .cx-pc.is-featured .cx-pc-link { flex-direction: row; }
-  .cx-pc.is-featured .cx-pc-cover { flex: 0 0 46%; aspect-ratio: auto; }
-  .cx-pc.is-featured .cx-pc-body { padding: 34px 36px; justify-content: center; }
-  .cx-pc.is-featured .cx-pc-title { font-size: 1.85rem; }
-  .cx-pc.is-featured .cx-pc-excerpt { font-size: 1.02rem; max-width: 46ch; }
-  .cx-pc.is-featured .cx-pc-mono { font-size: 4.5rem; }
+/* The newest post leads: two columns and two rows of the grid, the photograph
+   filling the height, the title set large under it. */
+.cx-pc.is-featured .cx-pc-cover {
+  flex: 1 1 auto;
+  min-height: 16rem;
+  aspect-ratio: auto;
+}
+
+.cx-pc.is-featured .cx-pc-body {
+  flex: 0 0 auto;
+  padding: 1.4rem 1.75rem 1.6rem;
+}
+
+.cx-pc.is-featured .cx-pc-title {
+  font-size: clamp(2rem, 1.3rem + 1.9vw, 3.1rem);
+  line-height: 1.02;
+  max-width: 20ch;
+}
+
+@media (max-width: 639px) {
+  .cx-pc.is-featured .cx-pc-cover {
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+  .cx-pc.is-featured .cx-pc-body { padding: 1.15rem 1.4rem 1.3rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cx-pc, .cx-pc:hover { transition: none; transform: none; }
+  .cx-pc,
+  .cx-pc-cover img,
+  .cx-pc-disc {
+    transition: none;
+  }
+  .cx-pc:hover,
+  .cx-pc:focus-within {
+    translate: none;
+  }
+  .cx-pc:hover .cx-pc-cover img,
+  .cx-pc:focus-within .cx-pc-cover img {
+    transform: none;
+  }
 }

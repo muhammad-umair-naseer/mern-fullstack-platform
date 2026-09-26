@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import VerificationStep from '../components/auth/VerificationStep';
+import PageHero from '../components/PageHero';
+import AuthFormVisual from '../components/heroes/AuthFormVisual';
+import Seo from '../seo/Seo';
 
 const RESEND_COOLDOWN = 60;
 
@@ -9,6 +11,10 @@ const RESEND_COOLDOWN = 60;
  * One component behind /login and /signup. Both can land on the same second
  * step: an account is unusable until its email is confirmed, so signing in with
  * an unverified address asks for the code rather than failing.
+ *
+ * Both steps share the hero and its visual; only the headline and the card's
+ * contents change. The hero is keyed on the step, so moving to the code
+ * screen (or back) replays the entrance instead of swapping text in place.
  */
 const AuthForm = ({ mode }) => {
   const isSignup = mode === 'signup';
@@ -25,6 +31,7 @@ const AuthForm = ({ mode }) => {
   const [code, setCode] = useState('');
   const [notice, setNotice] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const codeRef = useRef(null);
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
   const destination = location.state?.from || '/dashboard';
@@ -34,6 +41,17 @@ const AuthForm = ({ mode }) => {
     const id = setTimeout(() => setCooldown((c) => c - 1), 1000);
     return () => clearTimeout(id);
   }, [cooldown]);
+
+  // The second step replaces the hero, so start it from the top (on a phone
+  // the page is still scrolled to the old submit button, which would leave
+  // the code field under the navbar), then put the cursor in the code field.
+  // Instant, as ScrollToTop does for a new page: html is scroll-behavior
+  // smooth, and an animated jump would fight the hero's entrance.
+  useEffect(() => {
+    if (!pending) return;
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    codeRef.current?.focus({ preventScroll: true });
+  }, [pending]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,124 +102,194 @@ const AuthForm = ({ mode }) => {
     }
   };
 
-  // The emailed-code screen is its own component; both sign-up and sign-in
-  // can land on it, since an account is unusable until the code is confirmed.
+  const startOver = () => {
+    setPending(null);
+    setCode('');
+    setError('');
+    setNotice('');
+  };
+
+  // Robots.txt already keeps both routes out of search; this gives the tab a
+  // real title and marks the pages noindex for anything that ignores it.
+  const seo = (
+    <Seo
+      title={isSignup ? 'Create your free account' : 'Sign in'}
+      description={
+        isSignup
+          ? 'Create a free Cortexis account to take every course and earn its certificate.'
+          : 'Sign in to your Cortexis account to pick up your courses where you left off.'
+      }
+      path={isSignup ? '/signup' : '/login'}
+      noindex
+    />
+  );
+
+  const errorAlert = error && (
+    <p role="alert" className="lx-auth-alert lx-auth-alert--error">
+      {error}
+    </p>
+  );
+
+  // ------------------------------------------------------- emailed code
+  // Both sign-up and sign-in can land here, since an account is unusable
+  // until the code is confirmed.
   if (pending) {
     return (
-      <VerificationStep
-        pending={pending}
-        code={code}
-        setCode={setCode}
-        error={error}
-        notice={notice}
-        busy={busy}
-        cooldown={cooldown}
-        onVerify={handleVerify}
-        onResend={handleResend}
-        onStartOver={() => {
-          setPending(null);
-          setCode('');
-          setError('');
-          setNotice('');
-        }}
-      />
+      <main>
+        {seo}
+        <PageHero
+          key="verify"
+          label="Verify"
+          lines={['Check your', <em>email.</em>]}
+          lede={
+            <>
+              We sent a 6-digit code to <strong className="lx-auth-email">{pending.email}</strong>.
+            </>
+          }
+          visual={
+            <AuthFormVisual mode="signup">
+              <form onSubmit={handleVerify} className="lx-auth-form">
+                {errorAlert}
+                {notice && (
+                  <p role="status" className="lx-auth-alert lx-auth-alert--ok">
+                    {notice}
+                  </p>
+                )}
+                {pending.emailSent === false && (
+                  <p className="lx-auth-alert lx-auth-alert--warn">
+                    Email delivery is not configured yet, so the code was written to the server log.
+                  </p>
+                )}
+
+                <div>
+                  <label htmlFor="code" className="lx-auth-label">
+                    Verification code
+                  </label>
+                  <input
+                    id="code"
+                    ref={codeRef}
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    placeholder="000000"
+                    required
+                    className="lx-auth-input lx-auth-code"
+                  />
+                </div>
+
+                <button type="submit" disabled={busy || code.length !== 6} className="btn lx-btn lx-auth-submit">
+                  {busy ? 'Verifying…' : 'Verify and continue'}
+                </button>
+
+                <p className="lx-auth-switch">
+                  Didn&rsquo;t get it?{' '}
+                  <button type="button" onClick={handleResend} disabled={cooldown > 0} className="lx-auth-textbtn">
+                    {cooldown > 0 ? `Resend in ${cooldown}s` : 'Send a new code'}
+                  </button>
+                </p>
+                <p className="lx-auth-switch">
+                  Wrong address?{' '}
+                  <button type="button" onClick={startOver} className="lx-auth-textbtn">
+                    Start over
+                  </button>
+                </p>
+              </form>
+            </AuthFormVisual>
+          }
+        />
+      </main>
     );
   }
 
   // ------------------------------------------------------------ credentials
   return (
-    <main className="min-h-[80vh] grid place-items-center px-6 py-16">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-900">
-            {isSignup ? 'Create your free account' : 'Welcome back'}
-          </h1>
-          <p className="mt-2 text-slate-600">
-            {isSignup
-              ? 'Every course and certificate is free. We email a code to confirm your address.'
-              : 'Sign in to pick up where you left off.'}
-          </p>
-        </div>
+    <main>
+      {seo}
+      <PageHero
+        key="credentials"
+        label={isSignup ? 'Sign up' : 'Sign in'}
+        lines={isSignup ? ['Your free', <em>account.</em>] : ['Welcome', <em>back.</em>]}
+        lede={
+          isSignup
+            ? 'Every course and certificate is free. We email a code to confirm.'
+            : 'Sign in to pick up where you left off.'
+        }
+        visual={
+          <AuthFormVisual mode={mode}>
+            <form onSubmit={handleSubmit} className="lx-auth-form">
+              {errorAlert}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-cardLg p-6 md:p-8 space-y-5">
-          {error && (
-            <p role="alert" className="rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-600 px-4 py-3 text-sm">
-              {error}
-            </p>
-          )}
+              {isSignup && (
+                <div>
+                  <label htmlFor="name" className="lx-auth-label">
+                    Full name
+                  </label>
+                  <input
+                    id="name"
+                    value={form.name}
+                    onChange={update('name')}
+                    required
+                    minLength={2}
+                    autoComplete="name"
+                    className="lx-auth-input"
+                    placeholder="Ali Raza"
+                  />
+                </div>
+              )}
 
-          {isSignup && (
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">
-                Full name
-              </label>
-              <input
-                id="name"
-                value={form.name}
-                onChange={update('name')}
-                required
-                minLength={2}
-                autoComplete="name"
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Ali Raza"
-              />
-            </div>
-          )}
+              <div>
+                <label htmlFor="email" className="lx-auth-label">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={form.email}
+                  onChange={update('email')}
+                  required
+                  autoComplete="email"
+                  className="lx-auth-input"
+                  placeholder="you@example.com"
+                />
+                {isSignup && (
+                  <p className="lx-auth-hint">
+                    Use an address you can open. You&rsquo;ll need the code we send it.
+                  </p>
+                )}
+              </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={form.email}
-              onChange={update('email')}
-              required
-              autoComplete="email"
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="you@example.com"
-            />
-            {isSignup && (
-              <p className="mt-1.5 text-xs text-slate-500">
-                Use an address you can open. You&rsquo;ll need the code we send it.
+              <div>
+                <label htmlFor="password" className="lx-auth-label">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={form.password}
+                  onChange={update('password')}
+                  required
+                  minLength={isSignup ? 8 : undefined}
+                  autoComplete={isSignup ? 'new-password' : 'current-password'}
+                  className="lx-auth-input"
+                  placeholder={isSignup ? 'At least 8 characters' : '••••••••'}
+                />
+              </div>
+
+              <button type="submit" disabled={busy} className="btn lx-btn lx-auth-submit">
+                {busy ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'}
+              </button>
+
+              <p className="lx-auth-switch">
+                {isSignup ? 'Already have an account? ' : 'New here? '}
+                <Link to={isSignup ? '/login' : '/signup'} className="lx-link">
+                  {isSignup ? 'Sign in' : 'Create a free account'}
+                </Link>
               </p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={form.password}
-              onChange={update('password')}
-              required
-              minLength={isSignup ? 8 : undefined}
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder={isSignup ? 'At least 8 characters' : '••••••••'}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition"
-          >
-            {busy ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'}
-          </button>
-
-          <p className="text-center text-sm text-slate-600">
-            {isSignup ? 'Already have an account? ' : 'New here? '}
-            <Link to={isSignup ? '/login' : '/signup'} className="text-indigo-600 font-semibold hover:underline">
-              {isSignup ? 'Sign in' : 'Create a free account'}
-            </Link>
-          </p>
-        </form>
-      </div>
+            </form>
+          </AuthFormVisual>
+        }
+      />
     </main>
   );
 };

@@ -1,0 +1,878 @@
+/* ── Games hero visual ───────────────────────────────────────────────
+   A keyboard photograph with one round of each game floating over it in
+   glass.
+   Sized in em off the column's width (container query units), so the whole
+   composition scales as one piece from phone to desktop.
+
+   One clock for both loops: --gv-cycle. Gotcha Rush's timer runs down and
+   the answer is picked at 46-50%; TypeDash types its passage from 0 to 52%
+   while the runners race. Both rounds hold until 88%, then clear. */
+
+.gv {
+  --gv-cycle: 7.2s;
+  --gv-loop: 1.9s;
+  position: relative;
+  container-type: inline-size;
+}
+
+.gv-stage {
+  position: relative;
+  font-size: clamp(12px, 2.9cqi, 16px);
+  padding: 1.5em 0 2.25em;
+}
+
+.gv-photo {
+  width: 80%;
+  margin-left: auto;
+  aspect-ratio: 4 / 5;
+}
+
+/* ── Live pill on the photo ──
+   The wrapper holds the stage's em, so 1.5em matches the stage's top
+   padding, and carries the motion so the frosted pill itself stays still. */
+
+.gv-live-pos {
+  position: absolute;
+  z-index: 1;
+  top: calc(1.5em + 1rem);
+  right: 1rem;
+  animation:
+    lx-rise 1s var(--ease-out-expo) 1.2s both,
+    gv-float 7s ease-in-out 2.4s infinite alternate;
+}
+
+.gv .gv-live {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  color: var(--ink-2);
+}
+
+.gv-live-dot {
+  position: relative;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--copper-2);
+}
+
+.gv-live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--copper-2);
+  animation: gv-ping 2.4s var(--ease-out-quint) 2s infinite;
+}
+
+@keyframes gv-ping {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(3); opacity: 0; }
+}
+
+/* ── Card placement: depth (scroll) > tilt (pointer) > card (CSS) ── */
+
+.gv-depth {
+  position: absolute;
+  z-index: 2;
+}
+
+.gv-depth-a {
+  top: calc(1.5em + 6%);
+  left: 0;
+  width: 21em;
+}
+
+.gv-depth-b {
+  z-index: 3;
+  bottom: 0.75em;
+  right: -1.25em;
+  width: 22.5em;
+}
+
+.gv .gv-card {
+  --gv-in: 0.75s;
+  position: relative;
+  padding: 1.05em 1.15em 1.2em;
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--paper) 76%, transparent);
+  animation:
+    lx-rise 1.1s var(--ease-out-expo) var(--gv-in) both,
+    gv-float 8s ease-in-out calc(var(--gv-in) + 1.3s) infinite alternate;
+}
+
+/* Each runner is as wide as its track and slides a full width to the right,
+   so without a clip its empty box would widen the page (a sideways scroll on
+   phones). The dots stay well inside the card's padding. */
+.gv .gv-race {
+  --gv-in: 0.95s;
+  overflow: hidden;
+  animation-duration: 1.1s, 9s;
+}
+
+@keyframes gv-float {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -9px, 0); }
+}
+
+.gv-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.gv-name {
+  font-family: var(--font-display);
+  font-size: 1.4em;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.gv-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* ── Gotcha Rush ── */
+
+.gv-timer {
+  height: 2px;
+  margin-top: 0.85em;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.gv-timer span {
+  display: block;
+  height: 100%;
+  background: var(--copper-2);
+  transform-origin: left center;
+  animation: gv-timer var(--gv-cycle) linear var(--gv-loop) infinite backwards;
+}
+
+@keyframes gv-timer {
+  0% { transform: scaleX(1); opacity: 1; }
+  46% { transform: scaleX(0.3); opacity: 1; }
+  88% { transform: scaleX(0.3); opacity: 1; }
+  94% { transform: scaleX(0.3); opacity: 0; }
+  96% { transform: scaleX(1); opacity: 0; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+.gv-code {
+  margin-top: 0.85em;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+
+.gv-code-line {
+  display: flex;
+  white-space: pre;
+  animation: lx-rise 0.9s var(--ease-out-expo) calc(1.15s + var(--l, 0) * 110ms) both;
+}
+
+.gv-ln {
+  flex: none;
+  width: 1.75em;
+  color: var(--ink-4);
+}
+
+.gv-k { color: var(--copper); }
+.gv-s { color: var(--copper-3); }
+.gv-n { color: var(--ink); font-weight: 600; }
+
+.gv-options {
+  list-style: none;
+  margin: 0.85em 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45em;
+  animation: lx-rise 0.9s var(--ease-out-expo) 1.4s both;
+}
+
+.gv-opt {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 0.8em;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--paper) 55%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.gv-opt:not(.is-answer) {
+  animation: gv-dim var(--gv-cycle) var(--ease-out-quint) var(--gv-loop) infinite backwards;
+}
+
+/* The picked answer: a copper wash under the cell, then a tick. */
+.gv-opt::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border: 1px solid var(--copper-2);
+  border-radius: inherit;
+  background: var(--copper-tint);
+  opacity: 0;
+}
+
+.gv-opt.is-answer::before {
+  animation: gv-pick var(--gv-cycle) var(--ease-out-quint) var(--gv-loop) infinite backwards;
+}
+
+.gv-opt-tick {
+  color: var(--copper);
+  opacity: 0;
+  animation: gv-tick var(--gv-cycle) var(--ease-out-expo) var(--gv-loop) infinite backwards;
+}
+
+@keyframes gv-dim {
+  0%, 46% { opacity: 1; }
+  51%, 88% { opacity: 0.38; }
+  94%, 100% { opacity: 1; }
+}
+
+@keyframes gv-pick {
+  0%, 46% { opacity: 0; }
+  49%, 88% { opacity: 1; }
+  94%, 100% { opacity: 0; }
+}
+
+@keyframes gv-tick {
+  0%, 46% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1.18); }
+  54%, 88% { opacity: 1; transform: scale(1); }
+  94%, 100% { opacity: 0; transform: scale(0.4); }
+}
+
+/* The player's pointer: drifts in, clicks the answer, leaves. */
+.gv-cursor {
+  position: absolute;
+  z-index: 1;
+  left: 46%;
+  top: 48%;
+  color: var(--ink);
+  fill: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+  animation: gv-cursor var(--gv-cycle) var(--ease-out-quint) var(--gv-loop) infinite backwards;
+}
+
+@keyframes gv-cursor {
+  0%, 26% { opacity: 0; transform: translate3d(3.4em, 3.8em, 0); }
+  32% { opacity: 1; transform: translate3d(3.4em, 3.8em, 0); }
+  44% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  47% { transform: translate3d(0, 0, 0) scale(0.8); }
+  51% { transform: translate3d(0, 0, 0) scale(1); }
+  70% { opacity: 1; transform: translate3d(0, 0, 0); }
+  80%, 100% { opacity: 0; transform: translate3d(1.2em, 1.6em, 0); }
+}
+
+/* ── TypeDash ── */
+
+.gv-passage {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+  margin-top: 0.9em;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.gv-passage-base {
+  color: var(--ink-4);
+  opacity: 0.5;
+}
+
+/* The typed text is revealed by a window sliding over it while the text
+   slides the other way, so the letters stay put: 28 steps, one per
+   character, then a hold and a fade before the next passage. */
+.gv-typed-win {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  animation: gv-type-win var(--gv-cycle) linear calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+.gv-typed {
+  display: block;
+  color: var(--ink);
+  animation: gv-type-text var(--gv-cycle) linear calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+.gv-caret {
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  bottom: 0.25em;
+  width: 2px;
+  margin-left: -1px;
+  animation: gv-caret var(--gv-cycle) linear calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+.gv-caret i {
+  display: block;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--copper-2);
+  animation: gv-blink 1.1s steps(2, jump-none) infinite;
+}
+
+@keyframes gv-type-win {
+  0% { transform: translate3d(-100%, 0, 0); opacity: 1; animation-timing-function: steps(28, end); }
+  52% { transform: translate3d(0, 0, 0); opacity: 1; }
+  88% { transform: translate3d(0, 0, 0); opacity: 1; }
+  94%, 100% { transform: translate3d(0, 0, 0); opacity: 0; }
+}
+
+@keyframes gv-type-text {
+  0% { transform: translate3d(100%, 0, 0); animation-timing-function: steps(28, end); }
+  52%, 100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes gv-caret {
+  0% { transform: translate3d(0, 0, 0); opacity: 1; animation-timing-function: steps(28, end); }
+  52% { transform: translate3d(28ch, 0, 0); opacity: 1; }
+  88% { transform: translate3d(28ch, 0, 0); opacity: 1; }
+  94%, 100% { transform: translate3d(28ch, 0, 0); opacity: 0; }
+}
+
+@keyframes gv-blink {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.gv-lanes {
+  position: relative;
+  display: grid;
+  gap: 0.7em;
+  margin-top: 1em;
+  padding-right: 1.6em;
+}
+
+.gv-lane {
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.gv-lane-name {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  color: var(--ink-3);
+}
+
+.gv-track {
+  position: relative;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.gv-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-origin: left center;
+}
+
+.gv-fill-you {
+  background: var(--ink);
+  animation: gv-fill-you var(--gv-cycle) linear calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+.gv-fill-ghost {
+  background: color-mix(in srgb, var(--copper-2) 55%, transparent);
+  animation: gv-fill-ghost var(--gv-cycle) linear calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+/* A runner is as wide as its track, so translating it by 100% carries the
+   dot at its left edge to the finish line. */
+.gv-runner {
+  position: absolute;
+  inset: 0;
+}
+
+.gv-runner-you {
+  animation: gv-run-you var(--gv-cycle) linear calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+.gv-runner-ghost {
+  animation: gv-run-ghost var(--gv-cycle) linear calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+.gv-runner i {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.75em;
+  height: 0.75em;
+  margin: -0.375em 0 0 -0.375em;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--paper) 85%, transparent);
+}
+
+.gv-runner-you i {
+  animation: gv-win var(--gv-cycle) var(--ease-out-expo) calc(var(--gv-loop) + 0.5s) infinite backwards;
+}
+
+.gv-runner-ghost i {
+  background: var(--paper);
+  border: 1.5px dashed var(--copper-2);
+}
+
+.gv-flag {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin-top: -0.45em;
+  color: var(--ink-3);
+}
+
+@keyframes gv-run-you {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  4% { transform: translate3d(0, 0, 0); opacity: 1; }
+  18% { transform: translate3d(20%, 0, 0); }
+  34% { transform: translate3d(52%, 0, 0); }
+  52% { transform: translate3d(100%, 0, 0); }
+  88% { transform: translate3d(100%, 0, 0); opacity: 1; }
+  94%, 100% { transform: translate3d(100%, 0, 0); opacity: 0; }
+}
+
+@keyframes gv-fill-you {
+  0% { transform: scaleX(0); opacity: 0; }
+  4% { transform: scaleX(0); opacity: 1; }
+  18% { transform: scaleX(0.2); }
+  34% { transform: scaleX(0.52); }
+  52% { transform: scaleX(1); }
+  88% { transform: scaleX(1); opacity: 1; }
+  94%, 100% { transform: scaleX(1); opacity: 0; }
+}
+
+@keyframes gv-run-ghost {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  4% { transform: translate3d(0, 0, 0); opacity: 1; }
+  18% { transform: translate3d(29%, 0, 0); }
+  34% { transform: translate3d(60%, 0, 0); }
+  52% { transform: translate3d(88%, 0, 0); }
+  60% { transform: translate3d(100%, 0, 0); }
+  88% { transform: translate3d(100%, 0, 0); opacity: 1; }
+  94%, 100% { transform: translate3d(100%, 0, 0); opacity: 0; }
+}
+
+@keyframes gv-fill-ghost {
+  0% { transform: scaleX(0); opacity: 0; }
+  4% { transform: scaleX(0); opacity: 1; }
+  18% { transform: scaleX(0.29); }
+  34% { transform: scaleX(0.6); }
+  52% { transform: scaleX(0.88); }
+  60% { transform: scaleX(1); }
+  88% { transform: scaleX(1); opacity: 1; }
+  94%, 100% { transform: scaleX(1); opacity: 0; }
+}
+
+@keyframes gv-win {
+  0%, 51% { transform: scale(1); }
+  55% { transform: scale(1.55); }
+  62%, 100% { transform: scale(1); }
+}
+
+/* Phones: the quiz card covers the photo's top edge, so the pill goes, and
+   the race card stops overhanging into the gutter. */
+@media (max-width: 560px) {
+  .gv-live-pos { display: none; }
+  .gv-depth-b { right: -0.25em; }
+}
+
+/* ── Reduced motion: the finished round, still ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .gv .gv-card,
+  .gv .gv-timer span,
+  .gv .gv-opt,
+  .gv .gv-opt::before,
+  .gv .gv-opt-tick,
+  .gv .gv-cursor,
+  .gv .gv-typed-win,
+  .gv .gv-typed,
+  .gv .gv-caret,
+  .gv .gv-caret i,
+  .gv .gv-fill,
+  .gv .gv-runner,
+  .gv .gv-runner i,
+  .gv .gv-live-dot::after {
+    animation: none;
+  }
+
+  .gv .gv-timer span { transform: scaleX(0.3); }
+  .gv .gv-opt:not(.is-answer) { opacity: 0.38; }
+  .gv .gv-opt.is-answer::before,
+  .gv .gv-opt-tick { opacity: 1; }
+  .gv .gv-cursor,
+  .gv .gv-live-dot::after { opacity: 0; }
+  .gv .gv-caret { transform: translate3d(28ch, 0, 0); }
+  .gv .gv-runner-you { transform: translate3d(100%, 0, 0); }
+  .gv .gv-runner-ghost { transform: translate3d(88%, 0, 0); }
+  .gv .gv-fill-ghost { transform: scaleX(0.88); }
+}
+
+/* ══ Games page, below the hero ═══════════════════════════════════════
+   The page's own sections live here, beside the hero they follow. Two
+   photo-led game cards, then the local setup as a light terminal. Entrances
+   come from useRevealOnScroll (data-reveal, data-reveal-media,
+   data-parallax); the stylesheet only holds the finished state. */
+
+.gp {
+  color: var(--ink);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+.gp-section {
+  padding-top: clamp(3.5rem, 7vw, 6.5rem);
+  /* The hero's anchor links land below the fixed navbar. */
+  scroll-margin-top: max(0px, calc(var(--nav-h) - clamp(3.5rem, 7vw, 6.5rem) + 1rem));
+}
+
+.gp-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.1rem;
+  margin-bottom: clamp(2rem, 4vw, 3.25rem);
+}
+
+.gp .gp-title {
+  margin: 0;
+  font-size: clamp(2.3rem, 1.5rem + 2.6vw, 3.9rem);
+}
+
+/* ── Game cards ── */
+
+.gp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.gp-cell {
+  display: flex;
+  min-width: 0;
+}
+
+.gp .gp-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0.6rem;
+  border-radius: var(--r-lg);
+  transition:
+    transform var(--dur-slow) var(--ease-out-expo),
+    box-shadow var(--dur-slow) var(--ease-out-expo);
+}
+
+.gp .gp-card:hover {
+  transform: translate3d(0, -4px, 0);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    var(--shadow-float);
+}
+
+.gp-media {
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: calc(var(--r-lg) - 0.6rem);
+}
+
+/* Taller than its frame so data-parallax can drift it a few percent. */
+.gp-drift {
+  position: absolute;
+  left: 0;
+  top: -5%;
+  width: 100%;
+  height: 110%;
+  display: block;
+}
+
+/* Three layers, one mover each: the drift scrolls (GSAP), the zoom answers
+   hover (CSS), the image settles on entrance (GSAP). */
+.gp-zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 1.4s var(--ease-out-expo);
+}
+
+.gp-card:hover .gp-zoom {
+  transform: scale(1.045);
+}
+
+.gp-zoom img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gp-num {
+  position: absolute;
+  z-index: 1;
+  top: 0.9rem;
+  left: 0.9rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--r-pill);
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.gp-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: clamp(1.15rem, 2vw, 1.6rem) clamp(0.9rem, 1.8vw, 1.35rem) clamp(0.9rem, 1.6vw, 1.25rem);
+}
+
+.gp-kind {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--copper);
+}
+
+.gp .gp-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 1.6rem + 1.4vw, 2.9rem);
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.gp-line {
+  margin: 0;
+  max-width: 40ch;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+
+.gp-tags {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.gp-tags li {
+  padding: 0.42rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--paper) 50%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--ink-2);
+}
+
+.gp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.6rem;
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+
+/* ── Run locally ── */
+
+.gp .gp-local {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  padding: clamp(1.4rem, 4vw, 3.25rem);
+  border-radius: var(--r-lg);
+}
+
+.gp-local-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.1rem;
+  min-width: 0;
+}
+
+.gp-local-lede {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+
+.gp-ports {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.gp-ports li {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--paper) 60%, transparent);
+  font-size: 0.92rem;
+  line-height: 1;
+  color: var(--ink-2);
+}
+
+.gp-ports code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--copper);
+}
+
+/* A light terminal: paper, hairlines, ink text, a copper caret. */
+.gp-term {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+  box-shadow: var(--shadow-raised);
+}
+
+.gp-term-bar {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.gp-term-bar i {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--sand-2);
+}
+
+.gp .gp-term-body {
+  margin: 0;
+  padding: 1.1rem 1.25rem 1.2rem;
+  overflow-x: auto;
+  background: none;
+  border: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.95;
+  color: var(--ink);
+  white-space: pre;
+}
+
+.gp-term-body code {
+  font: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+.gp-term-line {
+  display: block;
+}
+
+.gp-term-prompt {
+  color: var(--copper);
+  user-select: none;
+}
+
+.gp-term-note {
+  color: var(--ink-4);
+}
+
+.gp-term-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  vertical-align: -0.18em;
+  background: var(--copper-2);
+  animation: gv-blink 1.1s steps(2, jump-none) infinite;
+}
+
+.gp-stack {
+  list-style: none;
+  margin: 0;
+  padding: 0.85rem 1.25rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  border-top: 1px solid var(--line);
+}
+
+.gp-stack li {
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--sand) 80%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--ink-3);
+}
+
+/* Stacks early so the clone command fits on one line beside nothing. */
+@media (max-width: 1100px) {
+  .gp .gp-local {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .gp-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gp .gp-card:hover { transform: none; }
+  .gp-card:hover .gp-zoom { transform: none; }
+  .gp-term-caret { animation: none; }
+}

@@ -17,6 +17,162 @@
   contain: layout paint;
 }
 
+/* Glass sheets on the silk, like every other card on the site. */
+.cx-co-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--glass-lit);
+  overflow: hidden;
+}
+
+/* A chapter folds to one line: its number, its title, its size. */
+.cx-co-head {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  padding: 1.15rem 1.5rem;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease-out-expo);
+}
+
+.cx-co-head:hover {
+  background: rgba(255, 253, 249, 0.5);
+}
+
+.cx-co-num {
+  flex: 0 0 3.25rem;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--copper);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+.cx-co-card.is-open .cx-co-num {
+  font-style: italic;
+}
+
+.cx-co-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.12rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.cx-co-facts {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* A plus that turns into a minus as the chapter opens. */
+.cx-co-plus {
+  position: relative;
+  flex: 0 0 2.1rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong);
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo);
+}
+
+.cx-co-plus::before,
+.cx-co-plus::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 1.5px;
+  margin: -0.75px 0 0 -5.5px;
+  border-radius: 2px;
+  background: var(--ink);
+  transition:
+    transform var(--dur-slow) var(--ease-out-expo),
+    background-color var(--dur-base) var(--ease-out-expo);
+}
+
+.cx-co-plus::after {
+  transform: rotate(90deg);
+}
+
+.cx-co-card.is-open .cx-co-plus {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.cx-co-card.is-open .cx-co-plus::before,
+.cx-co-card.is-open .cx-co-plus::after {
+  background: var(--ivory);
+}
+
+.cx-co-card.is-open .cx-co-plus::after {
+  transform: rotate(0deg);
+}
+
+.cx-co-panel {
+  border-top: 1px solid var(--line);
+}
+
+.cx-co-panel:not([hidden]) {
+  animation: cxRise var(--cx-dur-fast) var(--cx-ease-out) both;
+}
+
+.cx-co-summary {
+  margin: 0;
+  padding: 1rem 1.5rem 0.35rem calc(1.5rem + 3.25rem + 1.25rem);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+
+.cx-co-related {
+  transition:
+    translate 700ms var(--ease-out-expo),
+    box-shadow 700ms var(--ease-out-expo);
+}
+
+.cx-co-related:hover,
+.cx-co-related:focus-visible {
+  translate: 0 -4px;
+  box-shadow: var(--shadow-float);
+}
+
+@media (max-width: 639px) {
+  .cx-co-head {
+    gap: 0.85rem;
+    padding: 1rem 1.1rem;
+  }
+  .cx-co-num {
+    flex-basis: 2.4rem;
+    font-size: 2rem;
+  }
+  .cx-co-title {
+    font-size: 1rem;
+  }
+  .cx-co-mins {
+    display: none;
+  }
+  .cx-co-summary {
+    padding: 0.9rem 1.1rem 0.25rem;
+  }
+}
+
 /* Rows cascade inside a card once it has arrived, so a chapter reads as a short
    sequence rather than a block of twelve lines landing at once. */
 .cx-co-chapter.is-revealed .cx-co-row {
@@ -38,7 +194,7 @@
    is not finished, which is where the Continue button goes too. */
 .cx-co-resume {
   position: relative;
-  background: linear-gradient(90deg, rgba(234, 88, 12, 0.07), transparent 62%);
+  background: linear-gradient(90deg, rgba(154, 74, 34, 0.07), transparent 62%);
 }
 
 .cx-co-resume .cx-co-mark {
@@ -52,7 +208,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: #ea580c;
+  background: #9A4A22;
 }
 
 .cx-co-resume-tag {
@@ -60,7 +216,7 @@
   font-weight: 800;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: #c2410c;
+  color: #7E3B1B;
   white-space: nowrap;
 }
 
@@ -98,11 +254,24 @@
 /* --- the switch ----------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .cx-co-head,
+  .cx-co-num,
+  .cx-co-plus,
+  .cx-co-plus::before,
+  .cx-co-plus::after,
+  .cx-co-related {
+    transition: none;
+  }
+  .cx-co-related:hover,
+  .cx-co-related:focus-visible {
+    translate: none;
+  }
   .cx-co-chapter.is-revealed .cx-co-row,
   .cx-co-chapter.is-revealed .cx-co-mark.is-done,
   .cx-co-resume .cx-co-mark,
   .cx-co-pending,
-  .cx-co-locked.is-nudging {
+  .cx-co-locked.is-nudging,
+  .cx-co-panel:not([hidden]) {
     animation: none;
     opacity: 1;
     transform: none;
