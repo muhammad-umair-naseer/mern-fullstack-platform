@@ -47,12 +47,12 @@ export class DailyCard {
     }
     const leader = d.top[0] || null;
     const me = d.me;
-    const who = leader ? ` · best so far ${flag(leader.country)} ${escapeHtml(leader.name)} at ${leader.wpm} a min` : '';
+    const who = leader ? `<i class="lead" title="Best so far">🥇 ${flag(leader.country)} ${escapeHtml(leader.name)} · ${leader.wpm} a min</i>` : '';
     this.root.innerHTML = `
       <div class="daily-head">
         <span class="daily-eyebrow">${BOLT} Today</span>
         <b>#${d.number} · “${escapeHtml(d.passage.title)}”</b>
-        <span class="daily-meta">${d.passage.words} words · ${d.players.toLocaleString()} have tried it · new one in ${this.resetsIn()}${who}</span>
+        <span class="daily-meta"><i>${d.passage.words} words</i><i>${d.players.toLocaleString()} played</i><i title="A new one in">↻ ${this.resetsIn()}</i>${who}</span>
       </div>
       <div class="daily-stats">
         ${me ? `<span class="daily-you">You: <b>${me.wpm} a min</b> · #${me.rank} of ${me.of}</span>` : '<span class="daily-you dim">Everyone gets the same one, and one proper go at it</span>'}

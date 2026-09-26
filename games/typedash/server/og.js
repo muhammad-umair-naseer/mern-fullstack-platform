@@ -19,7 +19,8 @@ try { ({ Resvg } = require('@resvg/resvg-js')); } catch (_) { /* PNG rendering u
 
 const W = 1200;
 const H = 630;
-const FONT_FILES = ['Inter-Medium.ttf', 'Inter-Bold.ttf', 'SpaceGrotesk-Bold.ttf']
+// Instrument Serif is the site's display face; Inter carries the small print.
+const FONT_FILES = ['Inter-Medium.ttf', 'Inter-Bold.ttf', 'SpaceGrotesk-Bold.ttf', 'InstrumentSerif-Regular.ttf', 'InstrumentSerif-Italic.ttf']
   .map((f) => path.join(__dirname, 'fonts', f))
   .filter((f) => fs.existsSync(f));
 
@@ -60,39 +61,39 @@ const BOLT = 'M36 6 14 36h14l-4 22 26-32H36l4-20z';
 function frame({ tag, inner, footer }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f4ef"/><stop offset="1" stop-color="#f0eae2"/></linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FAF8F4"/><stop offset="1" stop-color="#F2EDE4"/></linearGradient>
     <radialGradient id="glow" cx="0.5" cy="0" r="0.7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
     <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient>
-    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b45309"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9A4A22"/><stop offset="1" stop-color="#B8612E"/></linearGradient>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <rect width="${W}" height="${H}" fill="url(#glow)"/>
-  <g stroke="#2a2521" stroke-opacity=".05" stroke-width="2">${[0, 1, 2, 3, 4, 5].map((i) => `<line x1="${-100 + i * 260}" y1="${H}" x2="${300 + i * 260}" y2="0"/>`).join('')}</g>
-  <g transform="translate(56 40) scale(0.72)"><rect width="64" height="64" rx="14" fill="#ffffff"/><path d="${BOLT}" fill="#f59e0b"/></g>
-  <text x="116" y="80" font-family="Space Grotesk" font-weight="700" font-size="38" fill="#2a2521">TypeDash</text>
-  <text x="${W - 56}" y="78" text-anchor="end" font-family="Inter" font-weight="700" font-size="22" letter-spacing="4" fill="#b45309">${esc(tag)}</text>
+  <g stroke="#16130F" stroke-opacity=".05" stroke-width="2">${[0, 1, 2, 3, 4, 5].map((i) => `<line x1="${-100 + i * 260}" y1="${H}" x2="${300 + i * 260}" y2="0"/>`).join('')}</g>
+  <g transform="translate(56 40) scale(0.72)"><rect width="64" height="64" rx="14" fill="#16130F"/><path d="${BOLT}" fill="#FAF8F4"/></g>
+  <text x="116" y="80" font-family="Instrument Serif" font-weight="400" font-size="44" fill="#16130F">Type<tspan font-style="italic" fill="#9A4A22">Dash</tspan></text>
+  <text x="${W - 56}" y="78" text-anchor="end" font-family="Inter" font-weight="700" font-size="22" letter-spacing="4" fill="#9A4A22">${esc(tag)}</text>
   ${inner}
-  <line x1="56" y1="536" x2="${W - 56}" y2="536" stroke="#2a2521" stroke-opacity=".08" stroke-width="2"/>
-  <text x="56" y="584" font-family="Inter" font-weight="500" font-size="26" fill="#7a7267">${esc(footer)}</text>
+  <line x1="56" y1="536" x2="${W - 56}" y2="536" stroke="#16130F" stroke-opacity=".08" stroke-width="2"/>
+  <text x="56" y="584" font-family="Inter" font-weight="500" font-size="26" fill="#5E574F">${esc(footer)}</text>
 </svg>`;
 }
 
 /** A pill with the two-letter country code (flag emoji need a colour font, so we spell it out). */
-const pill = (x, y, text, color = '#7a7267') => `<rect x="${x}" y="${y - 30}" width="${28 + text.length * 17}" height="40" rx="20" fill="#2a2521" fill-opacity=".05" stroke="#2a2521" stroke-opacity=".09"/><text x="${x + 14}" y="${y - 1}" font-family="Inter" font-weight="700" font-size="24" letter-spacing="2" fill="${color}">${esc(text)}</text>`;
+const pill = (x, y, text, color = '#5E574F') => `<rect x="${x}" y="${y - 30}" width="${28 + text.length * 17}" height="40" rx="20" fill="#16130F" fill-opacity=".05" stroke="#16130F" stroke-opacity=".09"/><text x="${x + 14}" y="${y - 1}" font-family="Inter" font-weight="700" font-size="24" letter-spacing="2" fill="${color}">${esc(text)}</text>`;
 
 /** big number + label on the left, three lines and a car on the right */
-function hero({ big, bigLabel, name, country, line2, line3, skin, color = '#0d9fc4', bigColor = '#0d9fc4' }) {
+function hero({ big, bigLabel, name, country, line2, line3, skin, color = '#B8612E', bigColor = '#B8612E' }) {
   const bigStr = String(big);
   const bigSize = bigStr.length > 3 ? 150 : 210;
   const nameStr = cut(name, 18);
   const nameW = nameStr.length * 31;
   return `
-  <text x="60" y="392" font-family="Space Grotesk" font-weight="700" font-size="${bigSize}" fill="${bigColor}">${esc(bigStr)}</text>
-  <text x="66" y="446" font-family="Inter" font-weight="700" font-size="30" letter-spacing="8" fill="#7a7267">${esc(bigLabel)}</text>
-  <text x="520" y="296" font-family="Space Grotesk" font-weight="700" font-size="58" fill="#2a2521">${esc(nameStr)}</text>
+  <text x="60" y="392" font-family="Instrument Serif" font-weight="400" font-size="${bigSize}" fill="${bigColor}">${esc(bigStr)}</text>
+  <text x="66" y="446" font-family="Inter" font-weight="700" font-size="30" letter-spacing="8" fill="#5E574F">${esc(bigLabel)}</text>
+  <text x="520" y="296" font-family="Instrument Serif" font-weight="400" font-size="58" fill="#16130F">${esc(nameStr)}</text>
   ${country && country !== 'UN' ? pill(520 + nameW + 16, 292, country) : ''}
-  <text x="520" y="354" font-family="Inter" font-weight="500" font-size="33" fill="#2a2521">${esc(cut(line2, 40))}</text>
-  <text x="520" y="404" font-family="Inter" font-weight="500" font-size="29" fill="#7a7267">${esc(cut(line3, 46))}</text>
+  <text x="520" y="354" font-family="Inter" font-weight="500" font-size="33" fill="#16130F">${esc(cut(line2, 40))}</text>
+  <text x="520" y="404" font-family="Inter" font-weight="500" font-size="29" fill="#5E574F">${esc(cut(line3, 46))}</text>
   ${car(skin, color, 850, 428, 2.6)}`;
 }
 
@@ -139,7 +140,7 @@ function profileCard(p, origin) {
   return frame({
     tag: 'PLAYER PROFILE',
     inner: hero({
-      big: p.level, bigLabel: 'LEVEL', name: p.name, country: p.country, skin: p.skin, color: '#d97706', bigColor: '#b8860b',
+      big: p.level, bigLabel: 'LEVEL', name: p.name, country: p.country, skin: p.skin, color: '#B8612E', bigColor: '#7E3B1B',
       line2: `${p.title} · ${num(p.points)} points · best ${p.bestWpm} a min`,
       line3: `${rank} · ${p.wins} wins · ${p.streak > 0 ? `${p.streak}-day streak` : `${p.races} races`}`,
     }),
@@ -151,10 +152,10 @@ function siteCard(origin) {
   return frame({
     tag: 'FREE · NO SIGN-UP',
     inner: `
-  <text x="60" y="270" font-family="Space Grotesk" font-weight="700" font-size="84" fill="#2a2521">Type against</text>
-  <text x="60" y="365" font-family="Space Grotesk" font-weight="700" font-size="84" fill="url(#grad)">the world.</text>
-  <text x="60" y="438" font-family="Inter" font-weight="500" font-size="30" fill="#7a7267">A short paragraph, typed live.</text>
-  ${car('rocket', '#0d9fc4', 760, 300, 3.2)}`,
+  <text x="60" y="270" font-family="Instrument Serif" font-weight="400" font-size="92" fill="#16130F">Type against</text>
+  <text x="60" y="365" font-family="Instrument Serif" font-style="italic" font-weight="400" font-size="92" fill="#9A4A22">the world.</text>
+  <text x="60" y="438" font-family="Inter" font-weight="500" font-size="30" fill="#5E574F">A short paragraph, typed live.</text>
+  ${car('rocket', '#B8612E', 760, 300, 3.2)}`,
     footer: `${hostOf(origin)} · real-time multiplayer typing race with worldwide rankings`,
   });
 }
@@ -164,7 +165,7 @@ function dailyCard(d, origin) {
   return frame({
     tag: `DAILY #${d.number}`,
     inner: hero({
-      big: `#${d.number}`, bigLabel: 'DAILY', name: cut(d.passage.title, 26), country: null, skin: 'checker', color: '#b8860b', bigColor: '#b8860b',
+      big: `#${d.number}`, bigLabel: 'DAILY', name: cut(d.passage.title, 26), country: null, skin: 'checker', color: '#7E3B1B', bigColor: '#7E3B1B',
       line2: `${d.passage.words} words · same passage for everyone`,
       line3: `${num(d.players)} played today · ${leader}`,
     }),

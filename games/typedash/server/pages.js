@@ -47,7 +47,7 @@ function layout({ origin, path, title, description, image, imageAlt, body, jsonL
   <link rel="icon" href="${ICON}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>` : ''}
 </head>
@@ -392,7 +392,7 @@ function embedPage({ origin, passage }) {
   <meta name="robots" content="noindex">
   <link rel="icon" href="${ICON}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root { --bg: #f7f3ee; --panel: #ffffff; --b: rgba(58, 42, 25,.1); --text: #2a2521; --muted: #7a7267; --accent: #d97706; --accent2: #0d9fc4; --gold: #b45309; --red: #e04a61; }
     * { box-sizing: border-box; }
@@ -433,6 +433,9 @@ function embedPage({ origin, passage }) {
     .foot a { color: var(--text); }
     [hidden] { display: none !important; }
   </style>
+  <!-- Linked here as well as by js/embed.js, so the first paint already has
+       the current look instead of flashing the fallback colours above. -->
+  <link rel="stylesheet" href="/css/embed.css">
 </head>
 <body>
   <div class="wrap">

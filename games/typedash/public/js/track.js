@@ -1,5 +1,5 @@
 import { flag } from './countries.js';
-import { carSvg } from './cars.js';
+import { carSvg, paint } from './cars.js';
 import { medal } from './ui.js';
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
@@ -40,7 +40,7 @@ export class Track {
       }
       lane.el.style.order = i;
       lane.el.classList.toggle('me', p.id === localId);
-      lane.el.style.setProperty('--c', p.color);
+      lane.el.style.setProperty('--c', paint(p.color));
       lane.name.textContent = p.tag ? `[${p.tag}] ${p.name}` : p.name;
       lane.flag.textContent = flag(p.country);
       lane.bot.hidden = !p.isBot;

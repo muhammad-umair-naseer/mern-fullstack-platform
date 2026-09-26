@@ -2,6 +2,7 @@ import { TypingArea } from './typing.js';
 import { RaceGame } from './game.js';
 import { pickBonusWords } from './solo.js';
 import { fmtTime } from './ui.js';
+import { carSvg } from './cars.js';
 
 /**
  * The embeddable widget (/embed): a self-contained typing race against a
@@ -11,6 +12,27 @@ import { fmtTime } from './ui.js';
  */
 const $ = (s) => document.querySelector(s);
 const params = new URLSearchParams(location.search);
+
+// Presentation: the Cortexis type and the widget's own stylesheet on top of
+// the page's inline styles, and the brand set as the app sets it.
+(function dress() {
+  const add = (attrs) => { const l = document.createElement('link'); Object.assign(l, attrs); document.head.appendChild(l); };
+  add({ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap' });
+  add({ rel: 'stylesheet', href: '/css/embed.css' });
+  const brand = document.querySelector('.brand');
+  if (brand) brand.innerHTML = '<span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></span><span>Type<em>Dash</em></span>';
+  // a small car rides the front of each progress bar
+  for (const [sel, paint] of [['#bar-me', '#B8612E'], ['#bar-pacer', '#6E665E']]) {
+    const bar = document.querySelector(sel);
+    if (!bar) continue;
+    const car = document.createElement('span');
+    car.className = 'bar-car';
+    car.setAttribute('aria-hidden', 'true');
+    car.style.setProperty('--c', paint);
+    car.innerHTML = carSvg('dash');
+    bar.appendChild(car);
+  }
+})();
 const ORIGIN = location.origin;
 const PACER_WPM = Math.max(0, Math.min(200, Number(params.get('pacer')) || 50));
 const PACER_REACTION_MS = 350;

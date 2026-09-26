@@ -1,0 +1,135 @@
+/* =====================================================================
+   The looping mini race (js/demo.js), shared by the app home and the
+   landing page. Self-contained: it carries its own tokens.
+   ===================================================================== */
+
+.tdd {
+  --tdd-ink: #16130F; --tdd-ink-3: #5E574F; --tdd-ink-4: #857C72;
+  --tdd-copper: #9A4A22; --tdd-copper-2: #B8612E; --tdd-tint: #F5E6D8;
+  --tdd-sage: #62805A; --tdd-brick: #A3423A;
+  --tdd-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative; display: grid; gap: 14px; padding: 18px 18px 20px;
+  border-radius: 24px; background: rgba(255, 253, 249, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 1px 1px rgba(22, 19, 15, 0.03), 0 18px 48px rgba(22, 19, 15, 0.08);
+  font-family: 'Geist', ui-sans-serif, system-ui, sans-serif; color: var(--tdd-ink);
+  user-select: none; -webkit-user-select: none; pointer-events: none; overflow: hidden;
+  isolation: isolate;
+}
+.tdd::before {       /* a slow sheen across the glass */
+  content: ''; position: absolute; inset: -40% -60%; z-index: -1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.55) 50%, transparent 58%);
+  animation: tdd-sheen 9s var(--tdd-ease) infinite;
+}
+@keyframes tdd-sheen { 0%, 55% { transform: translateX(-40%); } 100% { transform: translateX(40%); } }
+
+.tdd-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 22px; }
+.tdd-live {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 500 0.7rem/1 'Geist Mono', ui-monospace, monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tdd-ink-3);
+}
+.tdd-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--tdd-sage); box-shadow: 0 0 0 0 rgba(98, 128, 90, 0.45); animation: tdd-ping 1.8s ease-out infinite; }
+@keyframes tdd-ping { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.8); } }
+.tdd-combo {
+  font: 500 0.7rem/1 'Geist Mono', ui-monospace, monospace; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 10px; border-radius: 999px; background: var(--tdd-ink); color: #FAF8F4;
+}
+.tdd-combo b { color: #E7B48E; font-weight: 500; margin-left: 3px; display: inline-block; }
+.tdd-combo.bump b { animation: tdd-bump 0.45s var(--tdd-ease); }
+@keyframes tdd-bump { 0% { transform: scale(1.7); } 100% { transform: none; } }
+
+.tdd-lanes { display: grid; gap: 8px; }
+.tdd-lane { display: grid; grid-template-columns: 62px minmax(0, 1fr) 34px; align-items: center; gap: 10px; }
+.tdd-who { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 500; color: var(--tdd-ink-3); white-space: nowrap; }
+.tdd-lane.me .tdd-who { color: var(--tdd-ink); font-weight: 600; }
+.tdd-flag { font-size: 1.05rem; line-height: 1; }
+.tdd-road {
+  position: relative; height: 40px; border-radius: 12px; overflow: visible;
+  background: linear-gradient(180deg, #EFE8DC, #E6DDCD);
+  box-shadow: inset 0 1px 2px rgba(22, 19, 15, 0.08), inset 0 -1px 0 rgba(255, 255, 255, 0.7);
+}
+.tdd-road::before {
+  content: ''; position: absolute; left: 8px; right: 18px; top: 50%; height: 2px; margin-top: -1px; border-radius: 2px;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0 12px, transparent 12px 26px);
+}
+.tdd-lane.moving .tdd-road::before { animation: tdd-dash 0.5s linear infinite; }
+@keyframes tdd-dash { to { background-position: -26px 0; } }
+.tdd-fill {
+  position: absolute; inset: 0; border-radius: 12px; transform-origin: left center; transform: scaleX(0);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c) 24%, transparent));
+}
+.tdd-finish {
+  position: absolute; right: 4px; top: 4px; bottom: 4px; width: 8px; border-radius: 2px; opacity: 0.85;
+  background: repeating-conic-gradient(#16130F 0 25%, #FAF8F4 0 50%) 0 0 / 6px 6px;
+}
+.tdd-car { position: absolute; left: 0; top: 50%; width: 74px; height: 32px; margin-top: -19px; will-change: transform; }
+.tdd-car svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 4px 5px rgba(60, 38, 20, 0.22)); }
+.tdd-car .nitro-flame, .tdd-car .exhaust { display: none; }
+.tdd-car .shadow { fill: rgba(22, 19, 15, 0.16); }
+.tdd-car .wheel { transform-box: fill-box; transform-origin: center; }
+.tdd-lane.moving .tdd-car .wheel { animation: tdd-spin 0.36s linear infinite; }
+.tdd-lane.moving .tdd-car .car-body { animation: tdd-rumble 0.22s ease-in-out infinite alternate; }
+@keyframes tdd-spin { to { transform: rotate(360deg); } }
+@keyframes tdd-rumble { to { transform: translateY(-0.9px); } }
+.tdd-lane.won .tdd-car svg { filter: drop-shadow(0 4px 5px rgba(60, 38, 20, 0.22)) drop-shadow(0 0 10px rgba(184, 97, 46, 0.45)); }
+.tdd-wpm { font: 500 0.82rem/1 'Geist Mono', ui-monospace, monospace; color: color-mix(in srgb, var(--c) 70%, #16130F); text-align: right; font-variant-numeric: tabular-nums; }
+
+.tdd-fx { position: absolute; left: 50%; bottom: 100%; width: 0; height: 0; }
+.tdd-pop {
+  position: absolute; left: 0; bottom: 2px; transform: translateX(-50%); white-space: nowrap;
+  font: 500 0.8rem/1 'Geist Mono', ui-monospace, monospace; padding: 5px 8px; border-radius: 999px;
+  animation: tdd-pop 1.3s var(--tdd-ease) forwards;
+}
+.tdd-pop.gold { background: #F3E6C4; color: #7A5A18; box-shadow: 0 6px 16px rgba(122, 90, 24, 0.18); }
+.tdd-pop.medal { font-size: 1.4rem; padding: 0; background: none; }
+@keyframes tdd-pop {
+  0% { opacity: 0; transform: translate(-50%, 8px) scale(0.6); }
+  18% { opacity: 1; transform: translate(-50%, -6px) scale(1.08); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -30px) scale(1); }
+}
+
+.tdd-text {
+  font: 400 0.98rem/1.75 'Geist Mono', ui-monospace, monospace; color: var(--tdd-ink-4);
+  padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(22, 19, 15, 0.06);
+}
+.tdd-text .w { display: inline-block; white-space: pre; border-radius: 5px; transition: background-color 0.4s; }
+.tdd-text .c { position: relative; border-radius: 3px; transition: color 0.12s, background-color 0.12s; }
+.tdd-text .c.ok { color: var(--tdd-ink); }
+.tdd-text .c.bad { color: var(--tdd-brick); background: #F6E1DC; }
+.tdd-text .c.cur { background: var(--tdd-tint); }
+.tdd-text .c.cur::before {
+  content: ''; position: absolute; left: -1px; top: 12%; height: 76%; width: 2px; border-radius: 2px;
+  background: var(--tdd-copper-2); animation: tdd-caret 1s steps(2) infinite;
+}
+@keyframes tdd-caret { 50% { opacity: 0; } }
+.tdd-text .w.gold { background: rgba(214, 180, 106, 0.2); box-shadow: inset 0 -1.5px 0 rgba(160, 122, 44, 0.55); }
+.tdd-text .w.gold::before { content: '✦'; font-size: 0.66em; color: #A07A2C; margin-right: 2px; vertical-align: 0.4em; }
+.tdd-text .w.done-ok { animation: tdd-word 0.6s var(--tdd-ease); }
+.tdd-text .w.gold-hit { background: rgba(98, 128, 90, 0.16); box-shadow: inset 0 -1.5px 0 rgba(98, 128, 90, 0.6); }
+@keyframes tdd-word { 0% { background-color: rgba(98, 128, 90, 0.22); } 100% { background-color: transparent; } }
+
+.tdd.tdd-done .tdd-text { animation: tdd-glow 1.2s var(--tdd-ease); }
+@keyframes tdd-glow { 0% { box-shadow: inset 0 0 0 1px rgba(98, 128, 90, 0.5), 0 0 0 6px rgba(98, 128, 90, 0.12); } 100% { box-shadow: inset 0 0 0 1px rgba(22, 19, 15, 0.06); } }
+
+@media (min-width: 900px) {
+  .tdd { padding: 22px 22px 24px; gap: 16px; border-radius: 28px; }
+  .tdd-lanes { gap: 10px; }
+  .tdd-lane { grid-template-columns: 70px minmax(0, 1fr) 38px; }
+  .tdd-road { height: 50px; border-radius: 14px; }
+  .tdd-car { width: 94px; height: 40px; margin-top: -24px; }
+  .tdd-text { font-size: 1.08rem; padding: 16px 18px; }
+}
+@media (max-width: 560px) {
+  .tdd { padding: 14px 14px 16px; gap: 11px; border-radius: 20px; }
+  .tdd-lane { grid-template-columns: 50px minmax(0, 1fr) 30px; gap: 8px; }
+  .tdd-who { font-size: 0.72rem; gap: 4px; }
+  .tdd-road { height: 34px; }
+  .tdd-car { width: 62px; height: 27px; margin-top: -16px; }
+  .tdd-text { font-size: 0.84rem; padding: 11px 12px; line-height: 1.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tdd::before, .tdd-live i, .tdd-text .c.cur::before { animation: none; }
+}

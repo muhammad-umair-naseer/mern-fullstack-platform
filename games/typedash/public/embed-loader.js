@@ -13,7 +13,7 @@
   frame.src = origin + '/embed?' + q.toString();
   frame.title = 'TypeDash typing race';
   frame.setAttribute('loading', 'lazy');
-  frame.style.cssText = 'width:100%;max-width:' + (me.dataset.width || '720px') + ';height:' + (me.dataset.height || '420px') + ';border:0;border-radius:16px;display:block;background:#f7f4ef;';
+  frame.style.cssText = 'width:100%;max-width:' + (me.dataset.width || '720px') + ';height:' + (me.dataset.height || '420px') + ';border:0;border-radius:24px;display:block;background:#FAF8F4;';
   frame.allow = 'clipboard-write';
   me.parentNode.insertBefore(frame, me.nextSibling);
   window.addEventListener('message', function (e) {

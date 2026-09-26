@@ -1,17 +1,37 @@
 /**
- * Full-screen animated backdrop for the light theme: a soft nebula glow above a
- * perspective grid that scrolls towards the viewer. `setSpeed()` is driven by
- * the local racer's WPM so the world visibly accelerates as you type faster.
+ * Full-screen backdrop: drifting silk light on warm ivory, the same calm
+ * surface as the Cortexis site. A few soft ribbons of light and shade fold
+ * slowly across the page; `setSpeed()` is driven by the local racer's typing
+ * speed, so while you race the silk streams faster and fine light streaks
+ * pass behind the track. Rendered at a fraction of the screen resolution
+ * (it is all soft light, so the upscale reads as blur for free) and only
+ * redrawn as often as the motion needs. With reduced motion it is one still.
  */
+const RIBBONS = [
+  // y: centre as a share of the height, a: amplitude, f: waves across, w: width, s: drift rate, tone: light or shade
+  { y: 0.18, a: 0.16, f: 0.9, w: 0.20, s: 0.050, p: 0.0, tone: 'light' },
+  { y: 0.34, a: 0.12, f: 1.3, w: 0.13, s: -0.036, p: 1.7, tone: 'shade' },
+  { y: 0.58, a: 0.18, f: 0.7, w: 0.24, s: 0.030, p: 3.1, tone: 'light' },
+  { y: 0.74, a: 0.10, f: 1.6, w: 0.10, s: -0.044, p: 4.4, tone: 'copper' },
+  { y: 0.92, a: 0.14, f: 1.1, w: 0.18, s: 0.026, p: 5.6, tone: 'shade' },
+];
+const TONES = {
+  light: [255, 255, 255, 0.55],
+  shade: [222, 211, 195, 0.34],
+  copper: [226, 176, 140, 0.20],
+};
+const SCALE = 0.35;         // backing store resolution relative to CSS pixels
+
 export class Background {
   constructor(canvas) {
     this.c = canvas;
     this.ctx = canvas.getContext('2d');
     this.speed = 0.3;
     this.targetSpeed = 0.3;
-    this.offset = 0;
-    this.stars = [];
+    this.phase = 0;
+    this.streaks = [];
     this.last = performance.now();
+    this.lastDraw = 0;
     this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.resize();
     window.addEventListener('resize', () => this.resize());
@@ -20,20 +40,23 @@ export class Background {
   }
 
   resize() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
     this.w = window.innerWidth;
     this.h = window.innerHeight;
-    this.c.width = Math.floor(this.w * dpr);
-    this.c.height = Math.floor(this.h * dpr);
-    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const count = Math.floor((this.w * this.h) / 9000);
-    this.stars = Array.from({ length: count }, () => ({
-      x: Math.random() * this.w,
-      y: Math.random() * this.h * 0.62,
-      r: Math.random() * 1.3 + 0.3,
-      p: Math.random() * Math.PI * 2,
-      s: 0.5 + Math.random() * 1.5,
-    }));
+    this.c.width = Math.max(1, Math.floor(this.w * SCALE));
+    this.c.height = Math.max(1, Math.floor(this.h * SCALE));
+    this.ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
+    this.streaks = Array.from({ length: 14 }, () => this.newStreak(true));
+    this.draw(this.last);
+  }
+
+  newStreak(anywhere) {
+    return {
+      x: anywhere ? Math.random() * this.w : this.w + Math.random() * this.w * 0.5,
+      y: this.h * (0.12 + Math.random() * 0.8),
+      len: 60 + Math.random() * 200,
+      v: 0.6 + Math.random() * 0.9,
+      a: 0.25 + Math.random() * 0.45,
+    };
   }
 
   setSpeed(v) {
@@ -44,77 +67,86 @@ export class Background {
     const dt = Math.min(64, t - this.last);
     this.last = t;
     this.speed += (this.targetSpeed - this.speed) * 0.04;
-    if (!this.reduced) this.offset = (this.offset + (this.speed * dt) / 1000) % 1;
-    this.draw(t);
+    if (!this.reduced) {
+      this.phase += (dt / 1000) * (0.35 + this.speed * 0.9);
+      // soft light needs no more than ~30 frames a second, and every frame
+      // spent here is one the typing does not get
+      const every = this.speed > 0.6 ? 33 : 40;
+      if (t - this.lastDraw >= every) {
+        this.lastDraw = t;
+        this.draw(t, dt);
+      }
+    }
     requestAnimationFrame((tt) => this.loop(tt));
   }
 
-  draw(t) {
+  ribbonPath(r, t) {
+    const { w, h } = this;
+    const pts = [];
+    const n = 28;
+    const ph = r.p + this.phase * r.s * 10;
+    for (let i = 0; i <= n; i++) {
+      const u = i / n;
+      const x = -w * 0.15 + u * w * 1.3;
+      const y = h * (r.y
+        + r.a * Math.sin(u * Math.PI * 2 * r.f + ph)
+        + r.a * 0.35 * Math.sin(u * Math.PI * 2 * r.f * 2.3 - ph * 1.3));
+      pts.push([x, y]);
+    }
+    return pts;
+  }
+
+  strokeSoft(pts, width, [cr, cg, cb, ca]) {
+    const { ctx } = this;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length - 1; i++) {
+      const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+      const my = (pts[i][1] + pts[i + 1][1]) / 2;
+      ctx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+    }
+    // a few passes, wide and faint to narrow and brighter: a soft-edged band
+    for (const k of [1, 0.72, 0.46, 0.24]) {
+      ctx.lineWidth = width * k;
+      ctx.strokeStyle = `rgba(${cr},${cg},${cb},${(ca * (1.15 - k) * 0.55).toFixed(3)})`;
+      ctx.stroke();
+    }
+  }
+
+  draw(t, dt = 16) {
     const { ctx, w, h } = this;
     ctx.clearRect(0, 0, w, h);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    // soft motes
-    for (const s of this.stars) {
-      const tw = 0.55 + 0.45 * Math.sin(t / 900 * s + s.p);
-      ctx.globalAlpha = 0.14 + 0.16 * tw;
-      ctx.fillStyle = '#f59e0b';
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-
-    // light source (soft violet-white)
-    const hy = h * 0.66;
-    const cx = w / 2;
-    const sunR = Math.min(w, h) * 0.16;
-    const sun = ctx.createRadialGradient(cx, hy - sunR * 0.35, sunR * 0.1, cx, hy - sunR * 0.35, sunR);
-    sun.addColorStop(0, 'rgba(255, 255, 255, .9)');
-    sun.addColorStop(0.35, 'rgba(253, 224, 175, .35)');
-    sun.addColorStop(1, 'rgba(253, 224, 175, 0)');
-    ctx.fillStyle = sun;
-    ctx.beginPath();
-    ctx.arc(cx, hy - sunR * 0.35, sunR, 0, Math.PI * 2);
-    ctx.fill();
-
-    // horizon glow
-    const glow = ctx.createLinearGradient(0, hy - 40, 0, hy + 60);
-    glow.addColorStop(0, 'rgba(13, 159, 196, 0)');
-    glow.addColorStop(0.5, 'rgba(13, 159, 196, .07)');
-    glow.addColorStop(1, 'rgba(13, 159, 196, 0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, hy - 40, w, 100);
-
-    // perspective grid
-    ctx.lineWidth = 1;
-    const rows = 14;
-    for (let i = 0; i <= rows; i++) {
-      let f = (i / rows + this.offset) % 1;
-      const y = hy + (h - hy) * f * f;
-      ctx.strokeStyle = `rgba(217, 119, 6, ${0.03 + 0.14 * f})`;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
-    const cols = 9;
-    for (let k = -cols; k <= cols; k++) {
-      const xBottom = cx + k * (w / 4.5);
-      const g = ctx.createLinearGradient(cx, hy, xBottom, h);
-      g.addColorStop(0, 'rgba(13, 159, 196, 0)');
-      g.addColorStop(1, 'rgba(13, 159, 196, .1)');
-      ctx.strokeStyle = g;
-      ctx.beginPath();
-      ctx.moveTo(cx, hy);
-      ctx.lineTo(xBottom, h);
-      ctx.stroke();
+    for (const r of RIBBONS) {
+      const pts = this.ribbonPath(r, t);
+      const base = Math.min(w, h) * r.w + h * 0.04;
+      if (r.tone === 'light') {
+        // a shade fold under every light fold gives the silk its depth
+        const under = pts.map(([x, y]) => [x, y + base * 0.22]);
+        this.strokeSoft(under, base * 1.05, TONES.shade);
+      }
+      this.strokeSoft(pts, base, TONES[r.tone]);
     }
 
-    // fade the grid under the content
-    const fade = ctx.createLinearGradient(0, hy, 0, h);
-    fade.addColorStop(0, 'rgba(252, 249, 244, 0)');
-    fade.addColorStop(1, 'rgba(252, 249, 244, .55)');
-    ctx.fillStyle = fade;
-    ctx.fillRect(0, hy, w, h - hy);
+    // speed streaks: only while typing fast
+    const fast = Math.max(0, Math.min(1, (this.speed - 0.55) / 1.6));
+    if (fast > 0.02 && !this.reduced) {
+      ctx.lineWidth = 1.4;
+      for (const s of this.streaks) {
+        s.x -= s.v * (dt / 16) * (6 + this.speed * 7);
+        if (s.x + s.len < 0) Object.assign(s, this.newStreak(false));
+        const g = ctx.createLinearGradient(s.x, 0, s.x + s.len, 0);
+        g.addColorStop(0, 'rgba(255,255,255,0)');
+        g.addColorStop(0.6, `rgba(255,255,255,${(s.a * fast).toFixed(3)})`);
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.strokeStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x + s.len, s.y);
+        ctx.stroke();
+      }
+    }
   }
 }

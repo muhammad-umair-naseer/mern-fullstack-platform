@@ -1,5 +1,9 @@
 import { flag } from './countries.js';
 import { escapeHtml, toast } from './ui.js';
+import { carSvg } from './cars.js';
+
+// three cars riding in formation above the empty team form (decoration)
+const CONVOY = [['hatch', '#7E9A6D'], ['dash', '#B8612E'], ['muscle', '#3E6A82']];
 
 /**
  * Team card on the home page: create a team, join with an invite code, see
@@ -53,7 +57,8 @@ export class TeamCard {
     if (!t) {
       this.root.innerHTML = `
         <div class="team-empty">
-          <p class="hint">Every ranked point you earn also scores for your team. Make one, share the link, climb the team board together.</p>
+          <div class="team-art" aria-hidden="true">${CONVOY.map(([id, c]) => `<i style="--c:${c}">${carSvg(id)}</i>`).join('')}</div>
+          <p class="hint">Your ranked points score for your team too.</p>
           <form id="team-create-form" class="team-form">
             <input name="name" maxlength="24" minlength="3" placeholder="Team name" required aria-label="Team name">
             <input name="tag" maxlength="4" minlength="2" placeholder="TAG" pattern="[A-Za-z0-9]{2,4}" required aria-label="Team tag" class="team-tag-input">

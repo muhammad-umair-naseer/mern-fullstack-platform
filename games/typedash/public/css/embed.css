@@ -1,0 +1,121 @@
+/* =====================================================================
+   The embeddable widget (/embed). Loaded by js/embed.js on top of the
+   page's own inline styles, so everything here wins by coming later.
+   ===================================================================== */
+
+:root {
+  --ivory: #FAF8F4; --paper: #FFFFFF; --sand: #F2EDE4; --sand-2: #E9E2D6; --sand-3: #DDD3C3;
+  --ink: #16130F; --ink-2: #3D3833; --ink-3: #5E574F; --ink-4: #6E665E;
+  --copper: #9A4A22; --copper-2: #B8612E; --copper-light: #D08A5A; --copper-tint: #F5E6D8;
+  --sage: #62805A; --sage-ink: #4A6543; --sage-tint: #E5ECDF; --brick: #A3423A; --brick-tint: #F6E1DC;
+  --gold: #A07A2C; --gold-ink: #7A5A18; --gold-tint: #F3E6C4;
+  --line: rgba(22, 19, 15, 0.1); --line-strong: rgba(22, 19, 15, 0.22);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --font: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --display: "Instrument Serif", ui-serif, Georgia, serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+/* one warm glow in the corner, painted once: on html it would tile down a
+   short page and leave a hard band where each copy ends */
+html { background: var(--ivory); }
+body {
+  min-height: 100vh;
+  background: radial-gradient(600px 300px at 90% -20%, rgba(245, 230, 216, 0.9), transparent 70%) no-repeat, var(--ivory);
+  color: var(--ink-2); font: 15px/1.55 var(--font); -webkit-font-smoothing: antialiased;
+}
+.wrap { padding: 18px 20px 14px; }
+.head { margin-bottom: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; font: 400 1.45rem/1 var(--display); color: var(--ink); }
+.brand .mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: var(--ink); color: var(--copper-light); }
+.brand .mark svg { width: 14px; height: 14px; fill: currentColor; }
+.brand span { color: var(--ink); }
+.brand .mark { color: var(--copper-light); }
+.brand em { color: var(--copper); }
+.stats { gap: 6px; }
+.stat {
+  display: inline-flex; align-items: baseline; gap: 5px; padding: 6px 12px; border-radius: 999px;
+  background: rgba(255, 253, 249, 0.8); border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 1px 0 #fff, 0 4px 12px rgba(22, 19, 15, 0.05);
+  font: 500 0.6rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
+}
+.stat b { margin: 0; font: 600 0.95rem var(--font); letter-spacing: -0.01em; text-transform: none; color: var(--ink); font-variant-numeric: tabular-nums; }
+.stat:first-child b { color: var(--copper); }
+.status { margin: 0 0 10px; font: 400 0.74rem var(--mono); color: var(--ink-3); }
+
+.bars { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px 12px; margin: 6px 0 14px; }
+.bar-label { font: 500 0.58rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-4); min-width: 3.5em; }
+.bar-label:empty { display: none; }
+.bar { position: relative; height: 14px; border-radius: 999px; overflow: visible; border: 0; background: linear-gradient(180deg, #E6DDCE, #D9CFBE); box-shadow: inset 0 1px 3px rgba(22, 19, 15, 0.12); }
+.bar::after { content: ''; position: absolute; right: 3px; top: 2px; bottom: 2px; width: 6px; border-radius: 2px; background: repeating-conic-gradient(var(--ink) 0 25%, var(--ivory) 0 50%) 0 0 / 4px 4px; }
+.bar i { position: relative; min-width: 14px; border-radius: 999px; transition: width 0.12s linear; }
+.bar i::after { content: ''; position: absolute; right: -2px; top: 50%; width: 18px; height: 18px; margin-top: -9px; border-radius: 50%; background: inherit; box-shadow: 0 0 0 3px var(--paper), 0 3px 8px rgba(22, 19, 15, 0.2); }
+.bar.me i { background: linear-gradient(90deg, var(--copper-light), var(--copper-2)); }
+.bar.me i::after { background: var(--copper-2); }
+.bar.pacer i { background: linear-gradient(90deg, #A39A8F, var(--ink-4)); }
+.bar.pacer i::after { background: var(--ink-4); }
+/* when the script has put a car on the bar, the car is the marker */
+.bars:has(.bar-car) { gap: 14px 12px; margin: 12px 0 16px; }
+.bar i:has(.bar-car) { min-width: 34px; }
+.bar i:has(.bar-car)::after { display: none; }
+.bar-car { position: absolute; right: -12px; top: 50%; width: 48px; height: 21px; margin-top: -16px; filter: drop-shadow(0 3px 3px rgba(60, 38, 20, 0.24)); }
+.bar-car svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.bar-car .nitro-flame, .bar-car .exhaust, .bar-car .shadow { display: none; }
+
+.passage-wrap {
+  padding: 18px 20px; border-radius: 22px; border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88); box-shadow: inset 0 1px 0 #fff, 0 14px 34px rgba(22, 19, 15, 0.07);
+}
+.passage { font: 400 1.04rem/1.9 var(--mono); color: #736A5F; }
+.passage.locked { filter: none; opacity: 0.9; }
+.passage .w { border-radius: 5px; }
+.passage .c { border-radius: 3px; }
+.passage .c.ok { color: var(--ink); }
+.passage .c.bad { color: var(--brick); background: var(--brick-tint); text-decoration: underline 2px rgba(163, 66, 58, 0.5); text-underline-offset: 3px; }
+.passage .c.cur { background: var(--copper-tint); box-shadow: -2px 0 0 var(--copper-2); }
+.passage .w.gold { background: rgba(243, 230, 196, 0.65); box-shadow: inset 0 -2px 0 rgba(160, 122, 44, 0.5); }
+.passage .w.gold .c { color: #83652A; }
+.passage .w.gold .c.ok { color: var(--gold-ink); }
+.passage .w.gold::before { content: '✦'; color: var(--gold); font-size: 0.6em; margin-right: 2px; vertical-align: 0.7em; }
+.passage .w.gold.gold-hit { background: var(--sage-tint); box-shadow: inset 0 -2px 0 rgba(98, 128, 90, 0.6); }
+.passage .w.gold.gold-hit .c { color: var(--sage-ink); }
+.passage .w.done-ok { animation: word-ok 0.6s var(--ease); }
+@keyframes word-ok { from { background-color: rgba(98, 128, 90, 0.2); } }
+
+.result {
+  margin-top: 14px; padding: 18px 20px; border-radius: 22px; border: 0;
+  background: var(--paper); box-shadow: inset 0 0 0 1px var(--line), 0 14px 34px rgba(22, 19, 15, 0.07);
+  animation: result-in 0.5s var(--ease) both;
+}
+@keyframes result-in { from { opacity: 0; transform: translate3d(0, 14px, 0); } }
+.result-grid { gap: 26px; }
+.result-grid > div { display: flex; flex-direction: column; }
+.result-grid b { font: 400 2.6rem/1 var(--display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.result-grid > div:first-child b { color: var(--copper); }
+.result-grid span { margin-top: 4px; font: 500 0.58rem var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4); }
+.result p { margin: 14px 0 14px; font-size: 0.92rem; color: var(--ink-2); }
+.row { gap: 10px; }
+.btn {
+  position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line-strong); background: transparent;
+  color: var(--ink); font: 500 0.88rem var(--font); cursor: pointer;
+  transition: border-color 0.24s var(--ease), background-color 0.24s var(--ease), transform 90ms var(--ease);
+}
+.btn:hover { border-color: var(--ink); background: var(--paper); }
+.btn:active { transform: translate3d(0, 1px, 0) scale(0.985); }
+.btn.primary { background: var(--ink); border-color: var(--ink); color: var(--ivory); }
+.btn.primary::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--copper); transform: scaleX(0); transform-origin: right; transition: transform 0.42s var(--ease); }
+.btn.primary:hover { background: var(--ink); border-color: var(--copper); }
+.btn.primary:hover::before { transform: scaleX(1); transform-origin: left; }
+.foot { margin-top: 12px; font: 400 0.66rem var(--mono); color: var(--ink-4); }
+.foot a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+:where(a, button):focus-visible { outline: 2px solid var(--copper); outline-offset: 3px; border-radius: 8px; }
+
+@media (max-width: 480px) {
+  .wrap { padding: 14px 14px 12px; }
+  .head { flex-wrap: wrap; }
+  .result-grid { gap: 16px; }
+  .result-grid b { font-size: 2.1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

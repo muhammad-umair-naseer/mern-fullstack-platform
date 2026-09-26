@@ -2,6 +2,31 @@ import { skinFor } from './skins.js';
 
 let uid = 0;
 
+/* The server hands every racer a bright lane colour; on screen each one is
+   shown as a paint from a small, warm set so the track reads as one family.
+   Presentation only: the colour a racer is given never changes. */
+const PAINT = {
+  '#4cc9f0': '#B8612E',  // copper
+  '#fbbf24': '#3E6A82',  // petrol blue
+  '#ff4d6d': '#8E3B35',  // oxblood
+  '#ffd166': '#B8914E',  // champagne
+  '#3ddc97': '#4E7152',  // racing green
+  '#ff9e00': '#A8683A',  // burnt amber
+  '#f72585': '#76495F',  // plum
+  '#80ed99': '#7E9A6D',  // sage
+  '#8a8fa8': '#6E665E',  // graphite (the robot)
+};
+export function paint(color) {
+  const c = String(color || '').toLowerCase();
+  return PAINT[c] || color || '#B8612E';
+}
+
+/* Showroom paint for each car in the garage. */
+export const SHOWROOM = {
+  dash: '#B8612E', bolt: '#3E6A82', hatch: '#7E9A6D', muscle: '#8E3B35', flame: '#2A2520',
+  pickup: '#B8914E', checker: '#4A4540', rocket: '#4E7152', nova: '#76495F',
+};
+
 /* Side-view bodies, facing right, in a 122x52 box. Wheels sit at x=30 and x=92. */
 const BODIES = {
   sport: {
@@ -38,7 +63,7 @@ const BODIES = {
 
 const DECALS = {
   stripe: '<path d="M44 7 L52 7 L40 39 L32 39 Z M56 7 L62 7 L50 39 L44 39 Z" fill="rgba(255,255,255,.55)"/>',
-  flames: '<path d="M10 32 L20 28 L24 32 L32 26 L36 31 L46 27 L44 33 L56 30 L52 35 L14 36 Z" fill="#ff9e00" opacity=".92"/><path d="M12 33 L20 30 L23 33 L31 29 L34 32 L42 30 L40 33 L16 35 Z" fill="#ffd166" opacity=".9"/>',
+  flames: '<path d="M10 32 L20 28 L24 32 L32 26 L36 31 L46 27 L44 33 L56 30 L52 35 L14 36 Z" fill="#D07A3E" opacity=".95"/><path d="M12 33 L20 30 L23 33 L31 29 L34 32 L42 30 L40 33 L16 35 Z" fill="#F2C27E" opacity=".92"/>',
   checker: '<rect x="10" y="26" width="26" height="10" fill="url(#chk)" opacity=".9"/>',
   stars: '<path d="M22 15 l1.6 3.4 3.7.4-2.8 2.5.8 3.7-3.3-1.9-3.3 1.9.8-3.7-2.8-2.5 3.7-.4z" fill="#fff" opacity=".85"/><path d="M100 24 l1.2 2.5 2.7.3-2 1.8.6 2.7-2.5-1.4-2.5 1.4.6-2.7-2-1.8 2.7-.3z" fill="#fff" opacity=".8"/><path d="M60 32 l.9 1.9 2.1.2-1.6 1.4.5 2.1-1.9-1.1-1.9 1.1.5-2.1-1.6-1.4 2.1-.2z" fill="#fff" opacity=".7"/>',
 };
@@ -62,10 +87,15 @@ export function carSvg(skinId = 'dash') {
       <stop offset="1" stop-color="#000" stop-opacity=".28"/>
     </linearGradient>
     <linearGradient id="${id}-fire" x1="1" y1="0" x2="0" y2="0">
-      <stop offset="0" stop-color="#9be7ff"/>
-      <stop offset=".35" stop-color="#ffd166"/>
-      <stop offset=".7" stop-color="#ff7a00"/>
-      <stop offset="1" stop-color="#ff2d55" stop-opacity="0"/>
+      <stop offset="0" stop-color="#FFF4DF"/>
+      <stop offset=".35" stop-color="#F2C27E"/>
+      <stop offset=".7" stop-color="#D07A3E"/>
+      <stop offset="1" stop-color="#9A4A22" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="${id}-glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6E655C"/>
+      <stop offset=".5" stop-color="#2E2824"/>
+      <stop offset="1" stop-color="#1B1714"/>
     </linearGradient>
     <pattern id="chk" width="6" height="6" patternUnits="userSpaceOnUse">
       <rect width="3" height="3" fill="#fff"/><rect x="3" y="3" width="3" height="3" fill="#fff"/>
@@ -75,32 +105,35 @@ export function carSvg(skinId = 'dash') {
     <path d="M6 35 C-6 27 -20 31 -34 36 C-20 41 -6 45 6 37 Z" fill="url(#${id}-fire)" opacity=".95"/>
     <path d="M6 36 C-2 32 -10 34 -18 36 C-10 38 -2 40 6 36 Z" fill="#fff" opacity=".75"/>
   </g>
-  <ellipse class="shadow" cx="62" cy="47" rx="54" ry="3.5" fill="rgba(0,0,0,.5)"/>
+  <ellipse class="shadow" cx="62" cy="47" rx="54" ry="3.5" fill="rgba(22,19,15,.22)"/>
   <g class="car-body">
     <path d="${b.body}" fill="var(--c)"/>
     <path d="${b.body}" fill="url(#${id})"/>
     ${decal}
     ${b.extra}
-    <path d="${b.glass}" fill="#d6f1ff" opacity=".92"/>
+    <path d="${b.glass}" fill="url(#${id}-glass)"/>
+    <path d="${b.glass}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".8"/>
     <path d="${b.pillar}" stroke="var(--c)" stroke-width="2.2"/>
-    <rect x="112" y="27" width="6.5" height="4" rx="1" fill="#fff5c2"/>
-    <rect x="6" y="27" width="5" height="4" rx="1" fill="#ff3b3b"/>
-    <path d="M13 36 H113" stroke="rgba(0,0,0,.28)" stroke-width="2"/>
+    <rect x="112" y="27" width="6.5" height="4" rx="1" fill="#FFF3D6"/>
+    <rect x="6" y="27" width="5" height="4" rx="1" fill="#B83A2E"/>
+    <path d="M13 36 H113" stroke="rgba(22,19,15,.26)" stroke-width="2"/>
   </g>
   <g class="wheel">
-    <circle cx="30" cy="40" r="9.5" fill="#15151a"/>
-    <circle cx="30" cy="40" r="5.2" fill="#d5d5df"/>
-    <path d="M30 33 V47 M23 40 H37 M25 35 L35 45 M35 35 L25 45" stroke="#6b6b78" stroke-width="1.2"/>
+    <circle cx="30" cy="40" r="9.5" fill="#1C1916"/>
+    <circle cx="30" cy="40" r="5.4" fill="#E6DFD3"/>
+    <path d="M30 34.6 V45.4 M24.6 40 H35.4 M26.2 36.2 L33.8 43.8 M33.8 36.2 L26.2 43.8" stroke="#8C8378" stroke-width="1.1"/>
+    <circle cx="30" cy="40" r="1.6" fill="#8C8378"/>
   </g>
   <g class="wheel">
-    <circle cx="92" cy="40" r="9.5" fill="#15151a"/>
-    <circle cx="92" cy="40" r="5.2" fill="#d5d5df"/>
-    <path d="M92 33 V47 M85 40 H99 M87 35 L97 45 M97 35 L87 45" stroke="#6b6b78" stroke-width="1.2"/>
+    <circle cx="92" cy="40" r="9.5" fill="#1C1916"/>
+    <circle cx="92" cy="40" r="5.4" fill="#E6DFD3"/>
+    <path d="M92 34.6 V45.4 M86.6 40 H97.4 M88.2 36.2 L95.8 43.8 M95.8 36.2 L88.2 43.8" stroke="#8C8378" stroke-width="1.1"/>
+    <circle cx="92" cy="40" r="1.6" fill="#8C8378"/>
   </g>
   <g class="exhaust">
-    <circle cx="2" cy="37" r="2.5" fill="rgba(255,255,255,.35)"/>
-    <circle cx="-5" cy="36" r="3.5" fill="rgba(255,255,255,.22)"/>
-    <circle cx="-13" cy="35" r="4.5" fill="rgba(255,255,255,.1)"/>
+    <circle cx="2" cy="37" r="2.5" fill="rgba(120,108,96,.3)"/>
+    <circle cx="-5" cy="36" r="3.5" fill="rgba(120,108,96,.2)"/>
+    <circle cx="-13" cy="35" r="4.5" fill="rgba(120,108,96,.1)"/>
   </g>
 </svg>`;
 }

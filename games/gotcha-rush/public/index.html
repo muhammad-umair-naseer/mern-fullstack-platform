@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Gotcha Rush — Predict the output. Beat the room.</title>
   <meta name="description" content="Real-time multiplayer 'what does this print?' game. Tricky JavaScript and Python snippets, combos, lifelines, Solo Rush, worldwide rankings and daily streaks.">
-  <meta name="theme-color" content="#fff8f1">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f97316'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23ffffff' font-family='monospace' font-weight='bold'%3E%3E_%3C/text%3E%3C/svg%3E">
+  <meta name="theme-color" content="#FAF8F4">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2316130F'/%3E%3Cpath d='M20 20l12 12-12 12' fill='none' stroke='%23FAF8F4' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M35 45h11' stroke='%23B8612E' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script>if (window.self !== window.top) document.documentElement.classList.add('in-frame');</script>
 </head>
 <body>
   <canvas id="bg" aria-hidden="true"></canvas>
@@ -18,8 +19,8 @@
 
   <header class="topbar">
     <a class="brand" href="/">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="mark-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#c2410c"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#mark-g)"/><path d="M10 10l6 6-6 6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path class="cursor" d="M17 23h6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
-      Gotcha Rush
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#16130F"/><path d="M10 10l6 6-6 6" fill="none" stroke="#FAF8F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path class="cursor" d="M17.5 22.5h5.5" stroke="#B8612E" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span>Gotcha Rush</span>
     </a>
     <nav class="nav" id="site-nav" aria-label="Site">
       <a href="#play-now" data-go="play">Play</a>
@@ -28,7 +29,7 @@
       <a href="#home-panel" data-go="ach">Achievements</a>
     </nav>
     <div class="topbar-right">
-      <span class="live" id="online-pill" title="Players online right now"><i class="dot"></i><span id="online">–</span> online</span>
+      <span class="live" id="online-pill" title="Players online right now"><i class="dot"></i><span id="online">–</span><span class="live-word"> online</span></span>
       <span class="status ping" id="ping-pill" data-q="ok" title="Round-trip time"><span id="ping">–</span> ms</span>
       <a class="id-chip" id="level-pill" href="#home-panel" data-go="progress" title="Your progress">
         <span class="id-av" id="top-avatar">⚡</span>
@@ -40,43 +41,50 @@
       </a>
       <a class="btn primary small top-cta" href="#play-now" data-go="play">Play now</a>
       <button class="icon-btn" id="sound-btn" title="Toggle sound" aria-label="Toggle sound">
-        <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       </button>
-      <button class="icon-btn nav-toggle" id="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <button class="icon-btn nav-toggle" id="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14M5 12h14M5 16h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
     </div>
   </header>
 
   <main>
     <!-- ============================ HOME ============================ -->
     <section id="screen-home" class="screen active">
-      <div class="hero">
-        <h1>What does this <em class="mark">print<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 10c30-6 62 4 96-1s58-6 98 2" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></em>?</h1>
-        <p class="sub">Five players, one snippet, forty seconds to type what it prints. JavaScript and Python, no account needed.</p>
-        <div class="hero-demo" id="hero-demo" aria-hidden="true"></div>
-      </div>
+      <div class="home-hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-rule"></span>Live code quiz</p>
+          <h1 aria-label="What does this print?"><span class="line" aria-hidden="true"><span>What does this</span></span><span class="line" aria-hidden="true"><span><em>print?</em></span></span></h1>
+          <p class="sub">Read the snippet. Type the output. Beat the room.</p>
+        </div>
 
-      <div class="home-grid">
+        <div class="stage" id="how-it-works" aria-hidden="true">
+          <div class="stage-halo"></div>
+          <div class="hero-demo" id="hero-demo"></div>
+        </div>
+
         <div class="card join-card" id="play-now">
-          <div class="field-row">
-            <label class="field">
-              <span>Your name</span>
-              <input id="name" maxlength="16" placeholder="e.g. nullpointer" autocomplete="nickname">
-            </label>
-            <label class="field">
-              <span>Playing for</span>
-              <div class="select-wrap">
-                <span id="flag-preview" class="flag-preview">🌍</span>
-                <select id="country"></select>
-              </div>
-            </label>
+          <div class="identity">
+            <span class="me-avatar" id="me-avatar" aria-hidden="true">⚡</span>
+            <div class="identity-fields">
+              <label class="field">
+                <span class="visually-hidden">Your name</span>
+                <input id="name" maxlength="16" placeholder="Your name" autocomplete="nickname">
+              </label>
+              <label class="field">
+                <span class="visually-hidden">Playing for</span>
+                <div class="select-wrap">
+                  <span id="flag-preview" class="flag-preview">🌍</span>
+                  <select id="country"></select>
+                </div>
+              </label>
+            </div>
           </div>
 
-          <div class="avatar-row" id="avatar-row"></div>
+          <div class="avatar-row" id="avatar-row" aria-label="Avatar"></div>
 
           <div class="lang-row">
-            <span class="lang-label">Language</span>
-            <div class="seg" id="lang-seg">
+            <div class="seg" id="lang-seg" aria-label="Language">
               <button data-lang="mix" class="on">Both</button>
               <button data-lang="js">JavaScript</button>
               <button data-lang="py">Python</button>
@@ -85,112 +93,84 @@
 
           <div class="mode-grid">
             <button class="mode-btn primary" id="btn-quick">
-              <svg class="mode-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="17" cy="9" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.2 19a4.6 4.6 0 0 1 6.3-4.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span class="mode-art" aria-hidden="true"><i style="--c:#B8612E">🦊</i><i style="--c:#8A5A8C">🐙</i><i style="--c:#4F7A8C">🤖</i><i class="more">+2</i></span>
               <b>Quick Match</b>
-              <small>5 players · 8 rounds · ranked</small>
+              <small>5 players · ranked</small>
+              <span class="mode-go" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12L12 4M6 4h6v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <button class="mode-btn rush" id="btn-rush">
-              <svg class="mode-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 13.5V9.8M10 3h4M12 3v3.5M18.5 7.5L20 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span class="mode-art hearts" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>
               <b>Solo Rush</b>
-              <small>3 lives · endless · leaderboard</small>
+              <small>3 lives · endless</small>
+              <span class="mode-go" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12L12 4M6 4h6v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
           </div>
 
-          <div class="divider"><span>or play with friends</span></div>
-          <div class="row">
-            <button class="btn" id="btn-create">Create private room</button>
+          <div class="friends-row">
+            <button class="btn ghost" id="btn-create"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Private room</button>
             <div class="join-row">
               <input id="code" maxlength="6" placeholder="CODE" aria-label="Room code">
               <button class="btn" id="btn-join">Join</button>
             </div>
           </div>
-          <p class="hint">Matches start on their own — empty seats are filled by bots.</p>
+        </div>
+      </div>
+
+      <div class="card panel-card" id="home-panel">
+        <div class="section-tabs" id="home-tabs" role="tablist">
+          <button data-panel="progress" class="on" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18l5-6 4 3 7-8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Progress</button>
+          <button data-panel="boards" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20v-9h5v9M9.5 20V5h5v15M15 20v-6h5v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Rankings</button>
+          <button data-panel="ach" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="14.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 10L6 3h4l2 4 2-4h4l-2.5 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Achievements <small id="ach-count"></small></button>
+          <button data-panel="rivals" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="15" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Rivals</button>
         </div>
 
-        <div class="card how-card" id="how-it-works">
-          <h3>How a round goes</h3>
-          <div class="scene" aria-hidden="true">
-            <div class="scene-code">
-              <b class="pin">1</b>
-              <div class="scene-bar"><i></i><i></i><i></i><span>main.js</span></div>
-              <pre><span class="tk-b">console</span><span class="tk-p">.</span><span class="tk-b">log</span><span class="tk-p">(</span><span class="tk-s">"b"</span> <span class="tk-p">+</span> <span class="tk-s">"a"</span> <span class="tk-p">+</span> <span class="tk-p">+</span><span class="tk-s">"a"</span> <span class="tk-p">+</span> <span class="tk-s">"a"</span><span class="tk-p">);</span></pre>
+        <div class="panel progress-grid" data-panel="progress">
+          <div class="progress-main">
+            <div class="profile-head">
+              <div class="level-ring" id="level-ring" style="--p:0">
+                <span class="lvl-label">Level</span>
+                <b id="prof-level">1</b>
+              </div>
+              <div class="profile-meta">
+                <div class="prof-title" id="prof-title">Script Kiddie</div>
+                <div class="xp-bar"><i id="xp-fill" style="width:0%"></i></div>
+                <div class="xp-text" id="xp-text">0 / 400 points to level 2</div>
+              </div>
             </div>
-            <div class="scene-term">
-              <b class="pin">2</b>
-              <span class="p">1</span><span class="typed">baNaNa<i class="caret"></i></span>
-              <span class="clock"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="t"/><circle cx="22" cy="22" r="19" class="a"/></svg><b>27</b></span>
+            <div class="streak-box" id="streak-box">
+              <div class="streak-flame" id="streak-flame">🕯️</div>
+              <div class="streak-meta">
+                <b id="streak-days">No streak yet</b>
+                <span id="streak-sub">Play today to start one</span>
+              </div>
+              <div class="streak-week" id="streak-week"></div>
             </div>
-            <div class="scene-players">
-              <span class="me">⚡ you <em>locked in</em></span>
-              <span>🦊 Linus <em>thinking…</em></span>
-              <span>🐙 Grace <em>locked in</em></span>
-            </div>
-            <svg class="scene-arrow" viewBox="0 0 80 60"><path d="M74 6c-8 26-28 42-66 38" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M18 36l-10 8 6 10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <div class="scene-tag"><b class="pin">3</b>+296 · first in the room</div>
+            <div class="rank-chips" id="rank-chips"></div>
           </div>
-          <ol class="captions">
-            <li><b class="pin">1</b><span>Read the snippet — a short program with a twist.</span></li>
-            <li><b class="pin">2</b><span>Type what it prints, one line per output line, before the clock runs out.</span></li>
-            <li><b class="pin">3</b><span>Beat the room: the first correct answer earns a bonus, and streaks multiply it.</span></li>
-          </ol>
+          <div class="progress-side">
+            <div class="prof-stats">
+              <div><b id="st-points">0</b><span>points</span></div>
+              <div><b id="st-solved">0</b><span>solved</span></div>
+              <div><b id="st-acc">0%</b><span>accuracy</span></div>
+              <div><b id="st-wins">0</b><span>wins</span></div>
+              <div><b id="st-rush">0</b><span>best rush</span></div>
+              <div><b id="st-combo">0</b><span>best combo</span></div>
+            </div>
+            <div class="lang-mastery" id="lang-mastery"></div>
+          </div>
         </div>
 
-        <div class="card panel-card" id="home-panel">
-          <div class="section-tabs" id="home-tabs" role="tablist">
-            <button data-panel="progress" class="on" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18l5-6 4 3 7-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Your progress</button>
-            <button data-panel="boards" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20v-9h5v9M9.5 20V5h5v15M15 20v-6h5v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Rankings</button>
-            <button data-panel="ach" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="14.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10L6 3h4l2 4 2-4h4l-2.5 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Achievements <small id="ach-count"></small></button>
-            <button data-panel="rivals" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Rivals</button>
-          </div>
+        <div class="panel" data-panel="boards" hidden>
+          <div id="boards" class="boards"></div>
+        </div>
 
-          <div class="panel progress-grid" data-panel="progress">
-            <div>
-              <div class="profile-head">
-                <div class="level-ring" id="level-ring" style="--p:0">
-                  <span class="lvl-label">LVL</span>
-                  <b id="prof-level">1</b>
-                </div>
-                <div class="profile-meta">
-                  <div class="prof-title" id="prof-title">Script Kiddie</div>
-                  <div class="xp-bar"><i id="xp-fill" style="width:0%"></i></div>
-                  <div class="xp-text" id="xp-text">0 / 400 points to level 2</div>
-                </div>
-              </div>
-              <div class="streak-box" id="streak-box">
-                <div class="streak-flame" id="streak-flame">🕯️</div>
-                <div class="streak-meta">
-                  <b id="streak-days">No streak yet</b>
-                  <span id="streak-sub">Play on any day to start one. Each day in a row adds +5% points, up to +50%.</span>
-                </div>
-                <div class="streak-week" id="streak-week"></div>
-              </div>
-              <div class="rank-chips" id="rank-chips"></div>
-            </div>
-            <div>
-              <div class="prof-stats">
-                <div><b id="st-points">0</b><span>points</span></div>
-                <div><b id="st-solved">0</b><span>solved</span></div>
-                <div><b id="st-acc">0%</b><span>accuracy</span></div>
-                <div><b id="st-wins">0</b><span>wins</span></div>
-                <div><b id="st-rush">0</b><span>best rush</span></div>
-                <div><b id="st-combo">0</b><span>best combo</span></div>
-              </div>
-              <div class="lang-mastery" id="lang-mastery"></div>
-            </div>
-          </div>
+        <div class="panel" data-panel="ach" hidden>
+          <div class="ach-grid" id="ach-grid"></div>
+        </div>
 
-          <div class="panel" data-panel="boards" hidden>
-            <div id="boards" class="boards"></div>
-          </div>
-
-          <div class="panel" data-panel="ach" hidden>
-            <div class="ach-grid" id="ach-grid"></div>
-          </div>
-
-          <div class="panel" data-panel="rivals" hidden>
-            <div class="rivals" id="rivals"></div>
-            <p class="hint">Invite someone to a private room and the score between you is kept forever. Friendlies don't add ranked points, but they keep your streak alive.</p>
-          </div>
+        <div class="panel" data-panel="rivals" hidden>
+          <div class="rivals" id="rivals"></div>
+          <p class="hint">Friendlies keep a head-to-head score and your streak, but no ranked points.</p>
         </div>
       </div>
 
@@ -219,7 +199,7 @@
       </div>
 
       <div class="host-bar" id="host-bar" hidden>
-        <label class="check"><input type="checkbox" id="bots-check" checked> Fill empty seats with bots</label>
+        <label class="check"><input type="checkbox" id="bots-check" checked> Bots fill seats</label>
         <div class="seg small" id="host-lang">
           <button data-lang="mix" class="on">Both</button>
           <button data-lang="js">JS</button>
@@ -251,10 +231,11 @@
             <div class="term-actions">
               <button class="btn ghost small" id="btn-lifeline" title="Multiple choice for half the points">🛟 Lifeline</button>
               <span class="term-note" id="term-note">Enter moves to the next line · Ctrl+Enter locks in</span>
-              <button class="btn primary" id="btn-lock">Lock in ⏎</button>
+              <button class="btn primary" id="btn-lock">Lock in</button>
             </div>
             <div class="choices" id="choices" hidden></div>
             <div class="locked-overlay" id="locked-overlay" hidden>
+              <svg class="stamp" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><path d="M21 33l7.5 7.5L44 25"/></svg>
               <b>Locked in</b><span id="locked-sub">Waiting for the room…</span>
             </div>
           </div>
@@ -272,12 +253,12 @@
               <p id="explain-text"></p>
               <div class="explain-actions">
                 <button class="btn small ghost" id="btn-lab" hidden>🧪 Tinker with it</button>
-                <button class="btn small primary" id="btn-next" hidden>Next round →</button>
+                <button class="btn small primary" id="btn-next" hidden>Next round</button>
               </div>
             </div>
             <div class="lab" id="lab" hidden>
               <textarea id="lab-code" spellcheck="false"></textarea>
-              <div class="lab-actions"><button class="btn small primary" id="btn-lab-run">▶ Run</button><span id="lab-status"></span></div>
+              <div class="lab-actions"><button class="btn small primary" id="btn-lab-run">Run</button><span id="lab-status"></span></div>
               <pre class="lab-out" id="lab-out"></pre>
             </div>
             <div class="round-results" id="round-results"></div>
@@ -299,7 +280,7 @@
 
       <div class="callouts" id="callouts" aria-live="polite"></div>
 
-      <button class="chat-toggle" id="chat-toggle" title="Room chat" aria-label="Room chat">💬</button>
+      <button class="chat-toggle" id="chat-toggle" title="Room chat" aria-label="Room chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16h0.5A2.5 2.5 0 0 1 5 13.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
       <aside class="chat" id="chat" hidden>
         <div class="chat-head">Room chat <button class="icon-btn" id="chat-close" aria-label="Close chat">✕</button></div>
         <div class="chat-log" id="chat-log"></div>
@@ -312,59 +293,39 @@
   </main>
 
   <footer class="site-foot" id="site-foot">
-    <svg class="foot-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M10 8l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <div class="foot-inner">
       <div class="foot-cta">
-        <div>
-          <p class="foot-kicker">Ready when you are</p>
-          <h2>Think you know what it <em class="mark">prints<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 10c30-6 62 4 96-1s58-6 98 2" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></em>?</h2>
-          <p>A match starts within seconds and empty seats are filled by bots, so there's always a game on.</p>
-        </div>
+        <h2>Think you know what it <em>prints?</em></h2>
         <div class="foot-cta-actions">
           <a class="btn primary" href="#play-now" data-go="quick">Play a round</a>
-          <a class="btn ghost" href="#play-now" data-go="rush">Try Solo Rush</a>
+          <a class="text-link" href="#play-now" data-go="rush">Try Solo Rush</a>
         </div>
       </div>
-      <div class="foot-grid">
-        <div class="foot-brand">
-          <a class="brand" href="/">
-            <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="mark-g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#c2410c"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#mark-g2)"/><path d="M10 10l6 6-6 6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 23h6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
-            Gotcha Rush
-          </a>
-          <p>A live "what does this print?" quiz. Tricky JavaScript and Python snippets, five players a room, forty seconds a round. No sign-up.</p>
-        </div>
-        <div class="foot-col">
-          <h4>Play</h4>
-          <a href="#play-now" data-go="quick">Quick match</a>
-          <a href="#play-now" data-go="rush">Solo Rush</a>
+      <div class="foot-row">
+        <a class="brand" href="/">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#16130F"/><path d="M10 10l6 6-6 6" fill="none" stroke="#FAF8F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 22.5h5.5" stroke="#B8612E" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <span>Gotcha Rush</span>
+        </a>
+        <nav class="foot-links" aria-label="Footer">
           <a href="#play-now" data-go="friends">Play with friends</a>
-        </div>
-        <div class="foot-col">
-          <h4>Learn</h4>
-          <a href="#how-it-works" data-go="how">How a round goes</a>
-          <a href="#home-panel" data-go="boards">World rankings</a>
+          <a href="#home-panel" data-go="boards">Rankings</a>
           <a href="#home-panel" data-go="ach">Achievements</a>
           <a href="#home-panel" data-go="rivals">Rivals</a>
-        </div>
-        <div class="foot-col">
-          <h4>Project</h4>
           <a href="#under-the-hood" data-go="tech">Under the hood</a>
-          <span>Node.js + WebSockets, zero front-end build</span>
-          <span>MIT licensed</span>
-        </div>
+        </nav>
       </div>
       <details class="how-tech" id="under-the-hood">
         <summary>Under the hood</summary>
         <ul class="how">
-          <li><b>Every puzzle is executed, not hand-typed.</b> The bank is frozen by running each snippet through a real runtime (<span id="rt-info">Node.js / CPython</span>) — the output you're guessing is what actually printed.</li>
-          <li><b>The server does as little as possible.</b> The puzzle bank is cached in your browser, so a match round is a puzzle id on the wire and the snippet is highlighted and animated locally. Solo Rush runs entirely in this tab and is only submitted at the end, where the server re-scores the whole answer log. Multiplayer rounds are graded on the server against a synced clock, so ping doesn't decide who was first.</li>
-          <li><b>Pluggable sandbox.</b> The same runner abstraction supports local, Docker (no network, capped CPU/memory, read-only, non-root) and Judge0 execution — which also powers the Lab for editing a snippet and re-running it after a reveal.</li>
+          <li><b>Every answer was really printed.</b> Each snippet is run through a real runtime (<span id="rt-info">Node.js / CPython</span>) when the bank is built.</li>
+          <li><b>Light on the wire.</b> The bank is cached in your browser, so a round is just a puzzle id. Solo Rush runs in this tab and the server re-scores the run at the end. Match rounds are graded on the server against a synced clock, so ping doesn't decide who was first.</li>
+          <li><b>Sandboxed runner.</b> Local, Docker or Judge0 execution, which also powers the Lab after a reveal.</li>
         </ul>
       </details>
       <div class="foot-bottom">
-        <span>© <span id="year">2026</span> Gotcha Rush</span>
+        <span>© <span id="year">2026</span> Gotcha Rush · MIT</span>
         <span id="bank-info"></span>
-        <a class="to-top" href="#top" data-go="top" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="to-top" href="#top" data-go="top" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
     </div>
   </footer>
@@ -408,7 +369,7 @@
 
   <div class="levelup" id="levelup" hidden>
     <div class="levelup-card">
-      <div class="levelup-eyebrow">LEVEL UP</div>
+      <div class="levelup-eyebrow">Level up</div>
       <div class="levelup-num" id="levelup-num">2</div>
       <div class="levelup-title" id="levelup-title">Junior</div>
       <div class="levelup-avatars" id="levelup-avatars"></div>

@@ -60,7 +60,7 @@ const el = {
   name: $('#name'), country: $('#country'), flagPrev: $('#flag-preview'), code: $('#code'),
   online: $('#online'), ping: $('#ping'), pingPill: $('#ping-pill'), soundBtn: $('#sound-btn'),
   topLevel: $('#top-level'), topTitle: $('#top-title'), topAvatar: $('#top-avatar'), topName: $('#top-name'), topXp: $('#top-xp'),
-  avatarRow: $('#avatar-row'), langSeg: $('#lang-seg'), heroDemo: $('#hero-demo'), bankInfo: $('#bank-info'), rtInfo: $('#rt-info'),
+  avatarRow: $('#avatar-row'), meAvatar: $('#me-avatar'), langSeg: $('#lang-seg'), heroDemo: $('#hero-demo'), bankInfo: $('#bank-info'), rtInfo: $('#rt-info'),
   profLevel: $('#prof-level'), profTitle: $('#prof-title'), levelRing: $('#level-ring'), xpFill: $('#xp-fill'), xpText: $('#xp-text'),
   streakBox: $('#streak-box'), streakFlame: $('#streak-flame'), streakDays: $('#streak-days'), streakSub: $('#streak-sub'), streakWeek: $('#streak-week'),
   rankChips: $('#rank-chips'), stPoints: $('#st-points'), stSolved: $('#st-solved'), stAcc: $('#st-acc'), stWins: $('#st-wins'), stRush: $('#st-rush'), stCombo: $('#st-combo'),
@@ -188,31 +188,124 @@ window.addEventListener('scroll', () => topbar.classList.toggle('scrolled', wind
 new IntersectionObserver(([entry]) => document.body.classList.toggle('past-play', !entry.isIntersecting), { rootMargin: '-64px 0px 0px 0px' }).observe($('#play-now'));
 $('#year').textContent = new Date().getFullYear();
 
-// hero demo: tiny original teasers that "type" their answer
+// hero demo: a looping mini-round in place of a "how it works" explainer. The snippet
+// types itself, the room locks in, an answer is typed and locked, the output checks out,
+// and the points and combo pop. Every output below is what the real runtime prints.
 const DEMO = [
-  ['console.log("2" * "3")', '6'],
-  ['print(0.1 + 0.2 == 0.3)', 'False'],
-  ['console.log([] + {})', '[object Object]'],
-  ['print(-7 // 2)', '-4'],
-  ['console.log(typeof null)', 'object'],
-  ['print(round(2.5))', '2'],
+  { lang: 'js', code: 'const x = "5" - 2;\nconsole.log(x + "1");', out: '31', pts: 296 },
+  { lang: 'py', code: 'print(round(2.5), round(3.5))', out: '2 4', pts: 318 },
+  { lang: 'js', code: 'const a = [10, 1, 2];\nconsole.log(a.sort());', out: '[ 1, 10, 2 ]', pts: 342 },
+  { lang: 'py', code: 'x = [1, 2]\ny = x\ny += [3]\nprint(x)', out: '[1, 2, 3]', pts: 365 },
+  { lang: 'js', code: 'console.log("b" + "a" + +"a" + "a");', out: 'baNaNa', pts: 388 },
 ];
-let demoIdx = 0;
-function heroTick() {
-  const [q, a] = DEMO[demoIdx % DEMO.length];
-  demoIdx++;
-  el.heroDemo.innerHTML = `<span class="q">${escapeHtml(q)}</span><span class="a hidden">▍</span>`;
-  const out = el.heroDemo.querySelector('.a');
-  let i = 0;
-  const t = setInterval(() => {
-    i++;
-    out.textContent = a.slice(0, i) + (i < a.length ? '▍' : '');
-    out.classList.remove('hidden');
-    if (i >= a.length) clearInterval(t);
-  }, 90);
-}
-heroTick();
-setInterval(heroTick, 3600);
+const ICON = {
+  check: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  lock: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 7V5.2a2.5 2.5 0 0 1 5 0V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
+  flame: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5c.4 2.3 3.8 3.9 3.8 7.4A3.8 3.8 0 0 1 8 12.7a3.8 3.8 0 0 1-3.8-3.8c0-1.5.8-2.5 1.6-3.2.1 1.2.7 2 1.5 2.3C7 6 7.2 3.6 8 1.5z" fill="currentColor"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+};
+const heroDemo = (() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const seat = (cls, id) => { const a = avatarFor(id); return `<div class="demo-seat ${cls}" style="--c:${a.color}"><span>${a.emoji}</span><i class="demo-check">${ICON.check}</i></div>`; };
+  el.heroDemo.innerHTML = `<div class="demo">
+    <div class="demo-win">
+      <div class="demo-bar"><span class="demo-dots"><i></i><i></i><i></i></span><span class="demo-file">main.js</span><span class="demo-lang">JavaScript</span><span class="demo-clock"><svg viewBox="0 0 36 36"><circle class="t" cx="18" cy="18" r="15.5"/><circle class="a" cx="18" cy="18" r="15.5"/></svg><b>40</b></span></div>
+      <pre class="demo-code"></pre>
+      <div class="demo-term"><span class="demo-prompt">1</span><span class="demo-typed"></span><i class="demo-caret"></i><span class="demo-stamp">${ICON.lock.replace('<svg', '<svg class="lk"')}${ICON.check.replace('<svg', '<svg class="ok"')}<span class="lk">Locked</span><span class="ok">Correct</span></span></div>
+    </div>
+    ${seat('s1', 'fox')}${seat('s2', 'octopus')}${seat('s3', 'robot')}${seat('s4', 'ghost')}${seat('me', account.avatar)}
+    <div class="demo-pop">+0</div>
+    <div class="demo-combo">${ICON.flame}Combo <b>×2</b></div>
+  </div>`;
+  const root = el.heroDemo.querySelector('.demo');
+  const q = (s) => root.querySelector(s);
+  const parts = { file: q('.demo-file'), lang: q('.demo-lang'), code: q('.demo-code'), typed: q('.demo-typed'), clock: q('.demo-clock b'), pop: q('.demo-pop'), combo: q('.demo-combo b'), seats: [...root.querySelectorAll('.demo-seat')] };
+  let idx = 0;
+  let timers = [];
+  let visible = true;
+  let running = false;
+  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+  const phase = (p) => { root.className = `demo ${p}${reduced ? ' still' : ''}`; };
+
+  function fill(d, n) {
+    parts.file.textContent = d.lang === 'js' ? 'main.js' : 'main.py';
+    parts.lang.textContent = d.lang === 'js' ? 'JavaScript' : 'Python';
+    parts.lang.className = `demo-lang ${d.lang}`;
+    const raw = d.code.split('\n');
+    let delay = 0;
+    parts.code.innerHTML = highlightLines(d.code, d.lang).map((html, i) => {
+      const chars = Math.max(1, raw[i].length);
+      const t = chars * 0.032;
+      const line = `<div class="ln"><i>${i + 1}</i><span style="--n:${chars};--t:${t.toFixed(2)}s;--d:${delay.toFixed(2)}s">${html}</span></div>`;
+      delay += t + 0.1;
+      return line;
+    }).join('');
+    parts.pop.textContent = `+${d.pts}`;
+    parts.combo.textContent = `×${(n % 4) + 2}`;
+    return delay;
+  }
+
+  function round() {
+    timers.forEach(clearTimeout);
+    timers = [];
+    if (!visible) { running = false; return; }
+    running = true;
+    const d = DEMO[idx % DEMO.length];
+    const typedMs = fill(d, idx) * 1000;
+    idx++;
+    parts.seats.forEach((s) => s.classList.remove('done'));
+    if (reduced) {
+      parts.typed.textContent = d.out;
+      parts.clock.textContent = '27';
+      parts.seats.forEach((s) => s.classList.add('done'));
+      phase('p-reveal');
+      later(round, 6000);
+      return;
+    }
+    parts.typed.textContent = '';
+    phase('p-out');
+    void root.offsetWidth;
+    phase('p-code');
+    let secs = 40;
+    parts.clock.textContent = secs;
+    const tick = setInterval(() => { if (secs > 24) parts.clock.textContent = --secs; }, 420);
+    timers.push(tick);
+    later(() => parts.seats[1].classList.add('done'), typedMs + 500);
+    later(() => {
+      phase('p-answer');
+      let i = 0;
+      const type = setInterval(() => {
+        i++;
+        parts.typed.textContent = d.out.slice(0, i);
+        if (i >= d.out.length) clearInterval(type);
+      }, 105);
+      timers.push(type);
+    }, typedMs + 350);
+    const lockAt = typedMs + 350 + d.out.length * 105 + 450;
+    later(() => { clearInterval(tick); phase('p-locked'); parts.seats[4].classList.add('done'); }, lockAt);
+    later(() => parts.seats[0].classList.add('done'), lockAt + 300);
+    later(() => parts.seats[2].classList.add('done'), lockAt + 650);
+    later(() => { phase('p-reveal'); parts.seats[3].classList.add('done'); }, lockAt + 1000);
+    later(() => phase('p-out'), lockAt + 3600);
+    later(round, lockAt + 4100);
+  }
+
+  // only animate while the stage is on screen
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible && !running) round();
+  }).observe(el.heroDemo);
+  round();
+
+  return {
+    setMe(id) {
+      const a = avatarFor(id);
+      const me = parts.seats[4];
+      me.style.setProperty('--c', a.color);
+      me.querySelector('span').textContent = a.emoji;
+    },
+  };
+})();
 
 /* ------------------------------------------------------- profile & garage */
 
@@ -254,10 +347,10 @@ function renderStreak() {
   el.streakDays.textContent = n > 0 ? `${n}-day streak` : 'No streak yet';
   const bonus = Math.round(Math.min(50, n * 5));
   el.streakSub.textContent = n === 0
-    ? 'Play on any day to start one. Each day in a row adds +5% points, up to +50%.'
+    ? 'Each day in a row adds +5% points, up to +50%'
     : today
-      ? `Today is banked ✓  ·  +${bonus}% on every point  ·  best: ${plural(account.bestStreak, 'day')}`
-      : `Play today to keep it alive  ·  +${bonus}% on every point  ·  best: ${plural(account.bestStreak, 'day')}`;
+      ? `Today is banked · +${bonus}% points · best ${plural(account.bestStreak, 'day')}`
+      : `Play today to keep it · +${bonus}% points · best ${plural(account.bestStreak, 'day')}`;
   const pips = [];
   for (let i = 6; i >= 0; i--) {
     const covered = today ? i < n : i > 0 && i <= n;
@@ -299,16 +392,23 @@ function renderAvatars() {
     const locked = a.unlock > lvl;
     return `<button class="avatar-pick ${locked ? 'locked' : ''} ${a.id === account.avatar ? 'on' : ''}" data-av="${a.id}" data-lvl="L${a.unlock}" style="--c:${a.color}" title="${a.name}${locked ? ` · unlocks at level ${a.unlock}` : ''}">${a.emoji}</button>`;
   }).join('');
+  if (!el.avatarRow.dataset.intro) { el.avatarRow.dataset.intro = '1'; setTimeout(() => el.avatarRow.classList.add('settled'), 1600); }   // the pop-in plays once, not on every refresh
   const me = avatarFor(account.avatar);
   el.topAvatar.textContent = me.emoji;
   el.topAvatar.style.setProperty('--c', me.color);
+  el.meAvatar.textContent = me.emoji;
+  el.meAvatar.style.setProperty('--c', me.color);
+  heroDemo.setMe(me.id);
 }
 el.avatarRow.addEventListener('click', (e) => {
   const b = e.target.closest('.avatar-pick');
   if (!b) return;
   const a = avatarFor(b.dataset.av);
   if (a.unlock > account.level) { toast(`${a.name} unlocks at level ${a.unlock} — keep playing!`, 'warn', 2200); return; }
-  if (account.setAvatar(a.id)) { sound.ensure(); sound.join(); renderAvatars(); if (net.connected) identify(); }
+  if (account.setAvatar(a.id)) {
+    sound.ensure(); sound.join(); renderAvatars(); if (net.connected) identify();
+    el.meAvatar.classList.remove('swap'); void el.meAvatar.offsetWidth; el.meAvatar.classList.add('swap');
+  }
 });
 
 function renderAchievements() {
@@ -606,7 +706,7 @@ function refreshHead(m) {
     const me = m.players.find((p) => p.id === S.myId);
     const lives = me ? me.lives : m.lives;
     const total = window.GotchaScoring.RULES.RUSH_LIVES;
-    el.lives.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i < lives ? '' : 'lost'}">❤️</i>`).join('');
+    el.lives.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i < lives ? '' : 'lost'}">${ICON.heart}</i>`).join('');
   }
   if (m.state === 'round' || m.state === 'reveal') {
     el.roundPill.textContent = m.mode === 'rush' ? `Round ${m.roundNo}` : `Round ${m.roundNo} of ${m.totalRounds}`;
@@ -724,6 +824,11 @@ function showChoices(choices) {
   el.choices.innerHTML = choices.map((c, i) => `<button class="choice" data-i="${i}" style="animation-delay:${i * 70}ms"><span class="k">${String.fromCharCode(65 + i)}</span>${escapeHtml(c)}</button>`).join('');
   el.choices.querySelectorAll('.choice').forEach((b) => b.addEventListener('click', () => lockIn(choices[Number(b.dataset.i)].split('\n'))));
   el.termHint.textContent = 'pick one — this round pays half';
+  // on phones the choices land below the fold, so bring them up
+  if (window.matchMedia('(max-width: 960px)').matches) {
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    requestAnimationFrame(() => el.choices.scrollIntoView({ block: 'nearest', behavior: smooth ? 'smooth' : 'auto' }));
+  }
 }
 
 document.addEventListener('keydown', (e) => {
@@ -739,7 +844,7 @@ function renderPlayers(m) {
   const standings = [...m.players].sort((a, b) => b.score - a.score || (a.isBot ? 1 : 0) - (b.isBot ? 1 : 0));
   const ids = standings.map((p) => p.id).join(',');
   const before = new Map();
-  for (const card of el.players.children) before.set(card.dataset.id, card.getBoundingClientRect().top);
+  for (const card of el.players.children) before.set(card.dataset.id, card.getBoundingClientRect());
   const seen = new Set();
   standings.forEach((p) => {
     seen.add(p.id);
@@ -777,7 +882,7 @@ function renderPlayers(m) {
       st.textContent = '';
       sub.textContent = p.isBot ? 'bot' : p.connected === false ? 'reconnecting…' : 'ready';
     }
-    card.querySelector('.score small').innerHTML = p.combo > 1 ? `<span class="combo ${p.combo >= 4 ? 'hot' : ''}">🔥 ×${p.combo}</span>` : (m.mode === 'rush' ? `<span class="lives">${'❤️'.repeat(Math.max(0, p.lives || 0))}</span>` : 'pts');
+    card.querySelector('.score small').innerHTML = p.combo > 1 ? `<span class="combo ${p.combo >= 4 ? 'hot' : ''}">🔥 ×${p.combo}</span>` : (m.mode === 'rush' ? `<span class="lives">${ICON.heart.repeat(Math.max(0, p.lives || 0))}</span>` : 'pts');
   });
   for (const card of [...el.players.children]) {
     if (!seen.has(card.dataset.id)) { card.classList.add('leaving'); setTimeout(() => card.remove(), 300); }
@@ -790,11 +895,12 @@ function renderPlayers(m) {
     for (const card of el.players.children) {
       const was = before.get(card.dataset.id);
       if (was == null) continue;
-      const now = card.getBoundingClientRect().top;
-      const dy = was - now;
-      if (Math.abs(dy) > 1) {
+      const now = card.getBoundingClientRect();
+      const dx = was.left - now.left;   // the strip runs sideways on phones, down the sidebar on desktop
+      const dy = was.top - now.top;
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
         card.style.transition = 'none';
-        card.style.transform = `translateY(${dy}px)`;
+        card.style.transform = `translate(${dx}px, ${dy}px)`;
         requestAnimationFrame(() => requestAnimationFrame(() => { card.style.transition = ''; card.style.transform = ''; }));
         if (prevIds.indexOf(card.dataset.id) > standings.findIndex((p) => p.id === card.dataset.id)) { card.classList.remove('rank-up'); void card.offsetWidth; card.classList.add('rank-up'); }
       }
@@ -929,7 +1035,7 @@ function onReveal(rv) {
     el.explainText.textContent = rv.explain;
     el.explain.hidden = false;
     el.btnNext.hidden = !isRush;
-    el.btnNext.textContent = rv.last ? 'See results →' : 'Next round →';
+    el.btnNext.textContent = rv.last ? 'See results' : 'Next round';
     renderRoundResults(rv);
     if (S.room) renderPlayers(S.room);
   }, tVerdict + 500);
@@ -977,7 +1083,7 @@ function showResults(m) {
   const results = m.results || [];
   const mine = results.find((r) => r.id === S.myId);
   const isRush = m.mode === 'rush';
-  el.resultsTitle.textContent = isRush ? `Run over — ${mine ? mine.score.toLocaleString() : 0} points` : mine && mine.rank === 1 ? '🏆 You won the match!' : mine ? `You placed ${medal(mine.rank)}` : 'Match results';
+  el.resultsTitle.innerHTML = isRush ? `Run over · <em>${mine ? mine.score.toLocaleString() : 0} points</em>` : mine && mine.rank === 1 ? 'You <em>won</em> the match' : mine ? `You placed <em>${medal(mine.rank)}</em>` : 'Match <em>results</em>';
   const top = isRush ? [] : [results[1], results[0], results[2]];
   el.podium.hidden = isRush;
   el.podium.innerHTML = top.map((r, i) => {
@@ -990,7 +1096,8 @@ function showResults(m) {
     <tr class="${r.id === S.myId ? 'me' : ''}" style="--c:${avatarFor(r.avatar).color}"><td>${medal(r.rank)}</td><td><span class="swatch"></span>${flag(r.country)} ${escapeHtml(r.name)}${r.isBot ? ' <span class="tag">BOT</span>' : ''}</td><td class="num">${r.correct}/${r.rounds}</td><td class="num">${r.bestCombo}</td><td class="num score">${r.score.toLocaleString()}</td></tr>`).join('');
   el.myRace.hidden = !mine;
   if (mine) {
-    el.mrScore.textContent = mine.score.toLocaleString();
+    el.mrScore.textContent = '0';
+    setTimeout(() => tweenNumber(el.mrScore, 0, mine.score, 1100), 450);   // the score counts up as the card lands
     el.mrCorrect.textContent = `${mine.correct}/${mine.rounds}`;
     el.mrCombo.textContent = mine.bestCombo;
     el.mrFast.textContent = mine.fastestMs != null ? `${(mine.fastestMs / 1000).toFixed(1)}s` : '–';

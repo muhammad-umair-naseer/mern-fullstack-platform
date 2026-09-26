@@ -10,7 +10,7 @@ import { RaceGame } from './game.js';
 import { Account, pointsForLevel } from './account.js';
 import { Boards } from './boards.js';
 import { SKINS } from './skins.js';
-import { carSvg } from './cars.js';
+import { carSvg, paint, SHOWROOM } from './cars.js';
 import { COUNTRIES, flag, detectCountry } from './countries.js';
 import { $, escapeHtml, fmtTime, toast, medal } from './ui.js';
 import { Solo, PACERS } from './solo.js';
@@ -32,6 +32,8 @@ const clock = new ServerClock(net);
 const sound = new Sound();
 const bg = new Background($('#bg'));
 const confetti = new Confetti($('#confetti'));
+// the small cars in the how-to-play pictures (decoration only)
+for (const n of document.querySelectorAll('.how-art [data-car]')) n.innerHTML = carSvg(n.dataset.car);
 const track = new Track($('#track'));
 const typing = new TypingArea($('#passage'), $('#hidden-input'));
 const game = new RaceGame();
@@ -409,7 +411,7 @@ function renderGarage() {
     const locked = s.unlock > lvl;
     const sel = s.id === account.skin;
     return `<button class="skin ${locked ? 'locked' : ''} ${sel ? 'selected' : ''}" data-skin="${s.id}" title="${escapeHtml(s.blurb)}" ${locked ? 'aria-disabled="true"' : ''}>
-      <div class="skin-car" style="--c:${sel ? 'var(--accent-2)' : '#8f86ff'}">${carSvg(s.id)}</div>
+      <div class="skin-car" style="--c:${SHOWROOM[s.id] || '#B8612E'}">${carSvg(s.id)}</div>
       <div class="skin-name">${escapeHtml(s.name)}</div>
       <div class="skin-sub">${locked ? `🔒 Lvl ${s.unlock}` : sel ? '✓ Riding' : 'Select'}</div>
     </button>`;
@@ -931,8 +933,8 @@ function enterState(m) {
     el.countdown.hidden = false;
     S.lastCd = null;
     el.cdSub.textContent = (m.bonusWords || []).length
-      ? `Get ready to type… ${m.bonusWords.length} words in here are worth extra`
-      : 'Fingers on the keys…';
+      ? `Get ready · ${m.bonusWords.length} ✦ bonus words`
+      : 'Fingers on the keys';
   } else if (st === 'racing') {
     if (typing.text !== S.passage) { // joined/reconnected straight into a race
       resetLocal();
@@ -1036,7 +1038,7 @@ function onFinished(m) {
 function onChat(m) {
   const div = document.createElement('div');
   div.className = 'msg';
-  div.innerHTML = `<span class="who" style="color:${escapeHtml(m.from.color)}">${flag(m.from.country)} ${escapeHtml(m.from.name)}</span> ${escapeHtml(m.text)}`;
+  div.innerHTML = `<span class="who" style="--c:${escapeHtml(paint(m.from.color))}">${flag(m.from.country)} ${escapeHtml(m.from.name)}</span> ${escapeHtml(m.text)}`;
   el.chatLog.appendChild(div);
   el.chatLog.scrollTop = el.chatLog.scrollHeight;
   if (el.chat.hidden && m.from.id !== myId()) {
@@ -1232,7 +1234,7 @@ function showResults(m) {
   el.podium.innerHTML = top.map((r, i) => {
     if (!r) return '<div class="podium-slot empty"></div>';
     const place = i === 1 ? 1 : i === 0 ? 2 : 3;
-    return `<div class="podium-slot p${place} ${r.id === myId() ? 'me' : ''}" style="--c:${escapeHtml(r.color)}">
+    return `<div class="podium-slot p${place} ${r.id === myId() ? 'me' : ''}" style="--c:${escapeHtml(paint(r.color))}">
       <div class="podium-car">${carSvg(r.skin)}</div>
       <div class="podium-name">${flag(r.country)} ${escapeHtml(r.name)}</div>
       <div class="podium-wpm">${r.wpm}<small>WPM</small></div>
@@ -1241,7 +1243,7 @@ function showResults(m) {
   }).join('');
 
   el.resultsBody.innerHTML = results.map((r) => `
-    <tr class="${r.id === myId() ? 'me' : ''}" style="--c:${escapeHtml(r.color)}">
+    <tr class="${r.id === myId() ? 'me' : ''}" style="--c:${escapeHtml(paint(r.color))}">
       <td>${medal(r.rank)}</td>
       <td><span class="swatch"></span>${flag(r.country)} ${escapeHtml(r.name)}${r.isBot ? ' <span class="tag bot">BOT</span>' : ''}</td>
       <td class="num">${r.wpm}</td>
@@ -1305,7 +1307,7 @@ function renderSeries(m) {
   const line = rows.map((r) => `${escapeHtml(r.name)} ${r.wins}`).join('  ·  ');
   el.series.textContent = `Series: ${line}`;
   el.mrSeries.innerHTML = `<span class="mr-series-label">Room series</span>` + rows.map((r) => `
-    <span class="series-pill ${r.id === myId() ? 'me' : ''}" style="--c:${escapeHtml(r.color)}">
+    <span class="series-pill ${r.id === myId() ? 'me' : ''}" style="--c:${escapeHtml(paint(r.color))}">
       ${flag(r.country)} ${escapeHtml(r.name)} <b>${r.wins}</b>
     </span>`).join('');
 }
@@ -1371,7 +1373,7 @@ function showLevelUp(out) {
   el.levelupNum.textContent = out.levelAfter;
   el.levelupTitle.textContent = account.title;
   el.levelupSkins.innerHTML = out.newSkins.length
-    ? out.newSkins.map((s) => `<div class="lu-skin" style="--c:var(--accent-2)">${carSvg(s.id)}<span>${escapeHtml(s.name)} unlocked</span></div>`).join('')
+    ? out.newSkins.map((s) => `<div class="lu-skin" style="--c:${SHOWROOM[s.id] || '#B8612E'}">${carSvg(s.id)}<span>${escapeHtml(s.name)} unlocked</span></div>`).join('')
     : '';
   el.levelup.classList.remove('out');
   el.levelup.hidden = false;
