@@ -30,6 +30,10 @@ module.exports = {
   // --- accounts, ranking & streaks ---
   DATA_FILE: process.env.DATA_FILE || 'data/typedash.json',
   RANKED_PRIVATE: process.env.RANKED_PRIVATE === '1',  // friendlies are unranked by default
+  // Boards and ranks list signed-in (Cortexis, cx_) players only. RANK_GUESTS=1
+  // lets guests on too: a LAN party with no website, or the older test suites.
+  RANK_GUESTS: process.env.RANK_GUESTS === '1',
+  CX_SESSIONS_MAX: num('CX_SESSIONS_MAX', 10),   // devices signed in to one Cortexis account at once
   STREAK_BONUS_STEP: 0.05,                 // +5% points per day of streak
   STREAK_BONUS_CAP: 0.5,                   // ...capped at +50%
   BOARD_SIZE: num('BOARD_SIZE', 25),       // rows returned per ranking board

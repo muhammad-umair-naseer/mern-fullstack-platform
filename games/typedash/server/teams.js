@@ -69,6 +69,18 @@ class Teams {
     return team.members.length ? team : null;
   }
 
+  /** A guest signed in: the account takes the guest's place in its team, or the guest leaves if the account already has one. */
+  handOver(guest, into) {
+    const team = this.of(guest);
+    if (!team) return;
+    if (into.team && this.get(into.team)) { this.leave(guest); return; }
+    team.members = team.members.map((id) => (id === guest.id ? into.id : id));
+    if (team.ownerId === guest.id) team.ownerId = into.id;
+    into.team = team.id;
+    guest.team = null;
+    this.store.touch();
+  }
+
   /** Fresh invite code (owner only). */
   rotateInvite(acc) {
     const team = this.of(acc);
@@ -93,7 +105,7 @@ class Teams {
       let races = 0;
       for (const id of team.members) {
         const a = this.accounts.accounts[id];
-        if (!a || !live(a, win)) continue;
+        if (!a || !this.accounts.isRanked(a) || !live(a, win)) continue;
         value += this.pointsIn(a, win);
         races += win === 'all' ? a.races : win === 'season' ? (a.season ? a.season.races : 0) : win === 'week' ? a.week.races : a.day.races;
       }
@@ -107,7 +119,7 @@ class Teams {
   countryRows(win, live) {
     const sums = new Map();
     for (const a of this.accounts.all) {
-      if (!isCountry(a.country) || !live(a, win)) continue;
+      if (!this.accounts.isRanked(a) || !isCountry(a.country) || !live(a, win)) continue;
       const v = this.pointsIn(a, win);
       if (!v) continue;
       const s = sums.get(a.country) || { id: a.country, name: nameOf(a.country), country: a.country, skin: 'flag', value: 0, tie: 0, players: 0, races: 0, streak: 0 };

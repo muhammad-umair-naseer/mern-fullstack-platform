@@ -34,6 +34,7 @@ class Ghosts {
     this.data = store.data.ghosts || (store.data.ghosts = { wr: {}, pb: {} });
     this.data.wr ||= {};
     this.data.pb ||= {};
+    this.rankedId = null;   // (accountId) => bool; only ranked (signed-in) players hold world records
   }
 
   ghost(acc, r, max) {
@@ -52,7 +53,7 @@ class Ghosts {
     const out = { wr: false, pb: false, prevWr: null, prevPb: null };
     if (!acc || !r || !r.finished || !r.verified || !Array.isArray(r.timeline) || r.timeline.length < 2 || !(r.wpm > 0)) return out;
     const id = r.passageId;
-    const prevWr = this.data.wr[id] || null;
+    const prevWr = this.wr(id);
     const mine = (this.data.pb[acc.id] ||= {});
     const prevPb = mine[id] || null;
     out.prevWr = prevWr ? { name: prevWr.name, wpm: prevWr.wpm, accountId: prevWr.accountId } : null;
@@ -67,7 +68,7 @@ class Ghosts {
         delete mine[ids[0]];
       }
     }
-    if (!prevWr || r.wpm > prevWr.wpm) {
+    if (this.holds(acc.id) && (!prevWr || r.wpm > prevWr.wpm)) {
       this.data.wr[id] = this.ghost(acc, r, WR_SAMPLES);
       out.wr = true;
     }
@@ -75,7 +76,27 @@ class Ghosts {
     return out;
   }
 
-  wr(passageId) { return this.data.wr[passageId] || null; }
+  /** A guest signed in: their personal bests (and any record they hold) now belong to the account. */
+  handOver(guest, into) {
+    const from = this.data.pb[guest.id];
+    if (from) {
+      const mine = (this.data.pb[into.id] ||= {});
+      for (const [pid, g] of Object.entries(from)) if (!mine[pid] || g.wpm > mine[pid].wpm) mine[pid] = { ...g, accountId: into.id, name: into.name };
+      const ids = Object.keys(mine);
+      if (ids.length > PB_PASSAGES) ids.sort((a, b) => mine[a].at - mine[b].at).slice(0, ids.length - PB_PASSAGES).forEach((k) => delete mine[k]);
+      delete this.data.pb[guest.id];
+    }
+    for (const g of Object.values(this.data.wr)) if (g.accountId === guest.id) { g.accountId = into.id; g.name = into.name; }
+    this.store.touch();
+  }
+
+  holds(accountId) { return !this.rankedId || this.rankedId(accountId); }
+
+  /** The standing record on a passage; one held by a guest (from before sign-in existed) does not count. */
+  wr(passageId) {
+    const g = this.data.wr[passageId] || null;
+    return g && this.holds(g.accountId) ? g : null;
+  }
   pb(accountId, passageId) { return (this.data.pb[accountId] || {})[passageId] || null; }
 
   /** Public view of a ghost for /api/ghost (no account id). */
@@ -87,6 +108,7 @@ class Ghosts {
   /** Every world record, fastest first (for the records / practice pages). */
   records() {
     return Object.entries(this.data.wr)
+      .filter(([, g]) => this.holds(g.accountId))
       .map(([passageId, g]) => ({ passageId, name: g.name, country: g.country, skin: g.skin, wpm: g.wpm, accuracy: g.accuracy, time: g.time, at: g.at }))
       .sort((a, b) => b.wpm - a.wpm);
   }

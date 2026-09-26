@@ -8,9 +8,11 @@
     "dev": "node --watch server/index.js",
     "verify": "node server/verify.js",
     "verify:check": "node server/verify.js --check",
-    "test": "npm run verify:check && npm run test:game",
-    "test:game": "DATA_FILE=/tmp/gotcha-test/game.json LOBBY_WAIT_MS=1500 START_MS=800 ROUND_MS=6000 AFTER_HUMANS_MS=800 REVEAL_MS=1200 RESULTS_MS=1500 ROUNDS=3 node test/run-test.js",
-    "simulate": "node test/simulate.js"
+    "test": "npm run verify:check && npm run test:game && npm run test:auth && npm run test:routes",
+    "test:game": "RANK_GUESTS=1 DATA_FILE=/tmp/gotcha-test/game.json LOBBY_WAIT_MS=1500 START_MS=800 ROUND_MS=6000 AFTER_HUMANS_MS=800 REVEAL_MS=1200 RESULTS_MS=1500 ROUNDS=3 node test/run-test.js",
+    "test:auth": "node test/auth-test.js",
+    "simulate": "node test/simulate.js",
+    "test:routes": "node --no-warnings test/routes-test.mjs"
   },
   "engines": {
     "node": ">=18"

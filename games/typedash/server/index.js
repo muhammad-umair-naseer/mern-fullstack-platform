@@ -25,6 +25,7 @@ const pages = require('./pages');
 const progression = require('./progression');
 const countries = require('./countries');
 const { dayKey } = require('./accounts');
+const cx = require('./cx');
 
 // Must match public/js/skins.js. Skins are cosmetic; the server only validates the id.
 const SKINS = ['dash', 'bolt', 'hatch', 'muscle', 'flame', 'pickup', 'rocket', 'checker', 'nova'];
@@ -38,6 +39,8 @@ const MIME = {
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.ico': 'image/x-icon',
+  '.webp': 'image/webp',
+  '.woff2': 'font/woff2',
   '.webmanifest': 'application/manifest+json',
 };
 
@@ -61,6 +64,76 @@ seasons.onArchived = (s) => { teams.archiveSeason(s.key, s.number, boards.live.b
 const seasonTimer = setInterval(() => seasons.check(), 60000);
 seasonTimer.unref?.();
 const clients = new Map();
+
+// Signed-in (Cortexis) players are the ranked ones; a guest who signs in brings
+// their daily entries, ghosts and team place along (accounts.merge).
+ghosts.rankedId = (id) => accounts.isRankedId(id);
+accounts.onMerge = (guest, into) => {
+  daily.moveEntries(guest.id, into);
+  ghosts.handOver(guest, into);
+  teams.handOver(guest, into);
+};
+
+/** Where a new or signing-in player is from: a CDN header, else the browser's own guess. */
+const firstCountry = (req, guess) => cx.headerCountry(req) || cx.guessCountry(guess);
+
+function readBody(req, limit = 32 * 1024) {
+  return new Promise((resolve, reject) => {
+    let raw = '';
+    req.on('data', (d) => { raw += d; if (raw.length > limit) { reject(new Error('too large')); req.destroy(); } });
+    req.on('end', () => resolve(raw));
+    req.on('error', reject);
+  });
+}
+
+function sendJson(res, status, obj) {
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+  res.end(JSON.stringify(obj));
+}
+
+/**
+ * Sign in with a Cortexis game token (see server/cx.js). The browser also
+ * sends the guest credentials it was playing under, so that guest's progress
+ * is folded into the Cortexis account once. Answers with this game's own
+ * session credentials for the cx_ account, stored like a guest's.
+ */
+function signInWithCortexis(body, req) {
+  let claims;
+  try {
+    claims = cx.verifyGameToken(body && body.gameToken);
+  } catch (err) {
+    return { status: err.code === 'config' ? 503 : 401, body: { error: err.message, code: err.code || 'invalid' } };
+  }
+  const g = body.accountId && Object.prototype.hasOwnProperty.call(accounts.accounts, body.accountId) ? accounts.accounts[body.accountId] : null;
+  const guest = g && body.token && accounts.tokenMatches(g, body.token) ? g : null;
+  const out = accounts.bindCortexis(claims, {
+    guest,
+    country: firstCountry(req, body.country),
+    nickname: cx.nicknameFrom(claims.name, cfg.MAX_NAME_LEN),
+  });
+  resetCaches();
+  if (manager.onRaceSettled) manager.onRaceSettled();
+  return {
+    status: 200,
+    body: { id: out.account.id, token: out.token, created: out.created, merged: out.merged, profile: accounts.profile(out.account), standings: boards.standings(out.account) },
+  };
+}
+
+async function handleAuth(req, res, urlPath) {
+  if (urlPath === '/api/auth/config') return sendJson(res, 200, cx.siteConfig(req));
+  if (req.method !== 'POST') return sendJson(res, 405, { error: 'POST only.' });
+  let body;
+  try { body = JSON.parse(await readBody(req)) || {}; } catch (_) { return sendJson(res, 400, { error: 'Bad request body.' }); }
+  if (urlPath === '/api/auth/cortexis') {
+    const out = signInWithCortexis(body, req);
+    return sendJson(res, out.status, out.body);
+  }
+  if (urlPath === '/api/auth/signout') {
+    const acc = body.accountId && Object.prototype.hasOwnProperty.call(accounts.accounts, body.accountId) ? accounts.accounts[body.accountId] : null;
+    return sendJson(res, 200, { ok: true, revoked: acc ? accounts.revoke(acc, body.token) : false });
+  }
+  return sendJson(res, 404, { error: 'not found' });
+}
 
 /** Public origin for absolute URLs: configured, else what the proxy / client asked for. */
 function originOf(req) {
@@ -131,33 +204,13 @@ function indexHtml(origin) {
   }
   let html = indexCache.get(origin);
   if (!html) {
-    html = indexSrc.text.replace(/__ORIGIN__/g, origin);
+    // one navbar and footer for the whole site: the game gets the same markup as every page
+    html = indexSrc.text
+      .replace(/__ORIGIN__/g, origin)
+      .replace('<!--TD:NAV-->', pages.navbar())
+      .replace('<!--TD:FOOT-->', pages.footer({ origin }));
     indexCache.set(origin, html);
     if (indexCache.size > 20) indexCache.delete(indexCache.keys().next().value);
-  }
-  return html;
-}
-
-// The marketing/landing page lives at /; the game itself at /app. Both are
-// static except for the origin substitution, and both are cached per host.
-const SPLASH_PATH = path.join(PUBLIC_DIR, 'splash.html');
-let splashSrc = { mtime: 0, text: '' };
-const splashCache = new Map();
-function splashHtml(origin) {
-  const mtime = fs.statSync(SPLASH_PATH).mtimeMs;
-  if (mtime !== splashSrc.mtime) {
-    splashSrc = { mtime, text: fs.readFileSync(SPLASH_PATH, 'utf8') };
-    splashCache.clear();
-  }
-  let html = splashCache.get(origin);
-  if (!html) {
-    html = splashSrc.text
-      .replace(/__ORIGIN__/g, origin)
-      .replace(/__PASSAGES__/g, String(passages.PASSAGES.length))
-      .replace(/__LANGS__/g, String(Object.keys(passages.LANGS).length))
-      .replace(/__RACERS__/g, String(cfg.MAX_PLAYERS));
-    splashCache.set(origin, html);
-    if (splashCache.size > 20) splashCache.delete(splashCache.keys().next().value);
   }
   return html;
 }
@@ -191,6 +244,7 @@ function sitemapUrls() {
     { path: '/daily', changefreq: 'daily', priority: 0.9 },
     { path: '/practice', changefreq: 'weekly', priority: 0.8 },
     { path: '/leaderboard', changefreq: 'hourly', priority: 0.8 },
+    { path: '/how', changefreq: 'monthly', priority: 0.6 },
   ];
   for (const c of countriesWithPlayers()) urls.push({ path: `/leaderboard/${c}`, changefreq: 'daily', priority: 0.6 });
   for (const set of pages.practiceSets(passages.PASSAGES, passages.LANGS, passages.CATEGORIES)) urls.push({ path: set.path, changefreq: 'weekly', priority: 0.75 });
@@ -204,6 +258,9 @@ function sitemapUrls() {
 function serveStatic(req, res) {
   let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
 
+  if (urlPath.startsWith('/api/auth/')) {
+    return handleAuth(req, res, urlPath).catch((err) => sendJson(res, 500, { error: err.message }));
+  }
   if (urlPath === '/api/stats') {
     const body = JSON.stringify({
       online: clients.size, ...manager.stats(), accounts: accounts.size, uptime: Math.round(process.uptime()),
@@ -299,7 +356,7 @@ function serveStatic(req, res) {
     shares.viewed(m[1]);
     return sendHtml(res, 200, pages.sharePage(s, m[1], originOf(req)));
   }
-  if ((m = urlPath.match(/^\/u\/(p_[A-Za-z0-9_-]{6,24})\/?$/))) {
+  if ((m = urlPath.match(/^\/u\/((?:p_[A-Za-z0-9_-]{6,24})|(?:cx_[A-Za-z0-9_-]{1,40}))\/?$/))) {
     const acc = accounts.accounts[m[1]];
     if (!acc) return sendHtml(res, 404, pages.notFoundPage(originOf(req), urlPath));
     return sendHtml(res, 200, pages.profilePage(profileView(acc), originOf(req)));
@@ -309,7 +366,7 @@ function serveStatic(req, res) {
     if (!s) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('not found'); }
     return sendCard(res, `r:${m[1]}`, og.resultCard(s, originOf(req)), 365 * 86400000, 'public, max-age=31536000, immutable');
   }
-  if ((m = urlPath.match(/^\/og\/u\/(p_[A-Za-z0-9_-]{6,24})\.png$/))) {
+  if ((m = urlPath.match(/^\/og\/u\/((?:p_[A-Za-z0-9_-]{6,24})|(?:cx_[A-Za-z0-9_-]{1,40}))\.png$/))) {
     const acc = accounts.accounts[m[1]];
     if (!acc) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('not found'); }
     const p = profileView(acc);
@@ -369,8 +426,18 @@ function serveStatic(req, res) {
     return res.end('ok');
   }
 
-  if (urlPath === '/' || urlPath === '/index.html' || urlPath === '/splash') return sendHtml(res, 200, splashHtml(origin));
-  if (urlPath === '/app' || urlPath === '/app/') return sendHtml(res, 200, indexHtml(origin));
+  if (urlPath === '/' || urlPath === '/index.html' || urlPath === '/splash') {
+    const html = cachedPage(`home:${origin}`, 60000, () => pages.homePage({ origin, passages: passages.PASSAGES.length, langs: Object.keys(passages.LANGS).length, racers: cfg.MAX_PLAYERS }));
+    return sendHtml(res, 200, html);
+  }
+  if (urlPath === '/how' || urlPath === '/how/') return sendHtml(res, 200, cachedPage(`how:${origin}`, 600000, () => pages.howPage({ origin })), 'public, max-age=300');
+  // the game and its own pages (your stats, garage, team, awards) are one document
+  if (urlPath === '/app' || urlPath === '/app/' || /^\/app\/(profile|garage|team|awards|badges|signin)\/?$/.test(urlPath)) return sendHtml(res, 200, indexHtml(origin));
+  // pages that used to live inside the game moved to their own addresses
+  if ((m = urlPath.match(/^\/app\/(rankings|how)\/?$/))) {
+    res.writeHead(301, { Location: m[1] === 'rankings' ? '/leaderboard' : '/how' });
+    return res.end();
+  }
   const filePath = path.normalize(path.join(PUBLIC_DIR, urlPath));
   if (!filePath.startsWith(PUBLIC_DIR)) {
     res.writeHead(403);
@@ -387,7 +454,7 @@ function serveStatic(req, res) {
     // Code (css/js/manifest) must never be served stale: the browser revalidates
     // every time and gets a cheap 304 while nothing has changed. Only art that
     // rarely changes is allowed to sit in the cache.
-    const longLived = /^\/(icons|fonts)\//.test(urlPath);
+    const longLived = /^\/(icons|fonts|img)\//.test(urlPath);
     const tag = `W/"${stat.size.toString(16)}-${Math.round(stat.mtimeMs).toString(36)}"`;
     const lastModified = stat.mtime.toUTCString();
     const headers = {
@@ -442,23 +509,32 @@ function handle(player, msg) {
       return player.send({ type: 'pong', t: msg.t, st: Date.now() });
 
     case 'hello': {
-      player.name = sanitizeText(msg.name, cfg.MAX_NAME_LEN) || 'Guest-' + player.id.slice(0, 3);
+      const typed = sanitizeText(msg.name, cfg.MAX_NAME_LEN);
       player.country = sanitizeCountry(msg.country);
       player.skin = sanitizeSkin(msg.skin, SKINS);
 
-      // resolve (or mint) the persistent account behind this browser
-      if (!player.account) {
-        const { account, token, created } = accounts.login(msg.accountId, msg.token);
-        player.account = account;
+      // resolve (or mint) the persistent account behind this browser: on the
+      // first hello, or when the browser now holds different credentials (it
+      // just signed in with Cortexis)
+      let created = false;
+      if (!player.account || (msg.accountId && msg.accountId !== player.account.id)) {
+        const out = accounts.login(msg.accountId, msg.token, { country: player.ipCountry || cx.guessCountry(msg.countryGuess) || cx.guessCountry(msg.country) });
+        player.account = out.account;
+        created = out.created;
         player.send({
           type: 'account',
-          id: account.id,
-          token,                       // only sent when the account is minted
+          id: out.account.id,
+          token: out.token,            // only sent when the account is minted
           created,
-          profile: accounts.profile(account),
-          standings: boards.standings(account),
+          profile: accounts.profile(out.account),
+          standings: boards.standings(out.account),
         });
       }
+      // a brand-new player takes the country found at first contact; after that the player's own pick wins
+      if (created) player.country = player.account.country;
+      // a Cortexis player keeps their nickname when the browser has none to offer
+      const keepName = accounts.isCortexis(player.account) && (!typed || /^Guest(-\w+)?$/i.test(typed));
+      player.name = keepName ? player.account.name : typed || 'Guest-' + player.id.slice(0, 3);
       accounts.setIdentity(player.account, { name: player.name, country: player.country, skin: player.skin });
       const team = teams.of(player.account);
       player.tag = team ? team.tag : null;
@@ -467,6 +543,14 @@ function handle(player, msg) {
       if (team) player.send({ type: 'team', team: teams.view(team, boards) });
       if (player.room) player.room.broadcastState();
       return;
+    }
+
+    case 'signout': {
+      // back to a fresh guest: the next hello (without credentials) mints one
+      if (player.account) accounts.revoke(player.account, msg.token);
+      player.account = null;
+      player.tag = null;
+      return player.send({ type: 'signed_out' });
     }
 
     case 'board': {
@@ -629,6 +713,7 @@ function handle(player, msg) {
 
 wss.on('connection', (ws, req) => {
   const player = new Player({ id: randomId(10), ws });
+  player.ipCountry = cx.headerCountry(req);   // the country header only; the IP is never kept
   player.origin = originOf(req);
   clients.set(player.id, player);
   ws.isAlive = true;

@@ -1,10 +1,10 @@
 /* TypeDash service worker: makes the game installable and fast to reopen.
  * - navigations: network first, falling back to the cached shell when offline
  * - the app's code (css/js): network first, so a reload can never boot stale code
- * - icons and fonts: stale-while-revalidate, for speed and offline use
+ * - icons, fonts and photographs: stale-while-revalidate, for speed and offline use
  * - never caches /api, /og, /r or the socket
  * Push notifications (streak reminders) are handled at the bottom. */
-const CACHE = 'typedash-v4';
+const CACHE = 'typedash-v5';
 const SHELL = ['/', '/app', '/manifest.webmanifest', '/icons/icon-192.png'];
 
 self.addEventListener('install', (e) => {
@@ -15,7 +15,9 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
-const isAsset = (url) => /^\/(css|js|icons|fonts)\//.test(url.pathname) || url.pathname === '/manifest.webmanifest';
+const isAsset = (url) => /^\/(css|js|icons|fonts|img)\//.test(url.pathname) || url.pathname === '/manifest.webmanifest';
+/** The game and its own pages (/app/garage, ...) share one document: one cached shell. */
+const shellOf = (path) => (/^\/app(\/|$)/.test(path) ? '/app' : '/');
 const never = (url) => /^\/(api|og|r)\//.test(url.pathname) || url.pathname === '/sw.js';
 
 self.addEventListener('fetch', (e) => {
@@ -28,7 +30,7 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(fetch(req).then((res) => {
       if (res.ok && (url.pathname === '/' || url.pathname === '/app')) caches.open(CACHE).then((c) => c.put(url.pathname, res.clone()));
       return res;
-    }).catch(() => caches.match(url.pathname === '/app' ? '/app' : '/')));
+    }).catch(() => caches.match(shellOf(url.pathname))));
     return;
   }
   if (isAsset(url)) {

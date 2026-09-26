@@ -18,6 +18,7 @@ const { CATALOGUE } = require('./achievements');
 const { Bank, LANG_META } = require('./puzzles');
 const runner = require('./runner');
 const { verifyRun } = require('./rush');
+const cx = require('./cx');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const SHARED_DIR = path.join(__dirname, '..', 'shared');
@@ -28,6 +29,7 @@ const MIME = {
   '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.webp': 'image/webp',
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
 };
@@ -95,7 +97,53 @@ function rateLimited(ip) {
   return false;
 }
 
+/** Where a new or signing-in player is from: a CDN header, else the browser's own guess. */
+const firstCountry = (req, guess) => cx.headerCountry(req) || cx.guessCountry(guess);
+
+/**
+ * Sign in with a Cortexis game token (see server/cx.js). The browser also
+ * sends the guest credentials it was playing under, so that guest's progress
+ * is folded into the Cortexis account once. Answers with this game's own
+ * session credentials for the cx_ account, stored like a guest's.
+ */
+function signInWithCortexis(body, req) {
+  let claims;
+  try {
+    claims = cx.verifyGameToken(body && body.gameToken);
+  } catch (err) {
+    return { status: err.code === 'config' ? 503 : 401, body: { error: err.message, code: err.code || 'invalid' } };
+  }
+  const g = body.accountId && Object.prototype.hasOwnProperty.call(accounts.accounts, body.accountId) ? accounts.accounts[body.accountId] : null;
+  const guest = g && body.token && accounts.tokenMatches(g, body.token) ? g : null;
+  const out = accounts.bindCortexis(claims, {
+    guest,
+    country: firstCountry(req, body.country),
+    nickname: cx.nicknameFrom(claims.name, cfg.MAX_NAME_LEN),
+  });
+  boards.invalidate();
+  manager.onGameSettled && manager.onGameSettled();
+  return {
+    status: 200,
+    body: { id: out.account.id, token: out.token, created: out.created, merged: out.merged, profile: accounts.profile(out.account), standings: boards.standings(out.account) },
+  };
+}
+
 async function handleApi(req, res, urlPath) {
+  if (urlPath === '/api/auth/config') {
+    return json(res, 200, cx.siteConfig(req));
+  }
+  if (urlPath === '/api/auth/cortexis' && req.method === 'POST') {
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
+    const out = signInWithCortexis(body || {}, req);
+    return json(res, out.status, out.body);
+  }
+  if (urlPath === '/api/auth/signout' && req.method === 'POST') {
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
+    const acc = body && body.accountId && Object.prototype.hasOwnProperty.call(accounts.accounts, body.accountId) ? accounts.accounts[body.accountId] : null;
+    return json(res, 200, { ok: true, revoked: acc ? accounts.revoke(acc, body.token) : false });
+  }
   if (urlPath === '/api/stats') {
     return json(res, 200, { online: clients.size, ...manager.stats(), accounts: accounts.size, runner: cfg.RUNNER_LIVE ? cfg.RUNNER : 'off', uptime: Math.round(process.uptime()) });
   }
@@ -124,7 +172,9 @@ async function handleApi(req, res, urlPath) {
     try { body = JSON.parse(await readBody(req, 64 * 1024)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
     const { account, created } = accounts.login(body.accountId, body.token);
     if (created) return json(res, 401, { error: 'Unknown account. Reload the page and try again.' });
-    if (body.name || body.country || body.avatar) accounts.setIdentity(account, { name: sanitizeText(body.name, cfg.MAX_NAME_LEN), country: sanitizeCountry(body.country), avatar: Player.AVATARS.includes(body.avatar) ? body.avatar : null });
+    const rushName = sanitizeText(body.name, cfg.MAX_NAME_LEN);
+    const keepName = accounts.isCortexis(account) && /^Guest(-\w+)?$/i.test(rushName);
+    if (body.name || body.country || body.avatar) accounts.setIdentity(account, { name: keepName ? null : rushName, country: sanitizeCountry(body.country), avatar: Player.AVATARS.includes(body.avatar) ? body.avatar : null });
     const run = verifyRun(bank, body);
     if (!run.rounds) return json(res, 400, { error: 'Nothing to score.', flags: run.flags });
     const out = accounts.recordGame(account, {
@@ -162,6 +212,11 @@ async function handleApi(req, res, urlPath) {
   return json(res, 404, { error: 'not found' });
 }
 
+// Code is never served stale: html, css and js revalidate on every load (a
+// cheap 304 while nothing changed), so a new page never runs old styles.
+// Only pictures, sounds and fonts sit in the cache.
+const CODE_EXT = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest']);
+
 function serveStatic(req, res) {
   let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
   if (urlPath.startsWith('/api/') || urlPath === '/healthz') return handleApi(req, res, urlPath).catch((err) => json(res, 500, { error: err.message }));
@@ -175,7 +230,7 @@ function serveStatic(req, res) {
   const ext = path.extname(filePath).toLowerCase();
   const asset = cachedAsset(`file:${filePath}`, () => { try { return fs.readFileSync(filePath); } catch (_) { return null; } }, MIME[ext] || 'application/octet-stream');
   if (!asset) { res.writeHead(404); return res.end('Not found'); }
-  sendAsset(req, res, asset, { maxAge: ext === '.html' ? 0 : cfg.STATIC_MAX_AGE });
+  sendAsset(req, res, asset, { maxAge: CODE_EXT.has(ext) ? 0 : cfg.STATIC_MAX_AGE });
 }
 
 // dev convenience: forget cached files when they change on disk
@@ -211,8 +266,9 @@ manager.onGameSettled = () => {
   boardPushTimer.unref?.();
 };
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
   const player = new Player(randomId(10), ws);
+  player.ipCountry = cx.headerCountry(req);   // the country header only; the IP is never kept
   clients.set(player.id, player);
   ws.isAlive = true;
   ws.on('pong', () => { ws.isAlive = true; });
@@ -251,18 +307,34 @@ function route(player, msg) {
       return player.send({ type: 'pong', t: msg.t, st: Date.now() });
 
     case 'hello': {
-      player.name = sanitizeText(msg.name, cfg.MAX_NAME_LEN) || 'Guest-' + player.id.slice(0, 3);
+      const typed = sanitizeText(msg.name, cfg.MAX_NAME_LEN);
       player.country = sanitizeCountry(msg.country);
       player.avatar = Player.AVATARS.includes(msg.avatar) ? msg.avatar : 'bolt';
-      if (!player.account) {
-        const { account, token, created } = accounts.login(msg.accountId, msg.token);
-        player.account = account;
-        player.send({ type: 'account', id: account.id, token, created, profile: accounts.profile(account), standings: boards.standings(account) });
+      // resolve the account on first hello, or when the browser now holds
+      // different credentials (it just signed in with Cortexis)
+      let created = false;
+      if (!player.account || (msg.accountId && msg.accountId !== player.account.id)) {
+        const out = accounts.login(msg.accountId, msg.token, { country: player.ipCountry || cx.guessCountry(msg.countryGuess) || cx.guessCountry(msg.country) });
+        player.account = out.account;
+        created = out.created;
+        player.send({ type: 'account', id: out.account.id, token: out.token, created, profile: accounts.profile(out.account), standings: boards.standings(out.account) });
       }
+      // a brand-new player takes the country found at first contact; after that the player's own pick wins
+      if (created) player.country = player.account.country;
+      // a Cortexis player keeps their nickname when the browser has none to offer
+      const keepName = accounts.isCortexis(player.account) && (!typed || /^Guest(-\w+)?$/i.test(typed));
+      player.name = keepName ? player.account.name : typed || 'Guest-' + player.id.slice(0, 3);
       accounts.setIdentity(player.account, { name: player.name, country: player.country, avatar: player.avatar });
       player.send({ type: 'hello_ok', player: player.info() });
       if (player.room) player.room.broadcastState();
       return;
+    }
+
+    case 'signout': {
+      // back to a fresh guest: the next hello (without credentials) mints one
+      if (player.account) accounts.revoke(player.account, msg.token);
+      player.account = null;
+      return player.send({ type: 'signed_out' });
     }
 
     case 'quick': {

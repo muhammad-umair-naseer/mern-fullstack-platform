@@ -157,9 +157,24 @@ class Daily {
     const rec = this.data[day];
     if (!rec) return [];
     return Object.entries(rec.entries)
+      .filter(([id]) => this.accounts.isRankedId(id))   // a guest's run counts for them, not on the board
       .map(([id, e]) => ({ id, name: e.name, country: e.country, skin: e.skin, value: e.wpm, tie: e.accuracy, accuracy: e.accuracy, time: e.time, races: 1, streak: 0 }))
       .sort((a, b) => b.value - a.value || b.tie - a.tie || a.time - b.time || a.name.localeCompare(b.name))
       .map((r, i) => ({ ...r, rank: i + 1 }));
+  }
+
+  /** A guest signed in: their entries become the account's (the better run wins a shared day). */
+  moveEntries(fromId, into) {
+    let moved = false;
+    for (const rec of Object.values(this.data)) {
+      const e = rec.entries[fromId];
+      if (!e) continue;
+      const cur = rec.entries[into.id];
+      if (!cur || e.wpm > cur.wpm) rec.entries[into.id] = { ...e, name: into.name, country: into.country, skin: into.skin };
+      delete rec.entries[fromId];
+      moved = true;
+    }
+    if (moved) this.touch();
   }
 
   rankOf(day, id) {

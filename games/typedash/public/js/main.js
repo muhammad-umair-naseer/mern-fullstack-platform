@@ -8,7 +8,6 @@ import { Confetti } from './confetti.js';
 import { Sound } from './audio.js';
 import { RaceGame } from './game.js';
 import { Account, pointsForLevel } from './account.js';
-import { Boards } from './boards.js';
 import { SKINS } from './skins.js';
 import { carSvg, paint, SHOWROOM } from './cars.js';
 import { COUNTRIES, flag, detectCountry } from './countries.js';
@@ -18,6 +17,9 @@ import { DailyCard } from './daily.js';
 import { ShareDialog } from './share.js';
 import { TeamCard } from './team.js';
 import { PushReminders } from './push.js';
+import { Router, appPageOf } from './router.js';
+import { mountChrome, setActiveNav, setAwardCount } from './nav.js';
+import { cxAuth } from './cx-auth.js';
 
 /* ------------------------------------------------------------------ tuning */
 
@@ -32,8 +34,7 @@ const clock = new ServerClock(net);
 const sound = new Sound();
 const bg = new Background($('#bg'));
 const confetti = new Confetti($('#confetti'));
-// the small cars in the how-to-play pictures (decoration only)
-for (const n of document.querySelectorAll('.how-art [data-car]')) n.innerHTML = carSvg(n.dataset.car);
+mountChrome({ app: true });   // navbar, account control, phone menu and footer (js/nav.js)
 const track = new Track($('#track'));
 const typing = new TypingArea($('#passage'), $('#hidden-input'));
 const game = new RaceGame();
@@ -82,7 +83,6 @@ const el = {
   online: $('#online'),
   ping: $('#ping'),
   pingPill: $('#ping-pill'),
-  boards: $('#boards'),
   rivals: $('#rivals'),
   rankChips: $('#rank-chips'),
   streakBox: $('#streak-box'),
@@ -140,8 +140,6 @@ const el = {
   chatInput: $('#chat-input'),
   connBanner: $('#conn-banner'),
   soundBtn: $('#sound-btn'),
-  topLevel: $('#top-level'),
-  topTitle: $('#top-title'),
   profLevel: $('#prof-level'),
   profTitle: $('#prof-title'),
   levelRing: $('#level-ring'),
@@ -156,7 +154,6 @@ const el = {
   garage: $('#garage'),
   garageHint: $('#garage-hint'),
   achGrid: $('#ach-grid'),
-  achCount: $('#ach-count'),
   pacer: $('#pacer'),
   lang: $('#lang'),
   mode: $('#mode'),
@@ -170,22 +167,46 @@ const el = {
   dailyCard: $('#daily-card'),
   btnShare: $('#btn-share'),
   btnShareProfile: $('#btn-share-profile'),
+  site: $('#screen-site'),
+  dock: $('#race-dock'),
+  dockText: $('#race-dock-text'),
+  profCar: $('#prof-car'),
+  garageCar: $('#garage-car'),
+  garageName: $('#garage-name'),
+  garageBlurb: $('#garage-blurb'),
 };
 
 /* ------------------------------------------------------------- home setup */
 
-for (const [code, name] of COUNTRIES) {
-  const opt = document.createElement('option');
-  opt.value = code;
-  opt.textContent = name;   // the flag lives in #flag-preview beside the select
-  el.country.appendChild(opt);
+// the country lists: "Racing for" on your stats page and on the sign-in page
+const siCountry = $('#si-country');
+for (const sel of [el.country, siCountry]) {
+  for (const [code, name] of COUNTRIES) {
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = name;   // the flag lives in the .flag-preview beside the select
+    sel.appendChild(opt);
+  }
 }
-el.name.value = localStorage.getItem('td_name') || '';
-el.country.value = localStorage.getItem('td_country') || detectCountry();
-if (!el.country.value) el.country.value = 'UN';
-el.flagPrev.textContent = flag(el.country.value);
-el.country.addEventListener('change', () => { el.flagPrev.textContent = flag(el.country.value); });
-el.name.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btn-quick').click(); });
+const savedName = localStorage.getItem('td_name') || '';
+el.name.value = savedName && savedName !== 'Guest' ? savedName : cxAuth.state.status === 'signed-in' ? cxAuth.state.name : '';
+/** Select a country in both lists, adding it first if a list does not carry it. */
+function setCountry(code) {
+  const cc = /^[A-Z]{2}$/.test(code || '') ? code : 'UN';
+  for (const sel of [el.country, siCountry]) {
+    if (![...sel.options].some((o) => o.value === cc)) {
+      const opt = document.createElement('option');
+      opt.value = cc;
+      opt.textContent = cxAuth.countryName(cc);
+      sel.insertBefore(opt, sel.lastElementChild);
+    }
+    sel.value = cc;
+  }
+  el.flagPrev.textContent = flag(cc);
+  $('#si-flag').textContent = flag(cc);
+}
+const known = cxAuth.state.country;
+setCountry(localStorage.getItem('td_country') || (known && known !== 'UN' ? known : '') || cxAuth.guessCountry() || detectCountry());
 el.code.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btn-join').click(); });
 el.code.addEventListener('input', () => { el.code.value = el.code.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
 
@@ -196,31 +217,48 @@ if (/^[A-Z0-9]{4,6}$/.test(hashCode)) {
   toast(`Room code ${hashCode} filled in — pick a name and hit Join`, 'info', 5000);
 }
 
-const soundLabel = (on) => `<svg class="i" aria-hidden="true"><use href="#i-${on ? 'volume' : 'volume-x'}"/></svg> Sound ${on ? 'on' : 'off'}`;
-el.soundBtn.innerHTML = soundLabel(sound.enabled);
-el.soundBtn.addEventListener('click', () => { el.soundBtn.innerHTML = soundLabel(sound.toggle()); });
+const paintSound = (on) => {
+  el.soundBtn.innerHTML = `<svg class="i" aria-hidden="true"><use href="#i-${on ? 'volume' : 'volume-x'}"/></svg>`;
+  el.soundBtn.setAttribute('aria-pressed', String(on));
+  el.soundBtn.title = on ? 'Sound on' : 'Sound off';
+};
+paintSound(sound.enabled);
+el.soundBtn.addEventListener('click', () => paintSound(sound.toggle()));
 
-/* ------------------------------------------------------- home: identity & module pages */
+/* ------------------------------------------------------- screens (pages) */
 
-// Each section below the play card is its own page with its own screen; the home
-// page stays clean. A tiny hash router (#/rankings, #/profile, …) shows them one
-// at a time and keeps the URL deep-linkable.
-const SECTION_PAGES = ['rankings', 'profile', 'garage', 'team', 'badges', 'how'];
+// Every page of the game is a screen in this one document, so a lobby keeps
+// its socket while you look around. js/router.js owns the addresses
+// (/app, /app/profile, /app/garage, /app/team, /app/awards and the site's own
+// pages, fetched into #screen-site) and calls showScreen() to put one up.
+const SCREENS = ['home', 'profile', 'garage', 'team', 'badges', 'signin', 'site', 'race'];
 const screenEl = (p) => document.getElementById(`screen-${p}`);
-
-/* ----------------------------------------------------------------- flow
- * One journey: home -> a page or the race -> back. Every screen change says
- * which way it went, and the CSS moves the arriving screen accordingly
- * (deeper comes up from below, back settles down from above). The race
- * launch is the one orchestrated sequence; everything else is quiet. */
-const DEPTH = { home: 0, rankings: 1, profile: 1, garage: 1, team: 1, badges: 1, how: 1, race: 2 };
-let flowAt = 'home';
-function flowTo(name) {
-  const back = (DEPTH[name] ?? 1) < (DEPTH[flowAt] ?? 0);
-  document.body.dataset.nav = back ? 'back' : 'forward';
-  flowAt = name;
-}
+const NAV_KEY = { home: 'app', race: 'app', profile: 'profile', garage: 'garage', team: 'team', badges: 'badges', signin: 'signin' };
+const HOME_TITLE = document.title;
+let currentScreen = SCREENS.find((p) => screenEl(p).classList.contains('active')) || 'home';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+/** Put one screen up. `site` pages set their own title and nav item (the router does that). */
+function showScreen(name) {
+  currentScreen = name;
+  for (const p of SCREENS) screenEl(p).classList.toggle('active', p === name);
+  document.body.classList.toggle('in-race', name === 'race');   // the starfield only comes forward on the track
+  if (name === 'race') requestAnimationFrame(() => track.measure());
+  if (name !== 'site') {
+    setActiveNav(NAV_KEY[name] || '');
+    document.title = name === 'race' ? `${S.room && S.room.solo ? 'On your own' : 'Race'} · TypeDash` : screenEl(name).dataset.title || HOME_TITLE;
+  }
+  renderDock();
+}
+
+/** A live room you have stepped away from: a pill that takes you back to it. */
+function renderDock() {
+  const live = S.room && !S.room.solo;
+  el.dock.hidden = !live || currentScreen === 'race';
+  if (el.dock.hidden) return;
+  const st = S.room.state;
+  el.dockText.textContent = st === 'finished' ? 'Your race just finished' : S.room.isPrivate ? `You are in game ${S.room.code}` : `You are in a race lobby, ${S.room.players.length} of ${S.room.maxPlayers}`;
+}
 
 /**
  * Count a number up to its final value — only for the figure the player cares
@@ -245,30 +283,14 @@ function countTo(node, value, format = (v) => String(v)) {
   node.textContent = format(0);
   requestAnimationFrame(step);
 }
-function pageFromHash() {
-  const m = location.hash.match(/^#\/([a-zA-Z0-9-]+)\/?$/);
-  if (!m) return 'home';
-  const p = m[1].toLowerCase();
-  return SECTION_PAGES.includes(p) ? p : 'home';
-}
-function switchPage(page) {
-  flowTo(page);
-  for (const p of SECTION_PAGES) screenEl(p).classList.toggle('active', p === page);
-  el.home.classList.toggle('active', page === 'home');
-  el.race.classList.toggle('active', false);
-  document.body.classList.toggle('in-race', false);
-  for (const a of document.querySelectorAll('#home-links .home-link')) a.classList.toggle('on', a.dataset.page === page);
-  window.scrollTo(0, 0);
-}
-$('#level-pill').addEventListener('click', () => { if (el.home.classList.contains('active') || screenEl('profile').classList.contains('active')) { if (location.hash !== '#/profile') location.hash = '#/profile'; } });
 
-// "Racing as Guest 🇬🇧 · English" — the form behind it only opens on request.
+// "Paragraphs in English": the language, mode and robot picker behind it opens on request.
+// Who you are (name, country, account) lives on the sign-in page and on your stats page.
 const btnOptions = $('#btn-options');
 function renderIdentity() {
-  const name = el.name.value.trim() || 'Guest';
   const lang = el.lang.selectedOptions[0] ? el.lang.selectedOptions[0].textContent : 'English';
   const mode = el.mode.selectedOptions[0] ? el.mode.selectedOptions[0].textContent : 'Prose';
-  $('#identity-text').innerHTML = `Racing as <b>${escapeHtml(name)}</b> ${flag(el.country.value || 'UN')} · ${escapeHtml(lang)}${el.mode.value !== 'prose' ? ` · ${escapeHtml(mode)}` : ''}`;
+  $('#identity-text').innerHTML = `Paragraphs in <b>${escapeHtml(lang)}</b>${el.mode.value && el.mode.value !== 'prose' ? `, <b>${escapeHtml(mode.toLowerCase())}</b>` : ''}`;
 }
 // Progressive disclosure: both panels stay in the DOM and grow open, so nothing
 // on the home page jumps when they appear. `openPanel` drives the CSS.
@@ -282,7 +304,7 @@ btnOptions.addEventListener('click', () => {
   const open = openPanel(optionsWrap, !isOpen(optionsWrap));
   btnOptions.setAttribute('aria-expanded', String(open));
   btnOptions.textContent = open ? 'Done' : 'Change';
-  if (open) el.name.focus();
+  if (open) { const first = $('#wiz-lang-opts .wiz-opt.on') || $('#wiz-lang-opts .wiz-opt'); if (first) first.focus(); }
 });
 
 const friendsWrap = $('#friends-wrap');
@@ -292,23 +314,14 @@ btnFriends.addEventListener('click', () => {
   btnFriends.setAttribute('aria-expanded', String(open));
   if (open) el.code.focus();
 });
-el.name.addEventListener('input', renderIdentity);
-for (const sel of [el.country, el.lang, el.mode]) sel.addEventListener('change', renderIdentity);
+for (const sel of [el.lang, el.mode]) sel.addEventListener('change', renderIdentity);
 renderIdentity();
-
-// top-bar menu
-const menu = $('#menu');
-const menuBtn = $('#menu-btn');
-menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menu.hidden = !menu.hidden; menuBtn.setAttribute('aria-expanded', String(!menu.hidden)); });
-document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target)) { menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); } });
 
 /* ------------------------------------------------------- profile & garage */
 
 function renderProfile() {
   const lvl = account.level;
   const [into, span, frac] = account.levelProgress;
-  el.topLevel.textContent = lvl;
-  el.topTitle.textContent = account.title;
   el.profLevel.textContent = lvl;
   el.profTitle.textContent = account.title;
   el.levelRing.style.setProperty('--p', frac.toFixed(3));
@@ -419,8 +432,24 @@ function renderGarage() {
   const chosen = SKINS.find((s) => s.id === account.skin) || SKINS[0];
   const next = SKINS.find((s) => s.unlock > lvl);
   el.garageHint.textContent = next
-    ? `${chosen.name}: ${chosen.blurb}  ·  Next unlock: ${next.name} at level ${next.unlock}.`
-    : `${chosen.name}: ${chosen.blurb}  ·  You've unlocked every car.`;
+    ? `Tap a car to drive it. ${next.name} unlocks at level ${next.unlock}.`
+    : 'Tap a car to drive it. Every car is yours.';
+  showroomCar(el.garageCar, chosen.id);
+  showroomCar(el.profCar, chosen.id);
+  showroomCar($('#si-car'), chosen.id);
+  el.garageName.textContent = chosen.name;
+  el.garageBlurb.textContent = chosen.blurb;
+}
+
+/** The big car on the showroom floor: the old one drives off, the new one rolls in. */
+function showroomCar(node, id) {
+  if (!node || node.dataset.car === id) return;
+  const first = !node.dataset.car;
+  node.dataset.car = id;
+  node.style.setProperty('--c', SHOWROOM[id] || '#B8612E');
+  node.innerHTML = carSvg(id);
+  if (first || reducedMotion.matches) return;
+  node.classList.remove('arrive'); void node.offsetWidth; node.classList.add('arrive');
 }
 
 el.garage.addEventListener('click', (e) => {
@@ -445,7 +474,10 @@ function renderAchievements() {
   const have = new Set(account.achievements);
   const list = account.catalogue;
   if (!list.length) { el.achGrid.innerHTML = '<div class="board-empty small">Loading…</div>'; return; }
-  el.achCount.textContent = `${have.size}/${list.length}`;
+  setAwardCount(`${have.size}/${list.length}`);
+  $('#aw-have').textContent = have.size;
+  $('#aw-total').textContent = list.length;
+  $('#aw-fill').style.transform = `scaleX(${(have.size / list.length).toFixed(3)})`;
   el.achGrid.innerHTML = list.map((a) => `
     <div class="ach ${have.has(a.id) ? 'got' : ''}" title="${escapeHtml(a.desc)}">
       <span class="ach-icon">${a.icon}</span>
@@ -453,9 +485,7 @@ function renderAchievements() {
     </div>`).join('');
 }
 
-const boards = new Boards(el.boards, { onRequest: (q) => net.send({ type: 'board', ...q }) });
-boards.setCountry(el.country.value);
-el.country.addEventListener('change', () => { boards.setCountry(el.country.value); if (net.connected) identify(); });
+
 
 /* ------------------------------------------------------------- practice */
 
@@ -610,7 +640,7 @@ const push = new PushReminders(net, { button: $('#btn-remind'), onState: () => r
 /* ------------------------------------------------------------------ teams */
 
 const teamCard = new TeamCard($('#team-card'), net, {
-  onChanged: (m) => { if (m.profile) { account.setProfile(m.profile, null); renderProfile(); } boards.request(); },
+  onChanged: (m) => { if (m.profile) { account.setProfile(m.profile, null); renderProfile(); } },
 });
 const teamHash = location.hash.match(/^#team\/([A-Za-z0-9]{4,8})$/i);
 if (teamHash) {
@@ -645,15 +675,51 @@ function dailyFromHash() {
   return true;
 }
 
-/* --------------------------------------------- sections router (the one router) */
+/* ------------------------------------------------------------- the router */
 
-function navigate() {
-  if (S.room && !S.room.solo) return;   // live race: don't bounce screens
-  switchPage(pageFromHash());
-  if (!S.room || S.room.solo) practiceFromHash() || dailyFromHash();
+/**
+ * You can look around while you wait in a lobby or after a race: the room
+ * keeps going and a pill takes you back. Once the countdown starts you are
+ * on the track until the finish; a practice run simply stops if you leave.
+ */
+function canLeave(url) {
+  const r = S.room;
+  if (!r) return true;
+  const toRace = appPageOf(url.pathname) === 'home';
+  if (r.solo) {
+    if (!toRace) { solo.abort(); resetRoom(); }
+    return true;
+  }
+  if ((r.state === 'countdown' || r.state === 'racing') && !S.local.done && currentScreen === 'race' && !toRace) {
+    toast('The race is on. Everything else opens after the finish.', 'warn', 2600);
+    return false;
+  }
+  return true;
 }
-window.addEventListener('hashchange', navigate);
-navigate();
+
+const router = new Router({
+  show: (page) => {
+    // the game's home address shows the track while you are in a room
+    if (page === 'home' && S.room) page = 'race';
+    if (page !== 'race') el.results.hidden = true;
+    showScreen(page);
+  },
+  canLeave,
+  arrived: (page, url) => {
+    // "Change country" in the account menu: land on the field itself
+    if (page === 'profile' && url.hash === '#country') {
+      const field = $('#country-field');
+      el.country.focus({ preventScroll: true });
+      field.scrollIntoView({ block: 'center', behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+      field.classList.remove('ask'); void field.offsetWidth; field.classList.add('ask');
+      return;
+    }
+    if (page !== 'home' || (S.room && !S.room.solo)) return;
+    // /app#practice/<id>, /app#daily: start typing straight away
+    if (url.hash && !S.room) practiceFromHash() || dailyFromHash();
+  },
+});
+router.start();
 
 renderProfile();
 
@@ -664,8 +730,126 @@ function identify() {
   const country = el.country.value || 'UN';
   localStorage.setItem('td_name', name);
   localStorage.setItem('td_country', country);
-  net.send({ type: 'hello', name, country, skin: account.skin, ...account.credentials });
+  net.send({ type: 'hello', name, country, countryGuess: cxAuth.guessCountry(), skin: account.skin, ...account.credentials });
+  // the server only sends a profile on sign-in; keep the cached one (and so the navbar) in step
+  const mine = { ...account.profile, country, skin: account.skin };
+  if (name !== 'Guest') mine.name = name;
+  account.setProfile(mine, null);
+  cxAuth.syncProfile(account.profile);
 }
+
+/* ------------------------------------------------ who you are: name and country */
+
+// Your stats page holds the name other racers see and the country you race for.
+// A change is saved when you leave the field (or press Enter), and said so once.
+el.name.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); el.name.blur(); } });
+el.name.addEventListener('change', () => {
+  const typed = el.name.value.trim();
+  if (!typed && cxAuth.state.status === 'signed-in') el.name.value = cxAuth.state.cortexisName || cxAuth.state.name;
+  else el.name.value = typed;
+  identify();
+  renderAuth();
+  toast(el.name.value ? `Other racers now see you as ${el.name.value}.` : 'You race as Guest.', 'success', 2400);
+});
+let pickedCountry = null;   // chosen on the sign-in page before signing in: applied once signed in
+function chooseCountry(cc) {
+  setCountry(cc);
+  identify();
+  renderAuth();
+  toast(`Racing for ${cxAuth.countryName(el.country.value)}.`, 'success', 2200);
+}
+el.country.addEventListener('change', () => chooseCountry(el.country.value));
+siCountry.addEventListener('change', () => { pickedCountry = siCountry.value; chooseCountry(siCountry.value); });
+
+/* ------------------------------------------------------------ the sign-in page */
+
+const siForm = $('#si-form');
+const siEmail = $('#si-email');
+const siPassword = $('#si-password');
+const siError = $('#si-error');
+const siSubmit = $('#si-submit');
+const siGuest = $('#si-guest');
+
+function showSignInError(r) {
+  const site = (cxAuth.config && cxAuth.config.siteUrl) || '';
+  siError.innerHTML = escapeHtml(r.message || 'Sign-in did not go through. Try again.')
+    + (r.reason === 'unverified' && site ? ` <a href="${escapeHtml(site)}/login"${cxAuth.state.embedded ? ' target="_top"' : ' target="_blank" rel="noopener"'}>Confirm it on Cortexis</a>` : '');
+  siError.hidden = false;
+  const field = r.reason === 'invalid' && !siEmail.value.trim() ? siEmail : r.reason === 'invalid' ? siPassword : null;
+  siForm.classList.toggle('bad', r.reason === 'invalid');
+  if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); if (field === siPassword) field.select(); }
+}
+for (const f of [siEmail, siPassword]) f.addEventListener('input', () => { f.removeAttribute('aria-invalid'); siForm.classList.remove('bad'); });
+
+siForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  siError.hidden = true;
+  if (!siEmail.value.trim() || !siPassword.value) {
+    showSignInError({ reason: 'invalid', message: 'Enter your email and password.' });
+    return;
+  }
+  const r = await cxAuth.signIn(siEmail.value, siPassword.value);
+  if (!r.ok) { showSignInError(r); return; }
+  siPassword.value = '';
+  // the welcome is said by the signed-in handler below; the game is where you were going
+  router.go('/app');
+});
+siGuest.addEventListener('click', () => {
+  cxAuth.playAsGuest();
+  router.go('/app');
+});
+$('#si-signout').addEventListener('click', () => signOutHere());
+async function signOutHere() {
+  const was = cxAuth.state.name;
+  await cxAuth.signOut();
+  toast(`Signed out. See you soon, ${was}.`, 'info', 2600);
+}
+
+/** Everything on the page that depends on being signed in or not. */
+function renderAuth() {
+  const s = cxAuth.state;
+  const signedIn = s.status === 'signed-in';
+  $('#guest-note').hidden = signedIn || s.busy;
+  $('#id-status').innerHTML = signedIn
+    ? `<span class="id-badge on">Ranked</span><span>Signed in with Cortexis${s.cortexisName ? ` as <b>${escapeHtml(s.cortexisName)}</b>` : ''}</span>`
+    : '<span class="id-badge">Guest</span><span>Guest scores aren\'t ranked. <a href="/app/signin">Sign in</a></span>';
+  $('#si-out').hidden = signedIn;
+  $('#si-in').hidden = !signedIn;
+  $('#si-title').textContent = signedIn ? 'Signed in' : 'Sign in';
+  $('#si-lead').textContent = signedIn ? 'Your races count on the rankings.' : 'Race under your Cortexis account and get ranked.';
+  $('#si-name').textContent = s.name;
+  $('#si-avatar').innerHTML = `<b>${escapeHtml((String(s.name || 'P').trim()[0] || 'P').toUpperCase())}</b><i class="avatar-flag">${flag(s.country)}</i>`;
+  $('#si-plate').textContent = signedIn ? s.name : (el.name.value.trim() || 'Guest');
+  siSubmit.disabled = !!s.busy;
+  siSubmit.classList.toggle('busy', !!s.busy);
+  siSubmit.firstChild.nodeValue = s.busy ? 'Signing in' : 'Sign in with Cortexis';
+  const signup = $('#si-signup');
+  signup.href = cxAuth.signupUrl;
+  if (s.embedded) { signup.target = '_top'; signup.removeAttribute('rel'); }
+}
+
+/* Cortexis sign-in (cx-auth.js owns the stored session; this keeps the game in step). */
+cxAuth.onChange((s, reason, detail = {}) => {
+  if (reason === 'signed-in') {
+    account.useCredentials(cxAuth.credentials);
+    if (detail.profile) account.setProfile(detail.profile, detail.standings);
+    el.name.value = s.name;
+    setCountry(pickedCountry || s.country);
+    pickedCountry = null;
+    renderProfile();
+    if (net.connected) identify();   // the server switches this socket to the Cortexis account
+    if (!detail.fromOtherTab) toast(detail.merged ? `Signed in as ${s.name}. Your guest races came with you.` : `Signed in as ${s.name}. Your races count now.`, 'success', 3200);
+  } else if (reason === 'signed-out') {
+    net.send({ type: 'signout', token: detail.previous ? detail.previous.token : undefined });
+    account.useCredentials({});
+    el.name.value = '';
+    localStorage.removeItem('td_name');
+    renderProfile();
+    if (net.connected) identify();   // no credentials: the server mints a fresh guest
+  }
+  renderAuth();
+});
+renderAuth();
 
 function whenConnected(action) {
   sound.ensure();
@@ -765,18 +949,34 @@ function goHome() {
   el.chatLog.innerHTML = '';
   el.trackWrap.classList.remove('nitro');
   renderProfile();
-  boards.request();
-  switchScreen('home');
-  if (location.hash) history.replaceState(null, '', location.pathname);
+  // leaving the track lands on the game's home; anywhere else you stay where you are
+  if (currentScreen === 'race') showScreen('home');
+  else renderDock();
+  if (location.hash && appPageOf(location.pathname)) history.replaceState(history.state, '', location.pathname);
 }
 
-function switchScreen(name) {
-  flowTo(name);
-  el.home.classList.toggle('active', name === 'home');
-  el.race.classList.toggle('active', name === 'race');
-  for (const p of SECTION_PAGES) screenEl(p).classList.toggle('active', false);
-  document.body.classList.toggle('in-race', name === 'race');   // the starfield only comes forward on the track
-  if (name === 'race') requestAnimationFrame(() => track.measure());
+/** Forget the room without touching the screen (a practice run left by navigating away). */
+function resetRoom() {
+  S.room = null;
+  S.passage = '';
+  S.players.clear();
+  S.interp.clear();
+  resetLocal();
+  track.setPlayers([], myId());
+  typing.setPassage('');
+  typing.setEnabled(false);
+  el.results.hidden = true;
+  el.countdown.hidden = true;
+  el.finishBanner.hidden = true;
+  el.focusOverlay.hidden = true;
+  renderDock();
+}
+
+/** Onto the track: from another page that means going back to the game's own address. */
+function toRace() {
+  if (currentScreen === 'race') return;
+  if (appPageOf(location.pathname) === 'home') showScreen('race');
+  else router.go('/app');
 }
 
 function resetLocal() {
@@ -830,17 +1030,18 @@ net.on('welcome', (m) => {
   clock.seed(m.serverTime);
   el.online.textContent = m.online;
   account.catalogue = m.achievements || [];
-  boards.setMeta(m.boards);
   renderAchievements();
   identify();          // resume the saved account as soon as we're connected
-  boards.request();
 });
 
 net.on('account', (m) => {
   account.onAccount(m);
-  boards.setMyId(account.id);
+  // a new player's country comes from the server (CDN header, else our guess)
+  if (m.created && m.profile && m.profile.country) { setCountry(m.profile.country); localStorage.setItem('td_country', el.country.value); }
+  cxAuth.syncProfile(m.profile);
+  if (!el.name.value.trim() && m.profile && m.profile.name && !/^Guest/i.test(m.profile.name)) el.name.value = m.profile.name;
   renderProfile();
-  boards.request();
+  renderAuth();
   dailyCard.load();   // now we know who "me" is
   loadSeason();
   push.setFromProfile(account.stats);
@@ -850,7 +1051,6 @@ net.on('account', (m) => {
   }
 });
 
-net.on('board', (m) => boards.setData(m));
 net.on('race_result', onRaceResult);
 
 net.on('online', (m) => { el.online.textContent = m.n; });
@@ -897,7 +1097,11 @@ function onRoom(m) {
   }
   track.setPlayers(m.players, myId());
 
-  if (!el.race.classList.contains('active')) switchScreen('race');
+  // onto the track when a room starts and when its countdown does; a lobby
+  // update while you look at another page leaves you where you are
+  const entering = !prev || prev.code !== m.code || !!prev.solo !== !!m.solo;
+  if (entering || (m.state === 'countdown' && prev.state !== 'countdown')) toRace();
+  else renderDock();
 
   const changed = !prev || prev.state !== m.state || prev.raceNo !== m.raceNo || prev.code !== m.code;
   if (changed) enterState(m);
@@ -1273,22 +1477,11 @@ function openResults() {
   card.setAttribute('data-seq', 'in');
   if (!el.soloResults.hidden) countTo($('#sr-wpm'), $('#sr-wpm').textContent);
   if (!el.myRace.hidden) countTo(el.mrScore, el.mrScore.textContent.replace(/,/g, ''), (v) => v.toLocaleString());
-  const named = (localStorage.getItem('td_name') || '').trim();
-  namePrompt.hidden = !!named && named !== 'Guest';
+  // a guest who just raced other people: the one place a nudge to sign in earns its space
+  namePrompt.hidden = cxAuth.state.status !== 'guest' || !!(S.room && S.room.solo);
 }
 
 const namePrompt = $('#name-prompt');
-namePrompt.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = $('#np-name').value.trim();
-  if (!name) return;
-  el.name.value = name;
-  el.name.dispatchEvent(new Event('input'));
-  localStorage.setItem('td_name', name);
-  if (net.connected) identify();
-  namePrompt.hidden = true;
-  toast(`Racing as ${escapeHtml(name)} from now on.`, 'success', 2600);
-});
 
 /** The per-race numbers the client itself produced (score, combo, nitro). */
 function showMyRace() {
@@ -1320,9 +1513,7 @@ function onRaceResult(msg) {
   const out = account.applyResult(msg);
   S.lastResultId = msg.resultId || null;
   el.btnShare.hidden = !S.lastResultId;
-  boards.setMyId(account.id);
   renderProfile();
-  boards.request();
 
   const lvl = account.level;
   el.mrXp.textContent = out.ranked
@@ -1532,4 +1723,4 @@ installBtn.addEventListener('click', async () => {
 window.addEventListener('appinstalled', () => { installBtn.hidden = true; toast('TypeDash installed — see you tomorrow for the daily', 'success'); });
 
 // Handy in devtools: TypeDash.game.score, TypeDash.account.level, ...
-window.TypeDash = { game, account, boards, solo, state: S };
+window.TypeDash = { game, account, solo, router, state: S };

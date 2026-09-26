@@ -1,11 +1,14 @@
 import { flag } from './countries.js';
 import { escapeHtml } from './ui.js';
+import { avatarFor } from './avatars.js';
 
 /**
  * Worldwide ranking boards: category tabs (points / speed / combo / wins /
  * streak / golden), a time window where the category supports one, and a
  * global-or-your-country scope toggle. The server sends the category list, so
- * adding a board server-side needs no client change.
+ * adding a board server-side needs no client change. On the Rankings page the
+ * category tabs sit in the page header (`tabsRoot`) and the top three stand on
+ * a podium (`podiumRoot`).
  */
 const FORMAT = {
   points: (v) => v.toLocaleString(),
@@ -18,16 +21,20 @@ const FORMAT = {
 };
 
 export class Boards {
-  constructor(root, { onRequest }) {
+  constructor(root, { onRequest, tabsRoot = null, podiumRoot = null }) {
     this.root = root;
+    this.tabsRoot = tabsRoot;
+    this.podiumRoot = podiumRoot;
     this.onRequest = onRequest;
+    this.sig = '';
+    this.podiumSig = '';
     this.meta = null;
     this.country = 'UN';
     this.sel = { category: 'points', window: 'all', scope: 'global' };
     this.data = null;
     this.myId = null;
 
-    root.addEventListener('click', (e) => {
+    const onClick = (e) => {
       const btn = e.target.closest('[data-cat], [data-win], [data-scope]');
       if (!btn) return;
       if (btn.dataset.cat) {
@@ -39,7 +46,9 @@ export class Boards {
       if (btn.dataset.scope) this.sel.scope = btn.dataset.scope;
       this.request();
       this.render();
-    });
+    };
+    root.addEventListener('click', onClick);
+    if (tabsRoot) tabsRoot.addEventListener('click', onClick);
   }
 
   category() { return this.meta?.categories.find((c) => c.id === this.sel.category); }
@@ -61,6 +70,9 @@ export class Boards {
   /** Board data arrived from the server. */
   setData(msg) {
     if (msg.category !== this.sel.category) return;   // a stale reply
+    const sig = JSON.stringify([msg.category, msg.window, msg.scope, msg.total, msg.entries, msg.me]);
+    if (sig === this.sig && this.data) return;        // a push with nothing new: leave the rows alone
+    this.sig = sig;
     this.data = msg;
     this.render();
   }
@@ -68,6 +80,7 @@ export class Boards {
   render() {
     if (!this.meta) {
       this.root.innerHTML = '<div class="board-empty">Connecting to the ranking server…</div>';
+      this.renderPodium(null, null);
       return;
     }
     const cat = this.category() || this.meta.categories[0];
@@ -94,7 +107,31 @@ export class Boards {
     }
     const count = d ? `<span class="board-count">${d.total.toLocaleString()} player${d.total === 1 ? '' : 's'}${cat.note ? ' · ' + escapeHtml(cat.note) : ''}</span>` : '';
 
-    this.root.innerHTML = `<div class="tabs">${tabs}</div><div class="board-filters">${wins}${scopes}${count}</div>${rows}`;
+    if (this.tabsRoot) {
+      this.tabsRoot.innerHTML = `<div class="tabs" role="group" aria-label="Board">${tabs}</div>`;
+      this.root.innerHTML = `<div class="board-filters">${wins}${scopes}${count}</div>${rows}`;
+    } else {
+      this.root.innerHTML = `<div class="tabs">${tabs}</div><div class="board-filters">${wins}${scopes}${count}</div>${rows}`;
+    }
+    this.renderPodium(d, fmt);
+  }
+
+  /** The top three on plinths. Re-drawn only when the three change, so their entrance plays for news, not for every push. */
+  renderPodium(d, fmt) {
+    const root = this.podiumRoot;
+    if (!root) return;
+    const top = d ? d.entries.slice(0, 3) : [];
+    const sig = d ? JSON.stringify([d.category, d.window, d.scope, top.map((r) => [r.id, r.value, r.name])]) : 'none';
+    if (sig === this.podiumSig) return;
+    this.podiumSig = sig;
+    const slot = (r, place) => {
+      if (!r) return `<div class="rk-slot p${place} empty"><span class="rk-av"></span><span class="rk-name">Open</span><span class="rk-val">–</span><span class="rk-block"><b>${place}</b></span></div>`;
+      const av = avatarFor(r.avatar);
+      const me = r.id === this.myId;
+      return `<div class="rk-slot p${place} ${me ? 'me' : ''}" style="--c:${av.color}"><span class="rk-av">${av.emoji}</span><span class="rk-name">${flag(r.country)} ${escapeHtml(r.name)}${me ? ' <em>you</em>' : ''}</span><span class="rk-val">${fmt(r.value)}</span><span class="rk-block"><b>${place}</b></span></div>`;
+    };
+    root.classList.toggle('is-empty', !top.length);
+    root.innerHTML = `${slot(top[1], 2)}${slot(top[0], 1)}${slot(top[2], 3)}`;
   }
 
   row(r, fmt) {

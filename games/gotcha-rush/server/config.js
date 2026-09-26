@@ -17,7 +17,7 @@ module.exports = {
   AFTER_HUMANS_MS: num('AFTER_HUMANS_MS', 4000), // once all humans locked in, bots get this long
   REVEAL_MS: num('REVEAL_MS', 11000),       // output + explanation
   RESULTS_MS: num('RESULTS_MS', 15000),
-  STATIC_MAX_AGE: num('STATIC_MAX_AGE', 3600),   // seconds; assets carry ETags so revalidation is a 304
+  STATIC_MAX_AGE: num('STATIC_MAX_AGE', 3600),   // seconds, for pictures, sounds and fonts; code always revalidates (a 304 via its ETag)
   BANK_MAX_AGE: num('BANK_MAX_AGE', 3600),
 
   // scoring weights live in shared/scoring.js (used by both server and client)
@@ -25,6 +25,10 @@ module.exports = {
   // --- accounts, ranking & streaks ---
   DATA_FILE: str('DATA_FILE', 'data/gotcharush.json'),
   RANKED_PRIVATE: process.env.RANKED_PRIVATE === '1',
+  // Boards and ranks list signed-in (Cortexis, cx_) players only. RANK_GUESTS=1
+  // lets guests on too: a LAN party with no website, or the older test suites.
+  RANK_GUESTS: process.env.RANK_GUESTS === '1',
+  CX_SESSIONS_MAX: num('CX_SESSIONS_MAX', 10),   // devices signed in to one Cortexis account at once
   STREAK_BONUS_STEP: 0.05,
   STREAK_BONUS_CAP: 0.5,
   BOARD_SIZE: num('BOARD_SIZE', 25),

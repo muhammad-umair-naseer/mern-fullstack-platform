@@ -2,27 +2,123 @@
 const { CATALOGUE } = require('./achievements');
 const { STAGES } = require('./passages');
 const { nameOf } = require('./countries');
+const { siteConfig } = require('./cx');
 
 /**
- * Server-rendered pages: share pages, player profiles and (see the SEO
- * routes) the leaderboard / practice / daily pages that search engines and
- * link unfurlers can read without running the app. Plain HTML on top of the
- * app's stylesheet with a link back into the game; nothing here holds a
- * socket or runs a tick, and every page is cheap string assembly.
+ * Server-rendered pages: the home page, the paragraphs, today's paragraph,
+ * the rankings, how to play, share pages, player and team profiles. Every
+ * one is plain, crawlable HTML inside one shared frame (navbar, footer,
+ * stylesheets, one module), and every one is cheap string assembly: nothing
+ * here holds a socket or runs a tick.
+ *
+ * The frame is shared with the game itself (/app): `navbar()` and `footer()`
+ * are substituted into public/index.html, so there is exactly one navbar.
+ * The game loads these pages into its own document when you move around
+ * inside it (see public/js/router.js), which is why each page's content lives
+ * in <main id="main"> and needs nothing from its <head> to work.
+ *
+ * Pictures that move (cars, the typing caret, the podium) are placeholders
+ * here (`data-car`, `data-replay`, ...) that public/js/pages.js brings to life.
  */
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const num = (n) => Number(n || 0).toLocaleString('en-US');
 const fmtTime = (ms) => { const s = Math.max(0, ms || 0) / 1000; const m = Math.floor(s / 60); return `${m}:${(s - m * 60).toFixed(1).padStart(4, '0')}`; };
 const place = (r) => (r === 1 ? '1st' : r === 2 ? '2nd' : r === 3 ? '3rd' : `${r}th`);
 const flag = (code) => (!code || code === 'UN' || code.length !== 2 ? '🌍' : String.fromCodePoint(...code.toUpperCase().split('').map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)));
+const plural = (n, one, many = `${one}s`) => `${num(n)} ${n === 1 ? one : many}`;
+/** JSON for a data-* attribute. */
+const attrJson = (v) => esc(JSON.stringify(v));
 
-const ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffffff'/%3E%3Cpath d='M36 6 14 36h14l-4 22 26-32H36l4-20z' fill='%23f59e0b'/%3E%3C/svg%3E";
+const ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2316130F'/%3E%3Cpath d='M36 9 17 35h12l-3 20 21-27H35l4-19z' fill='%23D08A5A'/%3E%3C/svg%3E";
+const FONTS = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap';
 
-function layout({ origin, path, title, description, image, imageAlt, body, jsonLd = null, noindex = false }) {
+/**
+ * Inline in every <head>: mark that scripts run, and when you arrive by the
+ * browser's back button run the page transition the other way round.
+ */
+const HEAD_SCRIPT = "document.documentElement.classList.add('js');addEventListener('pagereveal',function(e){var n=window.navigation,a=n&&n.activation;if(!e.viewTransition||!a||a.navigationType!=='traverse'||!a.from||!a.entry||a.entry.index>=a.from.index)return;var r=document.documentElement;r.classList.add('vt-back');e.viewTransition.finished.finally(function(){r.classList.remove('vt-back')})});";
+
+/* ------------------------------------------------------------- icons */
+
+const svg = (d, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+const I = {
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>',
+  menu: '<path d="M4 8h16M4 16h11"/>',
+  back: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
+};
+
+/** A car drawn in pencil: the empty seat on a podium or a board. */
+const PENCIL_CAR = '<svg class="pencil-car" viewBox="0 0 122 52" aria-hidden="true"><path d="M6 33 C6 27 10 24 16 23 L34 21 L46 10 C49 7 53 6 58 6 L84 6 C89 6 93 8 96 12 L104 21 L113 24 C117 25 119 28 119 32 L119 36 C119 39 117 40 114 40 L11 40 C8 40 6 38 6 36 Z"/><circle cx="30" cy="40" r="8.5"/><circle cx="92" cy="40" r="8.5"/></svg>';
+
+/* ------------------------------------------------------------- the frame */
+
+/** Where each navbar item points, and the key pages mark themselves with (the list in public/js/nav.js). */
+const NAV = [
+  { key: 'home', href: '/', label: 'Home' },
+  { key: 'practice', href: '/practice', label: 'Paragraphs' },
+  { key: 'daily', href: '/daily', label: 'Today' },
+  { key: 'leaderboard', href: '/leaderboard', label: 'Rankings' },
+  { key: 'how', href: '/how', label: 'How to play' },
+];
+
+/**
+ * The navbar and footer exactly as public/js/nav.js draws them for someone
+ * who is not signed in, so the first paint is already the final chrome and a
+ * page reads the same without scripts. The account slot stays empty: only
+ * the script knows who you are, and the bar's grid keeps everything else
+ * still when it fills in.
+ */
+function navbar({ active = null } = {}) {
+  const cur = (key) => (key === active ? ' aria-current="page"' : '');
+  const main = NAV.map((n) => `<a href="${n.href}" data-nav="${n.key}"${cur(n.key)}><span>${n.label}</span>${n.key === active ? '<i class="nav-caret" aria-hidden="true"></i>' : ''}</a>`).join('');
+  return `<header class="topbar tb" id="topbar">
+    <a class="brand" href="/" data-nav="home"${cur('home')} aria-label="TypeDash, home"><span class="bolt">${svg(I.bolt, 'i fill')}</span><span class="brand-word">Type<em>Dash</em></span></a>
+    <nav class="mainnav" id="mainnav" aria-label="Main">${main}</nav>
+    <div class="topbar-right">
+      <div class="acct" id="acct"></div>
+      <a class="nav-cta" href="/app" data-nav="app"><span>Play now</span><i aria-hidden="true"></i></a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navsheet">${svg(I.menu)}</button>
+    </div>
+    <div class="acct-menu" id="acct-menu" hidden></div>
+  </header>`;
+}
+
+/** The website's links for a page served at `origin`, by the same rules as /api/cx/config. */
+function siteOf(origin) {
+  let u = null;
+  try { u = new URL(origin); } catch (_) { /* no origin: localhost */ }
+  return siteConfig(u && { headers: { host: u.host, 'x-forwarded-proto': u.protocol.slice(0, -1) } });
+}
+
+function footer({ origin } = {}) {
+  const site = siteOf(origin);
+  return `<footer class="site-foot tdf">
+    <div class="tdf-top">
+      <div class="tdf-brand">
+        <a class="brand foot-brand" href="/"><span class="bolt">${svg(I.bolt, 'i fill')}</span><span class="brand-word">Type<em>Dash</em></span></a>
+        <a class="tdf-back" href="${esc(site.siteUrl)}">${svg(I.back)}<span>Back to Cortexis</span></a>
+      </div>
+      <nav class="tdf-cols" aria-label="Footer">
+        <div class="tdf-col"><p class="tdf-h">Play</p><a href="/app">Race people</a><a href="/practice">Paragraphs</a><a href="/daily">Today's paragraph</a></div>
+        <div class="tdf-col"><p class="tdf-h">Rankings</p><a href="/leaderboard">World</a><a href="/how">How to play</a></div>
+        <div class="tdf-col" data-foot-account><p class="tdf-h">Account</p><a href="/app/signin">Sign in</a><a href="${esc(site.signupUrl)}" target="_blank" rel="noopener">Create an account</a><a href="/app/profile">Your stats</a></div>
+      </nav>
+    </div>
+    <div class="tdf-base">
+      <p>A Cortexis game, made in Islamabad.</p>
+    </div>
+  </footer>`;
+}
+
+/**
+ * The document around a page. `nav` marks the active navbar item; `page`
+ * names the page for its styles; the body goes into <main id="main">.
+ */
+function layout({ origin, path, title, description, image, imageAlt, body, jsonLd = null, noindex = false, nav = null, page = 'page', ogType = 'website', preload = null }) {
   const url = origin + path;
   const img = image || `${origin}/og/site.png`;
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-doc="site">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -30,8 +126,8 @@ function layout({ origin, path, title, description, image, imageAlt, body, jsonL
   <meta name="description" content="${esc(description)}">
   <link rel="canonical" href="${esc(url)}">
   ${noindex ? '<meta name="robots" content="noindex">' : ''}
-  <meta name="theme-color" content="#f7f4ef">
-  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#FAF8F4">
+  <meta property="og:type" content="${ogType}">
   <meta property="og:site_name" content="TypeDash">
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
@@ -45,29 +141,129 @@ function layout({ origin, path, title, description, image, imageAlt, body, jsonL
   <meta name="twitter:description" content="${esc(description)}">
   <meta name="twitter:image" content="${esc(img)}">
   <link rel="icon" href="${ICON}">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="${FONTS}" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/demo.css">
+  <link rel="stylesheet" href="/css/site.css">
+  ${preload ? `<link rel="preload" as="image" href="${esc(preload)}" type="image/webp">` : ''}
   ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>` : ''}
+  <script>${HEAD_SCRIPT}</script>
 </head>
 <body class="page-body">
-  <header class="topbar">
-    <a class="brand" href="/"><span class="bolt"><svg class="i fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></span>TypeDash</a>
-    <nav class="topbar-right page-nav">
-      <a class="pill" href="/practice">Paragraphs</a>
-      <a class="pill" href="/daily">Today</a>
-      <a class="pill" href="/leaderboard">Fastest people</a>
-      <a class="btn primary small" href="/app">Play now</a>
-    </nav>
-  </header>
-  <main class="page">${body}</main>
-  <footer class="page-foot">
-    <a href="/">TypeDash</a> · real-time multiplayer typing race · free, no sign-up ·
-    <a href="/practice">all the paragraphs</a> · <a href="/daily">today's paragraph</a> · <a href="/leaderboard">fastest people</a>
-  </footer>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <a class="skip" href="#main">Skip to the page</a>
+  ${navbar({ active: nav })}
+  <main id="main" class="site-main" data-page="${esc(page)}" data-nav="${esc(nav || '')}" data-title="${esc(title)}">${body}</main>
+  ${footer({ origin })}
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script type="module" src="/js/site.js"></script>
 </body>
 </html>`;
+}
+
+/** A photograph in a page hero: warm, cropped by its frame, never the thing you read. */
+function photo(name, alt = '', { eager = true, w = 1600, h = 1066 } = {}) {
+  return `<img class="pg-photo-img" src="/img/${name}-1600.webp" srcset="/img/${name}-800.webp 800w, /img/${name}-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 60vw" width="${w}" height="${h}" alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
+}
+
+/** Title set as lines that rise out of a mask on arrival (see .hero-title in site.css). */
+const heroTitle = (lines, cls = '') => {
+  const list = Array.isArray(lines) ? lines : [lines];
+  return `<h1 class="hero-title ${cls}" tabindex="-1">${list.map((l, i) => `<span class="ln" style="--i:${i}"><span>${l}</span></span>`).join('')}</h1>`;
+};
+
+/* ------------------------------------------------------------- boards */
+
+/**
+ * A board as lanes: each row's car sits as far along its lane as its score
+ * is of the leader's, so the list reads as a race at a glance.
+ */
+function lanes(rows, fmt, { showCountry = true, href = (r) => `/u/${r.id}`, empty = 'Nobody here yet. One race puts you on the board.', label = '' } = {}) {
+  if (!rows || !rows.length) {
+    return `<div class="board-open">
+      <div class="open-lane" aria-hidden="true">${PENCIL_CAR}</div>
+      <p>${esc(empty)}</p>
+    </div>`;
+  }
+  const lead = Math.max(1, ...rows.map((r) => r.value || 0));
+  return `<ol class="lanes"${label ? ` aria-label="${esc(label)}"` : ''}>${rows.map((r) => `
+    <li class="lane-row${r.rank <= 3 ? ` p${r.rank}` : ''}" data-id="${esc(r.id)}" style="--f:${Math.max(0.04, (r.value || 0) / lead).toFixed(3)}">
+      <span class="lr-rank">${r.rank}</span>
+      <span class="lr-who">${showCountry ? `<span class="lr-flag">${flag(r.country)}</span>` : ''}<a href="${esc(href(r))}">${esc(r.name)}</a></span>
+      <span class="lr-road" aria-hidden="true"><span class="lr-car" data-car="${esc(r.skin && r.skin !== 'flag' ? r.skin : 'dash')}"></span></span>
+      <span class="lr-val">${esc(fmt(r.value, r))}</span>
+    </li>`).join('')}</ol>`;
+}
+
+/** The three steps. DOM order is rank order; CSS stands them 2 · 1 · 3. */
+function podium(rows, fmt, { href = (r) => `/u/${r.id}`, showCountry = true } = {}) {
+  const slot = (r, i) => (r ? `
+    <li class="pd pd${i + 1}" data-id="${esc(r.id)}">
+      <span class="pd-car" data-car="${esc(r.skin || 'dash')}" aria-hidden="true"></span>
+      <span class="pd-who">${showCountry ? `<span class="pd-flag">${flag(r.country)}</span>` : ''}<a href="${esc(href(r))}">${esc(r.name)}</a></span>
+      <span class="pd-val">${esc(fmt(r.value, r))}</span>
+      <span class="pd-step"><b>${i + 1}</b></span>
+    </li>` : `
+    <li class="pd pd${i + 1} open">
+      <span class="pd-car" aria-hidden="true">${PENCIL_CAR}</span>
+      <span class="pd-who"><span>Open seat</span></span>
+      <span class="pd-val">&nbsp;</span>
+      <span class="pd-step"><b>${i + 1}</b></span>
+    </li>`);
+  return `<ol class="podium-row" aria-label="Top three">${[0, 1, 2].map((i) => slot(rows[i] || null, i)).join('')}</ol>`;
+}
+
+/* ------------------------------------------------------------- home */
+
+function homePage({ origin, passages = 0, langs = 0, racers = 5 }) {
+  const title = 'TypeDash — a typing race against real people';
+  const description = `A free typing race you play in the browser: a short paragraph appears, you type it, and whoever finishes first wins. Paragraphs in ${langs} languages, a new one every day, worldwide rankings. No sign-up.`;
+  const body = `
+  <section class="hm-hero" data-hero>
+    <div class="hm-copy">
+      ${heroTitle(['Type fast.', '<em>Finish first.</em>'], 'hm-title')}
+      <p class="pg-lead hero-late" style="--i:2">Up to ${racers} people, one paragraph, about a minute.</p>
+      <div class="pg-cta hero-late" style="--i:3">
+        <a class="btn primary big-cta" href="/app">Play now</a>
+        <a class="text-link" href="/practice">See the paragraphs</a>
+      </div>
+    </div>
+    <div class="hm-stage hero-media" aria-hidden="true">
+      <div class="hm-glow"></div>
+      <div data-td-demo></div>
+      <span class="float f1"><b>✦</b>+250 bonus word</span>
+      <span class="float f2"><b>2×</b>points for a clean run</span>
+    </div>
+  </section>
+
+  <section class="hm-modes" aria-label="Ways to play">
+    <a class="mode" href="/app">
+      <span class="art" aria-hidden="true"><span class="art-lanes" data-lanes><i data-skin="bolt" data-paint="#B8612E"></i><i data-skin="hatch" data-paint="#3E6A82"></i><i data-skin="muscle" data-paint="#8E3B35"></i></span></span>
+      <span class="mode-foot"><span><b>Race people</b><small>Up to ${racers}, live</small></span><span class="go" aria-hidden="true"></span></span>
+    </a>
+    <a class="mode" href="/practice">
+      <span class="art" aria-hidden="true"><span class="art-solo"><span class="line"><i style="--k:0;width:22%"></i><i style="--k:1;width:14%"></i><i style="--k:2;width:30%"></i><i style="--k:3;width:18%"></i></span><span class="line"><i style="--k:4;width:16%"></i><i style="--k:5;width:26%"></i><i style="--k:6;width:12%"></i><i style="--k:7;width:22%"></i></span><span class="line"><i style="--k:8;width:28%"></i><i style="--k:9;width:18%"></i><i style="--k:10;width:10%"></i></span><span class="pacer me">you<span><b></b></span></span><span class="pacer">robot<span><b></b></span></span></span></span>
+      <span class="mode-foot"><span><b>On your own</b><small>${passages} paragraphs in ${langs} languages</small></span><span class="go" aria-hidden="true"></span></span>
+    </a>
+    <a class="mode" href="/daily">
+      <span class="art" aria-hidden="true"><span class="art-cal"><span class="leaf"><small>today</small><b>1</b></span><span class="star s1">✦</span><span class="star s2">✦</span><span class="star s3">✦</span></span></span>
+      <span class="mode-foot"><span><b>Today's paragraph</b><small>The same one for everyone</small></span><span class="go" aria-hidden="true"></span></span>
+    </a>
+  </section>
+
+  <section class="hm-closer">
+    <h2>How fast are you?</h2>
+    <a class="btn primary big-cta" href="/app">Play now</a>
+    <div class="parade" data-parade aria-hidden="true"></div>
+  </section>`;
+  const jsonLd = { '@context': 'https://schema.org', '@graph': [
+    { '@type': 'WebSite', name: 'TypeDash', url: `${origin}/` },
+    { '@type': 'VideoGame', name: 'TypeDash', url: `${origin}/app`, description: 'A typing race you play in the browser: a short paragraph appears, you type it, and whoever finishes first wins.', applicationCategory: 'Game', operatingSystem: 'Any', gamePlatform: 'Web browser', playMode: ['MultiPlayer', 'SinglePlayer'], genre: 'Typing', isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } },
+  ] };
+  return layout({ origin, path: '/', title, description, body, jsonLd, nav: 'home', page: 'home' });
 }
 
 /* ------------------------------------------------------------- share page */
@@ -99,16 +295,14 @@ function sharePage(s, id, origin) {
   const meta = shareMeta(s);
   const image = `${origin}/og/r/${id}.png`;
   const body = `
-    <section class="card page-card share-page">
-      <img class="share-img" src="${esc(image)}" alt="${esc(meta.title)}" width="1200" height="630">
-      <h1>${esc(meta.title)}</h1>
-      <p class="sub">${esc(meta.description)}</p>
-      <div class="page-cta">
-        <a class="btn primary big" href="${esc(meta.cta.href)}">${esc(meta.cta.label)}</a>
-      </div>
-      <p class="hint">TypeDash is a free typing race. A short paragraph appears, you type it, and whoever finishes first wins. No sign-up — you are typing within seconds.</p>
-    </section>`;
-  return layout({ origin, path: `/r/${id}`, title: meta.title, description: meta.description, image, body });
+  <section class="share-hero" data-hero>
+    <figure class="share-frame hero-media"><img class="share-img" src="${esc(image)}" alt="${esc(meta.title)}" width="1200" height="630" fetchpriority="high"></figure>
+    <div class="share-copy">
+      <h1 class="share-title hero-late" tabindex="-1" style="--i:1">${esc(meta.title)}</h1>
+      <div class="pg-cta hero-late" style="--i:2"><a class="btn primary big-cta" href="${esc(meta.cta.href)}">${esc(meta.cta.label)}</a><a class="text-link" href="/">What is TypeDash?</a></div>
+    </div>
+  </section>`;
+  return layout({ origin, path: `/r/${id}`, title: meta.title, description: meta.description, image, body, page: 'share' });
 }
 
 /* ------------------------------------------------------------- profile page */
@@ -119,41 +313,43 @@ function profilePage(p, origin) {
   const image = `${origin}/og/u/${p.id}.png`;
   const have = new Set(p.achievements);
   const ach = CATALOGUE.filter((a) => have.has(a.id));
-  const stat = (v, l) => `<div><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+  const stat = (v, l) => `<div class="figure"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
   const body = `
-    <section class="card page-card profile-page">
-      <img class="share-img" src="${esc(image)}" alt="${esc(title)}" width="1200" height="630">
-      <h1>${flag(p.country)} ${esc(p.name)} <small>Level ${p.level} · ${esc(p.title)}</small></h1>
-      <p class="sub">${esc(description)}</p>
-      <div class="prof-stats page-stats">
-        ${stat(num(p.points), 'points')}${stat(p.bestWpm, 'best words a min')}${stat(num(p.wins), 'wins')}${stat(num(p.races), 'races')}
-        ${stat(p.worldRank ? `#${num(p.worldRank)}` : '—', 'place in the world')}${stat(p.streak, 'days in a row')}${stat(p.bestCombo, 'best run of correct letters')}${stat(num(p.solo.finished), 'goes on their own')}
+  <section class="pg-hero who-hero" data-hero>
+    <div class="pg-copy">
+      <p class="who-flag hero-late" style="--i:0"><span class="flag-disc">${flag(p.country)}</span>Level ${p.level} ${esc(p.title)}</p>
+      ${heroTitle(esc(p.name), 'who-name')}
+      <div class="figures hero-late" style="--i:2">
+        ${stat(p.bestWpm, 'best words a minute')}${stat(num(p.points), 'points')}${stat(p.worldRank ? `#${num(p.worldRank)}` : '—', 'in the world')}
       </div>
-      ${ach.length ? `<h2>Awards <small>${ach.length} of ${CATALOGUE.length}</small></h2><div class="ach-grid">${ach.map((a) => `<div class="ach got" title="${esc(a.desc)}"><span class="ach-icon">${a.icon}</span><span class="ach-name">${esc(a.name)}</span></div>`).join('')}</div>` : ''}
-      <div class="page-cta"><a class="btn primary big" href="/app">Race ${esc(p.name)}</a></div>
-      <p class="hint">Profiles are created automatically the first time you race — no sign-up. Your stats, streak and achievements follow your browser.</p>
-    </section>`;
+      <div class="pg-cta hero-late" style="--i:3"><a class="btn primary big-cta" href="/app">Race ${esc(p.name)}</a></div>
+    </div>
+    <div class="showroom hero-media" aria-hidden="true">
+      <span class="spot"></span>
+      <span class="show-car" data-car="${esc(p.skin || 'dash')}"></span>
+      <span class="floor"></span>
+    </div>
+  </section>
+  <section class="pg-band">
+    <div class="figures wide">
+      ${stat(num(p.wins), 'wins')}${stat(num(p.races), 'races')}${stat(p.streak, 'days in a row')}${stat(p.bestCombo, 'best run of right letters')}${stat(num(p.solo.finished), 'goes on their own')}
+    </div>
+    ${ach.length ? `<h2 class="band-title">Awards <small>${ach.length} of ${CATALOGUE.length}</small></h2><div class="ach-grid">${ach.map((a) => `<div class="ach got" title="${esc(a.desc)}"><span class="ach-icon">${a.icon}</span><span class="ach-name">${esc(a.name)}</span></div>`).join('')}</div>` : ''}
+  </section>`;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
     mainEntity: { '@type': 'Person', name: p.name, identifier: p.id, url: `${origin}/u/${p.id}` },
   };
-  return layout({ origin, path: `/u/${p.id}`, title, description, image, body, jsonLd });
+  return layout({ origin, path: `/u/${p.id}`, title, description, image, body, jsonLd, page: 'profile' });
 }
 
-/* ------------------------------------------------------------- SEO pages */
-
-const medal = (r) => (r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : `#${r}`);
-
-function boardTable(rows, fmt, { showCountry = true } = {}) {
-  if (!rows.length) return '<p class="hint">Nobody on this board yet — one race puts you on it.</p>';
-  return `<table class="results-table board-table"><thead><tr><th>#</th><th>Who</th><th class="num">Score</th></tr></thead><tbody>${rows.map((r) => `
-    <tr><td>${medal(r.rank)}</td><td>${showCountry ? `${flag(r.country)} ` : ''}<a href="/u/${esc(r.id)}">${esc(r.name)}</a></td><td class="num">${esc(fmt(r.value))}</td></tr>`).join('')}</tbody></table>`;
-}
+/* ------------------------------------------------------------- rankings */
 
 /**
- * /leaderboard and /leaderboard/:country — the ranking boards as plain HTML.
- * `top` carries the rows per category; `countries` the codes that have players.
+ * /leaderboard and /leaderboard/:country. Every board is on the page (one
+ * tab each), so search engines read them all; the first one with anybody on
+ * it opens. `top` carries the rows per category.
  */
 function leaderboardPage({ origin, scope, top, countries, dailyRows, season, teams, countryRows }) {
   const global = scope === 'global';
@@ -163,23 +359,48 @@ function leaderboardPage({ origin, scope, top, countries, dailyRows, season, tea
     ? `The top ranked racers on TypeDash by points, typing speed (WPM) and daily streak, worldwide. Updated live after every race.`
     : `The top ranked TypeDash racers from ${cname} by points, typing speed (WPM) and daily streak. Updated live after every race.`;
   const path = global ? '/leaderboard' : `/leaderboard/${scope}`;
-  const links = countries.filter((c) => c !== scope).map((c) => `<a class="chip-btn" href="/leaderboard/${esc(c)}">${flag(c)} ${esc(nameOf(c) || c)}</a>`).join(' ');
+  const pts = (v) => `${num(v)} pts`;
+  const tabs = [
+    { id: 'season', label: 'Season', title: `Season ${season ? season.number : ''}, points this month`, rows: top.season || [], fmt: pts },
+    { id: 'points', label: 'All time', title: 'Points, all time', rows: top.points || [], fmt: pts },
+    { id: 'wpm', label: 'Fastest', title: 'Fastest, best words a minute', rows: top.wpm || [], fmt: (v) => `${v} a min` },
+    { id: 'streak', label: 'Days in a row', title: 'Most days in a row', rows: top.streak || [], fmt: (v) => `${v} ${v === 1 ? 'day' : 'days'}` },
+  ];
+  if (global && dailyRows) tabs.push({ id: 'daily', label: 'Today', title: "Today's paragraph, fastest", rows: dailyRows, fmt: (v) => `${v} a min`, empty: "Nobody has finished today's paragraph yet." });
+  if (global && teams) tabs.push({ id: 'teams', label: 'Teams', title: 'Teams, this season', rows: teams, fmt: pts, href: (t) => `/t/${t.id}`, country: false, empty: 'No teams on the board yet. Make one from your Team page.' });
+  if (global && countryRows) tabs.push({ id: 'countries', label: 'Countries', title: 'Countries, this week', rows: countryRows, fmt: pts, href: (c) => `/leaderboard/${c.country}`, empty: 'No points this week yet.' });
+  const open = (tabs.find((t) => t.rows.length) || tabs[0]).id;
+  const lead = (top.season && top.season.length ? top.season : top.points) || [];
+  const daysLeft = season ? Math.max(0, Math.ceil((season.endsAt - Date.now()) / 86400000)) : null;
+  const heading = global ? 'Rankings' : `Fastest in ${esc(cname)}`;
+  const links = countries.filter((c) => c !== scope).map((c) => `<a class="chip-btn" href="/leaderboard/${esc(c)}">${flag(c)} ${esc(nameOf(c) || c)}</a>`).join('');
   const body = `
-    <section class="card page-card">
-      <h1>${global ? 'Fastest people' : `Fastest in ${flag(scope)} ${esc(cname)}`} <small>${global ? 'everywhere' : `<a href="/leaderboard">see everyone</a>`}</small></h1>
-      <p class="sub">${esc(description)}</p>
-      <h2>Season ${season ? season.number : ''} <small>this month · ends ${season ? new Date(season.endsAt).toISOString().slice(0, 10) : ''}</small></h2>${boardTable(top.season || [], (v) => num(v), { showCountry: global })}
-      <h2>Points <small>all time</small></h2>${boardTable(top.points, (v) => num(v), { showCountry: global })}
-      <h2>Fastest <small>best words a minute</small></h2>${boardTable(top.wpm, (v) => `${v} a min`, { showCountry: global })}
-      <h2>Streak <small>days in a row</small></h2>${boardTable(top.streak, (v) => `${v} 🔥`, { showCountry: global })}
-      ${global && dailyRows ? `<h2>Today's paragraph</h2>${boardTable(dailyRows, (v) => `${v} a min`)}` : ''}
-      ${global && teams ? `<h2>Teams <small>this season</small></h2>${teams.length ? `<table class="results-table board-table"><thead><tr><th>#</th><th>Team</th><th class="num">Members</th><th class="num">Points</th></tr></thead><tbody>${teams.map((t) => `<tr><td>${medal(t.rank)}</td><td><a href="/t/${esc(t.id)}">${esc(t.name)}</a></td><td class="num">${t.members}</td><td class="num">${num(t.value)}</td></tr>`).join('')}</tbody></table>` : '<p class="hint">No teams on the board yet — create one from your profile card.</p>'}` : ''}
-      ${global && countryRows ? `<h2>Countries <small>this week</small></h2>${countryRows.length ? `<table class="results-table board-table"><thead><tr><th>#</th><th>Country</th><th class="num">People</th><th class="num">Points</th></tr></thead><tbody>${countryRows.map((c) => `<tr><td>${medal(c.rank)}</td><td>${flag(c.country)} <a href="/leaderboard/${esc(c.country)}">${esc(c.name)}</a></td><td class="num">${c.players}</td><td class="num">${num(c.value)}</td></tr>`).join('')}</tbody></table>` : '<p class="hint">No points this week yet.</p>'}` : ''}
-      <div class="page-cta"><a class="btn primary big" href="/app">Have a go</a></div>
-      ${global && season && season.past.length ? `<h2>Past seasons</h2><div class="past-seasons">${season.past.map((s) => `
-        <div class="past-season"><b>Season ${s.number}</b> <span class="passage-meta">${esc(s.key)} · ${num(s.players)} people</span><div>${s.top.map((t) => `${medal(t.rank)} ${flag(t.country)} <a href="/u/${esc(t.id)}">${esc(t.name)}</a> <small>${num(t.points)}</small>`).join(' · ')}</div></div>`).join('')}</div>` : ''}
-      ${links ? `<h2>The fastest in each country</h2><div class="chips wrap">${links}</div>` : ''}
-    </section>`;
+  <section class="pg-hero lb-hero" data-hero>
+    <figure class="pg-photo lb-photo hero-media" aria-hidden="true">${photo('rankings', '', { h: 1131 })}</figure>
+    <div class="pg-copy lb-copy">
+      ${global ? '' : `<p class="crumb hero-late" style="--i:0"><a href="/leaderboard">Rankings</a><span class="flag-disc">${flag(scope)}</span></p>`}
+      ${heroTitle(heading)}
+      <p class="pg-lead hero-late" style="--i:2">${season ? `Season ${season.number} ends in ${plural(daysLeft, 'day')}.` : 'Updated after every race.'}</p>
+    </div>
+    <div class="lb-podium hero-late" style="--i:2">${podium(lead, (v) => pts(v), { showCountry: global })}</div>
+  </section>
+
+  <section class="lb-boards" data-tabs>
+    <div class="tabs lb-tabs" role="tablist" aria-label="Boards">${tabs.map((t) => `<button class="tab${t.id === open ? ' on' : ''}" role="tab" type="button" id="tab-${t.id}" aria-controls="panel-${t.id}" aria-selected="${t.id === open}" tabindex="${t.id === open ? 0 : -1}" data-cat="${t.id}">${t.label}</button>`).join('')}</div>
+    ${tabs.map((t) => `<div class="lb-panel" role="tabpanel" id="panel-${t.id}" aria-labelledby="tab-${t.id}"${t.id === open ? '' : ' hidden'}>
+      <h2 class="sr-only">${esc(t.title)}</h2>
+      ${lanes(t.rows, t.fmt, { showCountry: global && t.country !== false, href: t.href, empty: t.empty, label: t.label })}
+    </div>`).join('')}
+  </section>
+
+  ${global && season && season.past.length ? `<section class="pg-band past">
+    <h2 class="band-title">Past seasons</h2>
+    <div class="past-seasons">${season.past.map((s) => `
+      <div class="past-season"><b>Season ${s.number}</b><span class="passage-meta">${esc(s.key)}, ${plural(s.players, 'person', 'people')}</span>
+        <ol>${s.top.map((t) => `<li><span class="lr-flag">${flag(t.country)}</span><a href="/u/${esc(t.id)}">${esc(t.name)}</a> <small>${num(t.points)}</small></li>`).join('')}</ol></div>`).join('')}</div>
+  </section>` : ''}
+  ${links ? `<section class="pg-band countries"><h2 class="band-title">The fastest in each country</h2><div class="chips wrap">${links}</div></section>` : ''}
+  <section class="pg-closer"><a class="btn primary big-cta" href="/app">Race for a place</a></section>`;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -188,10 +409,11 @@ function leaderboardPage({ origin, scope, top, countries, dailyRows, season, tea
     numberOfItems: top.points.length,
     itemListElement: top.points.slice(0, 25).map((r) => ({ '@type': 'ListItem', position: r.rank, name: r.name, url: `${origin}/u/${r.id}` })),
   };
-  return layout({ origin, path, title, description, body, jsonLd });
+  return layout({ origin, path, title, description, body, jsonLd, nav: 'leaderboard', page: 'leaderboard', preload: '/img/rankings-1600.webp' });
 }
 
-/** /practice — every passage with its record holder. */
+/* ------------------------------------------------------------- paragraphs */
+
 /** The key a set of paragraphs lives under: a language code, or a drill type. */
 const setKeyOf = (p) => (p.category === 'prose' ? p.lang : p.category);
 const setPathOf = (p) => (p.category === 'prose' ? `/practice/lang/${p.lang}` : `/practice/drill/${p.category}`);
@@ -211,6 +433,7 @@ function practiceSets(passages, langs = {}, categories = {}) {
         name: isDrill ? (categories[p.category] || { name: p.category }).name : (langs[p.lang] || { native: p.lang }).native,
         english: isDrill ? '' : (langs[p.lang] || { name: p.lang }).name,
         note: isDrill ? (categories[p.category] || { desc: '' }).desc : '',
+        lang: p.lang,
         items: [],
       }));
     }
@@ -220,7 +443,17 @@ function practiceSets(passages, langs = {}, categories = {}) {
   return sets;
 }
 
-/** One card per set of paragraphs, easiest thing on the page to understand: pick your language. */
+/** The first sentence (or so) of the easiest paragraph in a set: what the set sounds like. */
+function sampleOf(set, max = 96) {
+  const first = set.items.filter((p) => (p.stage || 1) === 1)[0] || set.items[0];
+  if (!first) return '';
+  const t = first.text;
+  const stop = t.slice(0, max).search(/[.!?;](\s|$)/);
+  if (stop > 24) return t.slice(0, stop + 1);
+  return t.length > max ? `${t.slice(0, max).replace(/\s+\S*$/, '')}…` : t;
+}
+
+/** The chooser: one card per language and drill, each showing a line of itself. */
 function practiceIndexPage({ origin, passages, records, langs = {}, categories = {} }) {
   const sets = practiceSets(passages, langs, categories);
   const sample = passages.find((p) => p.lang === 'en' && p.category === 'prose') || passages[0];
@@ -228,40 +461,53 @@ function practiceIndexPage({ origin, passages, records, langs = {}, categories =
   const title = 'Typing practice passages · TypeDash';
   // the meta description keeps the words people search for; the page itself says it plainly
   const description = `${passages.length} typing practice passages (WPM test paragraphs) in ${langNames.length} languages — ${langNames.join(', ')} — plus code and number drills, sorted into stages from easy to hard. Free, no sign-up.`;
+  const typer = sets.map((s) => ({ label: s.name, lang: s.kind === 'language' ? s.lang : 'en', text: sampleOf(s, 70) }));
   const card = (set) => `
-    <a class="set-card card" href="${esc(set.path)}">
-      <b>${esc(set.name)}</b>
-      ${set.english && set.english !== set.name ? `<span class="set-sub">${esc(set.english)}</span>` : ''}
-      ${set.note ? `<span class="set-sub">${esc(set.note)}</span>` : ''}
-      <span class="set-meta">${set.items.length} paragraphs · ${set.stages} stage${set.stages === 1 ? '' : 's'}</span>
+    <a class="set-card card" href="${esc(set.path)}" data-kind="${set.kind}" lang="${esc(set.kind === 'language' ? set.lang : 'en')}">
+      <span class="set-name">${esc(set.name)}</span>
+      <span class="set-sub">${esc(set.english && set.english !== set.name ? set.english : set.note)}</span>
+      <span class="set-sample" aria-hidden="true">${esc(sampleOf(set))}</span>
+      <span class="set-meta"><b>${set.items.length}</b> paragraphs<span class="stagebar" title="${set.stages} stages, easy to hard">${Array.from({ length: set.stages }, (_, i) => `<i style="--s:${i}"></i>`).join('')}</span></span>
     </a>`;
   const body = `
-    <section class="card page-card">
-      <h1>Pick a language <small>then choose a paragraph to type</small></h1>
-      <p class="sub">${passages.length} paragraphs in ${langNames.length} languages, plus drills made of code and of numbers. Inside each one they run from easy to hard, and nothing is locked.</p>
-      <h2>Languages</h2>
-      <div class="set-grid">${sets.filter((x) => x.kind === 'language').map(card).join('')}</div>
-      <h2>Drills</h2>
-      <div class="set-grid">${sets.filter((x) => x.kind === 'drill').map(card).join('')}</div>
-      <div class="page-cta"><a class="btn primary big" href="/app#practice">Type a random one now</a><a class="btn big" href="/daily">Today's paragraph</a></div>
-
-      <h2>Put a typing box on your own site</h2>
-      <div class="tile embed-snippet">
-        <p>One small script, no account needed. Your visitors type a paragraph without leaving your page.</p>
-        <pre><code>&lt;script src="${esc(origin)}/embed.js" data-passage="${esc(sample ? sample.id : 'trains')}" data-pacer="50"&gt;&lt;/script&gt;</code></pre>
-        <a class="btn" href="/embed?passage=${esc(sample ? sample.id : 'trains')}">See what it looks like</a>
+  <section class="pg-hero pr-hero" data-hero>
+    <div class="pg-copy">
+      ${heroTitle('Paragraphs')}
+      <p class="pg-lead hero-late" style="--i:1">${passages.length} to type in ${langNames.length} languages, plus code and numbers. Each set runs from easy to hard.</p>
+      <div class="pg-cta hero-late" style="--i:2"><a class="btn primary big-cta" href="/app#practice">Type a random one</a><a class="text-link" href="/daily">Today's paragraph</a></div>
+    </div>
+    <figure class="pg-photo pr-photo hero-media">
+      ${photo('paragraphs', '')}
+      <div class="typer" data-typer="${attrJson(typer)}" aria-hidden="true">
+        <span class="typer-lang">${esc(typer[0].label)}</span>
+        <span class="typer-text">${esc(typer[0].text)}</span>
       </div>
-    </section>`;
+    </figure>
+  </section>
+
+  <section class="pr-sets" aria-label="Languages and drills">
+    <div class="set-grid langs">${sets.filter((x) => x.kind === 'language').map(card).join('')}</div>
+    <div class="set-grid drills">${sets.filter((x) => x.kind === 'drill').map(card).join('')}</div>
+  </section>
+
+  <section class="pg-band embed-band">
+    <div class="embed-copy">
+      <h2 class="band-title">Put a typing box on your own site</h2>
+      <p>One script tag. Your visitors type a paragraph without leaving your page.</p>
+      <a class="text-link" href="/embed?passage=${esc(sample ? sample.id : 'trains')}">See it working</a>
+    </div>
+    <pre class="embed-code"><code>&lt;script src="${esc(origin)}/embed.js" data-passage="${esc(sample ? sample.id : 'trains')}" data-pacer="50"&gt;&lt;/script&gt;</code></pre>
+  </section>`;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'TypeDash typing practice',
     itemListElement: sets.map((set, i) => ({ '@type': 'ListItem', position: i + 1, name: set.name, url: `${origin}${set.path}` })),
   };
-  return layout({ origin, path: '/practice', title, description, body, jsonLd });
+  return layout({ origin, path: '/practice', title, description, body, jsonLd, nav: 'practice', page: 'practice', preload: '/img/paragraphs-1600.webp' });
 }
 
-/** One set: its paragraphs, in stage cards, easiest stage first. */
+/** One set: its stages side by side, easiest first; a car drives the road above them. */
 function practiceSetPage({ origin, set, records, allSets }) {
   const rec = Object.fromEntries(records.map((r) => [r.passageId, r]));
   const title = `${set.name} typing practice · ${set.items.length} passages · TypeDash`;
@@ -273,78 +519,181 @@ function practiceSetPage({ origin, set, records, allSets }) {
   const stages = STAGES
     .map((st) => ({ st, items: set.items.filter((p) => (p.stage || 1) === st.id) }))
     .filter((x) => x.items.length);
+  const first = stages[0] && stages[0].items[0];
   const others = allSets.filter((x) => x.key !== set.key);
   const body = `
-    <section class="card page-card">
-      <h1>${esc(set.name)} <small>${set.items.length} paragraphs · ${set.stages} stages</small></h1>
-      <p class="sub">Stage 1 is short and plain. Each stage after it has longer words, more punctuation or numbers. Start wherever you like — nothing is locked.</p>
-      ${stages.map((x) => `<div class="stage card s${x.st.id}">
-        <div class="stage-head">
-          <span class="stage-no">Stage ${x.st.id}</span>
-          <b>${esc(x.st.name)}</b>
-          <span class="stage-note">${esc(x.st.note)}</span>
-          <span class="stage-count">${x.items.length} ${x.items.length === 1 ? 'paragraph' : 'paragraphs'}</span>
-        </div>
-        <ol class="passage-list">${x.items.map(item).join('')}</ol>
-      </div>`).join('')}
-      <div class="page-cta"><a class="btn primary big" href="/app#practice">Type a random one now</a><a class="btn big" href="/practice">All languages</a></div>
-      <h2>Other languages and drills</h2>
-      <div class="set-grid small">${others.map((o) => `<a class="set-card card" href="${esc(o.path)}"><b>${esc(o.name)}</b><span class="set-meta">${o.items.length} paragraphs</span></a>`).join('')}</div>
-    </section>`;
+  <section class="pg-hero set-hero" data-hero>
+    <div class="pg-copy">
+      <p class="crumb hero-late" style="--i:0"><a href="/practice">Paragraphs</a></p>
+      ${heroTitle(esc(set.name))}
+      <p class="pg-lead hero-late" style="--i:2">${set.items.length} paragraphs in ${plural(set.stages, 'stage')}. Nothing is locked.</p>
+      ${first ? `<div class="pg-cta hero-late" style="--i:3"><a class="btn primary big-cta" href="/app#practice/${esc(first.id)}">Start with the first one</a></div>` : ''}
+    </div>
+    <div class="stage-road hero-media" data-stage-road aria-hidden="true">
+      <span class="sr-track"><span class="sr-car" data-car="${set.kind === 'drill' ? 'hatch' : 'dash'}"></span></span>
+      <ol class="sr-marks" style="--n:${stages.length}">${stages.map((x) => `<li><i></i>${esc(x.st.name)}</li>`).join('')}</ol>
+    </div>
+  </section>
+
+  <section class="stages" style="--n:${stages.length}">
+    ${stages.map((x) => `<div class="stage card s${x.st.id}">
+      <div class="stage-head">
+        <span class="stage-no">Stage ${x.st.id}</span>
+        <b>${esc(x.st.name)}</b>
+        <span class="stage-note">${esc(x.st.note)}</span>
+        <span class="stage-count">${plural(x.items.length, 'paragraph')}</span>
+      </div>
+      <ol class="passage-list">${x.items.map(item).join('')}</ol>
+    </div>`).join('')}
+  </section>
+
+  <section class="pg-band">
+    <h2 class="band-title">Other languages and drills</h2>
+    <div class="chips wrap">${others.map((o) => `<a class="chip-btn" href="${esc(o.path)}">${esc(o.name)} <small>${o.items.length}</small></a>`).join('')}</div>
+  </section>`;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${set.name} typing practice`,
     itemListElement: set.items.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.title, url: `${origin}/practice/${p.id}` })),
   };
-  return layout({ origin, path: set.path, title, description, body, jsonLd });
+  return layout({ origin, path: set.path, title, description, body, jsonLd, nav: 'practice', page: 'practice-set' });
 }
 
+/** One paragraph: the text itself is the page, and it types itself at the record's pace. */
 function practicePage({ origin, passage, record, prev, next, langs = {}, categories = {} }) {
   const p = passage;
   const langName = langs[p.lang] ? langs[p.lang].native : p.lang;
   const catName = categories[p.category] ? categories[p.category].name : p.category;
   const stage = STAGES[(p.stage || 1) - 1] || STAGES[0];
+  const setPath = setPathOf(p);
+  const setName = p.category !== 'prose' ? catName : langName;
   const title = `Typing practice: “${p.title}” (${p.words} words, ${p.lang === 'en' && p.category === 'prose' ? 'English' : `${langName}${p.category !== 'prose' ? ` · ${catName}` : ''}`}) · TypeDash`;
   const description = `${p.text.slice(0, 150).replace(/\s+\S*$/, '')}… Type this ${p.words}-word paragraph in your browser${record ? `, then race a replay of the fastest run so far (${record.wpm} words a minute)` : ''}. Free, no sign-up.`;
   const body = `
-    <section class="card page-card practice-page">
-      <h1>${esc(p.title)} <small>${esc(langName)}${p.category !== 'prose' ? ` · ${esc(catName)}` : ''} · ${p.words} words · ${p.text.length} characters</small></h1>
-      <p class="page-note stage-note-line"><span class="stage-no">Stage ${stage.id}</span> <b>${esc(stage.name)}</b> — ${esc(stage.note)}</p>
-      <blockquote class="passage-text">${esc(p.text)}</blockquote>
-      ${record
-        ? `<div class="record-box">Fastest anyone has typed this: <b>${record.wpm} words a minute</b> at ${record.accuracy}% correct, by ${flag(record.country)} ${esc(record.name)} (${fmtTime(record.time)})</div>`
-        : '<div class="record-box dim">Nobody has typed this paragraph yet — the first clean run sets the time to beat.</div>'}
-      <div class="page-cta">
-        <a class="btn primary big" href="/app#practice/${esc(p.id)}">Type this paragraph</a>
-        ${record ? `<a class="btn big" href="/app#practice/${esc(p.id)}/ghost/wr">Race the record ghost</a>` : ''}
-      </div>
-      <p class="hint">Practice runs happen entirely in your browser: no lobby, no waiting. Golden words pay a bonus, clean words charge nitro, and a verified run can set the record.</p>
-      <nav class="passage-nav">${prev ? `<a href="/practice/${esc(prev.id)}">← ${esc(prev.title)}</a>` : '<span></span>'}<a href="/practice">All passages</a>${next ? `<a href="/practice/${esc(next.id)}">${esc(next.title)} →</a>` : '<span></span>'}</nav>
-    </section>`;
+  <section class="pg-hero psg-hero" data-hero>
+    <div class="pg-copy">
+      <p class="crumb hero-late" style="--i:0"><a href="/practice">Paragraphs</a><a href="${esc(setPath)}">${esc(setName)}</a></p>
+      ${heroTitle(esc(p.title))}
+      <p class="psg-meta hero-late" style="--i:2"><span class="stage-no">Stage ${stage.id}</span><b>${esc(stage.name)}</b><span>${p.words} words</span><span>${p.text.length} characters</span></p>
+    </div>
+  </section>
+
+  <section class="sheet hero-media" data-replay="${attrJson({ wpm: record ? record.wpm : 0, skin: record ? record.skin : 'dash' })}">
+    <blockquote class="passage-text sheet-text" lang="${esc(p.lang)}">${esc(p.text)}</blockquote>
+    <div class="sheet-lane" aria-hidden="true"><span class="sheet-road"><span class="sheet-car" data-car="${esc(record ? record.skin || 'dash' : 'dash')}"></span></span><span class="sheet-wpm"><b>0</b> a min</span></div>
+  </section>
+
+  <section class="psg-actions">
+    <div class="pg-cta">
+      <a class="btn primary big-cta" href="/app#practice/${esc(p.id)}">Type this paragraph</a>
+      ${record ? `<a class="btn ghost-btn" href="/app#practice/${esc(p.id)}/ghost/wr">Race the record</a>` : ''}
+    </div>
+    ${record
+    ? `<p class="record-line"><span class="rec-label">Record</span><b>${record.wpm} a min</b><span>${flag(record.country)} ${esc(record.name)}, ${record.accuracy}% right in ${fmtTime(record.time)}</span></p>`
+    : '<p class="record-line dim">No record yet. The first clean run sets it.</p>'}
+  </section>
+
+  <nav class="passage-nav" aria-label="More paragraphs">
+    ${prev ? `<a class="pn prev" href="/practice/${esc(prev.id)}"><small>Previous</small><b>${esc(prev.title)}</b></a>` : '<span></span>'}
+    ${next ? `<a class="pn next" href="/practice/${esc(next.id)}"><small>Next</small><b>${esc(next.title)}</b></a>` : '<span></span>'}
+  </nav>`;
   const jsonLd = { '@context': 'https://schema.org', '@type': 'CreativeWork', name: p.title, text: p.text, wordCount: p.words, inLanguage: p.lang, url: `${origin}/practice/${p.id}`, isAccessibleForFree: true };
-  return layout({ origin, path: `/practice/${p.id}`, title, description, body, jsonLd });
+  return layout({ origin, path: `/practice/${p.id}`, title, description, body, jsonLd, nav: 'practice', page: 'passage' });
 }
 
-/** /daily — today's challenge, who is leading, and yesterday's podium. */
+/* ------------------------------------------------------------- today */
+
+/** /daily — today's paragraph as the hero, typed live at the leader's pace; today's board; yesterday's podium. */
 function dailyPage({ origin, today, yesterday }) {
   const d = today;
   const title = `Today's paragraph #${d.number} — “${d.passage.title}” · TypeDash`;
   const leader = d.top[0] ? `Best so far: ${d.top[0].wpm} words a minute by ${d.top[0].name}.` : 'Nobody has had a go yet.';
   const description = `Today's paragraph: ${d.passage.words} words, the same one for everybody, one proper go at it. ${num(d.players)} have tried it so far. ${leader}`;
-  const rows = (list) => list.map((t) => ({ id: t.id, rank: t.rank, name: t.name, country: t.country, value: t.wpm }));
+  const rows = (list) => list.map((t) => ({ id: t.id, rank: t.rank, name: t.name, country: t.country, skin: t.skin, value: t.wpm }));
+  const wpm = (v) => `${v} a min`;
+  const lead = d.top[0] || null;
   const body = `
-    <section class="card page-card daily-page">
-      <h1>Today's paragraph <small>#${d.number} · “${esc(d.passage.title)}” · ${d.passage.words} words · a new one at midnight UTC</small></h1>
-      <p class="sub">${esc(description)}</p>
-      <div class="page-cta"><a class="btn primary big" href="/app#daily">Have a go</a></div>
-      <h2>Today's top 10 <small>${num(d.players)} have tried it</small></h2>${boardTable(rows(d.top), (v) => `${v} a min`)}
-      ${yesterday && yesterday.top.length ? `<h2>Yesterday · #${yesterday.number} <small>“${esc(yesterday.title)}”</small></h2>${boardTable(rows(yesterday.top), (v) => `${v} a min`)}` : ''}
-      <p class="hint">You type today's paragraph on your own, right in your browser. The first go you finish is the one that counts; after that you can type it again for fun. Coming back day after day builds your days in a row.</p>
-    </section>`;
+  <section class="pg-hero dy-hero" data-hero>
+    <div class="pg-copy dy-copy">
+      <p class="dy-num hero-late" style="--i:0" aria-hidden="true">#${d.number}</p>
+      ${heroTitle("Today's paragraph")}
+      <p class="dy-title hero-late" style="--i:2">“${esc(d.passage.title)}”</p>
+      <p class="pg-lead hero-late" style="--i:2">The same ${d.passage.words} words for everyone. Your first finished go is the one that counts.</p>
+      <div class="pg-cta hero-late" style="--i:3"><a class="btn primary big-cta" href="/app#daily">Have a go</a>
+        <span class="dy-clock" data-countdown="${d.endsAt}">New one in <b>${(() => { const ms = Math.max(0, d.endsAt - Date.now()); const h = Math.floor(ms / 3600000); const m = Math.floor((ms % 3600000) / 60000); return h > 0 ? `${h}h ${m}m` : `${m}m`; })()}</b></span>
+      </div>
+    </div>
+    <figure class="pg-photo dy-photo hero-media">
+      ${photo('today', '', { h: 1200 })}
+      <div class="sheet paper" data-replay="${attrJson({ wpm: lead ? lead.wpm : 0, daily: true, skin: lead ? lead.skin : 'dash', name: lead ? lead.name : '' })}">
+        <blockquote class="passage-text sheet-text" lang="en">${esc(d.passage.text)}</blockquote>
+        <div class="sheet-lane" aria-hidden="true"><span class="sheet-road"><span class="sheet-car" data-car="${esc(lead ? lead.skin || 'dash' : 'dash')}"></span></span><span class="sheet-wpm"><b>0</b> a min</span></div>
+        <p class="sheet-who" aria-hidden="true">${lead ? `Replaying ${esc(lead.name)}, today's fastest` : 'At a steady 60 words a minute'}</p>
+      </div>
+    </figure>
+  </section>
+
+  <section class="pg-band dy-board">
+    <h2 class="band-title">Today's top 10 <small>${plural(d.players, 'person has', 'people have')} tried it</small></h2>
+    ${lanes(rows(d.top), wpm, { empty: 'Nobody yet. Finish it first and the top spot is yours.', label: "Today's top 10" })}
+  </section>
+  ${yesterday && yesterday.top.length ? `<section class="pg-band dy-yesterday">
+    <h2 class="band-title">Yesterday <small>#${yesterday.number}, “${esc(yesterday.title)}”</small></h2>
+    ${podium(rows(yesterday.top), wpm)}
+  </section>` : ''}`;
   const jsonLd = { '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url: `${origin}/daily`, dateModified: new Date().toISOString() };
-  return layout({ origin, path: '/daily', title, description, image: `${origin}/og/daily.png`, body, jsonLd });
+  return layout({ origin, path: '/daily', title, description, image: `${origin}/og/daily.png`, body, jsonLd, nav: 'daily', page: 'daily', preload: '/img/today-1600.webp' });
 }
+
+/* ------------------------------------------------------------- how to play */
+
+function howPage({ origin }) {
+  const title = 'How to play TypeDash · the typing race, explained';
+  const description = 'Type the paragraph and every right letter moves your car. Keep a clean run for more points, fill the boost, catch the bonus words, race a robot or a replay, and come back for one paragraph a day.';
+  const step = (cls, art, name, line) => `<li class="${cls}"><span class="how-art" aria-hidden="true">${art}</span><b>${name}</b><span class="how-line">${line}</span></li>`;
+  const body = `
+  <section class="pg-hero how-hero" data-hero>
+    <div class="pg-copy">
+      ${heroTitle('How to play')}
+      <p class="pg-lead hero-late" style="--i:1">Type the paragraph. Every right letter moves your car.</p>
+      <div class="pg-cta hero-late" style="--i:2"><a class="btn primary big-cta" href="/app">Play now</a></div>
+    </div>
+    <figure class="pg-photo how-photo hero-media">
+      ${photo('how', '', { h: 974 })}
+      <div class="tryit" data-tryit>
+        <p class="tryit-ask" id="tryit-ask">Type <b>race</b> to move the car</p>
+        <div class="tryit-lane" aria-hidden="true"><span class="tryit-road"><span class="tryit-car" data-car="dash" style="--c:#B8612E"></span></span><i class="tryit-flag"></i></div>
+        <label class="tryit-field"><span class="sr-only">Type the word race</span><span class="tryit-word" aria-hidden="true"><i>r</i><i>a</i><i>c</i><i>e</i></span><input class="tryit-input" type="text" maxlength="12" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="tryit-ask"></label>
+        <p class="tryit-done" role="status" aria-live="polite"></p>
+      </div>
+    </figure>
+  </section>
+
+  <ol class="how how-steps">
+    ${step('how-type', '<span class="ha-text"><i>t</i><i>y</i><i>p</i><i class="fix"><b>o</b><b>e</b></i></span><span class="ha-car" data-car="dash" style="--c:#B8612E"></span>', 'Type what you see', 'Right letters move your car. Fix the red ones.')}
+    ${step('how-combo', '<span class="ha-combo"><b>12</b><small>in a row</small><em>2×</em></span>', 'Keep a clean run', 'Words in a row with no mistakes are worth more.')}
+    ${step('how-boost', '<span class="ha-meter"><i></i></span><span class="ha-flame"></span>', 'Fill the boost', 'Full bar: a faster car and double points.')}
+    ${step('how-gold', '<span class="ha-gold">letter<em>+250</em></span>', 'Catch the ✦ words', 'Three per paragraph. No mistakes, bonus points.')}
+    ${step('how-solo', '<span class="ha-lane"><i class="me"><span data-car="dash" style="--c:#B8612E"></span></i><i class="ghost"><span data-car="dash" style="--c:#8C8378"></span></i></span>', 'Race a robot or a replay', 'Keeps your days in a row going. Points only come from real people.')}
+    ${step('how-daily', '<span class="ha-cal"><small>today</small><b>1</b></span>', 'One paragraph a day', 'The same for everyone. One proper go counts.')}
+    ${step('how-team', '<span class="ha-team"><i data-car="hatch" style="--c:#7E9A6D"></i><i data-car="dash" style="--c:#B8612E"></i><i data-car="muscle" style="--c:#3E6A82"></i></span>', 'Play with friends', 'A team adds up everything you all score. Your country does too.')}
+  </ol>
+
+  <details class="how-tech">
+    <summary>How it works underneath</summary>
+    <ul class="how-list">
+      <li><b>Ten server snapshots a second</b>, stamped with server time and smoothed in your browser, so cars glide instead of jumping.</li>
+      <li><b>The server checks every race.</b> Progress is validated and rate-limited, and the race clock is synced so everyone sees GO at the same moment.</li>
+      <li><b>Typing on your own never touches the server while you type.</b> One result is sent at the end and checked against how fast a person can type.</li>
+    </ul>
+  </details>
+  <section class="pg-closer"><a class="btn primary big-cta" href="/app">Play now</a></section>`;
+  const jsonLd = { '@context': 'https://schema.org', '@type': 'HowTo', name: 'How to play TypeDash', step: ['Type what you see', 'Keep a clean run', 'Fill the boost', 'Catch the bonus words', 'Race a robot or a replay', 'One paragraph a day', 'Play with friends'].map((name, i) => ({ '@type': 'HowToStep', position: i + 1, name })) };
+  return layout({ origin, path: '/how', title, description, body, jsonLd, nav: 'how', page: 'how', preload: '/img/how-1600.webp' });
+}
+
+/* ------------------------------------------------------------- robots, sitemap */
 
 function robots(origin) {
   return `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /og/\nDisallow: /r/\n\nSitemap: ${origin}/sitemap.xml\n`;
@@ -355,30 +704,36 @@ function sitemap(origin, urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items}\n</urlset>\n`;
 }
 
+/* ------------------------------------------------------------- team page */
+
 /** /t/:id — a team's public page. */
 function teamPage(t, origin) {
   const title = `[${t.tag}] ${t.name} · TypeDash team`;
   const description = `${t.size} member${t.size === 1 ? '' : 's'} · ${num(t.season.points)} points this season${t.season.rank ? ` (#${t.season.rank} of ${t.season.of})` : ''} · ${num(t.allTime.points)} all time. Every ranked point a member earns counts for the team.`;
+  const fig = (v, l) => `<div class="figure"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+  const convoy = t.members.slice(0, 5);
   const body = `
-    <section class="card page-card team-page">
-      <h1>[${esc(t.tag)}] ${esc(t.name)} <small>${t.size}/${t.max} members · team since ${new Date(t.createdAt).toISOString().slice(0, 10)}</small></h1>
-      <p class="sub">${esc(description)}</p>
-      <div class="prof-stats page-stats">
-        <div><b>${num(t.season.points)}</b><span>season points</span></div>
-        <div><b>${t.season.rank ? `#${t.season.rank}` : '—'}</b><span>season rank</span></div>
-        <div><b>${num(t.allTime.points)}</b><span>all time</span></div>
-        <div><b>${t.trophies.length}</b><span>trophies</span></div>
-      </div>
-      ${t.trophies.length ? `<p class="hint">${t.trophies.map((x) => `${medal(x.rank)} Season ${x.number}`).join(' · ')}</p>` : ''}
-      <h2>Members</h2>
-      <table class="results-table board-table"><thead><tr><th>Who</th><th class="num">Season</th><th class="num">All time</th><th class="num">Best a min</th></tr></thead><tbody>${t.members.map((m) => `
-        <tr><td>${flag(m.country)} <a href="/u/${esc(m.id)}">${esc(m.name)}</a>${m.owner ? ' <span class="tag">OWNER</span>' : ''}</td><td class="num">${num(m.season)}</td><td class="num">${num(m.points)}</td><td class="num">${m.bestWpm}</td></tr>`).join('')}</tbody></table>
-      <div class="page-cta"><a class="btn primary big" href="/app">Race them</a><a class="btn big" href="/leaderboard">Fastest people</a></div>
-      <p class="hint">Teams are free: create one from your profile card, share the invite link, and every ranked race your members finish scores for the team.</p>
-    </section>`;
+  <section class="pg-hero team-hero" data-hero>
+    <div class="pg-copy">
+      <p class="team-tag-big hero-late" style="--i:0">[${esc(t.tag)}]</p>
+      ${heroTitle(esc(t.name), 'team-name')}
+      <p class="pg-lead hero-late" style="--i:2">${t.size} of ${t.max} members. Together since ${new Date(t.createdAt).toISOString().slice(0, 10)}.</p>
+      <div class="figures hero-late" style="--i:3">${fig(num(t.season.points), 'season points')}${fig(t.season.rank ? `#${t.season.rank}` : '—', 'this season')}${fig(num(t.allTime.points), 'all time')}</div>
+    </div>
+    <div class="convoy hero-media" aria-hidden="true">${convoy.map((m, i) => `<span class="convoy-car" style="--i:${i}" data-car="${esc(m.skin || 'dash')}"></span>`).join('')}<span class="convoy-road"></span></div>
+  </section>
+  ${t.trophies.length ? `<p class="trophies">${t.trophies.map((x) => `<span class="rank-chip top">Season ${x.number}, ${place(x.rank)}</span>`).join('')}</p>` : ''}
+  <section class="pg-band">
+    <h2 class="band-title">Members</h2>
+    <table class="results-table board-table"><thead><tr><th>Who</th><th class="num">Season</th><th class="num">All time</th><th class="num">Best a min</th></tr></thead><tbody>${t.members.map((m) => `
+      <tr><td><span class="lr-flag">${flag(m.country)}</span> <a href="/u/${esc(m.id)}">${esc(m.name)}</a>${m.owner ? ' <span class="tag">OWNER</span>' : ''}</td><td class="num">${num(m.season)}</td><td class="num">${num(m.points)}</td><td class="num">${m.bestWpm}</td></tr>`).join('')}</tbody></table>
+  </section>
+  <section class="pg-closer"><a class="btn primary big-cta" href="/app">Race them</a><a class="text-link" href="/leaderboard">Rankings</a></section>`;
   const jsonLd = { '@context': 'https://schema.org', '@type': 'SportsTeam', name: t.name, alternateName: t.tag, url: `${origin}/t/${t.id}`, memberOf: { '@type': 'Organization', name: 'TypeDash' } };
-  return layout({ origin, path: `/t/${t.id}`, title, description, body, jsonLd });
+  return layout({ origin, path: `/t/${t.id}`, title, description, body, jsonLd, page: 'team' });
 }
+
+/* ------------------------------------------------------------- embed widget */
 
 /** /embed — the widget document itself (self-contained: inline styles, one module). */
 function embedPage({ origin, passage }) {
@@ -392,7 +747,7 @@ function embedPage({ origin, passage }) {
   <meta name="robots" content="noindex">
   <link rel="icon" href="${ICON}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="${FONTS}" rel="stylesheet">
   <style>
     :root { --bg: #f7f3ee; --panel: #ffffff; --b: rgba(58, 42, 25,.1); --text: #2a2521; --muted: #7a7267; --accent: #d97706; --accent2: #0d9fc4; --gold: #b45309; --red: #e04a61; }
     * { box-sizing: border-box; }
@@ -467,16 +822,19 @@ function embedPage({ origin, passage }) {
 </html>`;
 }
 
+/* ------------------------------------------------------------- not found */
+
 function notFoundPage(origin, path) {
   const body = `
-    <section class="card page-card">
-      <h1>Nothing here</h1>
-      <p class="sub">That link has expired or never existed. The race, however, is on.</p>
-      <div class="page-cta"><a class="btn primary big" href="/app">Play TypeDash</a></div>
-    </section>`;
-  return layout({ origin, path, title: 'Not found · TypeDash', description: 'That page does not exist.', body, noindex: true });
+  <section class="nf" data-hero>
+    <div class="nf-lane hero-media" aria-hidden="true"><span class="nf-road"><span class="nf-car" data-car="dash"></span></span><i class="nf-finish"></i></div>
+    ${heroTitle('Off the track')}
+    <p class="pg-lead hero-late" style="--i:1">That link has expired or never existed.</p>
+    <div class="pg-cta hero-late" style="--i:2"><a class="btn primary big-cta" href="/app">Play now</a><a class="text-link" href="/">Home</a></div>
+  </section>`;
+  return layout({ origin, path, title: 'Not found · TypeDash', description: 'That page does not exist.', body, noindex: true, page: 'notfound' });
 }
 
 module.exports = {
-  practiceSets,
+  HEAD_SCRIPT, practiceSets, navbar, footer, homePage, howPage,
   practiceSetPage, layout, sharePage, shareMeta, profilePage, leaderboardPage, practiceIndexPage, practicePage, dailyPage, teamPage, embedPage, robots, sitemap, notFoundPage, esc, num, fmtTime, flag };

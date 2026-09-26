@@ -48,7 +48,7 @@ class Seasons {
   /** Freeze a finished season: ranked top 100, badges for everyone on it. */
   archive(key) {
     const rows = this.accounts.all
-      .filter((a) => a.season && a.season.key === key && a.season.points > 0)
+      .filter((a) => this.accounts.isRanked(a) && a.season && a.season.key === key && a.season.points > 0)
       .map((a) => ({ id: a.id, name: a.name, country: a.country, skin: a.skin, points: a.season.points, races: a.season.races, wins: a.season.wins }))
       .sort((x, y) => y.points - x.points || y.wins - x.wins || x.name.localeCompare(y.name))
       .map((r, i) => ({ ...r, rank: i + 1 }));

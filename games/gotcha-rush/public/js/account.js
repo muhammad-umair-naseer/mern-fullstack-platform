@@ -58,6 +58,13 @@ export class Account {
 
   get credentials() { return this.id && this.token ? { accountId: this.id, token: this.token } : {}; }
 
+  /** Signed in or out through cx-auth.js, which owns the stored credentials. */
+  useCredentials({ accountId = null, token = null } = {}) {
+    this.id = accountId;
+    this.token = token;
+    if (!accountId) { this.profile = { ...EMPTY }; this.standings = []; this.synced = false; }
+  }
+
   onAccount(msg) {
     if (msg.id) this.id = msg.id;
     if (msg.token) this.token = msg.token;

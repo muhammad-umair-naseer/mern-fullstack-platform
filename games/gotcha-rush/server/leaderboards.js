@@ -52,6 +52,7 @@ class Leaderboards {
 
     const rows = [];
     for (const a of this.accounts.all) {
+      if (!this.accounts.isRanked(a)) continue;   // guests play, but only signed-in players are ranked
       if (scope !== 'global' && a.country !== scope) continue;
       if (!live(a)) continue;
       const v = cat.value(a, win);

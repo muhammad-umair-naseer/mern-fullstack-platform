@@ -76,11 +76,20 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   /* ---------------- home -> practice run ---------------- */
   await page.goto(`${base}/app`, { waitUntil: 'networkidle0' });
   await page.waitForSelector('#btn-solo');
-  await page.click('#btn-options');                         // the identity form is folded away by default
+  // who you are lives on your stats page (the footer links it for a guest); the home screen only plays
+  assert.ok(await page.$eval('#guest-note', (el) => !el.hidden && /aren't ranked/.test(el.textContent)), 'a guest sees the quiet not-ranked line');
+  assert.strictEqual(await page.$('#screen-home #name'), null, 'no name form on the home screen');
+  await page.click('.site-foot a[href="/app/profile"]');
+  await page.waitForFunction(() => location.pathname === '/app/profile' && document.getElementById('screen-profile').classList.contains('active') && !document.documentElement.dataset.transitioning, { timeout: 8000 });
   await page.type('#name', 'Tester');
+  await page.keyboard.press('Enter');                       // saved when you leave the field
+  await page.waitForFunction(() => localStorage.getItem('td_name') === 'Tester');
+  await page.click('#topbar .nav-cta');
+  await page.waitForFunction(() => location.pathname === '/app' && document.getElementById('screen-home').classList.contains('active') && !document.documentElement.dataset.transitioning, { timeout: 8000 });
   await page.select('#pacer', 'medium');
+  await page.click('#btn-options');                         // the language and robot picker is folded away by default
   await page.click('#btn-options');
-  assert.ok(/Racing as Tester/.test(await page.$eval('#identity-text', (el) => el.textContent)), 'identity line reflects the name');
+  assert.ok(/Paragraphs in English/.test(await page.$eval('#identity-text', (el) => el.textContent)), 'settings line names the paragraph language');
   await page.waitForFunction(() => window.TypeDash && window.TypeDash.solo.catalogue);
   const before = await sent();
   await page.click('#btn-solo');
@@ -92,7 +101,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   console.log('✓ practice run started from the home page (countdown, pacer lane)');
   await shot('01-countdown');
 
-  await page.waitForFunction(() => window.TypeDash.state.room.state === 'racing', { timeout: 5000 });
+  await page.waitForFunction(() => window.TypeDash.state.room.state === 'racing', { timeout: 8000 });
   const passage = await state('S.passage');
   assert.ok(passage.length > 100, 'passage loaded locally');
   assert.strictEqual(await page.evaluate(() => document.activeElement && document.activeElement.id), 'hidden-input', 'typing input focused at GO');
@@ -219,7 +228,14 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.waitForFunction(() => document.getElementById('screen-home').classList.contains('active'));
   await page.waitForFunction(() => /^#\d+/.test((document.querySelector('#daily-card .daily-head b') || {}).textContent || ''));
   const dailyTitle = await page.$eval('#daily-card .daily-head b', (el) => el.textContent);
-  assert.ok(await page.$('.tab[data-cat="daily"]'), 'Daily tab on the world rankings');
+  // the rankings are their own page now (/leaderboard); inside the game it opens in the same document
+  await page.click('#mainnav a[data-nav="leaderboard"]');
+  await page.waitForFunction(() => location.pathname === '/leaderboard' && document.querySelector('#screen-site.active .tab[data-cat="daily"]'), { timeout: 8000 });
+  assert.ok(await page.$('#screen-site.active .tab[data-cat="daily"]'), 'Daily tab on the world rankings');
+  await page.goBack();
+  await page.waitForFunction(() => location.pathname === '/app' && document.getElementById('screen-home').classList.contains('active') && !document.documentElement.dataset.transitioning, { timeout: 8000 });
+  // clickable once the page transition has handed the screen back (what a person would wait for too)
+  await page.waitForFunction(() => { const b = document.getElementById('btn-daily'); if (!b) return false; const r = b.getBoundingClientRect(); const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return !!hit && b.contains(hit); }, { timeout: 5000 });
   assert.ok(/Have a go/.test(await page.$eval('#btn-daily', (el) => el.textContent)));
   const beforeDaily = await sent();
   await page.click('#btn-daily');
@@ -266,10 +282,11 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   console.log('✓ language and mode selectors drive practice (es prose, en code)');
 
   /* ---------------- teams: create, then a friend joins from the invite link ---------------- */
-  await page.evaluate(() => { location.hash = '#/team'; });
-  await page.waitForFunction(() => document.getElementById('screen-team').classList.contains('active'));
+  await page.evaluate(() => { location.hash = '#/team'; });   // an old in-game address still lands on the page
+  await page.waitForFunction(() => document.getElementById('screen-team').classList.contains('active') && !document.documentElement.dataset.transitioning);
   await page.waitForSelector('#team-create-form');
-  assert.ok(await page.$eval('#screen-rankings', (el) => !el.classList.contains('active')) && await page.$eval('#screen-team', (el) => el.classList.contains('active')), 'module pages show one at a time');
+  assert.strictEqual(await page.evaluate(() => location.pathname), '/app/team', 'the old #/team address moves to /app/team');
+  assert.deepStrictEqual(await page.$$eval('main > .screen.active', (els) => els.map((e) => e.id)), ['screen-team'], 'module pages show one at a time');
   await page.type('#team-create-form input[name=name]', 'Speed Demons');
   await page.type('#team-create-form input[name=tag]', 'spd');
   await page.click('#team-create-form button[type=submit]');
@@ -283,6 +300,119 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   assert.ok(/2\/\d+ members/.test(await friendPage.$eval('#team-card', (el) => el.textContent)), 'friend joined from the invite link');
   await friend.close();
   console.log('✓ teams: created from the profile card; a friend joined through /#team/<code>');
+
+  /* ---------------- the chrome: every page from the navbar, back/forward, deep links ---------------- */
+  {
+    const ctx = await browser.createBrowserContext();
+    const nav = await ctx.newPage();
+    await nav.setViewport({ width: 1280, height: 860 });
+    const errors = [];
+    nav.on('pageerror', (e) => errors.push(String(e)));
+    nav.on('console', (m) => { if (m.type() === 'error' && !/status of 404/.test(m.text())) errors.push(m.text()); });
+    const settled = () => nav.waitForFunction(() => !document.documentElement.dataset.transitioning, { timeout: 8000 });
+    await nav.goto(`${base}/app`, { waitUntil: 'networkidle0' });
+    const items = await nav.$$eval('#mainnav a[data-nav]', (as) => as.map((a) => [a.dataset.nav, a.getAttribute('href')]));
+    assert.deepStrictEqual(items.map((i) => i[1]), ['/', '/practice', '/daily', '/leaderboard', '/how'], 'navbar lists every page');
+    assert.strictEqual(await nav.$('#topbar .you-pill, #topbar #level-pill'), null, 'no level chip in the bar');
+    assert.ok(await nav.$eval('#acct .acct-signin', (a) => a.getAttribute('href') === '/app/signin' && /Sign in/.test(a.textContent)), 'a guest sees Sign in');
+    for (const [key, href] of items) {
+      await nav.click(`#mainnav a[data-nav="${key}"]`);
+      await nav.waitForFunction((h, k) => location.pathname === h && document.getElementById('screen-site').classList.contains('active') && document.getElementById('screen-site').dataset.page === k, { timeout: 8000 }, href, key);
+      await settled();
+      assert.strictEqual(await nav.$eval(`#mainnav a[data-nav="${key}"]`, (a) => a.getAttribute('aria-current')), 'page', `${href} is marked in the navbar`);
+      assert.strictEqual(await nav.$$eval('#mainnav [aria-current="page"]', (as) => as.length), 1, 'one active item');
+    }
+    await nav.goBack(); await nav.waitForFunction(() => location.pathname === '/leaderboard', { timeout: 8000 }); await settled();
+    assert.strictEqual(await nav.$eval('#mainnav a[data-nav="leaderboard"]', (a) => a.getAttribute('aria-current')), 'page', 'back lands on the previous page, marked');
+    await nav.goForward(); await nav.waitForFunction(() => location.pathname === '/how', { timeout: 8000 }); await settled();
+    await nav.goto(`${base}/app/garage`, { waitUntil: 'networkidle0' });
+    assert.ok(await nav.$eval('#screen-garage', (el) => el.classList.contains('active')), 'deep link /app/garage opens the garage');
+    await nav.goto(`${base}/leaderboard`, { waitUntil: 'networkidle0' });
+    assert.ok(await nav.$eval('#acct .acct-signin', () => true) && await nav.$eval('.site-foot .tdf-back', (a) => /Back to Cortexis/.test(a.textContent)), 'server pages get the same navbar and footer');
+    assert.strictEqual(await nav.$eval('#mainnav a[data-nav="leaderboard"]', (a) => a.getAttribute('aria-current')), 'page');
+    assert.deepStrictEqual(errors, [], 'no console errors while moving around');
+    await ctx.close();
+    console.log('✓ navbar: every page opens, one active item, back/forward and deep links work, same chrome on server pages');
+  }
+
+  /* ---------------- sign-in page and the signed-in account menu ---------------- */
+  {
+    process.env.CORTEXIS_API_URL = base;                     // the website API is played by this test (same origin)
+    const cx = require('../server/cx.js');
+    const ctx = await browser.createBrowserContext();
+    const si = await ctx.newPage();
+    await si.setViewport({ width: 1280, height: 860 });
+    await si.setRequestInterception(true);
+    const logins = [];
+    si.on('request', (req) => {
+      const url = new URL(req.url());
+      if (url.pathname === '/api/auth/login' && req.method() === 'POST') {
+        const body = JSON.parse(req.postData() || '{}');
+        logins.push(body.email);
+        if (body.password !== 'right-password') return req.respond({ status: 401, contentType: 'application/json', body: JSON.stringify({ message: 'Invalid email or password' }) });
+        return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ token: 'site-session', user: { id: 777, name: 'Umair Naseer' } }) });
+      }
+      if (url.pathname === '/api/auth/game-token' && req.method() === 'POST') {
+        return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ token: cx.signGameToken({ sub: '777', name: 'Umair Naseer' }), user: { id: 777, name: 'Umair Naseer' }, expiresIn: 600 }) });
+      }
+      return req.continue();
+    });
+    await si.goto(`${base}/app`, { waitUntil: 'networkidle0' });
+    await si.click('#acct .acct-signin');
+    await si.waitForFunction(() => location.pathname === '/app/signin' && document.getElementById('screen-signin').classList.contains('active') && !document.documentElement.dataset.transitioning, { timeout: 8000 });
+    const page1 = await si.evaluate(() => ({
+      primary: document.getElementById('si-submit').textContent.trim(),
+      signup: document.getElementById('si-signup').href,
+      guest: document.getElementById('si-guest').textContent.trim(),
+      country: document.getElementById('si-country').value,
+      active: document.querySelector('#acct .acct-signin').getAttribute('aria-current'),
+    }));
+    assert.strictEqual(page1.primary, 'Sign in with Cortexis');
+    assert.ok(/\/signup$/.test(page1.signup), `Create a Cortexis account links to the website signup (${page1.signup})`);
+    assert.strictEqual(page1.guest, 'Play as guest');
+    assert.ok(/^[A-Z]{2}$/.test(page1.country), 'country is prefilled');
+    assert.strictEqual(page1.active, 'page', 'Sign in is marked while on the sign-in page');
+    await si.type('#si-email', 'umair@example.com');
+    await si.type('#si-password', 'wrong');
+    await si.click('#si-submit');
+    await si.waitForFunction(() => !document.getElementById('si-error').hidden, { timeout: 5000 });
+    assert.ok(/do not match/.test(await si.$eval('#si-error', (el) => el.textContent)), 'a wrong password says so, in place');
+    await si.click('#si-password', { clickCount: 3 });
+    await si.type('#si-password', 'right-password');
+    await si.click('#si-submit');
+    await si.waitForFunction(() => location.pathname === '/app' && document.getElementById('acct-btn'), { timeout: 8000 });
+    await si.waitForFunction(() => /Umair/.test(document.getElementById('acct-btn').textContent));
+    assert.ok(await si.$eval('#guest-note', (el) => el.hidden), 'the guest line goes once signed in');
+    await si.waitForFunction(() => !document.documentElement.dataset.transitioning);
+    await si.click('#acct-btn');
+    const menu = await si.$eval('#acct-menu', (m) => ({ hidden: m.hidden, text: m.textContent.replace(/\s+/g, ' ') }));
+    assert.ok(!menu.hidden && /Your stats/.test(menu.text) && /Change country/.test(menu.text) && /Sign out/.test(menu.text), `account menu: ${menu.text}`);
+    await si.click('#acct-menu [data-act="country"]');
+    await si.waitForFunction(() => location.pathname === '/app/profile' && document.activeElement && document.activeElement.id === 'country', { timeout: 8000 });
+    assert.ok(/Signed in with Cortexis/.test(await si.$eval('#id-status', (el) => el.textContent)), 'your stats page says how you are signed in');
+    await si.waitForFunction(() => !document.documentElement.dataset.transitioning);
+    await si.click('#acct-btn');
+    await si.click('#acct-menu [data-act="signout"]');
+    await si.waitForFunction(() => document.querySelector('#acct .acct-signin'), { timeout: 5000 });
+    assert.deepStrictEqual(logins, ['umair@example.com', 'umair@example.com']);
+    await si.goto(`${base}/app/signin`, { waitUntil: 'networkidle0' });
+    await si.click('#si-guest');
+    await si.waitForFunction(() => location.pathname === '/app' && localStorage.getItem('td_guest_ok') === '1', { timeout: 8000 });
+    await ctx.close();
+    delete process.env.CORTEXIS_API_URL;
+    console.log('✓ sign-in page: wrong password said in place, Cortexis sign-in lands in the game, account menu, change country, sign out, play as guest');
+  }
+
+  /* ---------------- an unknown address opens the game once, never a reload loop ---------------- */
+  const stray = await (await browser.createBrowserContext()).newPage();
+  let loads = 0;
+  stray.on('load', () => { loads++; });
+  await stray.goto(`${base}/no-such-page`, { waitUntil: 'load' });
+  await wait(1500);
+  assert.strictEqual(loads, 1, `unknown path loaded ${loads} times (a reload loop)`);
+  assert.strictEqual(await stray.evaluate(() => location.pathname), '/app', 'unknown path settles on the game');
+  await stray.browserContext().close();
+  console.log('✓ unknown address: the game opens once (no reload loop)');
 
   assert.deepStrictEqual(pageErrors, [], 'no console/page errors');
   await browser.close();

@@ -3,7 +3,7 @@ import { ServerClock } from './clock.js';
 import { Background } from './background.js';
 import { Confetti } from './confetti.js';
 import { Sound } from './audio.js';
-import { Account, pointsForLevel } from './account.js';
+import { Account, pointsForLevel, TITLES } from './account.js';
 import { Boards } from './boards.js';
 import { Bank } from './bank.js';
 import { RushEngine } from './rush.js';
@@ -11,6 +11,12 @@ import { AVATARS, avatarFor } from './avatars.js';
 import { highlightLines } from './highlight.js';
 import { COUNTRIES, flag, detectCountry } from './countries.js';
 import { $, escapeHtml, fmtTime, toast, medal } from './ui.js';
+import { ICON } from './icons.js';
+import { createDemo } from './demo.js';
+import { createRoom } from './room.js';
+import { createRouter } from './router.js';
+import * as Pages from './pages.js';
+import { cxAuth } from './cx-auth.js';
 
 /* ---------------------------------------------------------------- modules */
 
@@ -58,13 +64,15 @@ function send(msg) {
 const el = {
   home: $('#screen-home'), arena: $('#screen-arena'),
   name: $('#name'), country: $('#country'), flagPrev: $('#flag-preview'), code: $('#code'),
-  online: $('#online'), ping: $('#ping'), pingPill: $('#ping-pill'), soundBtn: $('#sound-btn'),
-  topLevel: $('#top-level'), topTitle: $('#top-title'), topAvatar: $('#top-avatar'), topName: $('#top-name'), topXp: $('#top-xp'),
-  avatarRow: $('#avatar-row'), meAvatar: $('#me-avatar'), langSeg: $('#lang-seg'), heroDemo: $('#hero-demo'), bankInfo: $('#bank-info'), rtInfo: $('#rt-info'),
+  online: $('#online'), soundBtn: $('#sound-btn'), homeRoom: $('#home-room'),
+  avatarRow: $('#avatar-row'), meAvatar: $('#me-avatar'), langSeg: $('#lang-seg'), bankInfo: $('#bank-info'), rtInfo: $('#rt-info'),
   profLevel: $('#prof-level'), profTitle: $('#prof-title'), levelRing: $('#level-ring'), xpFill: $('#xp-fill'), xpText: $('#xp-text'),
   streakBox: $('#streak-box'), streakFlame: $('#streak-flame'), streakDays: $('#streak-days'), streakSub: $('#streak-sub'), streakWeek: $('#streak-week'),
   rankChips: $('#rank-chips'), stPoints: $('#st-points'), stSolved: $('#st-solved'), stAcc: $('#st-acc'), stWins: $('#st-wins'), stRush: $('#st-rush'), stCombo: $('#st-combo'),
   langMastery: $('#lang-mastery'), boards: $('#boards'), rivals: $('#rivals'), achGrid: $('#ach-grid'), achCount: $('#ach-count'),
+  pages: $('#pages'), achNext: $('#ach-next'), achArc: $('#ach-ring-arc'), rivalsHero: $('#rivals-hero'), levelRoad: $('#level-road'), levelRoadWrap: $('#level-road-wrap'),
+  boardTabs: $('#board-tabs'), boardPodium: $('#board-podium'), friendsName: $('#friends-name'), friendsAvatar: $('#friends-avatar'), codeSlots: $('#code-slots'),
+  lobby: $('#lobby-demo'), howDemo: $('#how-demo'), howSteps: $('#how-steps'), hoodBank: $('#hood-bank'), hoodOnline: $('#hood-online'), hoodRtt: $('#hood-rtt'),
   // arena
   roomCode: $('#room-code'), roomType: $('#room-type'), seats: $('#seats'), series: $('#series'), roundPill: $('#round-pill'), lives: $('#lives'),
   timer: $('#timer'), timerArc: $('#timer-arc'), timerText: $('#timer-text'),
@@ -87,35 +95,85 @@ const el = {
 };
 
 const LANG_NAME = { mix: 'JavaScript & Python', js: 'JavaScript', py: 'Python' };
+
+/* ----------------------------------------------------------------- pages */
+
+// each page's own work when it opens; CSS entrances replay by themselves
+const ENTER = {
+  how: () => howDemo.restart(),
+  rankings: () => boards.request(),
+  progress: () => requestAnimationFrame(() => Pages.centerRoad(el.levelRoadWrap)),
+  friends: () => { el.friendsName.value = el.name.value; paintCode(); },
+  rivals: () => renderRivals(),
+  signin: () => { si.error.hidden = true; si.country.value = el.country.value; },
+};
+let backTo = '/';   // where signing in (or picking guest) returns to
+const router = createRouter({
+  isLocked: () => document.body.classList.contains('arena'),
+  savedTab: () => localStorage.getItem('gr_home_tab'),
+  onCode: (code) => fillInviteCode(code),
+  onEnter: (route) => {
+    if (route.key !== 'signin' && route.path) backTo = route.path;
+    if (ENTER[route.key]) ENTER[route.key]();
+  },
+});
 const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
 /* ------------------------------------------------------------- home setup */
 
-for (const [code, name] of COUNTRIES) {
-  const opt = document.createElement('option');
-  opt.value = code;
-  opt.textContent = `${flag(code)}  ${name}`;
-  el.country.appendChild(opt);
+const si = {
+  form: $('#signin-form'), email: $('#si-email'), password: $('#si-password'), country: $('#si-country'), error: $('#si-error'),
+  submit: $('#si-submit'), label: $('#si-submit .si-label'), guest: $('#si-guest'), pwToggle: $('#si-pw-toggle'), title: $('#h-signin'),
+  countryTouched: false,
+};
+const countrySelects = [el.country, si.country];
+for (const select of countrySelects) {
+  for (const [code, name] of COUNTRIES) {
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = `${flag(code)}  ${name}`;
+    select.appendChild(opt);
+  }
 }
 el.name.value = localStorage.getItem('gr_name') || '';
-const syncTopName = () => { el.topName.textContent = el.name.value.trim() || 'Guest'; };   // identity chip in the header
-syncTopName();
-el.name.addEventListener('input', syncTopName);
-el.country.value = localStorage.getItem('gr_country') || detectCountry() || 'UN';
-if (!el.country.value) el.country.value = 'UN';
-el.flagPrev.textContent = flag(el.country.value);
-el.name.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btn-quick').click(); });
+el.name.addEventListener('input', () => { el.friendsName.value = el.name.value; renderMe(); });
+el.name.addEventListener('keydown', (e) => { if (e.key === 'Enter') el.name.blur(); });
+el.name.addEventListener('change', () => { if (net.connected) identify(); });
+// Play with friends has its own "Playing as" field; both edit the one name
+el.friendsName.value = el.name.value;
+el.friendsName.addEventListener('input', () => { el.name.value = el.friendsName.value; renderMe(); });
+el.friendsName.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); el.code.focus(); } });
+/** Select a country, adding it to the list first if the list does not carry it. */
+function setCountry(code) {
+  const cc = /^[A-Z]{2}$/.test(code || '') ? code : 'UN';
+  for (const select of countrySelects) {
+    if (![...select.options].some((o) => o.value === cc)) {
+      const opt = document.createElement('option');
+      opt.value = cc;
+      opt.textContent = `${flag(cc)}  ${cxAuth.countryName(cc)}`;
+      select.insertBefore(opt, select.lastElementChild);
+    }
+    select.value = cc;
+  }
+  el.flagPrev.textContent = flag(cc);
+  renderMe();
+}
+setCountry(localStorage.getItem('gr_country') || cxAuth.guessCountry() || detectCountry());
 el.code.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btn-join').click(); });
 el.code.addEventListener('input', () => { el.code.value = el.code.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
 
-const hashCode = location.hash.replace('#', '').trim().toUpperCase();
-if (/^[A-Z0-9]{4,6}$/.test(hashCode)) {
-  el.code.value = hashCode;
-  toast(`Room code ${hashCode} filled in — pick a name and hit Join`, 'info', 5000);
+const paintCode = Pages.codeSlots(el.codeSlots);
+/** An invite link ("/play-with-friends#K7QXP", or the old "/#K7QXP") fills in the code. */
+function fillInviteCode(code) {
+  if (el.code.value === code) return;
+  el.code.value = code;
+  paintCode();
+  toast(`Room code ${code} filled in. Add your name and join.`, 'info', 5000);
 }
 
-el.soundBtn.classList.toggle('muted', !sound.enabled);
-el.soundBtn.addEventListener('click', () => { el.soundBtn.classList.toggle('muted', !sound.toggle()); });
+const paintSound = (on) => { el.soundBtn.classList.toggle('muted', !on); el.soundBtn.setAttribute('aria-pressed', String(on)); };
+paintSound(sound.enabled);
+el.soundBtn.addEventListener('click', () => paintSound(sound.toggle()));
 
 // language segment
 function renderLangSeg(root, value) {
@@ -136,189 +194,27 @@ el.hostLang.addEventListener('click', (e) => {
   renderLangSeg(el.hostLang, S.hostLang);
 });
 
-// home panel: progress / rankings / achievements / rivals share one card
-const homeTabs = $('#home-tabs');
-function showHomePanel(name) {
-  homeTabs.querySelectorAll('button').forEach((b) => { const on = b.dataset.panel === name; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
-  document.querySelectorAll('.panel-card .panel').forEach((p) => { p.hidden = p.dataset.panel !== name; });
-}
-homeTabs.addEventListener('click', (e) => {
-  const b = e.target.closest('button[data-panel]');
-  if (!b) return;
-  showHomePanel(b.dataset.panel);
-  localStorage.setItem('gr_home_tab', b.dataset.panel);
-});
-{
-  const saved = localStorage.getItem('gr_home_tab');
-  showHomePanel(homeTabs.querySelector(`button[data-panel="${saved}"]`) ? saved : 'progress');
-}
-
-// header nav + footer links: scroll to a section, switch a panel tab, or point at a play control
+// the header is transparent over the hero and turns solid once the page scrolls
 const topbar = $('.topbar');
-const navToggle = $('#nav-toggle');
-function reveal(section, focus, flash) {
-  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  if (focus) focus.focus({ preventScroll: true });
-  if (flash) { flash.classList.add('flash'); setTimeout(() => flash.classList.remove('flash'), 1400); }
-}
-const GO = {
-  play: () => reveal($('#play-now'), $('#name')),
-  quick: () => reveal($('#play-now'), null, $('#btn-quick')),
-  rush: () => reveal($('#play-now'), null, $('#btn-rush')),
-  friends: () => reveal($('#play-now'), $('#code')),
-  how: () => reveal($('#how-it-works')),
-  tech: () => { $('#under-the-hood').open = true; reveal($('#under-the-hood')); },
-  top: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
-};
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[data-go]');
-  if (!a) return;
-  e.preventDefault();
-  topbar.classList.remove('open');
-  navToggle.setAttribute('aria-expanded', 'false');
-  const go = a.dataset.go;
-  if (GO[go]) GO[go]();
-  else { showHomePanel(go); localStorage.setItem('gr_home_tab', go); reveal($('#home-panel')); }
-});
-navToggle.addEventListener('click', () => {
-  navToggle.setAttribute('aria-expanded', String(topbar.classList.toggle('open')));
-});
-// the header is transparent over the hero and turns solid once the page scrolls; a "Play now" button appears when the play card is out of view
 window.addEventListener('scroll', () => topbar.classList.toggle('scrolled', window.scrollY > 8), { passive: true });
-new IntersectionObserver(([entry]) => document.body.classList.toggle('past-play', !entry.isIntersecting), { rootMargin: '-64px 0px 0px 0px' }).observe($('#play-now'));
 $('#year').textContent = new Date().getFullYear();
 
-// hero demo: a looping mini-round in place of a "how it works" explainer. The snippet
-// types itself, the room locks in, an answer is typed and locked, the output checks out,
-// and the points and combo pop. Every output below is what the real runtime prints.
-const DEMO = [
-  { lang: 'js', code: 'const x = "5" - 2;\nconsole.log(x + "1");', out: '31', pts: 296 },
-  { lang: 'py', code: 'print(round(2.5), round(3.5))', out: '2 4', pts: 318 },
-  { lang: 'js', code: 'const a = [10, 1, 2];\nconsole.log(a.sort());', out: '[ 1, 10, 2 ]', pts: 342 },
-  { lang: 'py', code: 'x = [1, 2]\ny = x\ny += [3]\nprint(x)', out: '[1, 2, 3]', pts: 365 },
-  { lang: 'js', code: 'console.log("b" + "a" + +"a" + "a");', out: 'baNaNa', pts: 388 },
-];
-const ICON = {
-  check: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  lock: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 7V5.2a2.5 2.5 0 0 1 5 0V7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
-  flame: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5c.4 2.3 3.8 3.9 3.8 7.4A3.8 3.8 0 0 1 8 12.7a3.8 3.8 0 0 1-3.8-3.8c0-1.5.8-2.5 1.6-3.2.1 1.2.7 2 1.5 2.3C7 6 7.2 3.6 8 1.5z" fill="currentColor"/></svg>',
-  heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
-};
-const heroDemo = (() => {
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const seat = (cls, id) => { const a = avatarFor(id); return `<div class="demo-seat ${cls}" style="--c:${a.color}"><span>${a.emoji}</span><i class="demo-check">${ICON.check}</i></div>`; };
-  el.heroDemo.innerHTML = `<div class="demo">
-    <div class="demo-win">
-      <div class="demo-bar"><span class="demo-dots"><i></i><i></i><i></i></span><span class="demo-file">main.js</span><span class="demo-lang">JavaScript</span><span class="demo-clock"><svg viewBox="0 0 36 36"><circle class="t" cx="18" cy="18" r="15.5"/><circle class="a" cx="18" cy="18" r="15.5"/></svg><b>40</b></span></div>
-      <pre class="demo-code"></pre>
-      <div class="demo-term"><span class="demo-prompt">1</span><span class="demo-typed"></span><i class="demo-caret"></i><span class="demo-stamp">${ICON.lock.replace('<svg', '<svg class="lk"')}${ICON.check.replace('<svg', '<svg class="ok"')}<span class="lk">Locked</span><span class="ok">Correct</span></span></div>
-    </div>
-    ${seat('s1', 'fox')}${seat('s2', 'octopus')}${seat('s3', 'robot')}${seat('s4', 'ghost')}${seat('me', account.avatar)}
-    <div class="demo-pop">+0</div>
-    <div class="demo-combo">${ICON.flame}Combo <b>×2</b></div>
-  </div>`;
-  const root = el.heroDemo.querySelector('.demo');
-  const q = (s) => root.querySelector(s);
-  const parts = { file: q('.demo-file'), lang: q('.demo-lang'), code: q('.demo-code'), typed: q('.demo-typed'), clock: q('.demo-clock b'), pop: q('.demo-pop'), combo: q('.demo-combo b'), seats: [...root.querySelectorAll('.demo-seat')] };
-  let idx = 0;
-  let timers = [];
-  let visible = true;
-  let running = false;
-  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
-  const phase = (p) => { root.className = `demo ${p}${reduced ? ' still' : ''}`; };
-
-  function fill(d, n) {
-    parts.file.textContent = d.lang === 'js' ? 'main.js' : 'main.py';
-    parts.lang.textContent = d.lang === 'js' ? 'JavaScript' : 'Python';
-    parts.lang.className = `demo-lang ${d.lang}`;
-    const raw = d.code.split('\n');
-    let delay = 0;
-    parts.code.innerHTML = highlightLines(d.code, d.lang).map((html, i) => {
-      const chars = Math.max(1, raw[i].length);
-      const t = chars * 0.032;
-      const line = `<div class="ln"><i>${i + 1}</i><span style="--n:${chars};--t:${t.toFixed(2)}s;--d:${delay.toFixed(2)}s">${html}</span></div>`;
-      delay += t + 0.1;
-      return line;
-    }).join('');
-    parts.pop.textContent = `+${d.pts}`;
-    parts.combo.textContent = `×${(n % 4) + 2}`;
-    return delay;
-  }
-
-  function round() {
-    timers.forEach(clearTimeout);
-    timers = [];
-    if (!visible) { running = false; return; }
-    running = true;
-    const d = DEMO[idx % DEMO.length];
-    const typedMs = fill(d, idx) * 1000;
-    idx++;
-    parts.seats.forEach((s) => s.classList.remove('done'));
-    if (reduced) {
-      parts.typed.textContent = d.out;
-      parts.clock.textContent = '27';
-      parts.seats.forEach((s) => s.classList.add('done'));
-      phase('p-reveal');
-      later(round, 6000);
-      return;
-    }
-    parts.typed.textContent = '';
-    phase('p-out');
-    void root.offsetWidth;
-    phase('p-code');
-    let secs = 40;
-    parts.clock.textContent = secs;
-    const tick = setInterval(() => { if (secs > 24) parts.clock.textContent = --secs; }, 420);
-    timers.push(tick);
-    later(() => parts.seats[1].classList.add('done'), typedMs + 500);
-    later(() => {
-      phase('p-answer');
-      let i = 0;
-      const type = setInterval(() => {
-        i++;
-        parts.typed.textContent = d.out.slice(0, i);
-        if (i >= d.out.length) clearInterval(type);
-      }, 105);
-      timers.push(type);
-    }, typedMs + 350);
-    const lockAt = typedMs + 350 + d.out.length * 105 + 450;
-    later(() => { clearInterval(tick); phase('p-locked'); parts.seats[4].classList.add('done'); }, lockAt);
-    later(() => parts.seats[0].classList.add('done'), lockAt + 300);
-    later(() => parts.seats[2].classList.add('done'), lockAt + 650);
-    later(() => { phase('p-reveal'); parts.seats[3].classList.add('done'); }, lockAt + 1000);
-    later(() => phase('p-out'), lockAt + 3600);
-    later(round, lockAt + 4100);
-  }
-
-  // only animate while the stage is on screen
-  new IntersectionObserver(([entry]) => {
-    visible = entry.isIntersecting;
-    if (visible && !running) round();
-  }).observe(el.heroDemo);
-  round();
-
-  return {
-    setMe(id) {
-      const a = avatarFor(id);
-      const me = parts.seats[4];
-      me.style.setProperty('--c', a.color);
-      me.querySelector('span').textContent = a.emoji;
-    },
-  };
-})();
+// home shows the live room; How it works runs one player's round and narrates it step by step
+const room = createRoom(el.homeRoom, { avatar: account.avatar, country: el.country.value });
+const howDemo = createDemo(el.howDemo, { avatar: account.avatar, onPhase: Pages.stepNarrator(el.howSteps) });
+Pages.initScoring($('.score-lab'));
+Pages.renderRushChart($('#rush-chart'));
+Pages.observeReveals();
 
 /* ------------------------------------------------------- profile & garage */
 
 function renderProfile() {
   const lvl = account.level;
   const [into, span, frac] = account.levelProgress;
-  el.topLevel.textContent = lvl;
-  el.topTitle.textContent = account.title;
   el.profLevel.textContent = lvl;
   el.profTitle.textContent = account.title;
   el.levelRing.style.setProperty('--p', frac.toFixed(3));
   el.xpFill.style.width = `${Math.round(frac * 100)}%`;
-  el.topXp.style.width = el.xpFill.style.width;
   el.xpText.textContent = `${into.toLocaleString()} / ${span.toLocaleString()} points to level ${lvl + 1}`;
   const st = account.stats;
   el.stPoints.textContent = (st.points || 0).toLocaleString();
@@ -337,6 +233,12 @@ function renderProfile() {
   renderRivals();
   renderAvatars();
   renderAchievements();
+  renderLevelRoad();
+}
+
+function renderLevelRoad() {
+  const me = avatarFor(account.avatar);
+  Pages.renderLevelRoad(el.levelRoad, { level: account.level, frac: account.levelProgress[2], titles: TITLES, avatars: AVATARS, me });
 }
 
 function renderStreak() {
@@ -372,18 +274,8 @@ function renderRankChips() {
 }
 
 function renderRivals() {
-  const rivals = account.rivals;
-  if (!rivals.length) {
-    el.rivals.innerHTML = '<div class="board-empty small">No rivals yet. Send someone your room link and the head-to-head starts itself.</div>';
-    return;
-  }
-  el.rivals.innerHTML = rivals.map((r) => `
-    <div class="rival">
-      <span class="b-flag">${flag(r.country)}</span>
-      <span class="b-name">${escapeHtml(r.name)}</span>
-      <span class="rival-score ${r.w > r.l ? 'up' : r.w < r.l ? 'down' : ''}"><b>${r.w}</b>–<b>${r.l}</b></span>
-      <span class="rival-n">${plural(r.n, 'match')}</span>
-    </div>`).join('');
+  const me = avatarFor(account.avatar);
+  Pages.renderRivals({ hero: el.rivalsHero, list: el.rivals, rivals: account.rivals, me: { name: el.name.value.trim() || 'You', emoji: me.emoji, color: me.color } });
 }
 
 function renderAvatars() {
@@ -394,11 +286,14 @@ function renderAvatars() {
   }).join('');
   if (!el.avatarRow.dataset.intro) { el.avatarRow.dataset.intro = '1'; setTimeout(() => el.avatarRow.classList.add('settled'), 1600); }   // the pop-in plays once, not on every refresh
   const me = avatarFor(account.avatar);
-  el.topAvatar.textContent = me.emoji;
-  el.topAvatar.style.setProperty('--c', me.color);
   el.meAvatar.textContent = me.emoji;
   el.meAvatar.style.setProperty('--c', me.color);
-  heroDemo.setMe(me.id);
+  el.friendsAvatar.textContent = me.emoji;
+  el.friendsAvatar.style.setProperty('--c', me.color);
+  room.setMe({ avatar: me.id, country: el.country.value });
+  howDemo.setMe(me.id);
+  renderMe();
+  Pages.renderLobby(el.lobby, [me, ...['fox', 'octopus', 'robot', 'ghost'].map(avatarFor)]);
 }
 el.avatarRow.addEventListener('click', (e) => {
   const b = e.target.closest('.avatar-pick');
@@ -412,17 +307,21 @@ el.avatarRow.addEventListener('click', (e) => {
 });
 
 function renderAchievements() {
-  const have = new Set(account.achievements);
-  const list = account.catalogue;
-  if (!list.length) { el.achGrid.innerHTML = '<div class="board-empty small">Loading…</div>'; return; }
-  el.achCount.textContent = `${have.size}/${list.length}`;
-  el.achGrid.innerHTML = list.map((a) => `
-    <div class="ach ${have.has(a.id) ? 'got' : ''}" title="${escapeHtml(a.desc)}"><span class="ach-icon">${a.icon}</span><span class="ach-name">${escapeHtml(a.name)}</span></div>`).join('');
+  Pages.renderAchievements({ grid: el.achGrid, next: el.achNext, arc: el.achArc, count: el.achCount, catalogue: account.catalogue, have: new Set(account.achievements), profile: account.stats });
 }
 
-const boards = new Boards(el.boards, { onRequest: (q) => net.send({ type: 'board', ...q }) });
+const boards = new Boards(el.boards, { onRequest: (q) => net.send({ type: 'board', ...q }), tabsRoot: el.boardTabs, podiumRoot: el.boardPodium });
 boards.setCountry(el.country.value);
-el.country.addEventListener('change', () => { el.flagPrev.textContent = flag(el.country.value); boards.setCountry(el.country.value); if (net.connected) identify(); });
+for (const select of countrySelects) {
+  select.addEventListener('change', () => {
+    if (select === si.country) si.countryTouched = true;
+    setCountry(select.value);
+    localStorage.setItem('gr_country', el.country.value);
+    boards.setCountry(el.country.value);
+    room.setMe({ country: el.country.value });
+    if (net.connected) identify();
+  });
+}
 renderProfile();
 
 /* ---------------------------------------------------------------- actions */
@@ -432,8 +331,117 @@ function identify() {
   const country = el.country.value || 'UN';
   localStorage.setItem('gr_name', name);
   localStorage.setItem('gr_country', country);
-  net.send({ type: 'hello', name, country, avatar: account.avatar, ...account.credentials });
+  net.send({ type: 'hello', name, country, countryGuess: cxAuth.guessCountry(), avatar: account.avatar, ...account.credentials });
 }
+
+/* Cortexis sign-in (cx-auth.js owns the stored session; this keeps the game in step). */
+cxAuth.onChange((s, reason, detail = {}) => {
+  if (reason === 'signed-in') {
+    account.useCredentials(cxAuth.credentials);
+    if (detail.profile) account.setProfile(detail.profile, detail.standings);
+    el.name.value = s.name;
+    el.friendsName.value = s.name;
+    setCountry(s.country);
+    boards.setMyId(account.id);
+    boards.setCountry(el.country.value);
+    renderProfile();
+    if (net.connected) identify();   // the server switches this socket to the Cortexis account
+  } else if (reason === 'signed-out') {
+    net.send({ type: 'signout', token: detail.previous ? detail.previous.token : undefined });
+    account.useCredentials({});
+    el.name.value = '';
+    el.friendsName.value = '';
+    localStorage.removeItem('gr_name');
+    renderProfile();
+    if (net.connected) identify();   // no credentials: the server mints a fresh guest
+    if (!detail.fromOtherTab) toast('Signed out. You’re playing as a guest.', 'info', 3200);
+  }
+  renderMe();
+});
+
+/* ------------------------------------------------------- account & sign-in */
+
+/** Everything that shows who you are: header, menus, footer, sign-in and profile. */
+function renderMe() {
+  const s = cxAuth.state;
+  const signedIn = s.status === 'signed-in';
+  document.documentElement.dataset.auth = signedIn ? 'signed-in' : 'guest';
+  const me = avatarFor(account.avatar);
+  const nick = el.name.value.trim() || (signedIn ? s.name : 'Guest');
+  for (const n of document.querySelectorAll('[data-me-name]')) n.textContent = nick;
+  for (const n of document.querySelectorAll('[data-me-avatar]')) { n.textContent = me.emoji; n.style.setProperty('--c', me.color); }
+  for (const n of document.querySelectorAll('[data-me-flag]')) n.textContent = flag(el.country.value);
+  const accountLine = signedIn ? (s.cortexisName && s.cortexisName !== nick ? `Cortexis · ${s.cortexisName}` : 'Cortexis account') : 'Guest';
+  for (const n of document.querySelectorAll('[data-me-account]')) n.textContent = accountLine;
+  for (const n of document.querySelectorAll('[data-me-account-name]')) n.textContent = s.cortexisName || 'your Cortexis account';
+  document.querySelector('.acct-btn')?.setAttribute('aria-label', `Account: ${nick}`);   // the name is hidden on phones
+  if (si.title) si.title.textContent = signedIn ? 'You’re signed in' : 'Sign in';
+}
+cxAuth.ready.then((conf) => {
+  for (const a of document.querySelectorAll('[data-signup]')) a.href = conf.signupUrl || cxAuth.signupUrl;
+  for (const a of document.querySelectorAll('[data-site]')) a.href = conf.siteUrl || a.href;
+});
+
+function signInError(message, field) {
+  si.error.textContent = message;
+  si.error.hidden = false;
+  si.error.classList.remove('shake-x');
+  void si.error.offsetWidth;
+  si.error.classList.add('shake-x');
+  if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+}
+for (const f of [si.email, si.password]) f.addEventListener('input', () => { f.removeAttribute('aria-invalid'); si.error.hidden = true; });
+si.pwToggle.addEventListener('click', () => {
+  const show = si.password.type === 'password';
+  si.password.type = show ? 'text' : 'password';
+  si.pwToggle.textContent = show ? 'Hide' : 'Show';
+  si.pwToggle.setAttribute('aria-pressed', String(show));
+  si.password.focus();
+});
+si.form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (si.form.classList.contains('busy')) return;
+  si.error.hidden = true;
+  const email = si.email.value.trim();
+  const password = si.password.value;
+  if (!email) return signInError('Enter the email you use for Cortexis.', si.email);
+  if (!password) return signInError('Enter your password.', si.password);
+  const picked = si.countryTouched ? si.country.value : null;
+  si.form.classList.add('busy');
+  si.submit.disabled = true;
+  si.submit.setAttribute('aria-busy', 'true');
+  si.label.textContent = 'Signing in…';
+  const r = await cxAuth.signIn(email, password);
+  si.form.classList.remove('busy');
+  si.submit.disabled = false;
+  si.submit.removeAttribute('aria-busy');
+  si.label.textContent = 'Sign in with Cortexis';
+  if (!r.ok) return signInError(r.message, r.reason === 'invalid' ? si.password : null);
+  si.password.value = '';
+  si.countryTouched = false;
+  if (picked && picked !== el.country.value) {   // keep the country chosen on this page
+    setCountry(picked);
+    localStorage.setItem('gr_country', picked);
+    boards.setCountry(picked);
+    if (net.connected) identify();
+  }
+  toast(r.merged ? 'Signed in. Your guest progress is now on your account.' : `Signed in as ${cxAuth.state.name}`, 'success', 3600);
+  router.go(backTo === '/sign-in' ? '/' : backTo);
+});
+si.guest.addEventListener('click', () => {
+  cxAuth.playAsGuest();
+  router.go(backTo === '/sign-in' ? '/' : backTo);
+});
+
+// the header, phone menu, footer and pages share these controls
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-play], [data-rush], [data-signout]');
+  if (!t) return;
+  router.closeMenu();
+  if (t.matches('[data-play]')) whenConnected(() => net.send({ type: 'quick', lang: S.lang }));
+  else if (t.matches('[data-rush]')) startRush(S.lang);
+  else cxAuth.signOut();
+});
 
 function whenConnected(action) {
   sound.ensure();
@@ -487,7 +495,7 @@ async function startRush(lang) {
 }
 el.roomCode.addEventListener('click', async () => {
   if (!S.room) return;
-  const link = `${location.origin}/#${S.room.code}`;
+  const link = `${location.origin}/play-with-friends#${S.room.code}`;
   try { await navigator.clipboard.writeText(link); toast('Invite link copied to clipboard', 'success'); } catch (_) { toast(link, 'info', 6000); }
 });
 
@@ -539,14 +547,21 @@ function goHome() {
   el.hostBar.hidden = true;
   renderProfile();
   boards.request();
+  if (location.hash) history.replaceState({ ...(history.state || {}), scroll: 0 }, '', location.pathname);
   switchScreen('home');
-  if (location.hash) history.replaceState(null, '', location.pathname);
 }
 
+/** 'home' shows the site pages (whichever one the URL names); 'arena' takes the whole screen for a match. */
 function switchScreen(name) {
-  el.home.classList.toggle('active', name === 'home');
-  el.arena.classList.toggle('active', name === 'arena');
-  document.body.classList.toggle('arena', name === 'arena');   // hides site nav + footer during a match
+  const arena = name === 'arena';
+  el.pages.classList.toggle('active', !arena);
+  el.arena.classList.toggle('active', arena);
+  document.body.classList.toggle('arena', arena);   // hides site nav + footer during a match
+  for (const a of document.querySelectorAll('.topbar > .brand, .acct, .acct-signin')) a.toggleAttribute('inert', arena);   // Leave is the way out of a match
+  router.closeMenu();
+  window.scrollTo(0, 0);
+  if (arena) document.title = 'Live match · Gotcha Rush';
+  else router.refresh();
 }
 
 /* ------------------------------------------------------------ networking */
@@ -570,7 +585,9 @@ net.on('welcome', (m) => {
   renderAchievements();
   const rt = Object.entries(S.langs).map(([k, v]) => `${v.runtime}${k === 'js' ? '' : ''}`).join(' / ');
   el.rtInfo.textContent = rt || 'Node.js / CPython';
-  el.bankInfo.textContent = `${S.config.puzzles || 0} verified puzzles · ${Object.values(S.langs).map((v) => `${v.name} ${v.count}`).join(' · ')} · bank cached in your browser`;
+  el.bankInfo.textContent = `${S.config.puzzles || 0} verified puzzles`;
+  el.hoodBank.textContent = S.config.puzzles || 0;
+  el.hoodOnline.textContent = m.online;
   identify();
   boards.request();
   bank.load(S.config.bankVersion).catch(() => {});   // warm the cache so a match round needs only an id
@@ -581,13 +598,23 @@ net.on('puzzle', (m) => { // fallback delivery for a puzzle missing from the cac
 });
 net.on('account', (m) => {
   account.onAccount(m);
+  // a new player's country comes from the server (CDN header, else our guess)
+  if (m.created && m.profile && m.profile.country) { setCountry(m.profile.country); boards.setCountry(el.country.value); localStorage.setItem('gr_country', el.country.value); }
+  cxAuth.syncProfile(m.profile);
+  // a returning player on a new device: the nickname comes from their account
+  const saved = m.profile && m.profile.name;
+  if (saved && !/^Guest(-\w+)?$/i.test(saved) && !el.name.value.trim()) {
+    el.name.value = saved;
+    el.friendsName.value = saved;
+    localStorage.setItem('gr_name', saved);
+  }
   boards.setMyId(account.id);
   renderProfile();
   boards.request();
   if (!m.created && account.streak > 0 && !account.playedToday) toast(`🔥 ${account.streak}-day streak — one match today keeps it alive`, 'info', 4200);
 });
 net.on('board', (m) => boards.setData(m));
-net.on('online', (m) => { el.online.textContent = m.n; });
+net.on('online', (m) => { el.online.textContent = m.n; el.hoodOnline.textContent = m.n; });
 net.on('error', (m) => { toast(m.message || 'Something went wrong', 'error'); sound.error(); });
 net.on('left', () => { if (S.room && !S.room.local) goHome(); });
 net.on('player_left', (m) => { if (S.room && S.room.state !== 'finished') toast(`${m.name} left the room`, 'info', 2000); });
@@ -601,7 +628,7 @@ net.on('game_result', onGameResult);
 net.on('chat', onChat);
 net.on('emote', (m) => { if (!S.room) return; playerFx(m.id, `<div class="emote">${m.e}</div>`); sound.emote(); });
 
-clock.onUpdate = (c) => { el.ping.textContent = Math.round(c.rtt); el.pingPill.dataset.q = c.rtt < 90 ? 'good' : c.rtt < 200 ? 'ok' : 'bad'; };
+clock.onUpdate = (c) => { el.hoodRtt.textContent = Math.round(c.rtt); };
 net.connect();
 
 /* ------------------------------------------------------------- room state */
@@ -1223,4 +1250,8 @@ function frame() {
 }
 requestAnimationFrame(frame);
 
-window.GotchaRush = { account, boards, bank, state: S };
+router.start();
+// the photo on Play with friends loads lazily; fetch it once the first page is up
+(window.requestIdleCallback || ((f) => setTimeout(f, 1500)))(() => { const img = new Image(); img.src = '/img/friends-720.webp'; });
+
+window.GotchaRush = { account, boards, bank, router, state: S };

@@ -5,6 +5,7 @@ const { randomId } = require('./util');
 const { ACHIEVEMENTS } = require('./achievements');
 
 const hash = (s) => crypto.createHash('sha256').update(String(s)).digest('hex');
+const isCortexisId = (id) => typeof id === 'string' && id.startsWith('cx_');
 
 /** UTC day key, e.g. 2026-09-24 — everyone's streak rolls over at the same instant. */
 function dayKey(d = new Date()) { return d.toISOString().slice(0, 10); }
@@ -71,9 +72,14 @@ class Accounts {
   get all() { return Object.values(this.accounts); }
   get size() { return Object.keys(this.accounts).length; }
 
-  login(id, token) {
-    const acc = id && this.accounts[id];
-    if (acc && token && acc.tokenHash === hash(token)) {
+  /**
+   * Resolve an account from (id, token), or mint a fresh guest. A guest's
+   * token is its tokenHash; a Cortexis account (cx_) has one session per
+   * signed-in device. `country` seeds a freshly minted guest.
+   */
+  login(id, token, { country = null } = {}) {
+    const acc = id && Object.prototype.hasOwnProperty.call(this.accounts, id) ? this.accounts[id] : null;
+    if (acc && token && this.tokenMatches(acc, token)) {
       this.migrate(acc);
       acc.lastSeen = Date.now();
       this.rollWindows(acc);
@@ -83,9 +89,109 @@ class Accounts {
     const newId = `p_${randomId(14)}`;
     const newToken = crypto.randomBytes(24).toString('base64url');
     const fresh = blank(newId, hash(newToken));
+    if (country) fresh.country = country;
     this.accounts[newId] = fresh;
     this.store.touch();
     return { account: fresh, token: newToken, created: true };
+  }
+
+  tokenMatches(acc, token) {
+    const h = hash(token);
+    if (acc.tokenHash && acc.tokenHash === h) return true;
+    return Array.isArray(acc.sessions) && acc.sessions.some((x) => x.h === h);
+  }
+
+  isCortexis(acc) { return !!acc && isCortexisId(acc.id); }
+
+  /** On the boards? Signed-in players only (unless RANK_GUESTS), and never a guest already merged away. */
+  isRanked(acc) {
+    return !!acc && !acc.mergedInto && (isCortexisId(acc.id) || cfg.RANK_GUESTS);
+  }
+
+  /**
+   * Sign a player in with a verified Cortexis identity. Creates cx_<sub> on
+   * first sight (nickname from the Cortexis name, country from the caller),
+   * folds in the guest the browser was playing as (once), and opens a new
+   * session for this device. Returns { account, token, created, merged }.
+   */
+  bindCortexis({ sub, name }, { guest = null, country = null, nickname = null } = {}) {
+    const id = `cx_${sub}`;
+    let acc = this.accounts[id];
+    const created = !acc;
+    if (created) {
+      acc = blank(id, null);
+      acc.name = nickname || 'Player';
+      if (guest && guest.country && guest.country !== 'UN') acc.country = guest.country;
+      else if (country) acc.country = country;
+      if (guest && guest.avatar) acc.avatar = guest.avatar;
+      this.accounts[id] = acc;
+    }
+    this.migrate(acc);
+    const now = Date.now();
+    acc.cx = { sub: String(sub), name: String(name || '').slice(0, 80), linkedAt: (acc.cx && acc.cx.linkedAt) || now, lastAuthAt: now };
+
+    let merged = false;
+    if (guest && guest !== acc && !isCortexisId(guest.id) && !guest.mergedInto) {
+      this.merge(guest, acc);
+      merged = true;
+    }
+
+    const token = crypto.randomBytes(24).toString('base64url');
+    acc.sessions = [{ h: hash(token), at: now }, ...(acc.sessions || [])].slice(0, cfg.CX_SESSIONS_MAX);
+    acc.lastSeen = now;
+    this.rollWindows(acc);
+    this.store.touch();
+    return { account: acc, token, created, merged };
+  }
+
+  /** Forget one device's session (sign-out). Guests have nothing to revoke. */
+  revoke(acc, token) {
+    if (!acc || !token || !Array.isArray(acc.sessions)) return false;
+    const h = hash(token);
+    const before = acc.sessions.length;
+    acc.sessions = acc.sessions.filter((x) => x.h !== h);
+    if (acc.sessions.length !== before) this.store.touch();
+    return acc.sessions.length !== before;
+  }
+
+  /**
+   * Fold a guest's record into a Cortexis account, once. Counters add up,
+   * bests keep the higher, the streak follows whichever played last. The
+   * guest keeps its record (marked mergedInto) but its credentials stop
+   * working and it never appears on a board.
+   */
+  merge(guest, into) {
+    this.migrate(guest);
+    this.migrate(into);
+    const now = new Date();
+    this.rollWindows(guest, now);
+    this.rollWindows(into, now);
+    for (const k of ['points', 'matches', 'wins', 'podiums', 'rounds', 'correct', 'rushRuns', 'perfects', 'friendlies', 'friendlyWins']) into[k] = (into[k] || 0) + (guest[k] || 0);
+    for (const k of ['bestCombo', 'bestRush', 'bestStreak']) into[k] = Math.max(into[k] || 0, guest[k] || 0);
+    for (const [lang, st] of Object.entries(guest.langs || {})) {
+      const t = (into.langs[lang] ||= blankLang());
+      t.rounds += st.rounds || 0;
+      t.correct += st.correct || 0;
+    }
+    if (guest.lastPlayDay && (!into.lastPlayDay || guest.lastPlayDay > into.lastPlayDay || (guest.lastPlayDay === into.lastPlayDay && guest.streak > into.streak))) {
+      into.streak = guest.streak;
+      into.lastPlayDay = guest.lastPlayDay;
+    }
+    for (const w of ['day', 'week']) for (const k of ['points', 'matches', 'wins']) into[w][k] += guest[w][k] || 0;
+    for (const a of guest.achievements || []) if (!into.achievements.includes(a)) into.achievements.push(a);
+    for (const [rid, r] of Object.entries(guest.rivals || {})) {
+      if (rid === into.id) continue;
+      const t = (into.rivals[rid] ||= { n: 0, w: 0, l: 0, name: r.name, country: r.country });
+      t.n += r.n || 0; t.w += r.w || 0; t.l += r.l || 0;
+      if ((r.at || 0) >= (t.at || 0)) { t.at = r.at; t.name = r.name; t.country = r.country; }
+    }
+    delete into.rivals[guest.id];
+    into.createdAt = Math.min(into.createdAt || Date.now(), guest.createdAt || Date.now());
+
+    guest.mergedInto = into.id;
+    guest.mergedAt = Date.now();
+    guest.tokenHash = null;
+    this.store.touch();
   }
 
   /** Fill in fields added after an account was created. */
@@ -210,6 +316,9 @@ class Accounts {
       name: acc.name,
       country: acc.country,
       avatar: acc.avatar,
+      signedIn: isCortexisId(acc.id),     // a Cortexis account, not a guest
+      ranked: this.isRanked(acc),         // appears on the boards
+      cortexisName: acc.cx ? acc.cx.name : null,
       points: acc.points,
       matches: acc.matches,
       wins: acc.wins,
@@ -236,4 +345,4 @@ class Accounts {
   }
 }
 
-module.exports = { Accounts, dayKey, weekKey, daysBetween };
+module.exports = { Accounts, dayKey, weekKey, daysBetween, isCortexisId };

@@ -30,10 +30,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/demo.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/demo.css">
+  <link rel="stylesheet" href="/css/site.css">
+  <script>document.documentElement.classList.add('js');addEventListener('pagereveal',function(e){var n=window.navigation,a=n&&n.activation;if(!e.viewTransition||!a||a.navigationType!=='traverse'||!a.from||!a.entry||a.entry.index>=a.from.index)return;var r=document.documentElement;r.classList.add('vt-back');e.viewTransition.finished.finally(function(){r.classList.remove('vt-back')})});</script>
 </head>
-<body>
+<body class="app-body">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
@@ -62,38 +64,24 @@
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
     <symbol id="i-podium" viewBox="0 0 24 24"><path d="M9 21V9h6v12M3 21v-7h6M15 21v-9h6v9M2 21h20"/><path d="M12 3.5l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 5.6l2-.3z"/></symbol>
     <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.5 17a9 9 0 1 1 15 0"/><path d="M12 13l4.5-4.5"/><circle cx="12" cy="13" r="1.4"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10"/></symbol>
     <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
   </svg>
   <canvas id="bg" aria-hidden="true"></canvas>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
-  <header class="topbar">
-    <a class="brand" href="#/"><span class="bolt"><svg class="i fill" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="brand-word">Type<em>Dash</em></span></a>
-    <div class="topbar-right">
-      <button class="pill level-pill" id="level-pill" title="Your level. Racing earns points, and points raise your level."><b id="top-level">1</b><span id="top-title">Rookie</span></button>
-      <span class="pill" id="online-pill" title="How many people are on TypeDash right now"><i class="dot"></i><span id="online">–</span><span class="pill-word">&nbsp;online</span></span>
-      <button class="pill install-pill" id="install-btn" hidden title="Add TypeDash to this device so it opens like an app"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg> Install</button>
-      <button class="icon-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
-    </div>
-    <div class="menu" id="menu" hidden>
-      <button class="menu-item" id="sound-btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-volume"/></svg> Sound on</button>
-      <button class="menu-item" id="btn-share-profile" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Share my profile</button>
-      <a class="menu-item" href="/practice"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg> All the paragraphs</a>
-      <a class="menu-item" href="/daily"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg> Today's paragraph</a>
-      <a class="menu-item" href="/leaderboard"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg> Fastest people</a>
-      <div class="menu-foot"><span class="pill" id="ping-pill" data-q="ok" title="How long it takes to reach our server and back"><span id="ping">–</span><span class="pill-word">&nbsp;ms</span></span> delay to the server</div>
-    </div>
-  </header>
+  <a class="skip" href="#main">Skip to the page</a>
+  <!--TD:NAV-->
 
-  <main>
+  <main id="main">
     <!-- ============================ HOME ============================ -->
-    <section id="screen-home" class="screen active">
+    <section id="screen-home" class="screen active" data-title="Play · TypeDash">
       <div class="home">
         <!-- the promise, the three ways in, and a race that plays itself -->
         <div class="hero-card">
           <div class="hero">
-            <span class="eyebrow"><i class="live-dot"></i>Live typing race</span>
-            <h1>Type fast.<br><em>Finish first.</em></h1>
+            <span class="eyebrow"><i class="live-dot"></i>Live typing race<span class="eb-count"><b id="online">–</b> online</span></span>
+            <h1 tabindex="-1">Type fast.<br><em>Finish first.</em></h1>
           </div>
 
           <div class="home-stage" aria-hidden="true">
@@ -113,8 +101,10 @@
             <div class="daily-strip" id="daily-card"></div>
           </div>
 
+          <p class="guest-note" id="guest-note" hidden>Guest scores aren't ranked. <a href="/app/signin">Sign in</a></p>
+
           <div class="identity">
-            <span id="identity-text">Racing as <b>Guest</b></span>
+            <span id="identity-text">Paragraphs in <b>English</b></span>
             <span class="identity-actions">
               <button class="link-btn" id="btn-options" type="button" aria-expanded="false" aria-controls="options">Change</button>
               <button class="link-btn" id="btn-friends" type="button" aria-expanded="false" aria-controls="friends-wrap">Play with friends</button>
@@ -124,10 +114,6 @@
           <div class="reveal" id="options-wrap" data-open="false">
             <div class="reveal-inner">
               <div class="options" id="options">
-                <label class="field"><span>Your name</span><input id="name" maxlength="16" placeholder="e.g. speedster" autocomplete="nickname"></label>
-                <label class="field"><span>Racing for</span>
-                  <div class="select-wrap"><span id="flag-preview" class="flag-preview">🌍</span><select id="country"></select></div>
-                </label>
                 <div class="wizard" id="wizard">
                   <div class="wiz-step" id="wiz-lang">
                     <span class="wiz-step-label">Language</span>
@@ -166,68 +152,46 @@
           </div>
         </div>
 
-        <nav class="home-links" id="home-links" aria-label="More pages">
-          <a class="home-link card" href="#/rankings" data-page="rankings">
-            <span class="hl-icon"><svg class="i" aria-hidden="true"><use href="#i-podium"/></svg></span>
-            <b>Rankings</b>
-          </a>
-          <a class="home-link card" href="#/profile" data-page="profile">
-            <span class="hl-icon"><svg class="i" aria-hidden="true"><use href="#i-gauge"/></svg></span>
-            <b>Your stats</b>
-          </a>
-          <a class="home-link card" href="#/garage" data-page="garage">
-            <span class="hl-icon"><svg class="i" aria-hidden="true"><use href="#i-car"/></svg></span>
-            <b>Garage</b>
-          </a>
-          <a class="home-link card" href="#/team" data-page="team">
-            <span class="hl-icon"><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg></span>
-            <b>Team</b>
-          </a>
-          <a class="home-link card" href="#/badges" data-page="badges">
-            <span class="hl-icon"><svg class="i" aria-hidden="true"><use href="#i-award"/></svg></span>
-            <b>Awards <small id="ach-count"></small></b>
-          </a>
-          <a class="home-link card" href="#/how" data-page="how">
-            <span class="hl-icon"><svg class="i" aria-hidden="true"><use href="#i-help"/></svg></span>
-            <b>How to play</b>
-          </a>
-        </nav>
       </div>
     </section>
 
-    <!-- ============================ RANKINGS ============================ -->
-    <section id="screen-rankings" class="screen">
-      <div class="page">
-        <header class="page-head">
-          <a class="nav-back" href="#/" aria-label="Back to home"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg><span>Home</span></a>
-          <h2>Fastest <em>people</em></h2>
-          <span class="page-art art-podium" aria-hidden="true"><i></i><i></i><i></i></span>
-        </header>
-        <section class="card panel">
-          <div id="boards" class="boards"></div>
-        </section>
-      </div>
-    </section>
-
-    <!-- ============================ PROFILE ============================ -->
-    <section id="screen-profile" class="screen">
-      <div class="page">
-        <header class="page-head">
-          <a class="nav-back" href="#/" aria-label="Back to home"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg><span>Home</span></a>
-          <h2>Your <em>stats</em></h2>
-        </header>
-        <section class="card panel">
-          <div class="profile-head">
-            <div class="level-ring" id="level-ring" style="--p:0">
-              <span class="lvl-label">LVL</span>
-              <b id="prof-level">1</b>
-            </div>
-            <div class="profile-meta">
-              <div class="prof-title" id="prof-title">Rookie</div>
-              <div class="xp-bar"><i id="xp-fill" style="width:0%"></i></div>
-              <div class="xp-text" id="xp-text">0 / 400 points to level 2</div>
+    <!-- ============================ YOUR STATS (/app/profile) ============================ -->
+    <section id="screen-profile" class="screen" data-title="Your stats · TypeDash">
+      <div class="apg" data-hero>
+        <header class="apg-hero">
+          <div class="apg-copy">
+            <h1 class="hero-title" tabindex="-1"><span class="ln"><span>Your stats</span></span></h1>
+            <div class="profile-head hero-late" style="--i:1">
+              <div class="level-ring" id="level-ring" style="--p:0">
+                <span class="lvl-label">LVL</span>
+                <b id="prof-level">1</b>
+              </div>
+              <div class="profile-meta">
+                <div class="prof-title" id="prof-title">Rookie</div>
+                <div class="xp-bar"><i id="xp-fill" style="width:0%"></i></div>
+                <div class="xp-text" id="xp-text">0 / 400 points to level 2</div>
+              </div>
             </div>
           </div>
+          <div class="showroom hero-media" aria-hidden="true"><span class="spot"></span><span class="show-car" id="prof-car"></span><span class="floor"></span></div>
+        </header>
+        <section class="idcard" id="idcard" aria-label="How you appear to other racers">
+          <label class="field id-name"><span>Name on the track</span><input id="name" maxlength="16" placeholder="Guest" autocomplete="nickname" enterkeyhint="done"></label>
+          <label class="field id-country" id="country-field"><span>Racing for</span>
+            <div class="select-wrap"><span id="flag-preview" class="flag-preview">🌍</span><select id="country"></select></div>
+          </label>
+          <div class="id-status">
+            <span class="id-state" id="id-status"></span>
+            <button class="btn small" id="btn-share-profile" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Share my profile</button>
+          </div>
+        </section>
+        <div class="prof-stats figures wide">
+          <div class="figure"><b id="st-points">0</b><span>points</span></div>
+          <div class="figure"><b id="st-races">0</b><span>races</span></div>
+          <div class="figure"><b id="st-wins">0</b><span>wins</span></div>
+          <div class="figure"><b id="st-wpm">0</b><span>best words a minute</span></div>
+        </div>
+        <div class="apg-split">
           <div class="streak-box" id="streak-box">
             <div class="streak-flame" id="streak-flame">🔥</div>
             <div class="streak-meta">
@@ -237,89 +201,105 @@
             <div class="streak-week" id="streak-week"></div>
             <button class="btn small ghost remind-btn" id="btn-remind" hidden type="button">Remind me</button>
           </div>
-          <div class="season-line" id="season-line"></div>
-          <div class="rank-chips" id="rank-chips"></div>
-          <div class="prof-stats card-grid">
-            <div><b id="st-points">0</b><span>points</span></div>
-            <div><b id="st-races">0</b><span>races</span></div>
-            <div><b id="st-wins">0</b><span>wins</span></div>
-            <div><b id="st-wpm">0</b><span>best words a min</span></div>
+          <div class="apg-standing">
+            <div class="season-line" id="season-line"></div>
+            <div class="rank-chips" id="rank-chips"></div>
           </div>
-          <h3>Rivals</h3>
-          <div class="rivals card-grid" id="rivals"></div>
-        </section>
+        </div>
+        <h2 class="band-title">Rivals</h2>
+        <div class="rivals card-grid" id="rivals"></div>
       </div>
     </section>
 
-    <!-- ============================ GARAGE ============================ -->
-    <section id="screen-garage" class="screen">
-      <div class="page">
-        <header class="page-head">
-          <a class="nav-back" href="#/" aria-label="Back to home"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg><span>Home</span></a>
-          <h2>Your <em>cars</em></h2>
+    <!-- ============================ GARAGE (/app/garage) ============================ -->
+    <section id="screen-garage" class="screen" data-title="Garage · TypeDash">
+      <div class="apg" data-hero>
+        <header class="garage-hero">
+          <div class="apg-copy">
+            <h1 class="hero-title" tabindex="-1"><span class="ln"><span>Garage</span></span></h1>
+            <p class="pg-lead hero-late" style="--i:1" id="garage-hint">Tap a car to use it. You get new ones as you race more.</p>
+          </div>
+          <div class="showroom garage-show hero-media" aria-hidden="true">
+            <span class="spot"></span><span class="show-car" id="garage-car"></span><span class="floor"></span>
+            <p class="show-plate"><b id="garage-name">Dash</b><span id="garage-blurb">Where everyone starts.</span></p>
+          </div>
         </header>
-        <section class="card panel">
-          <div class="garage" id="garage"></div>
-          <p class="hint garage-hint tile" id="garage-hint">Tap a car to use it. You get new ones as you race more.</p>
-        </section>
+        <div class="garage" id="garage"></div>
       </div>
     </section>
 
-    <!-- ============================ TEAM ============================ -->
-    <section id="screen-team" class="screen">
-      <div class="page">
-        <header class="page-head">
-          <a class="nav-back" href="#/" aria-label="Back to home"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg><span>Home</span></a>
-          <h2>Your <em>team</em></h2>
-          <span class="page-art art-shield" aria-hidden="true"><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg></span>
+    <!-- ============================ TEAM (/app/team) ============================ -->
+    <section id="screen-team" class="screen" data-title="Team · TypeDash">
+      <div class="apg" data-hero>
+        <header class="apg-hero slim">
+          <div class="apg-copy">
+            <h1 class="hero-title" tabindex="-1"><span class="ln"><span>Team</span></span></h1>
+            <p class="pg-lead hero-late" style="--i:1">Every ranked point any of you scores counts for the team.</p>
+          </div>
         </header>
-        <section class="card panel">
+        <section class="card panel team-panel hero-late" style="--i:2">
           <div id="team-card"></div>
         </section>
       </div>
     </section>
 
-    <!-- ============================ BADGES ============================ -->
-    <section id="screen-badges" class="screen">
-      <div class="page">
-        <header class="page-head">
-          <a class="nav-back" href="#/" aria-label="Back to home"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg><span>Home</span></a>
-          <h2><em>Awards</em></h2>
+    <!-- ============================ AWARDS (/app/awards) ============================ -->
+    <section id="screen-badges" class="screen" data-title="Awards · TypeDash">
+      <div class="apg" data-hero>
+        <header class="apg-hero slim aw-hero">
+          <div class="apg-copy">
+            <h1 class="hero-title" tabindex="-1"><span class="ln"><span>Awards</span></span></h1>
+            <p class="aw-count hero-late" style="--i:1"><b id="aw-have">0</b><span>of <span id="aw-total">0</span> collected</span></p>
+          </div>
+          <div class="aw-meter hero-late" style="--i:2" aria-hidden="true"><i id="aw-fill"></i></div>
         </header>
-        <section class="card panel">
-          <div class="ach-grid" id="ach-grid"></div>
-        </section>
+        <div class="ach-grid" id="ach-grid"></div>
       </div>
     </section>
 
-    <!-- ============================ HOW TO PLAY ============================ -->
-    <section id="screen-how" class="screen">
-      <div class="page">
-        <header class="page-head">
-          <a class="nav-back" href="#/" aria-label="Back to home"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg><span>Home</span></a>
-          <h2>How to <em>play</em></h2>
-        </header>
-        <section class="card panel">
-          <ul class="how">
-            <li class="how-type"><span class="how-art" aria-hidden="true"><span class="ha-text"><i>t</i><i>y</i><i>p</i><i class="fix"><b>o</b><b>e</b></i></span><span class="ha-car" data-car="dash" style="--c:#B8612E"></span></span><b>Type what you see</b><span class="how-line">Right letters move your car. Fix the red ones.</span></li>
-            <li class="how-combo"><span class="how-art" aria-hidden="true"><span class="ha-combo"><b>12</b><small>in a row</small><em>2×</em></span></span><b>Keep a clean run</b><span class="how-line">Words in a row with no mistakes are worth more.</span></li>
-            <li class="how-boost"><span class="how-art" aria-hidden="true"><span class="ha-meter"><i></i></span><span class="ha-flame"></span></span><b>Fill the boost</b><span class="how-line">Full bar: a faster car and double points.</span></li>
-            <li class="how-gold"><span class="how-art" aria-hidden="true"><span class="ha-gold">letter<em>+250</em></span></span><b>Catch the ✦ words</b><span class="how-line">Three per paragraph. No mistakes, bonus points.</span></li>
-            <li class="how-solo"><span class="how-art" aria-hidden="true"><span class="ha-lane"><i class="me"><span data-car="dash" style="--c:#B8612E"></span></i><i class="ghost"><span data-car="dash" style="--c:#8C8378"></span></i></span></span><b>Race a robot or a replay</b><span class="how-line">Keeps your days in a row going. Points only come from real people.</span></li>
-            <li class="how-daily"><span class="how-art" aria-hidden="true"><span class="ha-cal"><small>today</small><b>1</b></span></span><b>One paragraph a day</b><span class="how-line">The same for everyone. One proper go counts.</span></li>
-            <li class="how-team"><span class="how-art" aria-hidden="true"><span class="ha-team"><i data-car="hatch" style="--c:#7E9A6D"></i><i data-car="dash" style="--c:#B8612E"></i><i data-car="muscle" style="--c:#3E6A82"></i></span></span><b>Play with friends</b><span class="how-line">A team adds up everything you all score. Your country does too.</span></li>
-          </ul>
-          <details class="how-tech">
-            <summary>For the curious: how it works underneath</summary>
-            <ul class="how-list">
-              <li><b>10 Hz server snapshots</b> stamped with server time, interpolated on the client — cars glide, they never jitter.</li>
-              <li><b>Server-authoritative progress.</b> Validated and rate-limited; the race clock is synced NTP-style so everyone sees GO at the same instant.</li>
-              <li><b>Typing on your own never touches the server while you type</b> — one result is sent at the end and checked against the typing-rate ceiling.</li>
-            </ul>
-          </details>
-        </section>
+    <!-- ============================ SIGN IN (/app/signin) ============================ -->
+    <section id="screen-signin" class="screen" data-title="Sign in · TypeDash">
+      <div class="apg si" data-hero>
+        <div class="si-grid">
+          <div class="si-copy">
+            <h1 class="hero-title" tabindex="-1"><span class="ln"><span id="si-title">Sign in</span></span></h1>
+            <p class="pg-lead hero-late" style="--i:1" id="si-lead">Race under your Cortexis account and get ranked.</p>
+
+            <div class="si-out hero-late" style="--i:2" id="si-out">
+              <form class="si-form" id="si-form" novalidate>
+                <label class="field"><span>Email</span><input id="si-email" type="email" autocomplete="username" inputmode="email" required></label>
+                <label class="field"><span>Password</span><input id="si-password" type="password" autocomplete="current-password" required></label>
+                <p class="si-error" id="si-error" role="alert" hidden></p>
+                <button class="btn primary big" id="si-submit" type="submit">Sign in with Cortexis</button>
+              </form>
+              <p class="si-new">New to Cortexis? <a id="si-signup" href="http://localhost:3000/signup" target="_blank" rel="noopener">Create a Cortexis account</a></p>
+              <div class="si-or" aria-hidden="true"><span>or</span></div>
+              <div class="si-guest">
+                <button class="btn" id="si-guest" type="button">Play as guest</button>
+                <span>Guest scores aren't ranked.</span>
+              </div>
+            </div>
+
+            <div class="si-in hero-late" style="--i:2" id="si-in" hidden>
+              <div class="si-who"><span class="avatar lg" id="si-avatar" aria-hidden="true"></span><span class="acct-who"><b id="si-name">Player</b><small>Signed in with Cortexis</small></span></div>
+              <div class="si-in-acts"><a class="btn primary" href="/app">Play now</a><button class="btn ghost" id="si-signout" type="button">Sign out</button></div>
+            </div>
+
+            <label class="field si-country hero-late" style="--i:3"><span>Racing for</span>
+              <div class="select-wrap"><span id="si-flag" class="flag-preview">🌍</span><select id="si-country"></select></div>
+            </label>
+          </div>
+          <div class="showroom si-show hero-media" aria-hidden="true">
+            <span class="spot"></span><span class="show-car" id="si-car"></span><span class="floor"></span>
+            <p class="show-plate"><b id="si-plate">Guest</b><span>Your car, your name, your rank.</span></p>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- ============================ SITE PAGES, shown inside the game (js/router.js) ============================ -->
+    <section id="screen-site" class="screen site-main"></section>
+    <script>/* a deep link to one of the game's pages paints that page first, not the home screen */(function(){var m=location.pathname.match(/^\/app\/(profile|garage|team|awards|badges|signin)\/?$/);if(!m)return;document.getElementById('screen-home').classList.remove('active');document.getElementById('screen-'+(m[1]==='awards'?'badges':m[1])).classList.add('active');})();</script>
 
     <!-- ============================ RACE ============================ -->
     <section id="screen-race" class="screen">
@@ -332,6 +312,8 @@
         </div>
         <div class="status" id="status">Looking for people to race…</div>
         <div class="race-actions">
+          <span class="pill ping-pill" id="ping-pill" data-q="ok" title="Delay to the race server"><span id="ping">–</span><span class="pill-word">&nbsp;ms</span></span>
+          <button class="icon-btn sound-btn" id="sound-btn" type="button" aria-pressed="true" aria-label="Sound"><svg class="i" aria-hidden="true"><use href="#i-volume"/></svg></button>
           <button class="btn small ghost" id="btn-leave"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg> Leave</button>
         </div>
       </div>
@@ -384,10 +366,7 @@
     </section>
   </main>
 
-  <footer class="site-foot">
-    <nav><a href="/practice">All the paragraphs</a><a href="/daily">Today's paragraph</a><a href="/leaderboard">Fastest people</a></nav>
-    <p>Free · no sign-up</p>
-  </footer>
+  <!--TD:FOOT-->
 
   <!-- ============================ RESULTS ============================ -->
   <div class="modal" id="results" hidden>
@@ -429,13 +408,7 @@
         <thead><tr><th>#</th><th>Who</th><th class="num">words a min</th><th class="num">right</th><th class="num">points</th><th class="num">time</th></tr></thead>
         <tbody id="results-body"></tbody>
       </table>
-      <form class="name-prompt" id="name-prompt" hidden>
-        <label for="np-name">Add a name to show up on the lists</label>
-        <div class="np-row">
-          <input id="np-name" maxlength="16" placeholder="e.g. speedster" autocomplete="nickname">
-          <button class="btn primary" type="submit">Save</button>
-        </div>
-      </form>
+      <p class="signin-nudge" id="name-prompt" hidden>Guest races don't count on the rankings. <a href="/app/signin">Sign in</a></p>
 
       <div class="results-foot">
         <span id="next-race">Next race starts soon</span>
@@ -473,10 +446,12 @@
     </div>
   </div>
 
+  <a class="race-dock" id="race-dock" href="/app" hidden><i class="dot" aria-hidden="true"></i><span id="race-dock-text">You are in a race lobby</span><b>Back to the race</b></a>
+
   <div id="toasts" class="toasts" aria-live="polite"></div>
   <div class="conn-banner" id="conn-banner" hidden>Reconnecting to the race server…</div>
 
-  <script type="module" src="js/main.js"></script>
-  <script type="module" src="js/demo.js"></script>
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/demo.js"></script>
 </body>
 </html>
