@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import { POSTS, postBySlug } from '../data/blog.generated';
+import { Navigate, useParams } from 'react-router-dom';
+import { POSTS, postBySlug, postPath } from '../data/blog.generated';
 import Markdown from '../learn/Markdown';
 import PostCard, { CATEGORY } from '../components/PostCard';
 import PageHero from '../components/PageHero';
@@ -95,6 +95,9 @@ const BlogPost = () => {
       </main>
     );
   }
+
+  // A post that lives on another page is read there; this address only forwards.
+  if (post.home) return <Navigate to={postPath(post)} replace />;
 
   // Read next: the newest other posts
   const more = POSTS.filter((p) => p.slug !== post.slug).slice(0, 2);

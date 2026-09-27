@@ -5,10 +5,13 @@ import { serviceBySlug, relatedServices } from '../data/services';
 import { serviceImage, serviceHeroPhoto } from '../data/serviceImages';
 import PageHero from '../components/PageHero';
 import ServiceDetailVisual from '../components/heroes/ServiceDetailVisual';
+import ServiceArticle from '../components/ServiceArticle';
 import { photos } from '../assets/lux';
+import { POSTS } from '../data/blog.generated';
+import { parseBlogContent } from '../lib/blogParser';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import Seo from '../seo/Seo';
-import { breadcrumbs, organization } from '../seo/schema';
+import { breadcrumbs, faq, organization } from '../seo/schema';
 import { SITE, absolute } from '../seo/site';
 
 // Each service opens on its own photograph: the tall crop of the same picture
@@ -68,6 +71,31 @@ const ServiceDetail = () => {
 
   const related = relatedServices(service.slug);
 
+  // A blog post can live on this page (its markdown names it as home). Its
+  // Article and FAQ markup join the page's own, since its words are here.
+  const path = `/services/${service.slug}`;
+  const article = POSTS.find((p) => p.home === path);
+  const articleFaqs = article ? parseBlogContent(article.body).faqs : [];
+  const articleSchema = article
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          '@id': absolute(`${path}#${article.slug}`),
+          headline: article.title,
+          description: article.description,
+          image: article.image ? [absolute(article.image)] : undefined,
+          datePublished: article.date,
+          dateModified: article.updated,
+          author: { '@type': 'Organization', name: SITE.legalName },
+          publisher: { '@id': `${absolute('/')}#organization`.replace('//#', '/#') },
+          mainEntityOfPage: absolute(path),
+          url: absolute(`${path}#${article.slug}`),
+        },
+        ...(articleFaqs.length ? [faq(articleFaqs.map((f) => ({ q: f.question, a: f.answer })))] : []),
+      ]
+    : [];
+
   return (
     <main className="text-ink min-h-screen">
       <Seo
@@ -93,6 +121,7 @@ const ServiceDetail = () => {
             { name: 'Services', path: '/services' },
             { name: service.title, path: `/services/${service.slug}` },
           ]),
+          ...articleSchema,
         ]}
       />
 
@@ -137,6 +166,8 @@ const ServiceDetail = () => {
           </div>
         </div>
       </section>
+
+      {article && <ServiceArticle post={article} />}
 
       {related.length > 0 && (
         <section ref={relatedRef} className="svd-related" aria-labelledby="svd-related-title">

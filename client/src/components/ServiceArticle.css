@@ -1,0 +1,59 @@
+/* A blog post read in full on its service page (ServiceArticle.js). The
+   header and cover sit on the page itself; the text sits on the blog's
+   reading sheet, so a post reads the same wherever it lives. */
+
+.svd-article {
+  padding: 0 0 clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  scroll-margin-top: 5rem;
+}
+
+.svd-article-head,
+.svd-article-cover {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.svd-article-head {
+  padding: 0 1.4rem;
+}
+
+/* wide enough for the sheet's own margin: line the title up with its edge */
+@media (min-width: 52rem) {
+  .svd-article-head { padding: 0; }
+}
+
+.svd-article-title {
+  margin-top: 0.9rem;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.svd-article-meta {
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+
+.svd-article-cover {
+  margin-top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  overflow: hidden;
+  border-radius: var(--r-lg);
+}
+
+.svd-article-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+@media (max-width: 720px) {
+  .svd-article-cover {
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
+    border-radius: var(--r-md);
+  }
+}

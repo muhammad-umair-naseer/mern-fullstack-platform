@@ -164,7 +164,7 @@ for (const f of (await readdir(COURSES)).filter((x) => x.endsWith('.js'))) {
 // markdown in the repo rather than in a database: the full text ends up in the
 // HTML by construction, so a crawler never has to run JavaScript to read one.
 const { POSTS } = await import(pathToFileURL(resolve(HERE, '../src/data/blog.generated.js')).href);
-for (const post of POSTS) routes.push(`/blog/${post.slug}`);
+for (const post of POSTS) if (!post.home) routes.push(`/blog/${post.slug}`);   // a post with a home renders on that page
 
 // Every service is its own page now, so every service gets prerendered.
 const { SERVICES } = await import(pathToFileURL(resolve(HERE, '../src/data/services.js')).href);

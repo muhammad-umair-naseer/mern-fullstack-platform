@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { POSTS } from '../data/blog.generated';
+import { POSTS, postPath } from '../data/blog.generated';
 import PostCard, { CATEGORY } from '../components/PostCard';
 import PageHero from '../components/PageHero';
 import { useGridReveal } from '../hooks/useGridReveal';
@@ -44,7 +44,7 @@ const Blog = () => {
         path="/blog"
         schema={[
           breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }]),
-          itemList(POSTS, (p) => `/blog/${p.slug}`),
+          itemList(POSTS, postPath),
         ]}
       />
 

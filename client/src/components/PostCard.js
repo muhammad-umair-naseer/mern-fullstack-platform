@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
+import { postPath } from '../data/blog.generated';
 import './PostCard.css';
 
 /** Display name for each category, so a tag is never shown raw. */
 export const CATEGORY = {
+  ai: { label: 'AI' },
   pdf: { label: 'Tools' },
   whatsapp: { label: 'Automation' },
   instagram: { label: 'Automation' },
@@ -39,7 +41,7 @@ const monogram = (title) =>
  */
 const PostCard = ({ post, featured = false }) => (
   <article className={`cx-pc${featured ? ' is-featured' : ''}`} data-card>
-    <Link to={`/blog/${post.slug}`} className="cx-pc-link">
+    <Link to={postPath(post)} className="cx-pc-link">
       <div className="cx-pc-cover">
         {post.image ? (
           <img src={post.image} alt={post.imageAlt || ''} loading="lazy" decoding="async" />
