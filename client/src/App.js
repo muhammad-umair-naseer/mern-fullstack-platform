@@ -110,6 +110,16 @@ export default function App() {
             <Route path="/learn/:slug/lesson/:lessonId" element={<RequireAuth><LessonView /></RequireAuth>} />
             <Route path="/learn/:slug/quiz/:chapterId" element={<RequireAuth><ChapterQuiz /></RequireAuth>} />
             <Route path="/learn/:slug/final" element={<RequireAuth><FinalExam /></RequireAuth>} />
+
+            {/* Navigation aliases & redirects */}
+            <Route path="/yourbot" element={<YourBot />} />
+            <Route path="/automations" element={<YourBot />} />
+            <Route path="/apply" element={<Internships />} />
+            <Route path="/apply-now" element={<Internships />} />
+            <Route path="/internship" element={<Internships />} />
+
+            {/* Catch-all fallback to Home */}
+            <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>
         </RouteTransition>

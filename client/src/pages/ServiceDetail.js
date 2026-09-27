@@ -45,8 +45,8 @@ const LEDE = {
  * The services page shows all twelve and opens each in a modal, which is fine
  * for browsing and useless for search: a modal has no address, so nothing can
  * link to it and no crawler can reach it. That left one page trying to rank for
- * "wordpress developer in islamabad" and "flutter app development company in
- * islamabad" simultaneously, which no page can do.
+ * "wordpress developer in pakistan" and "flutter app development company in
+ * pakistan" simultaneously, which no page can do.
  */
 const ServiceDetail = () => {
   const { slug } = useParams();
@@ -71,8 +71,8 @@ const ServiceDetail = () => {
   return (
     <main className="text-ink min-h-screen">
       <Seo
-        title={`${service.title} in Islamabad`}
-        description={`${service.description} Built in Islamabad by ${SITE.name}.`.slice(0, 154)}
+        title={`${service.title} in Pakistan`}
+        description={`${service.description} Built in Pakistan by ${SITE.name}.`.slice(0, 154)}
         path={`/services/${service.slug}`}
         image={serviceImage(service.slug)}
         schema={[

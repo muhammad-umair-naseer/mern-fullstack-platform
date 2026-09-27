@@ -266,7 +266,7 @@ const Footer = () => {
             </p>
             {/* City and country only. The street line on the SECP filing is a
                 private address and must never appear here. */}
-            <p className="cx-ft-place">Islamabad, Pakistan</p>
+            <p className="cx-ft-place">Pakistan</p>
             <p className="cx-ft-fine">Building since September 2025.</p>
             <p className="cx-ft-fine">
               &copy; {year} Cortexis Solution Hub (Pvt.) Ltd. All rights reserved.

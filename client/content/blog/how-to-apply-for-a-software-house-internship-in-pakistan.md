@@ -86,7 +86,7 @@ Subject: Internship application: Frontend, June to July, Ayesha Siddiqui
 Hello,
 
 I am a final year Computer Science student at [university] in
-Islamabad, applying for a frontend internship. I am free from 1 June
+Pakistan, applying for a frontend internship. I am free from 1 June
 and can work full time until 31 July.
 
 Your team builds mostly in React and Next.js, which is what I have
@@ -129,7 +129,7 @@ Follow up once, about ten days later, in the same thread, three lines long. Then
 
 ## How this works with us, and where we will disappoint you
 
-We run free internships in Islamabad, unpaid but with no fee of any kind, in tracks including MERN, frontend, backend, AI and machine learning, Python automation, mobile, UI and UX, digital marketing, WordPress and database engineering. Applications go through the form on the [internships page](/internships), which is faster than email because it reaches the person who reviews them. Pick one track, not four: four says you have not chosen.
+We run free internships in Pakistan, unpaid but with no fee of any kind, in tracks including MERN, frontend, backend, AI and machine learning, Python automation, mobile, UI and UX, digital marketing, WordPress and database engineering. Applications go through the form on the [internships page](/internships), which is faster than email because it reaches the person who reviews them. Pick one track, not four: four says you have not chosen.
 
 Now the parts that do not flatter us. We do not have open places every month. We will not certify work that did not happen or dates you did not serve. Finishing our free courses entitles nobody to a place; it helps only because it leaves you something to show, which is true of any project. And if you apply for a technical track with nothing built in that area, we will usually pass, because one short block is too little time to start from zero.
 

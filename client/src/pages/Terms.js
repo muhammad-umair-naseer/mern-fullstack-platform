@@ -112,7 +112,7 @@ const sections = [
     id: 'law',
     title: 'Governing Law & Changes',
     blocks: [
-      { p: 'These Terms are governed by the laws of the Islamic Republic of Pakistan, without regard to conflict-of-law principles. Disputes will be subject to the exclusive jurisdiction of the courts of Islamabad.' },
+      { p: 'These Terms are governed by the laws of the Islamic Republic of Pakistan, without regard to conflict-of-law principles. Disputes will be subject to the exclusive jurisdiction of the courts of Pakistan.' },
       { p: 'We may update these Terms from time to time. The “Last updated” date reflects the latest revision. Material changes will be communicated through the Services. Your continued use after changes take effect constitutes acceptance.' },
     ],
   },
@@ -124,7 +124,7 @@ const sections = [
       { list: [
         'Email: cortexis.solution.hub@gmail.com',
         'Phone: +92 347-5769500',
-        'Address: Islamabad, Pakistan',
+        'Address: Pakistan',
       ] },
       
     ],

@@ -30,7 +30,7 @@ import { aboutDrivers, aboutStory } from '../assets/about';
  * still visible as twelve pages under /services.
  */
 const stats = [
-  { number: "2025", label: "Incorporated in Islamabad" },
+  { number: "2025", label: "Incorporated in Pakistan" },
   { number: "50+", label: "Projects delivered" },
   { number: String(COURSE_COUNT), label: "Free courses, open to anyone" },
   { number: String(liveTools().length), label: "Free tools that never upload your file" },
@@ -53,7 +53,7 @@ const About = () => (
   <main className="relative">
     <Seo
       title="About Us"
-      description="Who Cortexis Solution Hub is: a software, training and consulting company in Islamabad building products, teaching engineers, and running free internships."
+      description="Who Cortexis Solution Hub is: a software, training and consulting company in Pakistan building products, teaching engineers, and running free internships."
       path="/about"
       schema={[organization(), breadcrumbs([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])]}
     />
@@ -62,7 +62,7 @@ const About = () => (
     <PageHero
       id="about-hero-heading"
       label="About Cortexis"
-      lines={['A software studio', <>in <em>Islamabad.</em></>]}
+      lines={['A software studio', <>in <em>Pakistan.</em></>]}
       lede="We build software, teach engineers and run free internships."
       actions={[
         { to: '/contact', label: 'Start a project', primary: true },

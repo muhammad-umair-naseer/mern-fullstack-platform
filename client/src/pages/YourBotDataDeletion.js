@@ -73,7 +73,7 @@ const sections = [
       { p: 'For any deletion request or question about this process:' },
       { list: [
         `Email: ${EMAIL}`,
-        'Company: Cortexis Solution Hub Pvt Ltd, Islamabad, Pakistan',
+        'Company: Cortexis Solution Hub Pvt Ltd, Pakistan',
       ] },
     ],
   },

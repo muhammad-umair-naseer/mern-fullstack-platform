@@ -118,7 +118,7 @@ Nothing in that email is unreasonable, and a company that runs internships prope
 
 ## Where we can help, and where we cannot
 
-We run free internships in Islamabad, unpaid but with no fee of any kind, we are registered with the SECP, and every intern who completes a track gets a verifiable certificate and a recommendation letter. Ask in your first week for the exact start and end dates to be printed on it rather than a duration like "one month", because that is a much easier request to honour at the start than after you have left. If a university coordinator phones us to verify one, we confirm it.
+We run free internships in Pakistan, unpaid but with no fee of any kind, we are registered with the SECP, and every intern who completes a track gets a verifiable certificate and a recommendation letter. Ask in your first week for the exact start and end dates to be printed on it rather than a duration like "one month", because that is a much easier request to honour at the start than after you have left. If a university coordinator phones us to verify one, we confirm it.
 
 What we will not do is more informative. We will not backdate a certificate, certify hours nobody worked, or describe a four week internship as eight. We cannot fill your department's proforma unless you bring us the blank form. Our tracks run in monthly blocks, so if your requirement is exactly six weeks, raise it before you accept a place rather than after, and we will tell you honestly whether the dates work.
 
@@ -140,4 +140,4 @@ No. An online course certificate verifies self-paced study and testing, whereas 
 
 ---
 
-*If you need a placement in Islamabad, the [internships page](/internships) lists the current tracks, the durations we run, and what each one actually involves.*
+*If you need a placement in Pakistan, the [internships page](/internships) lists the current tracks, the durations we run, and what each one actually involves.*

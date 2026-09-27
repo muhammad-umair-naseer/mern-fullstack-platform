@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowUpRight } from 'lucide-react';
 import './AboutFigures.css';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -308,7 +307,7 @@ export function AboutStory({ photo, chips, registration }) {
               link says to look us up rather than promising a one-click record. */}
           <div className="lx-as-record lx-glass">
             <h3 id="registration-heading" className="lx-as-record-title">
-              A registered company <em>you can check.</em>
+              A registered company <em>in Pakistan.</em>
             </h3>
             <dl className="lx-as-facts">
               <div className="lx-as-fact">
@@ -316,28 +315,14 @@ export function AboutStory({ photo, chips, registration }) {
                 <dd>Cortexis Solution Hub (Private) Limited</dd>
               </div>
               <div className="lx-as-fact">
-                <dt>{registration.authorityShort} identification number</dt>
-                <dd className="tabular lx-as-mono">{registration.cuin}</dd>
-              </div>
-              <div className="lx-as-fact">
                 <dt>Incorporated</dt>
                 <dd>2 September 2025, under the {registration.act}</dd>
               </div>
               <div className="lx-as-fact">
                 <dt>Registered office</dt>
-                <dd>Islamabad, Pakistan</dd>
+                <dd>Pakistan</dd>
               </div>
             </dl>
-            <a
-              href={registration.verifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="lx-link lx-as-verify"
-              aria-label={`Look us up on the ${registration.authority} register (opens in a new tab)`}
-            >
-              Look us up on the {registration.authorityShort} register
-              <ArrowUpRight size={15} aria-hidden="true" focusable="false" />
-            </a>
           </div>
         </div>
       </div>

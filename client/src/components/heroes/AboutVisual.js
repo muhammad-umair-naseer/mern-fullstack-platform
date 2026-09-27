@@ -17,7 +17,7 @@ const WORK = aboutWork;
 // Islamabad's published coordinates (33°41′35″N 73°03′50″E, rounded down to
 // the minute), and the year the company was incorporated, which the SECP
 // record further down this page shows.
-const RING = 'Islamabad · 33°41′ N · 73°03′ E · since 2025 · ';
+const RING = 'Pakistan · software studio · since 2025 · ';
 
 /**
  * The About hero: Islamabad in the house photo frame, a slowly turning seal

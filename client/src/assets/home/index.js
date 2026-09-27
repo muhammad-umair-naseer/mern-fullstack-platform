@@ -22,7 +22,7 @@ import workTools from './work-tools.webp';
 import workOffline from './work-offline.webp';
 
 export const reel = [
-  { src: islamabad, w: 1600, h: 920, caption: 'Islamabad', alt: 'The Faisal Mosque and the Margalla Hills seen through a car window in soft evening haze', credit: 'Tahamie Farooqui' },
+  { src: islamabad, w: 1600, h: 920, caption: 'Pakistan', alt: 'The Faisal Mosque and the Margalla Hills in Pakistan seen through a car window in soft evening haze', credit: 'Tahamie Farooqui' },
   { src: sketch, w: 1000, h: 1075, caption: 'Sketching', alt: 'An open sketchbook with fine pens and a ruler on a cutting mat', credit: 'Charles Etoroma' },
   { src: focus, w: 1600, h: 920, caption: 'Focus', alt: 'One person working at a long table beside tall, sunlit windows', credit: 'Austin' },
   { src: learning, w: 1000, h: 1075, caption: 'Learning', alt: 'Open books on a window sill, with trees and late sun outside', credit: 'Ioann-Mark Kuznietsov' },

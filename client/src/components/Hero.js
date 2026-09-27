@@ -13,7 +13,7 @@ gsap.registerPlugin(useGSAP);
 // Each fact has to survive a visitor clicking through to check it: the SECP
 // incorporation is on /about, the catalogue on /courses, the tools on /tools.
 const facts = [
-  { value: '2025', label: 'Incorporated in Islamabad', to: '/about' },
+  { value: '2025', label: 'Incorporated in Pakistan', to: '/about' },
   { count: COURSE_COUNT, label: 'Free courses', to: '/courses' },
   { count: liveTools().length, label: 'Free tools', to: '/tools' },
 ];
@@ -64,7 +64,7 @@ const Hero = () => {
     <section className="lx-hero" aria-labelledby="hero-heading" ref={scope}>
       <div className="lx-wrap">
         <div className="lx-hero-kicker">
-          <span className="lx-label"><span className="lx-label-num">Cortexis</span>A software studio in Islamabad</span>
+          <span className="lx-label"><span className="lx-label-num">Cortexis</span>A software studio in Pakistan</span>
         </div>
 
         {/* On a wide screen the lede and actions sit beside the headline

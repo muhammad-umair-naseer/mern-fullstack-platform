@@ -15,7 +15,7 @@ import './Academy.css';
  * course is twelve chapters of four topics, every topic ends in a three
  * question quiz, every chapter in a test, the course in a final exam, and the
  * certificate carries a code that /certificate/:code checks publicly without
- * an account. The internship line mirrors /internships: unpaid, and never a fee.
+ * an account. The action lines link to /courses.
  */
 const facts = [
   { k: '12', v: 'chapters in every course' },
@@ -62,8 +62,8 @@ export default function Academy() {
               Browse the courses
               <span className="lx-btn-disc" aria-hidden="true"><ArrowUpRight size={15} /></span>
             </Link>
-            <Link to="/internships" className="lx-link">
-              Unpaid internships, never a fee <ArrowRight size={16} aria-hidden="true" />
+            <Link to="/courses" className="lx-link">
+              Free certified courses, start learning <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </div>
         </div>

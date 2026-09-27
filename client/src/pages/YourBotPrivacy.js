@@ -198,7 +198,7 @@ const sections = [
       { p: 'Questions about this Privacy Policy or how your data is handled can be sent to:' },
       { list: [
         `Email: ${EMAIL}`,
-        'Company: Cortexis Solution Hub Pvt Ltd, Islamabad, Pakistan',
+        'Company: Cortexis Solution Hub Pvt Ltd, Pakistan',
       ] },
       
     ],

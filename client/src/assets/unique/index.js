@@ -25,7 +25,7 @@ import legalBotDeletion from './legal-bot-deletion.webp';
 /** /contact: the "Where we are" plate. */
 export const contactCity = {
   src: contactIslamabad, w: 1800, h: 1200,
-  alt: 'The Pakistan Monument in Islamabad, with visitors walking beneath its petals',
+  alt: 'The Pakistan Monument, with visitors walking beneath its petals',
   credit: 'Mohammad Hassan Mukhtar Ahmad', unsplashId: 'oNRXAEgPPng',
 };
 

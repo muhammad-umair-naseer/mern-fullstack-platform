@@ -234,7 +234,7 @@ export default function Internships() {
   return (
     <main className="cx-intern-page">
       <Seo
-        title="Software Internships in Islamabad, Free to Join"
+        title="Software Internships in Pakistan, Free to Join"
         description="Unpaid internships in web, mobile, AI, design and QA. We never charge a fee. Real projects, mentorship from working engineers, and a free certificate."
         path="/internships"
         schema={[breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Internships', path: '/internships' }]), faqSchema(faqsFor('/internships').map((f) => ({ q: f.q, a: f.a })))]}
@@ -492,7 +492,7 @@ export default function Internships() {
                           type="text"
                           id="city"
                           name="city"
-                          placeholder="e.g. Islamabad"
+                          placeholder="e.g. Lahore, Karachi, Islamabad"
                           value={formData.city}
                           onChange={handleChange}
                           className="cx-glass-input"
@@ -521,7 +521,7 @@ export default function Internships() {
                           type="text"
                           id="university"
                           name="university"
-                          placeholder="e.g. NUST, Islamabad"
+                          placeholder="e.g. NUST, FAST, COMSATS"
                           value={formData.university}
                           onChange={handleChange}
                           className="cx-glass-input"

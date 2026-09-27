@@ -47,17 +47,17 @@ export const photos = {
   },
   about: {
     src: about,
-    alt: 'The Faisal Mosque in Islamabad with the Margalla Hills behind it',
+    alt: 'The Faisal Mosque in Pakistan with the Margalla Hills behind it',
     credit: 'Mahreen Sarwar',
   },
 };
 
 // The studio reel on the home page: the same photographs, cropped for the
 // gallery's alternating wide and tall frames.
-// Only the two cuts still shown: Islamabad on /about, Internships on
+// Only the two cuts still shown: Pakistan on /about, Internships on
 // /internships. The other reel cuts duplicated photos used elsewhere.
 export const reel = [
-  { src: gIslamabad, w: 1800, h: 1200, caption: 'Islamabad', alt: 'The Faisal Mosque in Islamabad with the Margalla Hills behind it' },
+  { src: gIslamabad, w: 1800, h: 1200, caption: 'Pakistan', alt: 'The Faisal Mosque in Pakistan with the Margalla Hills behind it' },
   { src: gTeam, w: 1800, h: 1200, caption: 'Internships', alt: 'A small team taking notes around a wooden table' },
 ];
 

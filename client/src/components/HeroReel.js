@@ -212,7 +212,7 @@ const KPIS = [
 ];
 
 const ORDERS = [
-  ['#1284', 'Fatima R. · Islamabad', 'PKR 6,400', 'Paid', 'rl-st-paid', '2 min ago'],
+  ['#1284', 'Fatima R. · Pakistan', 'PKR 6,400', 'Paid', 'rl-st-paid', '2 min ago'],
   ['#1283', 'Hamza K. · Lahore', 'PKR 2,150', 'Shipped', 'rl-st-ship', '14 min ago'],
   ['#1282', 'Areeba S. · Karachi', 'PKR 8,900', 'Delivered', 'rl-st-done', '1 h ago'],
 ];

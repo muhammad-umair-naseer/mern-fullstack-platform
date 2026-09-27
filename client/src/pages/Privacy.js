@@ -132,7 +132,7 @@ const sections = [
       { list: [
         'Email: cortexis.solution.hub@gmail.com',
         'Phone: +92 347-5769500',
-        'Address: Islamabad, Pakistan',
+        'Address: Pakistan',
       ] },
       
     ],

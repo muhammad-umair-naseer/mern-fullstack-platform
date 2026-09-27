@@ -161,6 +161,231 @@
   background: var(--copper-2);
 }
 
+/* ── Digital Solutions Dropdown (Desktop) ─────────────────────────────── */
+
+.nav-dropdown-item {
+  position: relative;
+}
+
+.nav-dropdown-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.35rem 0;
+}
+
+.nav-chevron {
+  transition: transform var(--dur-base) var(--ease-out-expo);
+  color: var(--ink-3);
+  margin-top: 1px;
+}
+
+.nav-chevron.is-flipped {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-flyout {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 10px);
+  z-index: 1000;
+  padding-top: 10px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-base) var(--ease-out-expo),
+    visibility 0s linear var(--dur-base);
+}
+
+.nav-dropdown-flyout.is-visible,
+.nav-dropdown-item:hover .nav-dropdown-flyout {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  transition:
+    opacity var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-base) var(--ease-out-expo),
+    visibility 0s;
+}
+
+.nav-dropdown-inner {
+  width: 375px;
+  background: rgba(255, 255, 255, 0.96);
+  -webkit-backdrop-filter: blur(28px);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow:
+    0 24px 50px -12px rgba(22, 19, 15, 0.16),
+    0 0 1px 1px rgba(22, 19, 15, 0.05);
+}
+
+.nav-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+
+.nav-dropdown-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  font-weight: 600;
+}
+
+.nav-dropdown-count {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(184, 97, 46, 0.1);
+  color: var(--copper);
+  font-weight: 600;
+}
+
+.nav-dropdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-dropdown-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  text-decoration: none;
+  background: transparent;
+  transition:
+    background-color var(--dur-fast) var(--ease-out-expo),
+    transform var(--dur-fast) var(--ease-out-expo);
+}
+
+.nav-dropdown-card:hover {
+  background: var(--paper);
+  transform: translateX(2px);
+}
+
+.nav-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: rgba(22, 19, 15, 0.04);
+  color: var(--ink);
+  flex-shrink: 0;
+  transition:
+    background-color var(--dur-fast) var(--ease-out-expo),
+    color var(--dur-fast) var(--ease-out-expo),
+    transform var(--dur-fast) var(--ease-out-expo);
+}
+
+.nav-dropdown-card:hover .nav-card-icon {
+  background: var(--copper);
+  color: #fff;
+  transform: scale(1.04);
+}
+
+.nav-card-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.nav-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nav-card-title {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.nav-card-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(22, 19, 15, 0.05);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.nav-dropdown-card:hover .nav-card-badge {
+  background: rgba(184, 97, 46, 0.12);
+  color: var(--copper);
+}
+
+.nav-card-desc {
+  font-size: 0.77rem;
+  color: var(--ink-3);
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+/* ── Apply Now Pulse Pill ────────────────────────────────────────────── */
+
+.nav-apply-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.nav-apply-pulse {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--copper);
+  box-shadow: 0 0 0 0 rgba(184, 97, 46, 0.6);
+  animation: nav-apply-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes nav-apply-ping {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(184, 97, 46, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(184, 97, 46, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(184, 97, 46, 0);
+  }
+}
+
+@media (min-width: 1081px) {
+  .nav-mobile-sub {
+    display: none;
+  }
+}
+
 .nav-sheet-foot {
   display: none;
 }
@@ -271,8 +496,79 @@ html.lx-lock {
 
   .nav-menu li {
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
     border-bottom: 1px solid var(--line);
+  }
+
+  .nav-dropdown-flyout {
+    display: none !important;
+  }
+
+  .nav-dropdown-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.4rem + 3vw, 2.8rem);
+    line-height: 1.1;
+    color: var(--ink);
+    padding: 0.55rem 0;
+  }
+
+  .nav-dropdown-trigger .nav-chevron {
+    width: 22px;
+    height: 22px;
+    margin-right: 0.2rem;
+  }
+
+  .nav-mobile-sub {
+    width: 100%;
+    padding: 0.25rem 0 1rem 0.25rem;
+  }
+
+  .nav-mobile-toggle {
+    display: none;
+  }
+
+  .nav-mobile-sub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-left: 1.1rem;
+    border-left: 2px solid var(--copper);
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-mobile-sub-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-decoration: none;
+    padding: 0.4rem 0;
+  }
+
+  .nav-mobile-sub-title {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    color: var(--ink);
+    line-height: 1.2;
+    transition: color var(--dur-fast) var(--ease-out-expo);
+  }
+
+  .nav-mobile-sub-link:hover .nav-mobile-sub-title {
+    color: var(--copper);
+  }
+
+  .nav-mobile-sub-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    background: rgba(22, 19, 15, 0.05);
+    padding: 2px 7px;
+    border-radius: 999px;
   }
 
   .nav-menu .nav-link {

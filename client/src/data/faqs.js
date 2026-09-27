@@ -41,8 +41,8 @@ export const FAQS = [
   },
   {
     page: '/courses',
-    q: 'Do I have to be in Islamabad to take a course?',
-    a: 'No. The courses are entirely online and self paced, with no live classes and no timetable. You can be anywhere. The internships are the part with a location.',
+    q: 'Do I have to be in Pakistan to take a course?',
+    a: 'No. The courses are entirely online and self paced, with no live classes and no timetable. You can be anywhere in the world. Anyone can enroll and get certified for free.',
   },
 
   // ------------------------------------------------------------ internships
@@ -112,8 +112,8 @@ export const FAQS = [
   },
   {
     page: '/services',
-    q: 'Do you work with clients in Rawalpindi?',
-    a: 'Yes. We are based in Islamabad and Rawalpindi is next door, so meeting in person is easy. We also work with clients elsewhere in Pakistan and abroad, where the work happens over calls and shared documents instead.',
+    q: 'Do you work with clients across Pakistan and internationally?',
+    a: 'Yes. We are based in Pakistan and collaborate with clients nationwide as well as internationally, where the work happens smoothly over video calls, sprint demos, and shared repositories.',
   },
   {
     page: '/services',

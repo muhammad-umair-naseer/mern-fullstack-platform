@@ -7,7 +7,7 @@
  *
  * They used to live inside Services.js and open in a modal, which meant no
  * service had a URL. A single page cannot rank for "flutter app development
- * company in islamabad" and "wordpress developer in islamabad" at once, and a
+ * company in pakistan" and "wordpress developer in pakistan" at once, and a
  * modal is invisible to a crawler and impossible to link to. Each service now
  * has a slug and its own page.
  */

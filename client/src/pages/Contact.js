@@ -9,7 +9,7 @@ import { contactCity } from '../assets/unique';
 import Seo from '../seo/Seo';
 import { organization, breadcrumbs } from '../seo/schema';
 
-const islamabad = contactCity;
+const monument = contactCity;
 
 // An email address may wrap before its "@" on a narrow screen, never inside
 // a word.
@@ -67,7 +67,7 @@ const Contact = () => {
   const chips = [
     { icon: Mail, label: 'Email', value: 'cortexis.solution.hub@gmail.com', href: 'mailto:cortexis.solution.hub@gmail.com' },
     { icon: Phone, label: 'Phone', value: '+92 347-5769500', href: 'tel:+923475769500' },
-    { icon: MapPin, label: 'Address', value: 'Islamabad, Pakistan', href: 'https://maps.google.com/?q=Islamabad' }
+    { icon: MapPin, label: 'Address', value: 'Pakistan', href: 'https://maps.google.com/?q=Pakistan' }
   ];
 
   const perks = ['Free scoping call', 'Details kept private'];
@@ -79,7 +79,7 @@ const Contact = () => {
     <main className="relative min-h-screen overflow-x-clip text-ink">
       <Seo
         title="Contact Us"
-        description="Start a project, ask about training, or apply for an internship. Tell us what you are building and the Cortexis engineering team in Islamabad will reply."
+        description="Start a project, ask about training, or apply for an internship. Tell us what you are building and the Cortexis engineering team in Pakistan will reply."
         path="/contact"
         schema={[organization(), breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }])]}
       />
@@ -127,9 +127,9 @@ const Contact = () => {
 
             <figure className="lx-contact-city">
               <div className="lx-frame lx-contact-city-frame" data-reveal-media>
-                <img src={islamabad.src} alt={islamabad.alt} loading="lazy" decoding="async" />
+                <img src={monument.src} alt={monument.alt} loading="lazy" decoding="async" />
               </div>
-              <figcaption className="lx-glass lx-contact-city-tag">Pakistan Monument, Islamabad</figcaption>
+              <figcaption className="lx-glass lx-contact-city-tag">Pakistan Monument</figcaption>
             </figure>
           </aside>
 

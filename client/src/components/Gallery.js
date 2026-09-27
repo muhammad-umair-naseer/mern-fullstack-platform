@@ -104,7 +104,7 @@ export default function Gallery() {
       <div className="lx-wrap lx-reel-head">
         <span className="lx-label"><span className="lx-label-num">Studio</span>Where the work happens</span>
         <h2 id="reel-heading" className="lx-h2">
-          Made in <em>Islamabad.</em>
+          Made in <em>Pakistan.</em>
         </h2>
         <div className="lx-reel-meta" aria-hidden="true">
           <span className="lx-reel-count tabular">

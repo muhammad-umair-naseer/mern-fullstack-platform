@@ -123,7 +123,7 @@ export default function Services() {
     <main className="min-h-screen text-ink">
       <Seo
         title="Software Development and Consulting Services"
-        description="Web and mobile development, AI and automation, cloud and DevOps, UI/UX design and technical training, delivered by an Islamabad based engineering team."
+        description="Web and mobile development, AI and automation, cloud and DevOps, UI/UX design and technical training, delivered by our Pakistan engineering team."
         path="/services"
         schema={[
           organization(),

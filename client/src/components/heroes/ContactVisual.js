@@ -216,7 +216,7 @@ export default function ContactVisual() {
             <span className="lx-cv-ring" />
           </span>
           <span className="lx-cv-clock-text">
-            <span className="lx-cv-city">Islamabad</span>
+            <span className="lx-cv-city">Pakistan</span>
             <span className="lx-cv-time tabular">
               {time ? (
                 <>
