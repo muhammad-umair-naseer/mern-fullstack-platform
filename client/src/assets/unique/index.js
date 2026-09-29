@@ -25,8 +25,8 @@ import legalBotDeletion from './legal-bot-deletion.webp';
 /** /contact: the "Where we are" plate. */
 export const contactCity = {
   src: contactIslamabad, w: 1800, h: 1200,
-  alt: 'The Pakistan Monument, with visitors walking beneath its petals',
-  credit: 'Mohammad Hassan Mukhtar Ahmad', unsplashId: 'oNRXAEgPPng',
+  alt: 'A quiet, sunlit tech studio workspace with a laptop, copper desk lamp, and notebook',
+  credit: 'Cortexis Studio',
 };
 
 /** /contact hero: the letter the message flies to. */

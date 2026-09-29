@@ -55,14 +55,14 @@ export const SERVICE_PHOTOS = {
   'ai-automation': {
     src: aiAutomation,
     tall: aiAutomationTall,
-    alt: 'Orange robotic arms working along an automated assembly line',
-    credit: 'Simon Kadula',
+    alt: 'An AI workflow automation dashboard and agent pipelines on a monitor in a sunlit studio',
+    credit: 'Cortexis Studio',
   },
   'saas-platform-development': {
     src: saas,
     tall: saasTall,
-    alt: 'An open laptop on a sofa showing a product dashboard of charts, in soft window light',
-    credit: 'Lukas Blazek',
+    alt: 'A SaaS platform analytics dashboard with revenue charts on an open laptop in warm daylight',
+    credit: 'Cortexis Studio',
   },
   'web-development': {
     src: web,
@@ -97,14 +97,14 @@ export const SERVICE_PHOTOS = {
   'e-commerce-solutions': {
     src: ecommerce,
     tall: ecommerceTall,
-    alt: 'A woman packing an order into a cardboard box in a sunlit studio',
-    credit: 'M. Cooper',
+    alt: 'An e-commerce digital platform design, conversion funnel and store analytics on a desktop display',
+    credit: 'Cortexis Studio',
   },
   'c-development': {
     src: cpp,
     tall: cppTall,
-    alt: 'Gold traces and solder pads on a printed circuit board, close up',
-    credit: 'Manuel',
+    alt: 'High-performance C++ code and low-latency benchmark profiling on a curved developer display',
+    credit: 'Cortexis Studio',
   },
   'python-development': {
     src: python,
@@ -115,8 +115,8 @@ export const SERVICE_PHOTOS = {
   'ai-ml-solutions': {
     src: aiml,
     tall: aimlTall,
-    alt: 'The white hand of a humanoid robot, palm open',
-    credit: 'Franck V.',
+    alt: 'An AI engineer analyzing deep learning neural networks and training loss curves on an ultrawide display',
+    credit: 'Cortexis Studio',
   },
 };
 

@@ -129,7 +129,7 @@ const Contact = () => {
               <div className="lx-frame lx-contact-city-frame" data-reveal-media>
                 <img src={monument.src} alt={monument.alt} loading="lazy" decoding="async" />
               </div>
-              <figcaption className="lx-glass lx-contact-city-tag">Pakistan Monument</figcaption>
+              <figcaption className="lx-glass lx-contact-city-tag">Cortexis Studio</figcaption>
             </figure>
           </aside>
 

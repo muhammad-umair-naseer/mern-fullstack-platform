@@ -22,13 +22,13 @@ export const photos = {
   },
   serviceAi: {
     src: serviceAi,
-    alt: 'Warm sunlight and shadow falling across ribbed architectural panels',
-    credit: 'Declan Sun',
+    alt: 'An AI workflow automation dashboard and agent pipelines on a monitor in a sunlit studio',
+    credit: 'Cortexis Studio',
   },
   serviceSaas: {
     src: serviceSaas,
-    alt: 'A plain white shipping box with its lid open on a pale backdrop',
-    credit: 'Kelli McClintock',
+    alt: 'A SaaS platform analytics dashboard with revenue charts on an open laptop in warm daylight',
+    credit: 'Cortexis Studio',
   },
   learning: {
     src: learning,
@@ -42,8 +42,8 @@ export const photos = {
   },
   cta: {
     src: cta,
-    alt: 'A quiet, sunlit room with a single chair and a plant',
-    credit: 'Bree Anne',
+    alt: 'An engineer working on software architecture and design at a sunlit dual-monitor studio desk',
+    credit: 'Cortexis Studio',
   },
   about: {
     src: about,
