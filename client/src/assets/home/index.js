@@ -35,7 +35,7 @@ export const reel = [
 // laptop-and-coffee flat lay: it sits directly above the offline card, which
 // already is one, and the two read as the same photograph twice.
 export const workPhotos = {
-  bot: { src: workBot, alt: 'A customer messaging and conversational AI assistant on a smartphone on a clean studio desk', credit: 'Alexander Shatov' },
+  bot: { src: workBot, alt: 'YourBot studio interface on a laptop with 1-click WhatsApp and Instagram connection, prompt builder, and live chat simulation', credit: 'Cortexis Studio' },
   tools: { src: workTools, alt: 'Developer file utilities, code tools and data formatters on a clean monitor screen', credit: 'Ilya Pavlov' },
   offline: { src: workOffline, alt: 'A private offline workspace with laptop searching local documents and notes in warm daylight', credit: 'Clement Helardot' },
 };
