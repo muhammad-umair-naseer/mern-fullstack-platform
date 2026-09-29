@@ -17,8 +17,8 @@ import gTeam from './g-team.webp';
 export const photos = {
   serviceWeb: {
     src: serviceWeb,
-    alt: 'An open laptop and a phone on a wooden desk by a sunlit window',
-    credit: 'Mikey Harris',
+    alt: 'A web engineer coding a responsive modern web application on a laptop in a sunlit studio',
+    credit: 'Christopher Gower',
   },
   serviceAi: {
     src: serviceAi,

@@ -648,7 +648,7 @@ export default function Internships() {
                 </div>
                 <div className="cx-rail-inner">
                   <span className="lx-label">Program benefits</span>
-                  <h3 className="cx-rail-title">Why join <em>Cortexis?</em></h3>
+                  <h3 className="cx-rail-title">Why join <em>Cortexis Solution Hub?</em></h3>
 
                   <ol className="cx-perks">
                     {PERKS.map((p, i) => (

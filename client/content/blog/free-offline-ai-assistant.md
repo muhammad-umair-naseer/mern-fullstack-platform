@@ -5,7 +5,7 @@ date: 2026-09-27
 tags: [ai, privacy, tools]
 targetQuery: free offline ai assistant
 image: /blog/covers/free-offline-ai-assistant.webp
-imageAlt: "A hand pulling one card forward from a long drawer of library index cards"
+imageAlt: "A developer searching and indexing local desktop documents and files with magnifying focus in warm ambient light"
 home: /services/ai-automation
 ---
 

@@ -26,15 +26,15 @@ export const aboutWork = [
 // What drives us: three tall plates (7:10).
 export const aboutDrivers = {
   mission: { src: mission, alt: 'A designer drafting plans by hand at a wooden desk', credit: 'Ryan Ancill' },
-  vision: { src: vision, alt: 'Golden sunrise over misty mountains and a valley town', credit: 'Mario Amé' },
-  promise: { src: promise, alt: 'A cup of coffee and a pen on a sunlit wooden table', credit: 'Erico Terada' },
+  vision: { src: vision, alt: 'A minimalist architectural studio space with clean lines and warm natural light', credit: 'Nastuh Abootalebi' },
+  promise: { src: promise, alt: 'A sunlit software studio desk with thoughtful architectural focus and craftsmanship', credit: 'Austin Distel' },
 };
 
 // Our story (about 5:7).
 export const aboutStory = {
   src: story,
-  alt: 'A sunlit wooden work table with rulers, pens and tape',
-  credit: 'Ryan Ancill',
+  alt: 'A software engineering team collaborating closely around a studio work table in warm morning light',
+  credit: 'Annie Spratt',
 };
 
 export const ABOUT_CREDITS = [

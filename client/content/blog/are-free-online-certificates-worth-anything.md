@@ -5,7 +5,7 @@ date: 2026-08-28
 tags: [careers, courses, certificates]
 targetQuery: are free online certificates worth anything
 image: /blog/covers/are-free-online-certificates-worth-anything.webp
-imageAlt: "A gold fountain pen resting on a plain white surface"
+imageAlt: "A formal professional credential certificate and degree portfolio on a clean executive desk"
 ---
 
 A free online certificate is worth roughly what the work behind it was worth. If you watched twelve hours of video, clicked next, and a PDF appeared, it is worth nothing, and the person reading your CV can tell. If you worked through the material, failed an exam, went back, and passed it, then the certificate is a receipt for something real, and the real thing is where the value sits.

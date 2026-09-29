@@ -74,9 +74,9 @@ export const COURSE_COVERS = {
   },
   'cybersecurity-fundamentals': {
     src: cybersecurityFundamentals,
-    alt: 'A gold combination padlock resting on a white keyboard beside bank cards',
-    credit: 'Towfiqu barbhuiya',
-    unsplashId: 'FnA5pAzqhMM',
+    alt: 'Cybersecurity terminal showing network packet inspection, security event logs and firewall defenses on an engineer screen',
+    credit: 'John Barkiple',
+    unsplashId: 'photo-1550751827-4bd374c3f58b',
   },
   'data-engineering': {
     src: dataEngineering,
@@ -95,9 +95,9 @@ export const COURSE_COVERS = {
   },
   'digital-marketing': {
     src: digitalMarketing,
-    alt: 'A hand on a phone beside a latte on a wooden cafe table',
-    credit: 'Eugene Chystiakov',
-    unsplashId: '0Z7G_aaY4Mg',
+    alt: 'Digital marketing performance dashboard tracking multi-channel conversions, SEO traffic, and campaign analytics',
+    credit: 'Stephen Dawson',
+    unsplashId: 'photo-1533750516457-a7f992034fec',
   },
   'docker-kubernetes': {
     src: dockerKubernetes,
@@ -117,9 +117,9 @@ export const COURSE_COVERS = {
   },
   'flutter-mobile': {
     src: flutterMobile,
-    alt: 'A smartphone with a blank screen lying on light wood',
-    credit: 'Vojtech Bruzek',
-    unsplashId: 'J82GxqnwKSs',
+    alt: 'Mobile application interface prototype and Flutter Dart development on a smartphone screen',
+    credit: 'Alvaro Reyes',
+    unsplashId: 'photo-1551650975-87deedd944c3',
   },
   'freelancing-upwork-fiverr': {
     src: freelancingUpworkFiverr,
@@ -129,9 +129,9 @@ export const COURSE_COVERS = {
   },
   'frontend-engineering': {
     src: frontendEngineering,
-    alt: 'A laptop, pen and leather notebook on a woven lounge seat in dappled sunlight',
-    credit: 'engin akyurt',
-    unsplashId: '1U6Iw2cX-cU',
+    alt: 'Frontend engineering workstation with design systems, responsive CSS UI components, and component library',
+    credit: 'UX Indonesia',
+    unsplashId: 'photo-1581291518857-4e27b48ff24e',
   },
   'full-stack-web': {
     src: fullStackWeb,
@@ -145,9 +145,9 @@ export const COURSE_COVERS = {
   },
   'graphic-design-ps-ai': {
     src: graphicDesignPsAi,
-    alt: 'Colour swatch cards fanned into a full colour wheel on white',
-    credit: 'Andy Brown',
-    unsplashId: '9bC6YPVk0Ts',
+    alt: 'Graphic design studio workspace with brand typography, vector artwork, and creative digital illustration',
+    credit: 'Balázs Kétyi',
+    unsplashId: 'photo-1626785774573-4b799315345d',
   },
   'java-spring-boot': {
     src: javaSpringBoot,
@@ -178,9 +178,9 @@ export const COURSE_COVERS = {
   },
   'react-native': {
     src: reactNative,
-    alt: 'Hands using a phone on a sunlit stone ledge beside a glass of chai',
-    credit: 'Rohit Tandon',
-    unsplashId: 'Mkh2La9fEDY',
+    alt: 'Cross-platform mobile application development with React Native and native mobile interfaces',
+    credit: 'William Hook',
+    unsplashId: 'photo-1555774698-0b77e0d5fac6',
   },
   'software-testing-qa': {
     src: softwareTestingQa,
@@ -216,15 +216,15 @@ export const COURSE_COVERS = {
   },
   'video-editing-short-form': {
     src: videoEditingShortForm,
-    alt: 'Examining strips of film through a loupe on a glowing light table',
-    credit: 'Hossein Nasr',
-    unsplashId: 'pneiKD4wbZI',
+    alt: 'Professional video editing suite showing multi-track timeline, color grading curves, and short-form video cut',
+    credit: 'Jakob Owens',
+    unsplashId: 'photo-1574717024653-61fd2cf4d44d',
   },
   'wordpress-development': {
     src: wordpressDevelopment,
-    alt: 'A sunlit home desk with a lamp, a laptop and a glass of matcha',
-    credit: 'Dagny Reese',
-    unsplashId: 'sTo3IYhYC_c',
+    alt: 'Custom WordPress theme development, Gutenberg blocks, and PHP CMS architecture on a monitor',
+    credit: 'Hal Gatewood',
+    unsplashId: 'photo-1547658719-da2b51169166',
   },
 };
 

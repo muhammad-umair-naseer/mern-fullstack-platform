@@ -5,7 +5,7 @@ date: 2026-08-28
 tags: [whatsapp, ecommerce, automation]
 targetQuery: how to automate whatsapp order confirmation
 image: /blog/covers/how-to-automate-whatsapp-order-confirmation-for-cod.webp
-imageAlt: "Hands taping shut a parcel wrapped in brown kraft paper"
+imageAlt: "E-commerce cash on delivery packages and fulfillment parcels ready for automated customer WhatsApp notification"
 ---
 
 You need three things: a number on the WhatsApp Business Platform, a message template Meta approved before you ever sent it, and something on your side that reads the customer's reply and flips the order to confirmed or cancelled before it reaches the courier. The part that trips people up is that your business has to start this conversation, and starting a conversation is the one thing WhatsApp will not let you do in free text.

@@ -114,20 +114,6 @@ const raw = [
     deliverables: ["Storefront", "CMS setup", "Payment & tax configuration"],
   },
   {
-    title: "C++ Development",
-    description: "High-performance applications, system software, and game development using C++.",
-    category: "Development",
-    features: ["Low-latency systems", "Engine integrations", "Tooling & CI for C++"],
-    deliverables: ["Profiling report", "Benchmarks", "Deployment artifacts"],
-  },
-  {
-    title: "Python Development",
-    description: "Versatile Python solutions for web development, automation, data processing, and more.",
-    category: "Development",
-    features: ["FastAPI/Django services", "Task automation", "ETL jobs"],
-    deliverables: ["Service repo", "CI pipelines", "Monitoring hooks"],
-  },
-  {
     title: "AI/ML Solutions",
     description: "Artificial Intelligence and Machine Learning solutions to automate processes and gain insights.",
     category: "AI/ML",

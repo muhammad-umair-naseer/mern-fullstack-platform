@@ -5,7 +5,7 @@ date: 2026-08-28
 tags: [whatsapp, automation, real-estate]
 targetQuery: whatsapp chatbot for real estate agents islamabad
 image: /blog/covers/whatsapp-chatbot-for-islamabad-real-estate-agents.webp
-imageAlt: "A bright A-frame living room with tall windows onto a forest"
+imageAlt: "A contemporary luxury residential property in Islamabad for automated real estate client inquiries"
 ---
 
 A WhatsApp bot can handle the first two minutes of almost every property enquiry you get: where it is, what size it is, what you are asking, whether it has possession, and whether it is still available. It cannot negotiate, cannot read a buyer the way you can on a call, and cannot close.

@@ -5,7 +5,7 @@ date: 2026-08-28
 tags: [pdf, privacy, tools]
 targetQuery: is it safe to upload pdf to online compressor
 image: /blog/covers/is-it-safe-to-upload-pdf-to-online-compressor.webp
-imageAlt: "A white envelope closed with a red wax seal, the brass stamp beside it"
+imageAlt: "Digital document encryption and secure file privacy verification on an engineer monitor"
 ---
 
 Usually, yes. Sometimes, absolutely not. The honest answer depends on what is inside the PDF, and almost nobody writing about this will tell you that, because most of the people writing about it run a service that needs you to upload.

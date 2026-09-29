@@ -5,7 +5,7 @@ date: 2026-08-28
 tags: [pricing, mobile, flutter]
 targetQuery: mobile app development cost in pakistan
 image: /blog/covers/what-a-mobile-app-really-costs-in-pakistan.webp
-imageAlt: "Four phone app screens sketched by hand in ink on paper"
+imageAlt: "Mobile application financial budget spreadsheet and sprint cost estimation on a modern desk"
 ---
 
 Most app quotes in Pakistan are wrong in the same two ways. They price the screens and forget the server, and they price an app for someone who actually needed a website.

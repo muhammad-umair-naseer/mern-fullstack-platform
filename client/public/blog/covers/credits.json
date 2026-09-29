@@ -1,11 +1,16 @@
 {
   "license": "Unsplash License (https://unsplash.com/license): free to use, attribution appreciated",
-  "note": "Blog covers. Each file is the Unsplash photo cropped to 1600x900 (16:9, the card aspect) and encoded to WebP. One photo per post; none is reused elsewhere on the site.",
+  "note": "Blog covers. Each file is the Unsplash photo cropped to 1200x675 (16:9, the card aspect) and encoded to WebP. One photo per post; none is reused elsewhere on the site.",
   "covers": {
     "are-free-online-certificates-worth-anything.webp": {
-      "photographer": "Art Lasovsky",
-      "profile": "https://unsplash.com/@artlasovsky",
-      "photo": "https://unsplash.com/photos/gold-fountain-pen-on-white-8XddFc6NkBY"
+      "photographer": "Romain V",
+      "profile": "https://unsplash.com/@romainv",
+      "photo": "https://images.unsplash.com/photo-1450133064473-71024230f91b"
+    },
+    "free-offline-ai-assistant.webp": {
+      "photographer": "Markus Winkler",
+      "profile": "https://unsplash.com/@markuswinkler",
+      "photo": "https://images.unsplash.com/photo-1586769852044-692d6e3703f0"
     },
     "how-to-apply-for-a-software-house-internship-in-pakistan.webp": {
       "photographer": "2H Media",
@@ -13,9 +18,9 @@
       "photo": "https://unsplash.com/photos/a-laptop-computer-sitting-on-top-of-a-wooden-desk-3q4V539j_bw"
     },
     "how-to-automate-whatsapp-order-confirmation-for-cod.webp": {
-      "photographer": "Compagnons",
-      "profile": "https://unsplash.com/@sigmund",
-      "photo": "https://unsplash.com/photos/a-person-holding-a-brown-paper-bag-on-top-of-a-table-mErtCMDgUEM"
+      "photographer": "Claudio Schwarz",
+      "profile": "https://unsplash.com/@purzlbaum",
+      "photo": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d"
     },
     "instagram-comment-to-dm-without-manychat.webp": {
       "photographer": "Samuell Morgenstern",
@@ -28,29 +33,29 @@
       "photo": "https://unsplash.com/photos/person-writing-on-white-paper-GJao3ZTX9gU"
     },
     "is-it-safe-to-upload-pdf-to-online-compressor.webp": {
-      "photographer": "SHAN LU",
-      "profile": "https://unsplash.com/@toyamakanna",
-      "photo": "https://unsplash.com/photos/white-envelope-with-brown-stamp-j0VL_haSyhM"
+      "photographer": "Franck V.",
+      "profile": "https://unsplash.com/@franckinjapan",
+      "photo": "https://images.unsplash.com/photo-1563986768609-322da13575f3"
     },
     "what-a-mobile-app-really-costs-in-pakistan.webp": {
-      "photographer": "Hal Gatewood",
-      "profile": "https://unsplash.com/@halacious",
-      "photo": "https://unsplash.com/photos/illustration-of-smartphone-application-screenshots-weRQAu9TA-A"
+      "photographer": "Scott Graham",
+      "profile": "https://unsplash.com/@homajob",
+      "photo": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c"
     },
     "what-a-website-actually-costs-in-pakistan.webp": {
-      "photographer": "Sora Sagano",
-      "profile": "https://unsplash.com/@sorasagano",
-      "photo": "https://unsplash.com/photos/silver-imac-on-brown-wooden-desk-3BMIntVUsjQ"
+      "photographer": "Campaign Creators",
+      "profile": "https://unsplash.com/@campaign_creators",
+      "photo": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40"
     },
     "whatsapp-chatbot-for-islamabad-real-estate-agents.webp": {
-      "photographer": "Clay Banks",
-      "profile": "https://unsplash.com/@claybanks",
-      "photo": "https://unsplash.com/photos/modern-a-frame-living-room-with-forest-view-oIx5RmkC9Ow"
+      "photographer": "R Architecture",
+      "profile": "https://unsplash.com/@rarchitecture_melbourne",
+      "photo": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
     },
     "whatsapp-green-tick-pakistan-what-actually-qualifies.webp": {
-      "photographer": "Vitaly Gariev",
-      "profile": "https://unsplash.com/@silverkblack",
-      "photo": "https://unsplash.com/photos/fashion-designer-on-the-phone-working-on-a-laptop-kk4J92iaSBk"
+      "photographer": "John Schnobrich",
+      "profile": "https://unsplash.com/@johnschno",
+      "photo": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
     },
     "which-programming-language-should-you-learn-first-in-pakistan.webp": {
       "photographer": "Emile Perron",
@@ -58,9 +63,9 @@
       "photo": "https://unsplash.com/photos/macbook-pro-showing-programming-language-xrVDYZRGdw4"
     },
     "will-whatsapp-ban-my-number-for-using-a-bot.webp": {
-      "photographer": "Mehrpouya H",
-      "profile": "https://unsplash.com/@mehrpouya",
-      "photo": "https://unsplash.com/photos/a-person-looking-at-the-phone-48pVIPcloXA"
+      "photographer": "Fatos Bytyqi",
+      "profile": "https://unsplash.com/@fatosbytyqi",
+      "photo": "https://images.unsplash.com/photo-1555066931-4365d14bab8c"
     }
   }
 }

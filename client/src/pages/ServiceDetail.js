@@ -37,8 +37,6 @@ const LEDE = {
   'ui-ux-design': 'Intuitive, accessible interfaces, designed around users.',
   'digital-marketing': 'Data-driven marketing that widens your reach.',
   'e-commerce-solutions': 'Online stores with secure payments and inventory.',
-  'c-development': 'Fast applications, system software and games in C++.',
-  'python-development': 'Python for the web, automation and data.',
   'ai-ml-solutions': 'Machine learning that automates work and finds insight.',
 };
 

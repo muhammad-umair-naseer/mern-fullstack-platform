@@ -5,7 +5,7 @@ date: 2026-08-28
 tags: [pricing, web-development, pakistan]
 targetQuery: how much does it cost to build a website in pakistan
 image: /blog/covers/what-a-website-actually-costs-in-pakistan.webp
-imageAlt: "A wide display, keyboard and potted plant on a light wooden desk"
+imageAlt: "A web development team reviewing digital scope, timeline deliverables, and pricing architecture"
 ---
 
 Four different questions, not one. A brochure site for a small business, a WordPress shop, a custom web application and a SaaS product are four different things to build, and a single range covering all of them tells you nothing useful.

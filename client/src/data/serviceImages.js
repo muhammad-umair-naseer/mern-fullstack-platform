@@ -38,10 +38,6 @@ import marketing from '../assets/services-lux/digital-marketing.webp';
 import marketingTall from '../assets/services-lux/digital-marketing-tall.webp';
 import ecommerce from '../assets/services-lux/e-commerce-solutions.webp';
 import ecommerceTall from '../assets/services-lux/e-commerce-solutions-tall.webp';
-import cpp from '../assets/services-lux/c-development.webp';
-import cppTall from '../assets/services-lux/c-development-tall.webp';
-import python from '../assets/services-lux/python-development.webp';
-import pythonTall from '../assets/services-lux/python-development-tall.webp';
 import aiml from '../assets/services-lux/ai-ml-solutions.webp';
 import aimlTall from '../assets/services-lux/ai-ml-solutions-tall.webp';
 
@@ -67,20 +63,20 @@ export const SERVICE_PHOTOS = {
   'web-development': {
     src: web,
     tall: webTall,
-    alt: 'A laptop showing a website on a light wooden desk, a mouse beside it',
-    credit: 'Domenico Loia',
+    alt: 'A web engineer coding a responsive modern web application on a laptop in a sunlit studio',
+    credit: 'Christopher Gower',
   },
   'mobile-app-development': {
     src: mobile,
     tall: mobileTall,
-    alt: 'Two hands holding a smartphone, a silver watch on one wrist',
+    alt: 'A smartphone displaying a clean mobile application user interface on a wooden desk',
     credit: 'Paul Hanaoka',
   },
   'wordpress-development': {
     src: wordpress,
     tall: wordpressTall,
-    alt: 'Hands typing on a laptop beside a potted plant in soft daylight',
-    credit: 'Alexander Polous',
+    alt: 'A web designer building a custom responsive WordPress theme and website layout',
+    credit: 'Domenico Loia',
   },
   'ui-ux-design': {
     src: uiux,
@@ -91,26 +87,14 @@ export const SERVICE_PHOTOS = {
   'digital-marketing': {
     src: marketing,
     tall: marketingTall,
-    alt: 'Hands laying out sticky notes on a campaign plan on a wooden table',
-    credit: 'Brands&People',
+    alt: 'A digital marketing dashboard displaying SEO metrics, traffic analytics, and conversion funnels',
+    credit: 'Carlos Muza',
   },
   'e-commerce-solutions': {
     src: ecommerce,
     tall: ecommerceTall,
     alt: 'An e-commerce digital platform design, conversion funnel and store analytics on a desktop display',
     credit: 'Cortexis Studio',
-  },
-  'c-development': {
-    src: cpp,
-    tall: cppTall,
-    alt: 'High-performance C++ code and low-latency benchmark profiling on a curved developer display',
-    credit: 'Cortexis Studio',
-  },
-  'python-development': {
-    src: python,
-    tall: pythonTall,
-    alt: 'Lines of Python code on a dark screen, close up',
-    credit: 'Chris Ried',
   },
   'ai-ml-solutions': {
     src: aiml,
