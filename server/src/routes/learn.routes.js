@@ -12,9 +12,8 @@ import {
   submitTopicQuiz,
   getChapterQuiz,
   submitChapterQuiz,
-  getFinalExam,
-  submitFinalExam,
 } from '../controllers/quiz.controller.js';
+import { getFinal, startFinal, answerFinal, submitFinal } from '../controllers/final.controller.js';
 import { verifyCertificate } from '../controllers/certificate.controller.js';
 
 /**
@@ -42,8 +41,11 @@ router.get('/quiz/chapter/:chapterId', requireAuth, getChapterQuiz);
 router.post('/quiz/chapter/:chapterId', requireAuth, submitChapterQuiz);
 
 // --- final exam ------------------------------------------------------------
-router.get('/final/:slug', requireAuth, getFinalExam);
-router.post('/final/:slug', requireAuth, submitFinalExam);
+// One timed attempt and one retake; see services/finalExam.service.js.
+router.get('/final/:slug', requireAuth, getFinal);
+router.post('/final/:slug/start', requireAuth, startFinal);
+router.post('/final/:slug/answer', requireAuth, answerFinal);
+router.post('/final/:slug/submit', requireAuth, submitFinal);
 
 // --- certificate -----------------------------------------------------------
 // Public: anyone holding a code can verify it without an account.

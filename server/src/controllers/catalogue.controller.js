@@ -9,6 +9,7 @@ import {
   PASS_MARK,
 } from '../services/progress.service.js';
 import { getOrSet, CACHE_KEYS, CACHE_TTL } from '../services/cache.service.js';
+import { finalStatus } from '../services/finalExam.service.js';
 
 /** Catalogue browsing, enrolment, and the learner dashboard. */
 
@@ -133,13 +134,8 @@ export const getCourseOutline = async (req, res) => {
           (await db
             .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
             .get(req.user.id, publicOutline.id)) ?? null,
-        bestFinalScore:
-          (await db
-            .prepare(
-              `SELECT MAX(score) AS best FROM quiz_attempts
-               WHERE userId = ? AND courseId = ? AND chapterId IS NULL AND lessonId IS NULL`
-            )
-            .get(req.user.id, publicOutline.id)).best ?? null,
+        // The final exam's rules, attempts and retake date (services/finalExam.service.js).
+        final: await finalStatus(req.user.id, publicOutline, gates),
       };
     }
 

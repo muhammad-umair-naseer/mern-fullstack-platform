@@ -478,7 +478,7 @@ function runReel(root) {
     appear($.optOk, x + 1.4, { dy: 0, dx: -8, dur: 0.5 });
     appear($.seg20, x + 1.35, { dy: 0, dur: 0.3 });
     appear($.passed, x + 1.7, { dy: 26, s0: 0.97, dur: 0.8 });
-    num($.score, [[x + 1.75, 0], [x + 2.4, 95, OUT]], (v) => `${Math.round(v)}%`);
+    num($.score, [[x + 1.75, 0], [x + 2.4, 96, OUT]], (v) => `${Math.round(v)}%`);
     const C = L.cert;
     const cert = $.cert;
     tr(cert, 'o', [[x + 2.15, 0], [x + 2.5, 1, OUT], [M2, 1], [M2 + 0.7, 0, OUT]]);
@@ -961,7 +961,7 @@ const HeroReel = ({ className = '' }) => {
                       </ul>
                     </div>
                     <div className="rl-ex-main">
-                      <div className="rl-k">Final exam · Question 20 of 20</div>
+                      <div className="rl-k">Final exam · Question 50 of 50</div>
                       <div className="rl-qsegs">
                         {Array.from({ length: 19 }, (_, i) => <i key={i} />)}
                         <i className="rl-last"><b data-k="seg20" /></i>
@@ -987,11 +987,11 @@ const HeroReel = ({ className = '' }) => {
                             <circle cx="24" cy="24" r="20" fill="none" stroke="#E4ECDD" strokeWidth="4" />
                             <circle cx="24" cy="24" r="20" fill="none" stroke="#62805A" strokeWidth="4" strokeLinecap="round" strokeDasharray="125.66" strokeDashoffset="6.3" />
                           </svg>
-                          <b data-k="score">95%</b>
+                          <b data-k="score">96%</b>
                         </div>
                         <div>
                           <div className="rl-passed-title">You passed.</div>
-                          <div className="rl-passed-sub">19 of 20 correct · Python Development</div>
+                          <div className="rl-passed-sub">48 of 50 correct · Python Development</div>
                         </div>
                         <span className="rl-iss">
                           Certificate issued
@@ -1089,7 +1089,7 @@ const HeroReel = ({ className = '' }) => {
                 <div className="rl-cs-name">Ayesha Khan</div>
                 <div className="rl-cs-rule" />
                 <div className="rl-cs-copy">
-                  <div>has successfully completed the <b>Python Development</b> course and passed the final examination with a score of <b>95%</b>.</div>
+                  <div>has successfully completed the <b>Python Development</b> course and passed the final examination with a score of <b>96%</b>.</div>
                   <i className="rl-cs-orn" />
                   <div>Recognized for consistent dedication and a strong command of the subject. Wishing them continued success in their future career.</div>
                 </div>

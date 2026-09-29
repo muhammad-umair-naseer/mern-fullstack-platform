@@ -1,0 +1,255 @@
+/* The final exam (pages/FinalExam.js): the rules card, the paper, the result.
+   The paper reuses the quiz's question and dock styles from Quiz.css. */
+
+/* --- exam mode: nothing on screen but the paper -------------------------------- */
+
+html.cx-exam-mode .navbar,
+html.cx-exam-mode .footer {
+  display: none !important;
+}
+
+.fx-lock,
+.fx-lock * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media print {
+  html.cx-exam-mode .fx-paper {
+    display: none !important;
+  }
+}
+
+.fx-page {
+  padding-bottom: clamp(3rem, 2rem + 4vw, 6rem);
+}
+
+/* --- before: the rules --------------------------------------------------------- */
+
+.fx-rules,
+.fx-standing,
+.fx-result {
+  margin-top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  padding: clamp(1.5rem, 1rem + 2.5vw, 2.75rem);
+}
+
+.fx-rules-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 1.25rem + 1.8vw, 2.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.fx-rules-title em {
+  font-style: italic;
+  color: var(--copper);
+}
+
+.fx-retake {
+  margin: 0.9rem 0 0;
+  font-weight: 600;
+  color: var(--copper);
+}
+
+.fx-rules-head {
+  margin: 1.75rem 0 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.fx-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.fx-list li {
+  position: relative;
+  padding-left: 1.2rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.fx-list li::before {
+  content: '';
+  position: absolute;
+  left: 0.1rem;
+  top: 0.68em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--copper);
+}
+
+.fx-list strong {
+  color: var(--ink);
+}
+
+.fx-pledge {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1.9rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: rgba(255, 253, 249, 0.7);
+  line-height: 1.55;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.fx-pledge input {
+  flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.2rem;
+  accent-color: var(--copper);
+  cursor: pointer;
+}
+
+.fx-start {
+  margin-top: 1.25rem;
+}
+
+.fx-start:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* --- during: the paper ------------------------------------------------------- */
+
+.fx-exam-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin: clamp(1.25rem, 1rem + 1.5vw, 2rem) 0 1rem;
+}
+
+.fx-exam-note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.fx-prompt {
+  white-space: pre-wrap;
+}
+
+.fx-exam .cx-qz-dock-inner {
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+}
+
+.fx-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: var(--sand);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.fx-timer.is-low {
+  background: var(--copper);
+  color: #fff;
+  animation: fx-low 1.6s ease-in-out infinite;
+}
+
+@keyframes fx-low {
+  50% {
+    opacity: 0.72;
+  }
+}
+
+.fx-confirm {
+  background: var(--copper);
+  border-color: var(--copper);
+}
+
+@media (max-width: 560px) {
+  .fx-exam .cx-qz-dock-inner {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      "timer count bar"
+      "submit submit submit";
+  }
+  .fx-timer {
+    grid-area: timer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-timer.is-low {
+    animation: none;
+  }
+}
+
+/* --- after: the result ------------------------------------------------------- */
+
+.fx-marks {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.75rem, 2.5rem + 6vw, 6.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.fx-result.is-fail .fx-marks {
+  color: var(--copper);
+}
+
+.fx-marks-of {
+  font-size: 0.34em;
+  letter-spacing: 0;
+  color: var(--ink-3);
+}
+
+.fx-verdict {
+  margin: 1rem 0 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.fx-verdict-sub {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.fx-standing-line {
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.fx-standing-line strong {
+  color: var(--ink);
+}
+
+.fx-result .lp-issued,
+.fx-standing .lp-issued {
+  margin-bottom: 1.5rem;
+}

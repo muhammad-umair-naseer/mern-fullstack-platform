@@ -266,6 +266,20 @@ const CourseOutline = () => {
   const lessonGate = (id) => gates?.lessons?.[id];
   const quizGate = (id) => gates?.quizzes?.[id];
 
+  // The final exam: one attempt, and one retake 30 days after a fail
+  // (server/src/services/finalExam.service.js).
+  const final = progress?.final;
+  const examRules = final?.rules ?? { questions: 50, totalMarks: 100, passMarks: 50, minutes: 60, retakeAfterDays: 30 };
+  const canTakeFinal =
+    Boolean(enrolled && gates?.final?.unlocked && !progress?.certificate) &&
+    (!final || final.state === 'ready' || final.state === 'retake');
+  const examNote =
+    final?.state === 'waiting'
+      ? `Your retake opens on ${new Date(final.retakeAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.`
+      : final?.state === 'exhausted'
+      ? 'Both attempts have been used.'
+      : `One attempt, ${examRules.minutes} minutes. If you don't pass, you can retake once after ${examRules.retakeAfterDays} days.`;
+
   // Resume at the first lesson that is both unfinished AND unlocked, so the
   // button never points at something the server will refuse.
   const allLessons = course.chapters.flatMap((c) => c.lessons);
@@ -370,9 +384,10 @@ const CourseOutline = () => {
                     <ArrowUpRight size={15} />
                   </span>
                 </Link>
-                {progress.gates?.final?.unlocked && !progress.certificate && (
+                {canTakeFinal && (
                   <Link to={`/learn/${slug}/final`} className="lx-link">
-                    Take the final exam <ArrowRight size={16} aria-hidden="true" />
+                    {final?.state === 'retake' ? 'Take your retake' : 'Take the final exam'}{' '}
+                    <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                 )}
                 {progress.certificate && (
@@ -663,9 +678,9 @@ const CourseOutline = () => {
               Final exam &amp; certificate
             </h3>
 
-            {enrolled && gates?.final?.unlocked && !progress?.certificate && (
+            {canTakeFinal && (
               <Link to={`/learn/${slug}/final`} className="btn lx-btn">
-                Take the final exam
+                {final?.state === 'retake' ? 'Take your retake' : 'Take the final exam'}
                 <span className="lx-btn-disc" aria-hidden="true">
                   <ArrowUpRight size={15} />
                 </span>
@@ -677,7 +692,7 @@ const CourseOutline = () => {
             {[
               ['Topic checks', 'Each one opens the next topic'],
               ['Chapter quizzes', 'Each one opens the next chapter'],
-              [`${course.finalCount}-question final`, 'Score 70% or higher'],
+              [`${examRules.questions}-question final`, `${examRules.passMarks} of ${examRules.totalMarks} marks to pass`],
               ['Certificate', 'Issued instantly, verifiable by code'],
             ].map(([title, sub], i) => (
               <li key={title} className="bg-ivory/90 p-4 md:p-5">
@@ -688,7 +703,7 @@ const CourseOutline = () => {
             ))}
           </ol>
 
-          <p className="mt-4 mb-0 font-mono text-xs text-ink-3">Retakes are unlimited.</p>
+          <p className="mt-4 mb-0 font-mono text-xs text-ink-3">{examNote}</p>
 
           {enrolled && !gates?.final?.unlocked && gates?.final?.reason && (
             <p className="mt-3 mb-0 inline-flex items-center gap-2 text-sm text-amber-700 font-medium">

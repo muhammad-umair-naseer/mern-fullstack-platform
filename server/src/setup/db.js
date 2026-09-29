@@ -276,6 +276,33 @@ export const TABLES = {
     );
     CREATE INDEX IF NOT EXISTS idx_certificates_code ON certificates (code);
   `,
+  // One row per final-exam attempt (services/finalExam.service.js). The paper
+  // is a snapshot of exactly what was shown, answers in the order shown, so
+  // grading and the retake never depend on quiz_questions, which the seeder
+  // rewrites whenever course content changes.
+  final_attempts: `
+    CREATE TABLE IF NOT EXISTS final_attempts (
+      id          BIGSERIAL PRIMARY KEY,
+      userId      BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      courseId    BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      attemptNo   INTEGER NOT NULL,
+      token       TEXT NOT NULL,
+      paper       JSONB NOT NULL,
+      answers     JSONB NOT NULL DEFAULT '{}'::jsonb,
+      total       INTEGER NOT NULL,
+      pledgedAt   TIMESTAMPTZ NOT NULL,
+      startedAt   TIMESTAMPTZ NOT NULL,
+      deadline    TIMESTAMPTZ NOT NULL,
+      submittedAt TIMESTAMPTZ,
+      reason      TEXT,
+      correct     INTEGER,
+      marks       INTEGER,
+      passed      INTEGER,
+      blurs       INTEGER NOT NULL DEFAULT 0,
+      UNIQUE (userId, courseId, attemptNo)
+    );
+    CREATE INDEX IF NOT EXISTS idx_final_attempts_user ON final_attempts (userId, courseId);
+  `,
 };
 
 export const connectDB = async () => {

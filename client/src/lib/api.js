@@ -8,7 +8,9 @@ export const setToken = (t) =>
 
 // Thin fetch wrapper: attaches the bearer token, unwraps `data`, and turns a
 // non-2xx into a thrown Error carrying the server's message and status.
-export const api = async (path, { method = 'GET', body, auth = true } = {}) => {
+// `keepalive` lets a request finish while the page is being hidden or closed
+// (the final exam submits itself when its tab is left).
+export const api = async (path, { method = 'GET', body, auth = true, keepalive = false } = {}) => {
   const token = getToken();
   const res = await fetch(`${API_BASE_URL}/api${path}`, {
     method,
@@ -17,6 +19,7 @@ export const api = async (path, { method = 'GET', body, auth = true } = {}) => {
       ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
+    ...(keepalive ? { keepalive: true } : {}),
   });
 
   let payload = null;

@@ -1,16 +1,8 @@
 import { getDB } from '../setup/db.js';
-import {
-  courseBySlug,
-  enrollmentFor,
-  lessonCountFor,
-  computeGates,
-  finishedLessonIds,
-  PASS_MARK,
-} from '../services/progress.service.js';
+import { enrollmentFor, computeGates, PASS_MARK } from '../services/progress.service.js';
 import { loadQuestions, gradeAndRespond, strip } from '../services/quiz.service.js';
-import { issueCertificate, findCertificateByCode } from '../services/certificate.service.js';
 
-/** Chapter quizzes and the final exam, including certificate issuance. */
+/** Topic and chapter quizzes. The final exam lives in final.controller.js. */
 
 /** A topic's own quiz. Must be passed before the next topic unlocks. */
 export const getTopicQuiz = async (req, res) => {
@@ -103,59 +95,4 @@ export const submitChapterQuiz = async (req, res) => {
   const result = await gradeAndRespond(req, res, { course, chapterId: chapter.id, questions });
   if (!result) return;
   res.json({ data: result });
-};
-
-// ---------------------------------------------------------------- final exam
-
-export const getFinalExam = async (req, res) => {
-  const course = await courseBySlug(req.params.slug);
-  if (!course) return res.status(404).json({ message: 'Course not found' });
-  if (!(await enrollmentFor(req.user.id, course.id))) {
-    return res.status(403).json({ message: 'Not enrolled in this course' });
-  }
-
-  const gates = await computeGates(req.user.id, course);
-  if (!gates.final.unlocked) {
-    const total = await lessonCountFor(course.id);
-    const completed = finishedLessonIds(gates).length;
-    const quizzesLeft = gates.chapters.filter((c) => !c.quizPassed).length;
-    return res.status(403).json({
-      message: gates.final.reason,
-      data: { completed, total, chapterQuizzesRemaining: quizzesLeft },
-    });
-  }
-
-  const questions = await loadQuestions(course.id, null);
-  if (!questions.length) return res.status(404).json({ message: 'No final exam for this course yet' });
-
-  res.json({
-    data: { course, questions: questions.map(strip), passMark: Math.round(PASS_MARK * 100) },
-  });
-};
-
-export const submitFinalExam = async (req, res) => {
-  const db = getDB();
-  const course = await courseBySlug(req.params.slug);
-  if (!course) return res.status(404).json({ message: 'Course not found' });
-  if (!(await enrollmentFor(req.user.id, course.id))) {
-    return res.status(403).json({ message: 'Not enrolled in this course' });
-  }
-
-  const gates = await computeGates(req.user.id, course);
-  if (!gates.final.unlocked) {
-    return res.status(403).json({ message: gates.final.reason });
-  }
-
-  const questions = await loadQuestions(course.id, null);
-  const result = await gradeAndRespond(req, res, { course, chapterId: null, questions });
-  if (!result) return;
-
-  // Certificate issues automatically the first time they clear the pass mark.
-  const certificate = result.passed
-    ? await issueCertificate({ userId: req.user.id, courseId: course.id, score: result.percent })
-    : (await getDB()
-        .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
-        .get(req.user.id, course.id)) ?? null;
-
-  res.json({ data: { ...result, certificate: certificate ?? null } });
 };
