@@ -571,6 +571,14 @@ h2 em {
 
 /* ── Route loading ───────────────────────────────────────────────────── */
 
+/* Endless decorative loops, paused while nobody is using the page: set and
+   cleared by lib/idleMotion.js three seconds after the last movement. */
+[data-idle],
+[data-idle]::before,
+[data-idle]::after {
+  animation-play-state: paused !important;
+}
+
 .lx-route-loading {
   min-height: 60vh;
   display: grid;

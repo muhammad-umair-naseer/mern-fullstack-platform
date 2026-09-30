@@ -75,6 +75,11 @@ const START = [0, M[0] + 0.2, M[1] + 0.2, M[2] + 0.2, CYCLE];
 // A settled frame of each scene: paused seeks and the reduced-motion still.
 const COMPOSED = [4.6, 9.6, 14.9, 20.1];
 const STILL = COMPOSED[0];
+// One full story per showing: the reel rests on the last scene's composed
+// frame, play button showing, until it comes back into view or someone
+// presses play. A reel looping forever kept the GPU busy for as long as the
+// home page stayed open.
+const REST = COMPOSED[3];
 
 function val(k, t) {
   if (t <= k[0][0]) return k[0][1];
@@ -629,6 +634,7 @@ function runReel(root) {
   let delay = 0.6; // and lets the frame open before the first message lands
   let onScreen = false;
   let inView = false; // at least 30% visible
+  let autoRested = false; // resting after its one cycle, not paused by hand
   let last = null;
   let raf = 0;
   // While the logo intro (public/index.html) covers the page, the reel is
@@ -650,7 +656,18 @@ function runReel(root) {
     const advancing = playing && started;
     if (advancing) {
       if (delay > 0) delay -= dt;
-      else t = (t + dt) % CYCLE;
+      else {
+        const before = t;
+        t = (t + dt) % CYCLE;
+        if (before < REST && t >= REST) {
+          t = REST;
+          render(t);
+          hud(t);
+          autoRested = true;
+          setPlaying(false);
+          return;
+        }
+      }
       render(t);
       hud(t);
     }
@@ -692,6 +709,7 @@ function runReel(root) {
   const onPlayPause = () => {
     started = true;
     delay = 0;
+    autoRested = false;
     setPlaying(!playing);
   };
 
@@ -756,7 +774,13 @@ function runReel(root) {
     io = new IntersectionObserver(
       (entries) => {
         const e = entries[entries.length - 1];
+        const was = onScreen;
         onScreen = e.isIntersecting;
+        // Back in view after resting: one more showing.
+        if (onScreen && !was && autoRested) {
+          autoRested = false;
+          setPlaying(true);
+        }
         if (e.intersectionRatio >= 0.3) inView = true;
         if (inView && !introPlaying()) started = true;
         root.classList.toggle('is-offscreen', !onScreen);

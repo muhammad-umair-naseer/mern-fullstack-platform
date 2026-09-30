@@ -573,6 +573,11 @@ export default function ToolsOrbit({ onPick }) {
       ptr.ty = 0;
     };
 
+    // Holds still while nobody is using the page (lib/idleMotion.js).
+    const onIdle = () => stop();
+    const onActive = () => start();
+    window.addEventListener('cx:idle', onIdle);
+    window.addEventListener('cx:active', onActive);
     document.addEventListener('visibilitychange', onVisibility);
     mq.addEventListener('change', onReduce);
     zone.addEventListener('pointermove', onMove, { passive: true });
@@ -586,6 +591,8 @@ export default function ToolsOrbit({ onPick }) {
       stop();
       io.disconnect();
       ro.disconnect();
+      window.removeEventListener('cx:idle', onIdle);
+      window.removeEventListener('cx:active', onActive);
       document.removeEventListener('visibilitychange', onVisibility);
       mq.removeEventListener('change', onReduce);
       zone.removeEventListener('pointermove', onMove);

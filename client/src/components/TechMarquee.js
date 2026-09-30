@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './TechMarquee.css';
 import {
   SiReact,
@@ -41,8 +41,18 @@ const techItems = [
 const loopHalf = [...techItems, ...techItems];
 
 export default function TechMarquee() {
+  // The loop only runs while the row is on screen.
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !('IntersectionObserver' in window)) return undefined;
+    const io = new IntersectionObserver(([entry]) => el.classList.toggle('is-offscreen', !entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section className="lx-marquee" aria-label="Technologies we build with">
+    <section ref={ref} className="lx-marquee" aria-label="Technologies we build with">
       <div className="lx-wrap lx-marquee-head">
         <h2 className="lx-marquee-title">What we build with</h2>
       </div>

@@ -266,15 +266,31 @@ export default function SilkBackdrop() {
       }
 
       cA.classList.add('is-on');
+
+      // The silk only moves while the reader does. A few seconds after the
+      // last scroll, pointer move or resize it draws its last frame and the
+      // loop stops outright, so a page being read costs the GPU nothing; the
+      // next movement wakes it, and its clock resumes where it stopped.
+      const SETTLE_MS = 3000;
+      let lastActive = performance.now();
+      let wake = () => {};
       const onPointer = (e) => {
         light.tx = (e.clientX / vw) * 2 - 1;
         light.ty = (e.clientY / vh) * 2 - 1;
+        wake();
       };
-      window.addEventListener('resize', resize);
+      const onResize = () => {
+        resize();
+        wake();
+      };
+      const onScroll = () => wake();
+      window.addEventListener('resize', onResize);
       window.addEventListener('pointermove', onPointer, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true });
       cleanups.push(() => {
-        window.removeEventListener('resize', resize);
+        window.removeEventListener('resize', onResize);
         window.removeEventListener('pointermove', onPointer);
+        window.removeEventListener('scroll', onScroll);
       });
 
       const ease = (x) => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
@@ -294,7 +310,13 @@ export default function SilkBackdrop() {
         const sy = window.scrollY;
         const scrolling = sy !== lastScroll;
         const entering = now - start < 2800;
-        // About 30fps when idle; every frame while scrolling or unfurling.
+        const drifting = Math.abs(light.tx - light.x) + Math.abs(light.ty - light.y) > 0.004;
+        if (scrolling) lastActive = now;
+        if (!scrolling && !entering && !drifting && now - lastActive > SETTLE_MS) {
+          stop(); // settled: the last frame drawn stays on screen
+          return;
+        }
+        // About 30fps while settling; every frame while scrolling or unfurling.
         if (!scrolling && !entering && now - lastDraw < 31) return;
         lastDraw = now;
         lastScroll = sy;
@@ -306,11 +328,15 @@ export default function SilkBackdrop() {
           raf = requestAnimationFrame(tick);
         }
       };
+      wake = () => {
+        lastActive = performance.now();
+        if (!document.hidden) play();
+      };
       const stop = () => {
         cancelAnimationFrame(raf);
         raf = 0;
       };
-      const onVisibility = () => (document.hidden ? stop() : play());
+      const onVisibility = () => (document.hidden ? stop() : wake());
       const onLost = (e) => {
         e.preventDefault();
         stop();

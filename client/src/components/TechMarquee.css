@@ -39,7 +39,8 @@
   animation: lx-marquee 90s linear infinite;
 }
 
-.lx-marquee-track-wrap:hover .lx-marquee-track {
+.lx-marquee-track-wrap:hover .lx-marquee-track,
+.lx-marquee.is-offscreen .lx-marquee-track {
   animation-play-state: paused;
 }
 
