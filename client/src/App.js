@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import Footer from './components/Footer';
 import RouteTransition from './components/RouteTransition';
 import SilkBackdrop from './components/SilkBackdrop';
+import ClaudeAnnouncementBar from './components/ClaudeAnnouncementBar';
 import './Pages.css';
 import './theme-cosmic.css';
 import './premium.css';
@@ -55,6 +56,7 @@ export default function App() {
       <AuthProvider>
       <div className="App">
         <SilkBackdrop />
+        <ClaudeAnnouncementBar />
         <Navbar />
         <RouteTransition>
         <Suspense

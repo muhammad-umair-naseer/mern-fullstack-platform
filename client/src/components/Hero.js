@@ -65,6 +65,20 @@ const Hero = () => {
       <div className="lx-wrap">
         <div className="lx-hero-kicker">
           <span className="lx-label"><span className="lx-label-num">Cortexis</span>A software studio in Pakistan</span>
+          
+          <Link
+            to="/courses"
+            className="lx-hero-claude-pill"
+            aria-label="Get Claude Pro for free for one month upon course completion"
+          >
+            <span className="lx-claude-pill-tag">Free 1 Month</span>
+            <span className="lx-claude-pill-text">
+              Get <strong>Claude Pro</strong> for Free
+            </span>
+            <span className="lx-claude-pill-arrow" aria-hidden="true">
+              <ArrowRight size={13} />
+            </span>
+          </Link>
         </div>
 
         {/* On a wide screen the lede and actions sit beside the headline

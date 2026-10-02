@@ -5,11 +5,13 @@ import { api } from '../lib/api';
 import Markdown from '../learn/Markdown';
 import ProgressBar from '../learn/ProgressBar';
 import TopicQuiz from '../learn/TopicQuiz';
+import { useClaudeProTracker } from '../hooks/useClaudeProTracker';
 import '../learn/LessonView.css';
 
 const LessonView = () => {
   const { slug, lessonId } = useParams();
   const navigate = useNavigate();
+  const claudeTracker = useClaudeProTracker(slug);
 
   const [lesson, setLesson] = useState(null);
   const [status, setStatus] = useState('loading');
@@ -260,6 +262,21 @@ const LessonView = () => {
             <span className="cx-lv-sep" aria-hidden="true" />
             <span>
               Topic {lesson.index} of {lesson.totalLessons}
+            </span>
+            <span className="cx-lv-sep" aria-hidden="true" />
+            <span
+              className="cx-lv-claude-pill"
+              title="Your active study time is saved in real time for Claude Pro selection"
+            >
+              <span className="cx-lv-claude-dot" aria-hidden="true" />
+              <span>
+                Claude Pro:{' '}
+                {claudeTracker.applied
+                  ? 'Applied'
+                  : claudeTracker.timeSpentMinutes > 0
+                  ? `${claudeTracker.timeSpentMinutes}m tracked`
+                  : 'Time tracking active'}
+              </span>
             </span>
             {quizPassed && (
               <span className="cx-lv-done">

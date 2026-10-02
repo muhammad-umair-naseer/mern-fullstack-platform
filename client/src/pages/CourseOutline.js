@@ -391,9 +391,14 @@ const CourseOutline = () => {
                   </Link>
                 )}
                 {progress.certificate && (
-                  <Link to={`/certificate/${progress.certificate.code}`} className="lx-link">
-                    View your certificate <ArrowRight size={16} aria-hidden="true" />
-                  </Link>
+                  <>
+                    <Link to={`/certificate/${progress.certificate.code}`} className="lx-link">
+                      View your certificate <ArrowRight size={16} aria-hidden="true" />
+                    </Link>
+                    <span className="lx-claude-applied-pill" title="You have automatically applied for 1 Month Free Claude Pro">
+                      ✨ Claude Pro: Applied (Under Review)
+                    </span>
+                  </>
                 )}
               </div>
             </>
@@ -693,7 +698,7 @@ const CourseOutline = () => {
               ['Topic checks', 'Each one opens the next topic'],
               ['Chapter quizzes', 'Each one opens the next chapter'],
               [`${examRules.questions}-question final`, `${examRules.passMarks} of ${examRules.totalMarks} marks to pass`],
-              ['Certificate', 'Issued instantly, verifiable by code'],
+              ['Certificate', 'Issued instantly, verifiable'],
             ].map(([title, sub], i) => (
               <li key={title} className="bg-ivory/90 p-4 md:p-5">
                 <span className="font-mono text-xs text-[color:var(--copper)] tabular">{pad(i + 1)}</span>

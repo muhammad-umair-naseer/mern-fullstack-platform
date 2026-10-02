@@ -14,8 +14,106 @@
 }
 
 .lx-hero-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
   margin-bottom: clamp(1.25rem, 0.9rem + 1.2vw, 2rem);
   animation: lx-fade var(--dur-slow) var(--ease-out-quint) both;
+}
+
+/* ── Claude Pro Hero Notification Button ── */
+.lx-hero-claude-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(184, 97, 46, 0.32);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(154, 74, 34, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.lx-hero-claude-pill:hover {
+  background: #ffffff;
+  border-color: var(--copper);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(154, 74, 34, 0.16), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.lx-claude-pill-pulse {
+  width: 7px;
+  height: 7px;
+  background: #d96528;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(217, 101, 40, 0.7);
+  animation: claude-dot-pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes claude-dot-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(217, 101, 40, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(217, 101, 40, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 101, 40, 0);
+  }
+}
+
+.lx-claude-pill-sparkle {
+  color: var(--copper);
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.lx-hero-claude-pill:hover .lx-claude-pill-sparkle {
+  transform: rotate(20deg) scale(1.15);
+}
+
+.lx-claude-pill-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(184, 97, 46, 0.12);
+  color: var(--copper);
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.lx-claude-pill-text {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.lx-claude-pill-text strong {
+  color: var(--copper);
+  font-weight: 600;
+}
+
+.lx-claude-pill-arrow {
+  display: inline-flex;
+  align-items: center;
+  color: var(--copper);
+  transition: transform 0.25s ease;
+}
+
+.lx-hero-claude-pill:hover .lx-claude-pill-arrow {
+  transform: translateX(3px);
 }
 
 .lx-hero-title {

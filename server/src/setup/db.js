@@ -303,6 +303,35 @@ export const TABLES = {
     );
     CREATE INDEX IF NOT EXISTS idx_final_attempts_user ON final_attempts (userId, courseId);
   `,
+  claude_pro_applications: `
+    CREATE TABLE IF NOT EXISTS claude_pro_applications (
+      id               BIGSERIAL PRIMARY KEY,
+      userId           BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      courseId         BIGINT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+      userEmail        TEXT NOT NULL,
+      userName         TEXT NOT NULL,
+      courseSlug       TEXT NOT NULL,
+      courseTitle      TEXT NOT NULL,
+      score            INTEGER NOT NULL DEFAULT 0,
+      totalMarks       INTEGER NOT NULL DEFAULT 100,
+      timeSpentSeconds BIGINT NOT NULL DEFAULT 0,
+      lessonsCompleted INTEGER NOT NULL DEFAULT 0,
+      totalLessons     INTEGER NOT NULL DEFAULT 0,
+      quizzesPassed    INTEGER NOT NULL DEFAULT 0,
+      status           TEXT NOT NULL DEFAULT 'in_progress',
+      appliedAt        TIMESTAMPTZ,
+      completedAt      TIMESTAMPTZ,
+      lastActiveAt     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      metadata         JSONB NOT NULL DEFAULT '{}'::jsonb,
+      createdAt        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updatedAt        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE (userId, courseId)
+    );
+    CREATE INDEX IF NOT EXISTS idx_claude_pro_status_score ON claude_pro_applications (status, score DESC, timeSpentSeconds ASC);
+    CREATE INDEX IF NOT EXISTS idx_claude_pro_email ON claude_pro_applications (userEmail);
+    CREATE INDEX IF NOT EXISTS idx_claude_pro_user ON claude_pro_applications (userId);
+    CREATE INDEX IF NOT EXISTS idx_claude_pro_applied_at ON claude_pro_applications (appliedAt DESC);
+  `,
 };
 
 export const connectDB = async () => {

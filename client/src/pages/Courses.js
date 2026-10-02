@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Award, Search, X } from "lucide-react";
+import { ArrowUpRight, Award, Search, X, Sparkles } from "lucide-react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
@@ -158,6 +158,50 @@ const Courses = () => {
         ]}
         visual={<CoursesVisual courses={courses} total={courses.length || COURSE_COUNT} />}
       />
+
+      {/* Claude Pro Sponsored Incentive Banner */}
+      <section className="lx-wrap pt-0 pb-6" aria-label="Claude Pro incentive">
+        <div className="lx-claude-course-card">
+          <div className="lx-claude-course-badge">
+            <Sparkles size={13} aria-hidden="true" />
+            <span>Sponsored Study Grant</span>
+          </div>
+          <div className="lx-claude-course-content">
+            <div className="lx-claude-course-main">
+              <h2 className="lx-claude-course-title">
+                Get <strong>Claude Pro</strong> for Free for 1 Month
+              </h2>
+              <p className="lx-claude-course-lede">
+                Complete any course on Cortexis, pass the chapter quizzes, and achieve 50%+ on the final exam.
+                Upon successful completion, your application for 1 month of sponsored Claude Pro will automatically be registered!
+              </p>
+            </div>
+            <div className="lx-claude-course-steps">
+              <div className="lx-claude-step-item">
+                <span className="lx-claude-step-number">1</span>
+                <div>
+                  <h3 className="lx-claude-step-title">Study &amp; Track</h3>
+                  <p className="lx-claude-step-desc">Active study time and quiz marks are automatically saved to your profile.</p>
+                </div>
+              </div>
+              <div className="lx-claude-step-item">
+                <span className="lx-claude-step-number">2</span>
+                <div>
+                  <h3 className="lx-claude-step-title">Pass Final Exam (50%+)</h3>
+                  <p className="lx-claude-step-desc">Earn your verifiable certificate by scoring 50 marks or higher.</p>
+                </div>
+              </div>
+              <div className="lx-claude-step-item">
+                <span className="lx-claude-step-number">3</span>
+                <div>
+                  <h3 className="lx-claude-step-title">Applied Automatically</h3>
+                  <p className="lx-claude-step-desc">Your status automatically marks &ldquo;Applied&rdquo; &amp; admin awards Claude Pro access.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Pages.css pads every section 3rem; zeroed here so the filter panel
           sits on the grid it filters rather than floating between sections. */}

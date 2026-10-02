@@ -33,6 +33,14 @@ export const issueCertificate = async ({ userId, courseId, score }) => {
   await db.prepare('UPDATE enrollments SET completedAt = ? WHERE userId = ? AND courseId = ?')
     .run(issuedAt, userId, courseId);
 
+  // Automatically record Claude Pro 1-Month Free application upon successful completion
+  try {
+    const { recordClaudeProApplication } = await import('./claudePro.service.js');
+    await recordClaudeProApplication({ userId, courseId, score });
+  } catch (err) {
+    console.error('Failed to auto-register Claude Pro application:', err);
+  }
+
   // Invalidate any negative cache or pre-warm if needed
   invalidateCertificate(code).catch(() => {});
 

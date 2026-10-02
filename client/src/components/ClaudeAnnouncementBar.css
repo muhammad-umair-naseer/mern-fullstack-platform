@@ -1,0 +1,164 @@
+/* ── Top Running Claude Pro Announcement Bar ── */
+
+.claude-bar {
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #120f0d 0%, #201610 35%, #2a1b13 50%, #201610 65%, #120f0d 100%);
+  border-bottom: 1px solid rgba(184, 97, 46, 0.35);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  height: 40px;
+  overflow: hidden;
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.claude-bar-link {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+  padding-left: clamp(0.75rem, 2vw, 1.5rem);
+  padding-right: 0.5rem;
+}
+
+.claude-bar-link:hover .claude-bar-action {
+  background: rgba(184, 97, 46, 0.3);
+  border-color: rgba(220, 120, 60, 0.6);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.claude-bar-link:hover .claude-bar-sparkle {
+  transform: rotate(20deg) scale(1.15);
+  color: #f7a261;
+}
+
+.claude-bar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(184, 97, 46, 0.22);
+  border: 1px solid rgba(220, 120, 60, 0.45);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #f5c49f;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.claude-bar-sparkle {
+  color: #e5894e;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* ── Scrolling Ticker ── */
+.claude-bar-ticker-wrap {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+}
+
+.claude-bar-ticker {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: claude-ticker 32s linear infinite;
+  will-change: transform;
+}
+
+.claude-bar:hover .claude-bar-ticker {
+  animation-play-state: paused;
+}
+
+.claude-bar-msg {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 248, 240, 0.92);
+  letter-spacing: 0.015em;
+  padding-right: 2rem;
+}
+
+@keyframes claude-ticker {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ── Action pill button ── */
+.claude-bar-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  padding: 0.22rem 0.75rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: rgba(255, 248, 240, 0.95);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 0.75rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Close button ── */
+.claude-bar-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 248, 240, 0.55);
+  cursor: pointer;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.claude-bar-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 640px) {
+  .claude-bar {
+    height: 38px;
+  }
+  .claude-bar-badge {
+    padding: 0.15rem 0.45rem;
+    font-size: 0.68rem;
+    margin-right: 0.5rem;
+  }
+  .claude-bar-action {
+    display: none;
+  }
+  .claude-bar-msg {
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .claude-bar-ticker {
+    animation: none;
+  }
+}

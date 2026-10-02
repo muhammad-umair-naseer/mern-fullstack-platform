@@ -15,6 +15,13 @@ import {
 } from '../controllers/quiz.controller.js';
 import { getFinal, startFinal, answerFinal, submitFinal } from '../controllers/final.controller.js';
 import { verifyCertificate } from '../controllers/certificate.controller.js';
+import {
+  postHeartbeat,
+  getStatus,
+  apply,
+  getApplicants,
+  patchApplicant,
+} from '../controllers/claudePro.controller.js';
 
 /**
  * Learning platform routing.
@@ -50,5 +57,12 @@ router.post('/final/:slug/submit', requireAuth, submitFinal);
 // --- certificate -----------------------------------------------------------
 // Public: anyone holding a code can verify it without an account.
 router.get('/certificate/:code', verifyCertificate);
+
+// --- Claude Pro incentive & tracking ---------------------------------------
+router.get('/claude-pro/status/:slug', requireAuth, getStatus);
+router.post('/claude-pro/heartbeat', requireAuth, postHeartbeat);
+router.post('/claude-pro/apply/:slug', requireAuth, apply);
+router.get('/claude-pro/applicants', optionalAuth, getApplicants);
+router.patch('/claude-pro/applicants/:id', optionalAuth, patchApplicant);
 
 export default router;

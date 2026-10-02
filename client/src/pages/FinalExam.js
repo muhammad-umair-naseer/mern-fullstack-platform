@@ -129,6 +129,22 @@ const Rules = ({ rules, onStart, starting, retake }) => {
   );
 };
 
+const ClaudeAppliedCard = ({ score }) => (
+  <div className="fx-claude-applied-box" role="status">
+    <div className="fx-claude-applied-header">
+      <div className="flex items-center gap-2">
+        <span className="text-xl" aria-hidden="true">✨</span>
+        <h3 className="fx-claude-applied-title">Applied for 1 Month Free Claude Pro!</h3>
+      </div>
+      <span className="fx-claude-applied-badge">Status: Applied (Under Review)</span>
+    </div>
+    <p className="fx-claude-applied-note">
+      Congratulations on completing the course! Your score of{' '}
+      <strong>{score}/100</strong> and learning progress have been automatically submitted for the Claude Pro Sponsored Grant. Cortexis administration reviews all applicants and selects candidates for free Claude Pro access.
+    </p>
+  </div>
+);
+
 // Where the learner stands when there is nothing to start.
 const Standing = ({ status, slug }) => {
   const last = status.attempts[status.attempts.length - 1];
@@ -140,6 +156,7 @@ const Standing = ({ status, slug }) => {
             You passed with <strong>{status.certificate.score}/100</strong>.
           </p>
           <CertificatePanel certificate={status.certificate} fresh={false} />
+          <ClaudeAppliedCard score={status.certificate.score} />
         </>
       )}
       {status.state === 'waiting' && (
@@ -390,7 +407,12 @@ const Result = ({ result, slug }) => {
         </span>
       </p>
 
-      {result.passed && status.certificate && <CertificatePanel certificate={status.certificate} fresh />}
+      {result.passed && status.certificate && (
+        <>
+          <CertificatePanel certificate={status.certificate} fresh />
+          <ClaudeAppliedCard score={result.marks} />
+        </>
+      )}
       {status.state === 'waiting' && (
         <p className="fx-standing-line">
           You can retake the exam once, from <strong>{longDate(status.retakeAt)}</strong>.
