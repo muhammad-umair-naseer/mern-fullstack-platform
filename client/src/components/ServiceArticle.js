@@ -23,19 +23,19 @@ const headline = (title) => {
 };
 
 /**
- * A blog post whose markdown names a service page as its home, read in full
+ * A blog post whose markdown names another page as its home, read in full
  * on that page: cover, contents, body and questions, in the blog's own reading
  * layout. The section's id is the post's slug, which is where the blog card
  * and /blog/<slug> send people.
  */
-export default function ServiceArticle({ post }) {
+export default function ServiceArticle({ post, label = 'From our AI team' }) {
   const ref = useRevealOnScroll();
   const { toc, faqs, cleanedBody } = useMemo(() => parseBlogContent(post.body), [post.body]);
 
   return (
     <section ref={ref} id={post.slug} className="cx-lv svd-article" aria-labelledby={`${post.slug}-title`}>
       <header className="svd-article-head">
-        <span className="lx-label" data-reveal>From our AI team</span>
+        <span className="lx-label" data-reveal>{label}</span>
         <h2 id={`${post.slug}-title`} className="lx-h2 svd-article-title" data-reveal>
           {headline(post.title)}
         </h2>

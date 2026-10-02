@@ -2,9 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import Seo from '../seo/Seo';
+import { breadcrumbs, hostedArticle, itemList } from '../seo/schema';
 import PageHero from '../components/PageHero';
 import GamesVisual from '../components/heroes/GamesVisual';
+import PostCard from '../components/PostCard';
+import ServiceArticle from '../components/ServiceArticle';
+import { POSTS, postPath } from '../data/blog.generated';
+import { parseBlogContent } from '../lib/blogParser';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
+import { useGridReveal } from '../hooks/useGridReveal';
 import { gamesPhotos } from '../assets/games';
 
 // One line and three tags each; the games speak for themselves once opened.
@@ -39,6 +45,20 @@ const QUICK_START = [
 
 const SERVICES = ['website', 'gotcha-rush', 'typedash', 'postgres', 'redis'];
 
+// The guide that lives on this page (its markdown names /games as home), and
+// the other game guides, each on its own URL so each can rank for its query.
+const PATH = '/games';
+const ARTICLE = POSTS.find((p) => p.home === PATH);
+const GUIDES = POSTS.filter((p) => p.category === 'games' && !p.home);
+const SCHEMA = [
+  breadcrumbs([
+    { name: 'Home', path: '/' },
+    { name: 'Games', path: PATH },
+  ]),
+  ...(GUIDES.length ? [itemList(GUIDES, postPath)] : []),
+  ...(ARTICLE ? hostedArticle(ARTICLE, PATH, parseBlogContent(ARTICLE.body).faqs) : []),
+];
+
 // The games run as their own servers, so a new tab opens them on their port
 // of whatever host this page is on.
 const directUrl = (port) => {
@@ -49,13 +69,17 @@ const directUrl = (port) => {
 export default function Games() {
   const gamesRef = useRevealOnScroll();
   const localRef = useRevealOnScroll();
+  const guidesRef = useRevealOnScroll();
+  const guidesGridRef = useGridReveal([]);
 
   return (
     <main className="gp">
       <Seo
-        title="Playground & Multiplayer Games"
-        description="Experience real-time multiplayer coding challenges and typing races. Play Gotcha Rush and TypeDash directly in your browser with zero local setup."
-        path="/games"
+        title="Free Coding Games: Code Quiz and Typing Race"
+        description="Free coding games in your browser: guess what JavaScript and Python print in Gotcha Rush, or race live on real code in TypeDash. No sign-up."
+        path={PATH}
+        image={ARTICLE?.image}
+        schema={SCHEMA}
       />
 
       <PageHero
@@ -141,6 +165,33 @@ export default function Games() {
         </div>
       </section>
 
+      {GUIDES.length > 0 && (
+        <section
+          id="guides"
+          ref={guidesRef}
+          className="gp-section lx-wrap"
+          aria-labelledby="gp-guides-title"
+        >
+          <header className="gp-head">
+            <span className="lx-label" data-reveal>
+              <span className="lx-label-num">02</span>Guides
+            </span>
+            <h2 id="gp-guides-title" className="lx-h2 gp-title" data-reveal>
+              Sharpen <em>up.</em>
+            </h2>
+          </header>
+
+          {/* The first card spans two columns, so five guides fill two rows of three. */}
+          <div ref={guidesGridRef} className="grid gap-6 lg:gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            {GUIDES.map((p, i) => (
+              <div key={p.slug} className={i === 0 ? 'sm:col-span-2 grid' : 'grid'}>
+                <PostCard post={p} featured={i === 0} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section
         id="run-locally"
         ref={localRef}
@@ -150,7 +201,7 @@ export default function Games() {
         <div className="gp-local lx-glass">
           <div className="gp-local-copy">
             <span className="lx-label" data-reveal>
-              <span className="lx-label-num">02</span>Run locally
+              <span className="lx-label-num">03</span>Run locally
             </span>
             <h2 id="gp-local-title" className="lx-h2 gp-title" data-reveal>
               One <em>compose</em> file.
@@ -197,6 +248,8 @@ export default function Games() {
           </div>
         </div>
       </section>
+
+      {ARTICLE && <ServiceArticle post={ARTICLE} label="From the playground" />}
     </main>
   );
 }

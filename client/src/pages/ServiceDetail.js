@@ -11,7 +11,7 @@ import { POSTS } from '../data/blog.generated';
 import { parseBlogContent } from '../lib/blogParser';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import Seo from '../seo/Seo';
-import { breadcrumbs, faq, organization } from '../seo/schema';
+import { breadcrumbs, hostedArticle, organization } from '../seo/schema';
 import { SITE, absolute } from '../seo/site';
 
 // Each service opens on its own photograph: the tall crop of the same picture
@@ -73,26 +73,7 @@ const ServiceDetail = () => {
   // Article and FAQ markup join the page's own, since its words are here.
   const path = `/services/${service.slug}`;
   const article = POSTS.find((p) => p.home === path);
-  const articleFaqs = article ? parseBlogContent(article.body).faqs : [];
-  const articleSchema = article
-    ? [
-        {
-          '@context': 'https://schema.org',
-          '@type': 'Article',
-          '@id': absolute(`${path}#${article.slug}`),
-          headline: article.title,
-          description: article.description,
-          image: article.image ? [absolute(article.image)] : undefined,
-          datePublished: article.date,
-          dateModified: article.updated,
-          author: { '@type': 'Organization', name: SITE.legalName },
-          publisher: { '@id': `${absolute('/')}#organization`.replace('//#', '/#') },
-          mainEntityOfPage: absolute(path),
-          url: absolute(`${path}#${article.slug}`),
-        },
-        ...(articleFaqs.length ? [faq(articleFaqs.map((f) => ({ q: f.question, a: f.answer })))] : []),
-      ]
-    : [];
+  const articleSchema = article ? hostedArticle(article, path, parseBlogContent(article.body).faqs) : [];
 
   return (
     <main className="text-ink min-h-screen">

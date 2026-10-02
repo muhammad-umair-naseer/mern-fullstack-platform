@@ -13,6 +13,7 @@ export const CATEGORY = {
   pricing: { label: 'Pricing' },
   careers: { label: 'Careers' },
   internships: { label: 'Internships' },
+  games: { label: 'Games' },
 };
 
 const labelOf = (c) => (CATEGORY[c] || { label: 'Notes' }).label;
