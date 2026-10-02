@@ -20,6 +20,7 @@ import { PushReminders } from './push.js';
 import { Router, appPageOf } from './router.js';
 import { mountChrome, setActiveNav, setAwardCount } from './nav.js';
 import { cxAuth } from './cx-auth.js';
+import { tellSiteTyping, onSiteKey } from './site-keys.js';
 
 /* ------------------------------------------------------------------ tuning */
 
@@ -1005,6 +1006,7 @@ function goHome() {
   track.setPlayers([], myId());
   typing.setPassage('');
   typing.setEnabled(false);
+  syncSiteTyping();
   el.results.hidden = true;
   el.countdown.hidden = true;
   el.finishBanner.hidden = true;
@@ -1029,6 +1031,7 @@ function resetRoom() {
   track.setPlayers([], myId());
   typing.setPassage('');
   typing.setEnabled(false);
+  syncSiteTyping();
   el.results.hidden = true;
   el.countdown.hidden = true;
   el.finishBanner.hidden = true;
@@ -1221,6 +1224,7 @@ function enterState(m) {
     setNitroVisual(false);
     showResults(m);
   }
+  syncSiteTyping();
 }
 
 function refreshStateUI(m) {
@@ -1290,6 +1294,7 @@ function onFinished(m) {
     S.myFinish = m;
     S.local.done = true;
     typing.setEnabled(false);
+    syncSiteTyping();
     setNitroVisual(false);
     const bonus = game.finish(m.rank, m.accuracy, S.local.errors);
     scheduleSend(true); // final score (with finish bonus) to the server
@@ -1442,6 +1447,30 @@ function refocusTyping() {
   if (S.room.state === 'racing' && !S.local.done) typing.focus();
   else if (S.room.state === 'countdown') typing.focus(true);   // keyboard readiness on phones
 }
+
+/*
+ * Inside the website's frame (js/site-keys.js). A click on the site around
+ * the game takes the keyboard away from this document; the site then
+ * forwards the keys, which go through the same path as a keystroke in the
+ * box, and hands the focus back, which lands on the passage again.
+ */
+function syncSiteTyping() {
+  const st = S.room?.state;
+  tellSiteTyping(!!S.room && (st === 'countdown' || (st === 'racing' && !S.local.done)));
+}
+onSiteKey((key) => {
+  const st = S.room?.state;
+  if (st === 'waiting' || st === 'countdown') {
+    if (key.length === 1) rev();
+    return;
+  }
+  if (st !== 'racing' || S.local.done || key === 'Enter') return;
+  typing.focus();
+  const value = key === 'Backspace' ? typing.input.value.slice(0, -1) : typing.input.value + key;
+  typing.input.value = value;
+  typing.handle(value);
+});
+window.addEventListener('focus', refocusTyping);
 
 function scheduleSend(force) {
   if (S.room && S.room.solo) return; // practice: one result at the end, nothing in between

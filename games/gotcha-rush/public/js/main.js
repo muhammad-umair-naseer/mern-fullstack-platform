@@ -17,6 +17,7 @@ import { createRoom } from './room.js';
 import { createRouter } from './router.js';
 import * as Pages from './pages.js';
 import { cxAuth } from './cx-auth.js';
+import { tellSiteTyping, onSiteKey } from './site-keys.js';
 
 /* ---------------------------------------------------------------- modules */
 
@@ -479,6 +480,7 @@ async function startRush(lang) {
   if (S.rush) S.rush.stop();
   if (S.room && !S.room.local) net.send({ type: 'leave' });
   S.room = null;
+  syncSiteTyping();
   S.rush = new RushEngine({
     bank, lang, now: () => clock.now(), credentials: account.credentials,
     identity: { name: el.name.value.trim() || 'Guest', country: el.country.value || 'UN', avatar: account.avatar },
@@ -533,6 +535,7 @@ function goHome() {
   el.chatToggle.hidden = false;
   if (S.rush) { S.rush.stop(); S.rush = null; }
   S.room = null;
+  syncSiteTyping();
   S.puzzle = null;
   S.reveal = null;
   S.revealShownFor = null;
@@ -640,6 +643,7 @@ function onRoom(m) {
     for (const p of m.players) { const old = prev.players.find((x) => x.id === p.id); if (old && old.lockedT != null) p.lockedT = old.lockedT; }
   }
   S.room = m;
+  syncSiteTyping();
   renderEmoteBar(m.emotes);
   if (!el.arena.classList.contains('active')) switchScreen('arena');
 
@@ -821,11 +825,48 @@ function focusAnswer() {
   }
 }
 
+/*
+ * Inside the website's frame (js/site-keys.js). A click on the site around
+ * the game takes the keyboard away from this document; the site then
+ * forwards the keys into the answer line being typed, and hands the focus
+ * back so the next key lands there directly.
+ */
+let lastAnswerInput = null;
+document.addEventListener('focusin', (e) => {
+  if ((S.answerInputs || []).includes(e.target)) lastAnswerInput = e.target;
+});
+const answerTarget = () => {
+  const inputs = S.answerInputs || [];
+  return inputs.includes(lastAnswerInput) ? lastAnswerInput : inputs.find((i) => !i.value) || inputs[0];
+};
+const takingAnswers = () => !!S.room && S.room.state === 'round' && !S.answered;
+function syncSiteTyping() {
+  tellSiteTyping(takingAnswers());
+}
+onSiteKey((key) => {
+  if (!takingAnswers()) return;
+  const input = answerTarget();
+  if (!input || input.disabled) return;
+  input.focus({ preventScroll: true });
+  if (key === 'Enter') {
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    return;
+  }
+  input.value = key === 'Backspace' ? input.value.slice(0, -1) : input.value + key;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+});
+window.addEventListener('focus', () => {
+  if (!takingAnswers()) return;
+  const input = answerTarget();
+  if (input) input.focus({ preventScroll: true });
+});
+
 function lockIn(lines) {
   if (S.answered || !S.room || S.room.state !== 'round') return;
   const answer = lines || S.answerInputs.map((i) => i.value);
   if (!lines && answer.every((l) => !l.trim())) { toast('Type at least one line first (or use the lifeline)', 'warn', 2000); return; }
   S.answered = true;
+  syncSiteTyping();
   S.lockedAt = clock.now();
   send({ type: 'answer', lines: answer });
   S.answerInputs.forEach((i) => { i.disabled = true; });

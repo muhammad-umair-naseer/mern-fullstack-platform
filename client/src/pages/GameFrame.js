@@ -164,14 +164,52 @@ export default function GameFrame() {
       /* no token: the game still offers its own sign-in and guest play */
     }
   }, [user, postToGame]);
+  // Whether the game is taking typed input right now (it says so: cortexis:typing),
+  // and how many forwarded keys it has not yet confirmed (cortexis:key-done).
+  const gameTyping = useRef(false);
+  const keysInFlight = useRef(0);
   useEffect(() => {
     const onMessage = (e) => {
       if (e.origin !== gameOrigin || !iframeRef.current || e.source !== iframeRef.current.contentWindow) return;
       if (e.data && e.data.type === 'cortexis:need-token') sendToken();
+      if (e.data && e.data.type === 'cortexis:typing') gameTyping.current = Boolean(e.data.active);
+      if (e.data && e.data.type === 'cortexis:key-done') {
+        keysInFlight.current = Math.max(0, keysInFlight.current - 1);
+        // every forwarded key has landed: the next one can go straight to the game
+        if (keysInFlight.current === 0 && gameTyping.current) iframeRef.current.focus();
+      }
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
   }, [gameOrigin, sendToken]);
+
+  /*
+   * Keys pressed on this page belong to the game while it is taking typed
+   * input. One click on the page around the frame moves the keyboard here,
+   * where the game can neither see nor recover the keys, and the letters a
+   * player types next would simply vanish. So each one is forwarded to the
+   * game (games' js/site-keys.js), in order, and once the game has confirmed
+   * every forwarded key the frame takes the focus back, which puts the next
+   * key straight into the game; nothing can overtake a key still on its way.
+   * Space no longer scrolls the page or presses a button here mid-race; form
+   * fields are left alone.
+   */
+  useEffect(() => {
+    if (!gameOrigin) return undefined;
+    const onKey = (e) => {
+      const frame = iframeRef.current;
+      if (!gameTyping.current || !frame || !frame.contentWindow) return;
+      if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+      if (e.key !== 'Backspace' && e.key !== 'Enter' && e.key.length !== 1) return;
+      const t = e.target;
+      if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]')) return;
+      e.preventDefault();
+      keysInFlight.current += 1;
+      frame.contentWindow.postMessage({ type: 'cortexis:key', key: e.key }, gameOrigin);
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, [gameOrigin]);
 
   // Ask the game server whether it is up. An opaque no-cors request resolves
   // whenever anything answers and rejects when nothing is listening, which is
@@ -240,6 +278,8 @@ export default function GameFrame() {
   const handleReload = useCallback(() => {
     setSpin(false);
     requestAnimationFrame(() => setSpin(true));
+    gameTyping.current = false;
+    keysInFlight.current = 0;
     setAttempt((n) => n + 1);   // a new key remounts the iframe, which reloads the game
   }, []);
 
