@@ -157,6 +157,7 @@ export const TABLES = {
       name           TEXT NOT NULL,
       email          TEXT NOT NULL UNIQUE,
       passwordHash   TEXT NOT NULL,
+      role           TEXT NOT NULL DEFAULT 'user',
       emailVerified  INTEGER NOT NULL DEFAULT 0,
       verifyCode     TEXT,
       verifyExpires  TEXT,
@@ -357,6 +358,7 @@ const migrate = async (database) => {
   const additions = [
     ['quiz_questions', 'lessonId', 'BIGINT REFERENCES lessons(id) ON DELETE CASCADE'],
     ['quiz_attempts', 'lessonId', 'BIGINT REFERENCES lessons(id) ON DELETE CASCADE'],
+    ['users', 'role', "TEXT NOT NULL DEFAULT 'user'"],
     ['users', 'emailVerified', 'INTEGER NOT NULL DEFAULT 0'],
     ['users', 'verifyCode', 'TEXT'],
     ['users', 'verifyExpires', 'TEXT'],

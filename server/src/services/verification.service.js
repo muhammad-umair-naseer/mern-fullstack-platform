@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { getDB } from '../setup/db.js';
 import { sendVerificationCode } from './verificationMail.js';
+import { isUserAdmin } from '../middleware/auth.js';
 
 /**
  * Email-verification code lifecycle.
@@ -17,6 +18,8 @@ export const publicUser = (u) => ({
   id: u.id,
   name: u.name,
   email: u.email,
+  role: u.role || (isUserAdmin(u) ? 'admin' : 'user'),
+  isAdmin: isUserAdmin(u),
   emailVerified: Boolean(u.emailVerified),
   createdAt: u.createdAt,
 });

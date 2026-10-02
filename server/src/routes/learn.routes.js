@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth, optionalAuth } from '../middleware/auth.js';
+import { requireAuth, optionalAuth, requireAdmin } from '../middleware/auth.js';
 import {
   listCourses,
   getCourseOutline,
@@ -62,7 +62,7 @@ router.get('/certificate/:code', verifyCertificate);
 router.get('/claude-pro/status/:slug', requireAuth, getStatus);
 router.post('/claude-pro/heartbeat', requireAuth, postHeartbeat);
 router.post('/claude-pro/apply/:slug', requireAuth, apply);
-router.get('/claude-pro/applicants', optionalAuth, getApplicants);
-router.patch('/claude-pro/applicants/:id', optionalAuth, patchApplicant);
+router.get('/claude-pro/applicants', requireAdmin, getApplicants);
+router.patch('/claude-pro/applicants/:id', requireAdmin, patchApplicant);
 
 export default router;

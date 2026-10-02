@@ -139,17 +139,19 @@ const Dashboard = () => {
               </div>
             )}
 
-            <div className="mt-4 pt-2 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setAdminOpen(true)}
-                className="btn lx-btn-ghost inline-flex items-center gap-2 text-xs"
-                title="View stored learner data & select candidates for 1-Month Free Claude Pro"
-              >
-                <Sparkles size={14} className="text-copper" />
-                <span>Claude Pro Applicants Portal</span>
-              </button>
-            </div>
+            {user?.isAdmin && (
+              <div className="mt-4 pt-2 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setAdminOpen(true)}
+                  className="btn lx-btn-ghost inline-flex items-center gap-2 text-xs"
+                  title="View stored learner data & select candidates for 1-Month Free Claude Pro"
+                >
+                  <Sparkles size={14} className="text-copper" />
+                  <span>Claude Pro Applicants Portal (Admin)</span>
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="lp-hero-visual">

@@ -26,7 +26,7 @@ export const requireAuth = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, getSecret());
     const user = await getDB()
-      .prepare('SELECT id, name, email, emailVerified, createdAt FROM users WHERE id = ?')
+      .prepare('SELECT id, name, email, role, emailVerified, createdAt FROM users WHERE id = ?')
       .get(payload.sub);
 
     // The token can outlive the account it names.
@@ -56,7 +56,7 @@ export const optionalAuth = async (req, _res, next) => {
     try {
       const payload = jwt.verify(token, getSecret());
       const u = await getDB()
-        .prepare('SELECT id, name, email, emailVerified, createdAt FROM users WHERE id = ?')
+        .prepare('SELECT id, name, email, role, emailVerified, createdAt FROM users WHERE id = ?')
         .get(payload.sub);
       req.user = u && u.emailVerified ? u : null;
     } catch {
@@ -65,3 +65,30 @@ export const optionalAuth = async (req, _res, next) => {
   }
   next();
 };
+
+/** Checks if a user is an administrator via email or assigned database role */
+export const isUserAdmin = (user) => {
+  if (!user || !user.email) return false;
+  const adminEmails = [
+    process.env.ADMIN_ALERT_TO,
+    process.env.CONTACT_TO,
+    ...(process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : []),
+  ]
+    .filter(Boolean)
+    .map((e) => e.trim().toLowerCase());
+
+  if (adminEmails.includes(user.email.toLowerCase())) return true;
+  if (user.role && String(user.role).toLowerCase() === 'admin') return true;
+  return false;
+};
+
+/** Strictly gates endpoints to authorized administrators only */
+export const requireAdmin = async (req, res, next) => {
+  await requireAuth(req, res, () => {
+    if (!isUserAdmin(req.user)) {
+      return res.status(403).json({ message: 'Forbidden: Admin access required.' });
+    }
+    next();
+  });
+};
+
