@@ -183,12 +183,34 @@ export default function GameFrame() {
     setIsSlow(false);
     let cancelled = false;
     const ctrl = new AbortController();
-    const kill = setTimeout(() => ctrl.abort(), 6000);   // no answer in 6s counts as offline
+    const kill = setTimeout(() => {
+      try {
+        ctrl.abort();
+      } catch {
+        /* ignore */
+      }
+    }, 6000);   // no answer in 6s counts as offline
+
     fetch(`${gameUrl}/healthz`, { mode: 'no-cors', cache: 'no-store', signal: ctrl.signal })
-      .catch(() => { if (!cancelled) setHasError(true); })
+      .then(() => {
+        if (!cancelled) setHasError(false);
+      })
+      .catch((err) => {
+        if (!cancelled && err?.name !== 'AbortError') setHasError(true);
+      })
       .finally(() => clearTimeout(kill));
+
     const slow = setTimeout(() => setIsSlow(true), SLOW_MS);
-    return () => { cancelled = true; ctrl.abort(); clearTimeout(kill); clearTimeout(slow); };
+    return () => {
+      cancelled = true;
+      try {
+        ctrl.abort();
+      } catch {
+        /* ignore */
+      }
+      clearTimeout(kill);
+      clearTimeout(slow);
+    };
   }, [gameId, gameUrl, attempt, config]);
 
   // iPhone Safari has no element full screen, so the button only shows where it works
