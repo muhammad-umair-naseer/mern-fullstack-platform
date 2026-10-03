@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Award, Search, X, Sparkles } from "lucide-react";
+import { ArrowUpRight, Award, Search, X } from "lucide-react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useCatalogueFilter } from "../hooks/useCatalogueFilter";
@@ -163,7 +163,6 @@ const Courses = () => {
       <section className="lx-wrap pt-0 pb-6" aria-label="Claude Pro incentive">
         <div className="lx-claude-course-card">
           <div className="lx-claude-course-badge">
-            <Sparkles size={13} aria-hidden="true" />
             <span>Sponsored Study Grant</span>
           </div>
           <div className="lx-claude-course-content">
