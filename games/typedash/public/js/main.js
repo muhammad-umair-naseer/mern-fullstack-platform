@@ -20,7 +20,7 @@ import { PushReminders } from './push.js';
 import { Router, appPageOf } from './router.js';
 import { mountChrome, setActiveNav, setAwardCount } from './nav.js';
 import { cxAuth } from './cx-auth.js';
-import { tellSiteTyping, onSiteKey } from './site-keys.js';
+import { tellSiteTyping, onSiteKey, revealToSite } from './site-keys.js';
 
 /* ------------------------------------------------------------------ tuning */
 
@@ -1207,6 +1207,7 @@ function enterState(m) {
     el.cdSub.textContent = (m.bonusWords || []).length
       ? `Get ready · ${m.bonusWords.length} ✦ bonus words`
       : 'Fingers on the keys';
+    revealToSite(el.passageWrap);   // inside the website: bring the passage into view before GO
   } else if (st === 'racing') {
     if (typing.text !== S.passage) { // joined/reconnected straight into a race
       resetLocal();
@@ -1218,6 +1219,7 @@ function enterState(m) {
     typing.setEnabled(true);
     typing.focus();
     showGo();
+    revealToSite(el.passageWrap);
     sound.go();
   } else if (st === 'finished') {
     typing.setEnabled(false);
@@ -1400,6 +1402,8 @@ function showFocusOverlay(text) {
 typing.onBlur = () => {
   setTimeout(() => {
     if (document.activeElement === el.chatInput || !S.room) return;
+    // a blur that was undone in the same tick (the website handing the keyboard back) needs no cover
+    if (document.activeElement === typing.input && document.hasFocus()) return;
     if (S.room.state === 'racing' && !S.local.done) showFocusOverlay(IS_TOUCH ? '👆 Tap here to keep typing' : 'Click here to refocus and keep typing');
     else if (S.room.state === 'countdown' && IS_TOUCH) showFocusOverlay('👆 Tap here so your keyboard is ready');
   }, 0);
