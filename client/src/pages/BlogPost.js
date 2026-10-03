@@ -9,7 +9,7 @@ import TableOfContents from '../components/blog/TableOfContents';
 import BlogFaq from '../components/blog/BlogFaq';
 import { parseBlogContent } from '../lib/blogParser';
 import Seo from '../seo/Seo';
-import { breadcrumbs } from '../seo/schema';
+import { breadcrumbs, faq } from '../seo/schema';
 import { SITE, absolute } from '../seo/site';
 import '../learn/LessonView.css';
 
@@ -128,6 +128,8 @@ const BlogPost = () => {
             { name: 'Blog', path: '/blog' },
             { name: post.title, path: `/blog/${post.slug}` },
           ]),
+          // The questions render below the post (BlogFaq), so the markup matches the page.
+          ...(faqs.length ? [faq(faqs.map((f) => ({ q: f.question, a: f.answer })))] : []),
         ]}
       />
 

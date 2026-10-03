@@ -110,6 +110,29 @@ export const faq = (pairs) => ({
 });
 
 /**
+ * A blog post read in full on another page (its markdown names that page as
+ * home). Its Article markup, and its FAQ when it has one, belong to that page,
+ * since that is where its words are.
+ */
+export const hostedArticle = (post, path, faqs = []) => [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': absolute(`${path}#${post.slug}`),
+    headline: post.title,
+    description: post.description,
+    image: post.image ? [absolute(post.image)] : undefined,
+    datePublished: post.date,
+    dateModified: post.updated,
+    author: { '@type': 'Organization', name: SITE.legalName },
+    publisher: { '@id': `${absolute('/')}#organization`.replace('//#', '/#') },
+    mainEntityOfPage: absolute(path),
+    url: absolute(`${path}#${post.slug}`),
+  },
+  ...(faqs.length ? [faq(faqs.map((f) => ({ q: f.question, a: f.answer })))] : []),
+];
+
+/**
  * A working web tool.
  *
  * SoftwareApplication is the right type for a browser based utility, and the
