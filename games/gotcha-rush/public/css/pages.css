@@ -853,3 +853,7 @@ main#main { min-height: calc(100svh - 60px); }
   .sa-rows .r4 { transform: translate3d(0, calc(3 * var(--row-h)), 0); animation: none; }
   .sa-rows .r4 .sa-r i { transform: translate3d(0, -100%, 0); animation: none; }
 }
+
+/* Inside the website's frame (js/site-keys.js) the frame grows to fit the
+   game, so the page may not size itself from the viewport's height. */
+html.embedded main#main { min-height: 0; }

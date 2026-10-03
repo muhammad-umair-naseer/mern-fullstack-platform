@@ -122,6 +122,10 @@ export default function GameFrame() {
   const [isSlow, setIsSlow] = useState(false);
   const [spin, setSpin] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  // The game's own height (it reports it: cortexis:size), so the frame is
+  // never shorter than the game and only this page scrolls; the stage's CSS
+  // height is still the floor. Full screen keeps the screen's height instead.
+  const [gameHeight, setGameHeight] = useState(0);
 
   const config = GAME_CONFIG[gameId];
   const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
@@ -168,20 +172,43 @@ export default function GameFrame() {
   // and how many forwarded keys it has not yet confirmed (cortexis:key-done).
   const gameTyping = useRef(false);
   const keysInFlight = useRef(0);
+  // The game asks for a part of itself (a band of its own document, in px
+  // from its top) to be in view: at a countdown, the passage. Scroll this
+  // page the least that puts the band between the navbar and the bottom.
+  const reveal = useCallback(({ top, bottom }) => {
+    const frame = iframeRef.current;
+    if (!frame || document.fullscreenElement || document.webkitFullscreenElement) return;
+    const r = frame.getBoundingClientRect();
+    const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 0;
+    const y1 = r.top + Number(top);
+    const y2 = r.top + Number(bottom);
+    if (!(y2 > y1)) return;
+    let by = 0;
+    if (y2 > window.innerHeight - 16) by = y2 - window.innerHeight + 16;
+    if (y1 - by < navH + 16) by = y1 - navH - 16;   // the top of the band wins over its bottom
+    if (Math.abs(by) > 2) window.scrollBy({ top: by, behavior: 'smooth' });
+  }, []);
   useEffect(() => {
     const onMessage = (e) => {
       if (e.origin !== gameOrigin || !iframeRef.current || e.source !== iframeRef.current.contentWindow) return;
       if (e.data && e.data.type === 'cortexis:need-token') sendToken();
+      if (e.data && e.data.type === 'cortexis:size') {
+        const h = Math.ceil(Number(e.data.height));
+        if (h > 0 && h <= 1400) setGameHeight(h);
+      }
+      if (e.data && e.data.type === 'cortexis:reveal') reveal(e.data);
       if (e.data && e.data.type === 'cortexis:typing') gameTyping.current = Boolean(e.data.active);
       if (e.data && e.data.type === 'cortexis:key-done') {
         keysInFlight.current = Math.max(0, keysInFlight.current - 1);
-        // every forwarded key has landed: the next one can go straight to the game
-        if (keysInFlight.current === 0 && gameTyping.current) iframeRef.current.focus();
+        // every forwarded key has landed: the next one can go straight to the game.
+        // Only when the frame lacks the focus: focusing it again blurs and
+        // refocuses the game's input, which shows its "click to keep typing" cover.
+        if (keysInFlight.current === 0 && gameTyping.current && document.activeElement !== iframeRef.current) iframeRef.current.focus();
       }
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, [gameOrigin, sendToken]);
+  }, [gameOrigin, sendToken, reveal]);
 
   /*
    * Keys pressed on this page belong to the game while it is taking typed
@@ -278,6 +305,7 @@ export default function GameFrame() {
     requestAnimationFrame(() => setSpin(true));
     gameTyping.current = false;
     keysInFlight.current = 0;
+    setGameHeight(0);
     setAttempt((n) => n + 1);   // a new key remounts the iframe, which reloads the game
   }, []);
 
@@ -353,7 +381,7 @@ export default function GameFrame() {
         </div>
       </div>
 
-      <div className={`gf-stage ${ready ? 'is-ready' : ''}`} ref={stageRef}>
+      <div className={`gf-stage ${ready ? 'is-ready' : ''}`} ref={stageRef} style={gameHeight && !isFullscreen ? { minHeight: `${gameHeight}px` } : undefined}>
         <div className={`gf-state ${ready || hasError ? 'is-gone' : ''}`} role="status" aria-live="polite">
           <div className="gf-mark"><GameMark gameId={gameId} /></div>
           <h2>{config.title}</h2>

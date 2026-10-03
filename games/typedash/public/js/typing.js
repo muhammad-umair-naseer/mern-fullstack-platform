@@ -207,7 +207,11 @@ export class TypingArea {
     const box = this.el.getBoundingClientRect();
     const r = cur.getBoundingClientRect();
     if (r.top < box.top || r.bottom > box.bottom) {
-      cur.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      // Scroll the passage box alone: scrollIntoView also scrolls every frame
+      // around it, and inside the website's page that dragged the whole page
+      // down with each new line.
+      const top = this.el.scrollTop + (r.top - box.top) - (box.height - r.height) / 2;
+      this.el.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     }
   }
 }

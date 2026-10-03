@@ -1074,3 +1074,9 @@ html.ns-open, html.ns-open body { overflow: hidden; }
   .ns-link, .ns-account, .ns-play, .navsheet { animation: none; }
   .field.ask select { animation: none; border-color: var(--copper-2); }
 }
+
+/* Inside the website's frame (js/site-keys.js) the frame grows to fit the
+   game, so nothing here may size itself from the viewport's height: the frame
+   would grow to the content and the content to the frame, without end. */
+html.embedded body, html.embedded #main, html.embedded .hm-hero, html.embedded .set-hero, html.embedded .lb-hero,
+html.embedded .pg-hero { min-height: 0; }
