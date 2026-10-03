@@ -14,6 +14,7 @@ const path = require('path');
 const cfg = require('./config');
 const { run } = require('./runner');
 const { loadSources, normalizeOutput, LANG_META, ROOT } = require('./puzzles');
+const Scoring = require('../shared/scoring');
 
 const bankFile = path.resolve(__dirname, '..', cfg.BANK_FILE);
 const check = process.argv.includes('--check');
@@ -52,6 +53,8 @@ const check = process.argv.includes('--check');
     if (!src.explain) problems.push('missing @explain');
     if (src.distractors.length < 2) problems.push('needs at least 2 @distractor lines');
     if (src.distractors.some((d) => normalizeOutput(d).join('\n') === output.join('\n'))) problems.push('a distractor equals the real output');
+    // grading ignores whitespace (shared/scoring linesMatch): a distractor that only differs in spacing would be marked right
+    if (src.distractors.some((d) => Scoring.grade(normalizeOutput(d), output).full)) problems.push('a distractor is graded as the real output');
     const verified = problems.length === 0;
     if (!verified) failed++;
     results.push({ ...src, output, verified, problems, ms: r.ms });
