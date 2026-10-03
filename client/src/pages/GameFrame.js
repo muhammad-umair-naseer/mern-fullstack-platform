@@ -220,32 +220,30 @@ export default function GameFrame() {
     setHasError(false);
     setIsSlow(false);
     let cancelled = false;
-    const ctrl = new AbortController();
     const kill = setTimeout(() => {
-      try {
-        ctrl.abort();
-      } catch {
-        /* ignore */
-      }
+      if (!cancelled) setHasError(true);
     }, 6000);   // no answer in 6s counts as offline
 
-    fetch(`${gameUrl}/healthz`, { mode: 'no-cors', cache: 'no-store', signal: ctrl.signal })
+    fetch(`${gameUrl}/healthz`, { mode: 'no-cors', cache: 'no-store' })
       .then(() => {
-        if (!cancelled) setHasError(false);
+        if (!cancelled) {
+          clearTimeout(kill);
+          setHasError(false);
+        }
       })
-      .catch((err) => {
-        if (!cancelled && err?.name !== 'AbortError') setHasError(true);
-      })
-      .finally(() => clearTimeout(kill));
+      .catch(() => {
+        if (!cancelled) {
+          clearTimeout(kill);
+          setHasError(true);
+        }
+      });
 
-    const slow = setTimeout(() => setIsSlow(true), SLOW_MS);
+    const slow = setTimeout(() => {
+      if (!cancelled) setIsSlow(true);
+    }, SLOW_MS);
+
     return () => {
       cancelled = true;
-      try {
-        ctrl.abort();
-      } catch {
-        /* ignore */
-      }
       clearTimeout(kill);
       clearTimeout(slow);
     };
