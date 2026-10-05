@@ -4374,8 +4374,8 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
     q('What is query folding?', [
       'Hiding queries from the Data pane',
       'Combining CSV files from a folder',
-      'Pushing Power Query steps back to the source as a native query',
-      'Compressing a report before publishing',
+      'Pushing steps back to the source as a native query',
+      'Compressing the whole report before it is published to the Service',
     ], 2, 'Folding lets the source database do the filtering and shaping, so less data is transferred.'),
     q('In a star schema, what sits at the centre?', [
       'The date table',
@@ -4385,14 +4385,14 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
     ], 2, 'The fact table holds events and measures, surrounded by dimension tables related to it.'),
     q('Why should a dimension key column have unique values?', [
       'One-to-many relationships need a unique one side',
-      'Unique values make visuals more colourful',
+      'Unique values make visuals more colourful and easier to read',
       'Power BI hides duplicate values automatically',
       'Unique values are required for slicers only',
     ], 0, 'The one side of a one-to-many relationship must be unique, or Power BI cannot create the relationship.'),
     q('Why is Auto date/time commonly turned off?', [
       'It prevents any date filtering',
       'It deletes the date table',
-      'It makes DAX measures return errors',
+      'It makes DAX measures return errors when used with time intelligence',
       'It creates hidden date tables that bloat the model',
     ], 3, 'Auto date/time adds a hidden table per date column; one custom date table is leaner and more flexible.'),
     q('Which should be a measure rather than a calculated column?', [
@@ -4414,16 +4414,16 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
       'Multiplication is not allowed in measures',
     ], 2, 'Measures have no row context, so an iterator is needed to evaluate the expression row by row.'),
     q('What does CALCULATE do?', [
-      'Creates a new table from two others',
+      'Creates a new table from two others by combining their rows',
       'Evaluates an expression in a modified filter context',
       'Refreshes the data from the source',
       'Converts a measure into a column',
     ], 1, 'CALCULATE changes the filters applied to an expression, which enables comparisons, shares and time intelligence.'),
     q('Which measure pattern gives each branch\'s share of company revenue?', [
-      'Revenue divided by the number of branches',
+      'Revenue divided by the number of branches that traded this year',
       'Revenue with KEEPFILTERS on Branch',
       'Revenue for last year only',
-      'Revenue divided by revenue with Branch filters removed',
+      'Revenue divided by revenue ignoring Branch filters',
     ], 3, 'Removing branch filters in the denominator gives the company total, making each branch\'s share correct.'),
     q('Which function shifts the visible period back by one year?', [
       'DATESINPERIOD',
@@ -4441,17 +4441,17 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
       'A hover preview of a mini page',
       'Automatic refresh every hour',
       'A detail page filtered to the selected item',
-      'A way to edit data in the source',
+      'A way to edit rows in the source database from the report',
     ], 2, 'Drill through navigates to a dedicated page with the selected item carried as a filter.'),
     q('How can one visual be stopped from responding to clicks in another?', [
-      'Hide it with the Selection pane',
+      'Hide it with the Selection pane so viewers cannot see it',
       'Set its interaction to None with Edit interactions',
       'Remove its relationships',
       'Mark it as a date table',
     ], 1, 'Edit interactions controls how each visual responds to selections, including ignoring them.'),
     q('When is an on-premises data gateway needed?', [
       'When refreshing data stored inside a private network',
-      'For every file in SharePoint Online',
+      'For every file in SharePoint Online and OneDrive libraries',
       'To view reports on mobile phones',
       'To add bookmarks to a report',
     ], 0, 'The gateway lets the cloud Service reach sources it cannot access directly, such as office servers.'),
@@ -4462,7 +4462,7 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
       'Publish an app from the workspace',
     ], 3, 'Apps give consumers a clean, read-only experience that authors update when changes are ready.'),
     q('How does dynamic row-level security decide what a user sees?', [
-      'By the colour theme of the report',
+      'By the colour theme of the report and its page layout',
       'By matching the user\'s login to a security table',
       'By the order of report pages',
       'By the size of the semantic model',
@@ -4492,7 +4492,7 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
       'Remove Duplicates on the Region column',
     ], 2, 'Fill Down copies each value into the empty cells beneath it until the next value appears, which restores the region on every row of its group.'),
     q('A Price column contains a few "N/A" entries among the numbers. What happens when you change its type to Decimal Number?', [
-      'The whole column stays text until every N/A is removed',
+      'The whole column stays text until every N/A is removed by hand',
       'Those cells become Error values while the rest convert',
       'The N/A cells are silently converted to zero',
       'Power Query deletes the rows that contain N/A',
@@ -4523,9 +4523,9 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
     ], 1, 'Summarising changes the table\'s grain and discards the product-level rows; keeping the fact table at order-line grain and aggregating with measures preserves every question.'),
     q('Product (one side) relates to Sales (many side) with single-direction filtering. A measure counts rows of Product, and a slicer uses Sales[Channel]. What happens to the measure when Online is selected?', [
       'It shows only the products that were sold online',
-      'It shows blank, since the slicer and measure use different tables',
+      'It shows blank, since the slicer and the measure use different tables',
       'It returns an error until the relationship is set to Both',
-      'It is unchanged, since filters flow from Product to Sales, not back',
+      'Unchanged, since filters flow from Product to Sales, not back',
     ], 3, 'A single-direction relationship carries filters from the one side to the many side only, so a filter on Sales never reaches the Product table that the measure counts.'),
     q('Sales and Returns are separate fact tables, and both contain ProductID. How should the model let one Category slicer filter both?', [
       'Relate both fact tables to one shared Product dimension',
@@ -4579,11 +4579,11 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
       'A pie chart of units sold by product',
       'A card showing the average discount',
       'A scatter chart of discount % against units sold',
-      'A map of units sold by branch location',
+      'A map of total units sold by branch location and region',
     ], 2, 'A scatter chart plots one point per product on two numeric axes, which is how a relationship between two measures becomes visible.'),
     q('Managers want branches as rows, months as columns, and subtotals for each region. Which visual fits?', [
-      'A matrix with Region and Branch on rows and Month on columns',
-      'A table visual with one column per month added by hand',
+      'A matrix, Region and Branch on rows and Month on columns',
+      'A table visual with one column per month added by hand each year',
       'A stacked column chart with branches as the legend',
       'A multi-row card listing each branch\'s total revenue',
     ], 0, 'A matrix pivots a field across columns and supports a row hierarchy with subtotals, which a flat table or a chart cannot provide.'),
@@ -4607,7 +4607,7 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
     ], 2, 'Rules assign a specific colour to each range of values, which matches fixed business thresholds; a gradient shades values relative to each other instead.'),
     q('Regional managers say a dashboard page with 18 visuals is confusing and slow. What is the best first change?', [
       'Keep the few agreed KPIs and move detail to other pages',
-      'Shrink every visual so all 18 fit without scrolling',
+      'Shrink every visual so all 18 fit without any scrolling at all',
       'Give each visual its own colour so it stands out',
       'Replace every visual with a table of exact numbers',
     ], 0, 'A dashboard page should answer the audience\'s main questions at a glance, so a few agreed KPIs belong on it while detail lives on drill-through or supporting pages.'),
@@ -4618,8 +4618,8 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
       'It replaces the existing report and semantic model',
     ], 3, 'After you confirm the replacement, publishing under the same name overwrites the report and its semantic model, which is why a separate development workspace is safer.'),
     q('Scheduled refresh starts failing the day after the source database\'s password was changed. What fixes it?', [
-      'Republish the report from Desktop every morning',
-      'Update the stored credentials for that source in the Service',
+      'Republish the report from Desktop every morning before refresh',
+      'Update the stored credentials for that source',
       'Schedule the refresh to run more often each day',
       'Ask every viewer to sign out and sign back in',
     ], 1, 'The Service refreshes with the credentials stored for the data source, so they must be updated there; viewers\' sign-ins and schedule changes do not affect them.'),
@@ -4630,16 +4630,16 @@ The field keeps moving: Microsoft Fabric, AI features in Power BI, and data engi
       'Only the products that are named after Punjab cities',
     ], 2, 'The role\'s filter on Branch flows through the relationship to Sales, so every visual built on Sales shows only Punjab\'s rows, whatever fields it displays.'),
     q('Performance Analyzer shows a table visual with a short DAX query time but a very long visual display time. What is the likely fix?', [
-      'Show fewer rows and columns, for example with a top N filter',
-      'Rewrite the measure with variables to speed up the DAX',
+      'Show fewer rows and columns, for example a top N filter',
+      'Rewrite the measure with variables to speed up the DAX calculation',
       'Switch the model from Import mode to DirectQuery',
       'Set the table\'s relationship to filter in both directions',
     ], 0, 'Visual display time is the time spent drawing, so the visual is rendering too much; the calculation itself is already fast.'),
     q('A report in DirectQuery mode responds slowly, and the database team complains about heavy load. What explains both?', [
       'DirectQuery copies the whole database on every refresh',
-      'The report was published without an on-premises gateway',
+      'The report was published to a workspace without an on-premises gateway',
       'DirectQuery turns off caching inside the web browser',
-      'Each visual interaction sends queries to the source database',
+      'Each visual interaction sends queries to the source',
     ], 3, 'DirectQuery keeps no imported copy, so every visual and every click is answered by querying the source, making the report as fast as the database and adding to its load.'),
     q('For a portfolio project built entirely on a public dataset, how can employers explore the interactive report without a Power BI account?', [
       'Share it from My workspace to their email addresses',

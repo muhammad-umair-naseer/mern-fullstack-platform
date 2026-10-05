@@ -5059,8 +5059,8 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
   final: [
     q('Why does amending a commit message produce a different hash?', [
       'Git renumbers commits sequentially',
-      'The hash covers the whole commit, message included, so any change makes a different object',
-      'Amend adds a second parent to the commit',
+      'The hash covers the whole commit, message included, so any edit makes a new object',
+      'Amend adds a second parent to the commit so the new version links back to the original one',
       'The old hash is reserved by the reflog',
     ], 1, 'A commit is identified by the hash of its own contents, so changing any part of it produces a new commit entirely.'),
     q('git diff --staged answers which question?', [
@@ -5073,7 +5073,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
       'compose a commit out of only part of your working changes',
       'make git status run faster',
       'avoid merge conflicts',
-      'keep a backup copy of your files',
+      'keep a backup copy of your files in case the working directory is lost',
     ], 0, 'Separating "what I have edited" from "what I am about to record" is what makes atomic commits possible.'),
     q('Which of these belongs in a project .gitignore?', [
       'package-lock.json',
@@ -5084,26 +5084,26 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     q('What is the merge base of two branches?', [
       'The branch you are merging into',
       'The most recent commit both branches share',
-      'The very first commit in the repository',
+      'The very first commit in the repository, which every branch starts from',
       'The merge commit that Git creates',
     ], 1, 'A three-way merge compares both tips against their common ancestor to work out what each side changed.'),
     q('Your teammate has already pulled the commits on a branch. Which operation is now unsafe?', [
       'Rebasing that branch and force-pushing it',
       'Merging main into it',
-      'Adding a new commit to it',
+      'Adding a new commit to it and pushing normally to the shared remote',
       'Tagging one of its commits',
     ], 0, 'Rebase replaces commits with new hashes, so anyone holding the originals ends up with a duplicated, diverged history.'),
     q('git pull is shorthand for…', [
-      'git fetch followed by git reset --hard',
+      'git fetch followed by git reset --hard to match the remote exactly',
       'git clone followed by git switch',
       'git push, run in reverse',
-      'git fetch followed by git merge — or rebase, if configured',
+      'git fetch followed by git merge, or rebase if configured',
     ], 3, 'Fetch updates your origin/* bookmarks; the second half integrates those changes into your current branch.'),
     q('Why does commit-message discipline pay off at release time?', [
       'It makes clones smaller',
       'It prevents merge conflicts',
-      'Generated release notes and git log -S searches are only as good as the messages behind them',
-      'Annotated tags require a specific message format',
+      'Generated release notes and git log -S searches are only as good as the messages',
+      'Annotated tags require a specific message format that release tooling will then parse',
     ], 2, 'Changelog tooling and history archaeology both read your messages — vague ones make both worthless.'),
     q('Which command can permanently destroy work that Git has never recorded?', [
       'git reset --hard',
@@ -5113,14 +5113,14 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     ], 0, '--hard overwrites the working directory, and uncommitted edits were never objects, so the reflog cannot bring them back.'),
     q('What does the reflog record?', [
       'Every command you have ever run',
-      'Every position HEAD and your branch tips have pointed at, in this clone',
-      'The full history of the remote repository',
+      'Where HEAD and your branch tips have pointed, in this clone',
+      'The full history of the remote repository, as seen from every collaborator',
       'Every change made to every file',
     ], 1, 'It is a local journal of pointer movements, which is exactly what you need to undo a reset, rebase, or branch deletion.'),
     q('Why does git diff main...feature show what a pull request shows?', [
       'It hides merge commits',
-      'It diffs the two branch tips directly',
-      'Three dots diff the merge base against the feature tip, so commits main gained meanwhile are excluded',
+      'It diffs the two branch tips directly, so any commits main gained since the split appear as deletions',
+      'Three dots diff the merge base against the feature tip, so main\'s newer commits are excluded',
       'It only shows the files you have staged',
     ], 2, 'A pull request asks "what did this branch add?", which is the merge base compared with the branch tip — not tip against tip.'),
     q('git bisect can search 4,000 commits in about twelve tests, but only if…', [
@@ -5132,19 +5132,19 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     q('What makes a required status check stronger than a pre-push hook?', [
       'It runs faster than a local hook',
       'It can run tests that a hook cannot',
-      'It reports the failure to the whole team',
-      'The server enforces it, so --no-verify and an uninstalled hook cannot get past it',
+      'It also checks the contributor\'s uncommitted local edits before anything is pushed',
+      'The server enforces it, so --no-verify or a missing hook cannot get past it',
     ], 3, 'Local hooks are opt-in and skippable; branch protection is the only place a rule genuinely holds.'),
     q('Which file belongs in Git LFS rather than in ordinary Git?', [
       'package-lock.json',
       'A 40 MB design file revised every week',
-      'A 2,000-line CSS file',
+      'A 2,000-line CSS file that changes in small edits most days',
       'The .gitattributes file itself',
     ], 1, 'Binaries do not delta compress, so each revision adds its full size to every clone forever — LFS keeps those bytes out of the object store.'),
-      q('A workflow caches ~/.npm under a key built from hashFiles(\'package-lock.json\'), and it is triggered only by pull_request. Every pull request still downloads every package from the network. What explains that?', [
-      'A cache saved on a branch is readable only by that branch, and no run on the default branch ever wrote one',
+    q('A workflow caches ~/.npm under a key built from hashFiles(\'package-lock.json\'), and it is triggered only by pull_request. Every pull request still downloads every package from the network. What explains that?', [
+      'A cache saved on a branch is readable only by that branch, and no default-branch run wrote one',
       'hashFiles is evaluated after the restore step, so the key is empty on the lookup',
-      'Cache entries are immutable, so the entry is frozen with the packages it first held',
+      'Cache entries are immutable, so the entry stays frozen with the packages it first held, even after changes',
       'npm ci deletes node_modules, which invalidates the entry that was just restored',
     ], 0, 'Cache entries are scoped to the branch that wrote them, and only entries written on the default branch are visible everywhere, so a workflow that never runs on main leaves every pull request starting cold no matter how good the key is.'),
     q('You run git commit --fixup 8b02de4, then decide that commit\'s subject line reads badly and reword it before finally running git rebase -i --autosquash main. What happens to the fixup?', [
@@ -5156,12 +5156,12 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     q('You purged .env from every commit with git filter-repo, force pushed all branches and tags, and ran gc on your own clone. Why is the leaked key still fetchable from GitHub?', [
       'packed-refs keeps the old branch tips until the next full repack runs',
       'The tags were rewritten but the commits they pointed at were left alone',
-      'A commit that was ever pushed stays reachable by hash through pull request refs and forks',
+      'Pushed commits stay reachable by hash through pull request refs and forks',
       'GitHub copies every force pushed tip into a backup ref that anyone can read',
     ], 2, 'A rewrite only changes what your refs point at, while GitHub keeps the old commit fetchable by its full hash through pull request refs and the fork network until Support purges them, which is exactly why the credential has to be rotated before any history work begins.'),
     q('Every action in your workflow is pinned to a full commit SHA, but the job also calls an organisation reusable workflow at @v2, and that workflow uses actions/checkout@v4. What is your real exposure?', [
       'None, because a called workflow inherits the pinned references of its caller',
-      'The callee resolves its own tags at run time, so a moved tag runs its code in your job',
+      'The callee resolves its own tags at run time, so a moved tag runs in your job',
       'Only your own steps can be tampered with, since the callee runs on a separate runner',
       'The v2 reference is signature checked, so checkout@v4 is the single remaining risk',
     ], 1, 'A reusable workflow resolves the actions it names when it runs, so pinning stops at the first unpinned link in the chain and a repointed tag anywhere below that link executes inside a run that holds your secrets.'),
@@ -5192,7 +5192,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     q('Why set user.name and user.email on a new laptop before the first commit, rather than fixing them later?', [
       'Git refuses to run any command until both are set',
       'They are needed to encrypt the objects in .git',
-      'They only take effect for repositories cloned afterwards',
+      'They take effect for repositories cloned afterwards, not for ones already on the laptop',
       'Identity is stored in each commit, so fixing it rewrites history',
     ], 3, 'Author and committer are part of the commit object and its hash, so a wrong identity can only be corrected by creating new commits.'),
     q('What does the .gitignore line `build/` match?', [
@@ -5216,7 +5216,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     q('You rebased your already-pushed feature branch onto the latest main, and `git push` is now rejected as non-fast-forward. What caused the rejection?', [
       'Git blocks pushes for a while after any rebase',
       'The rebase deleted the remote copy of the branch',
-      'The rebase switched the branch\'s upstream to main',
+      'The rebase switched the branch\'s upstream to main, so Git treats the push as unrelated',
       'Rebase created new commits, so the remote tip is no longer an ancestor',
     ], 3, 'Rebase replaces your commits with new ones, so the pushed tip is not in your new history and only a force push, ideally --force-with-lease, can replace it.'),
     q('While on main you run `git merge feature` and get a conflict. Whose version appears directly after the `<<<<<<< HEAD` marker?', [
@@ -5226,7 +5226,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
       'A combined version that Git generated itself',
     ], 0, 'During a merge, HEAD is the branch you are on, so the first section shows main\'s side and the section after ======= shows feature\'s.'),
     q('Your library is at 2.3.1. You add a new optional parameter, and existing callers need no changes. Under semantic versioning, what is the next version?', [
-      '3.0.0',
+      '3.0.0, because the public API changed',
       '2.3.2',
       '2.4.0',
       '2.4.1',
@@ -5238,7 +5238,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
       'To a new remote that Git creates for pull requests',
     ], 1, 'You push the branch to your own fork and open the pull request from there; your fork\'s main should stay an exact copy of upstream.'),
     q('Why open a pull request as a draft while the work is still changing?', [
-      'It hides the branch from everyone except the author',
+      'It hides the branch from everyone except the author and the reviewers',
       'It lets the pull request merge without approval',
       'It pauses the branch so nobody can push to it',
       'It signals it is not ready for review, while CI still runs',
@@ -5256,7 +5256,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
       'Every commit on main up to and including a1b2c3',
     ], 2, 'Cherry-pick replays one commit\'s change on top of the current branch, producing a new commit with a new parent and therefore a new hash.'),
     q('On a branch with a linear history, which commit does the revision `HEAD~3` name?', [
-      'The third parent of the HEAD merge commit',
+      'The third parent of the HEAD merge commit, counting from the left',
       'The commit three generations back, following first parents',
       'The third most recent branch you checked out',
       'The commit three positions ahead of HEAD',
@@ -5264,7 +5264,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     q('You want every commit that changed the total() function in src/invoice.js, following it as it moves around the file. Which command does that?', [
       'git blame src/invoice.js',
       'git log -S total src/invoice.js',
-      'git log --follow src/invoice.js',
+      'git log --follow --stat src/invoice.js',
       'git log -L :total:src/invoice.js',
     ], 3, 'git log -L tracks a function or line range through history, printing only the patch for that range in each commit.'),
     q('You run `git bisect start`, mark main as bad and v1.4.0 as good. What does Git do next?', [
@@ -5274,9 +5274,9 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
       'Resets main back to v1.4.0 until the bug is found',
     ], 0, 'Bisect is a binary search: each good or bad answer halves the remaining range, so it checks out the midpoint for you to test.'),
     q('You add a pre-commit script to .git/hooks, but teammates who pull never get it. Why, and what is the fix?', [
-      'Hooks only run on the machine that first cloned the repository',
+      'Hooks run on the machine that first cloned the repository, not on later clones',
       'Teammates must run git gc before new hooks can load',
-      '.git/hooks is never committed; commit a hooks folder and set core.hooksPath',
+      '.git/hooks is not versioned; commit a hooks folder and set core.hooksPath',
       'Hooks are shared only when they are pushed with --tags',
     ], 2, 'Nothing in .git/hooks is versioned, so a committed directory plus core.hooksPath is how hook scripts reach other clones.'),
     q('A fresh clone of a repository that uses a submodule shows vendor/design-system as an empty folder. What fixes that clone?', [
@@ -5293,7 +5293,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     ], 3, 'fail-fast is true by default, so one failure cancels the siblings; set it to false when you need to see which versions fail.'),
     q('You push three commits to a pull request within a few minutes. Which setting cancels the older CI runs for that branch?', [
       'A concurrency group keyed on the ref with cancel-in-progress: true',
-      'fail-fast: true in the job\'s matrix strategy block',
+      'fail-fast: true in the job\'s matrix strategy block, so older runs stop early',
       'timeout-minutes: 5 set on every job in the workflow',
       'needs: linking each new run to the previous one',
     ], 0, 'Runs that share a concurrency group replace each other, and cancel-in-progress stops the outdated ones immediately.'),
@@ -5323,7 +5323,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     ], 0, 'Push protection turns a secret scanning match into a rejected push, stopping the leak before it lands.'),
     q('A script must open pull requests in one repository, acme/invoicing, for the next month. Which personal credential fits best?', [
       'A classic token with the repo scope and no expiry set',
-      'Your account password saved in the script\'s config file',
+      'Your account password saved in the script\'s config file for the whole month',
       'A fine-grained token for that repo, minimal permissions, with an expiry',
       'An SSH key added to your personal account for all repos',
     ], 2, 'A fine-grained token names one repository and specific permissions and must expire, so a leak reaches far less for far less time.'),
@@ -5335,7 +5335,7 @@ Backing up with \`cp -r\` or \`rsync\` on a repository somebody is using. Git re
     ], 1, 'Dependabot reads pinned hashes and opens pull requests that bump them, so pinning stays safe without becoming a chore.'),
     q('How do you bring a newer upstream version into a directory vendored with git subtree?', [
       'git submodule update --remote vendor/design-system',
-      'Run git pull upstream main inside vendor/design-system',
+      'Run git pull upstream main inside vendor/design-system, then commit the result',
       'Cherry-pick the upstream commits into main one by one',
       'git subtree pull --prefix vendor/design-system <url> <tag> --squash',
     ], 3, 'git subtree pull reads the trailers from the last sync and merges in only what changed upstream since then.'),

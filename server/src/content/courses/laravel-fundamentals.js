@@ -5820,14 +5820,14 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
     q('foreignId(\'user_id\')->constrained()->cascadeOnDelete() — what happens when that user is deleted?', [
       'The delete is blocked by the constraint',
       'user_id is set to null',
-      'Nothing; the rule is enforced only in PHP',
+      'Nothing; the rule is enforced only in PHP, so child rows stay as they are',
       'That user\'s rows in the child table are deleted too',
     ], 3, 'cascadeOnDelete tells the database to remove dependent rows, so no orphans remain.'),
     q('A Blade loop prints $post->author->name for 100 posts. What appears in the query log?', [
       '1 query',
       '2 queries',
       '101 queries — the N+1 pattern',
-      '100 queries plus a join',
+      '100 queries, plus one join to load every author',
     ], 2, 'One query fetches the posts and each iteration lazy-loads its author; with(\'author\') reduces it to two.'),
     q('Which Blade output is safe for user-submitted text?', [
       '{{ $comment->body }}',
@@ -5836,13 +5836,13 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
       '<?= $comment->body ?>',
     ], 0, 'Double braces run the value through htmlspecialchars; the other three emit raw markup.'),
     q('What does session()->regenerate() immediately after a successful login prevent?', [
-      'Duplicate form submission',
+      'Duplicate form submission when the user double-clicks the login button',
       'CSRF token mismatch errors',
       'Cookie size overflow',
       'Session fixation — a pre-planted session id surviving the login',
     ], 3, 'A new session id at login means any id an attacker planted beforehand is worthless.'),
     q('Route::apiResource registers how many routes, and which does it drop versus Route::resource?', [
-      '7; it drops store and update',
+      '7; it drops store and update, the two routes that accept a request body',
       '5; it drops create and edit, which only rendered HTML forms',
       '6; it drops edit and destroy',
       '5; it drops index and show',
@@ -5851,37 +5851,37 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
       '419 Page Expired',
       '403 Forbidden',
       'An empty response, because $next($request) was never returned',
-      'The middleware runs twice per request',
+      'The middleware runs twice per request, once before and once after the controller',
     ], 2, 'The pipeline needs the response returned back up through it; returning null yields an empty body.'),
     q('You need to change a column defined in a migration that already ran in production. What do you do?', [
       'Run migrate:fresh on production',
       'Run migrate:rollback then migrate',
-      'Nothing — Laravel re-runs files whose contents changed',
+      'Nothing; Laravel re-runs any migration file whose contents have changed since',
       'Write a new migration; already-run migrations are immutable',
     ], 3, 'Laravel tracks migrations by filename, so an executed file is never re-run — the change must be a new file.'),
     q('Why does storing money in a float column eventually corrupt totals?', [
-      'Binary floating point cannot represent decimal fractions exactly, so rounding errors accumulate',
-      'MySQL floats are limited to six digits overall',
+      'Floats cannot represent decimal fractions exactly, so rounding errors accumulate',
+      'Eloquent converts float columns to integers when it saves a model, so the cents are dropped',
       'Eloquent casts floats to strings on save',
       'Float columns cannot be indexed',
     ], 0, 'Values like 0.1 have no exact binary representation, so repeated arithmetic drifts; decimal or integer minor units do not.'),
     q('A job dispatched inside DB::transaction() intermittently fails with ModelNotFoundException. The fix?', [
       'Add $deleteWhenMissingModels = true to the job',
-      'Increase $tries so a retry eventually finds the row',
+      'Move the queue connection to Redis so that workers pick the job up sooner',
       'Dispatch after the commit — ChargeCard::dispatch($order)->afterCommit()',
       'Pass an array of attributes instead of the model',
     ], 2, 'The worker has its own connection and cannot see uncommitted rows, so the dispatch must wait for the transaction to land.'),
     q('Your deploy ships a bug fix, but queued jobs keep executing the old code. What is missing?', [
       'php artisan queue:restart at the end of the deploy',
       'php artisan migrate --force',
-      'A larger $tries value on every job class',
+      'A larger $tries value on every job class, so failed jobs retry on fresh code',
       'php artisan event:cache',
     ], 0, 'queue:work holds the booted application in memory, so workers keep running the code they started with until they are told to exit.'),
     q('A job filters on processed=false, sets it to true, and pages with chunk(500). Half the rows are silently skipped. Why?', [
-      'The callback returned false and stopped the loop',
+      'The callback returned false after the first chunk and stopped the loop early',
       'Model events re-queued the rows',
       'chunk() loads every row into memory and runs out',
-      'chunk() pages with OFFSET, and rows leaving the result set shift every later page',
+      'chunk() pages with OFFSET, so rows leaving the result set shift later pages',
     ], 3, 'Each processed page drops out of the filtered set, so the next offset lands past unprocessed rows; chunkById() keys on the primary key instead.'),
     q('Twelve tasks are registered in the Laravel scheduler. How many crontab entries does the server need?', [
       'Twelve, one per task',
@@ -5889,7 +5889,7 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
       'One per command that uses onOneServer()',
       'None, because the scheduler runs inside the web process',
     ], 1, 'schedule:run wakes every minute and decides what is due, which keeps the timetable in your repository rather than in crontab.'),
-      q('A provider binds TenantContext with singleton, and the object holds the tenant resolved at the start of each request. The code is correct under PHP-FPM, but once the same work runs through queue:work, jobs start writing rows against the wrong tenant. What is happening, and which binding fixes it?', [
+    q('A provider binds TenantContext with singleton, and the object holds the tenant resolved at the start of each request. The code is correct under PHP-FPM, but once the same work runs through queue:work, jobs start writing rows against the wrong tenant. What is happening, and which binding fixes it?', [
       'The worker keeps one container alive across jobs, so the first job\'s tenant persists; bind it with scoped.',
       'The worker serialises the container between jobs, so the tenant is stale after each restart; bind it with instance.',
       'Jobs resolve bindings before providers boot, so the tenant is null and falls back to the first one; use bind instead.',
@@ -5904,14 +5904,14 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
     q('A payment create call is wrapped in Http::timeout(4)->retry(3, 200) with no Idempotency-Key header, and the provider occasionally takes six seconds to answer a request it has already processed. What is the realistic worst outcome?', [
       'Laravel returns the first response body once the retries finish, so the customer is shown a stale payment status.',
       'The retry helper stops at the first non-2xx, so a slow but successful charge is reported to the caller as failed.',
-      'Each attempt times out before the answer arrives, so the provider creates several charges while the caller sees a failure.',
+      'Each attempt times out first, so the provider creates several charges while the caller sees a failure.',
       'Guzzle reuses one connection for the retries, so the provider rejects attempts two and three as duplicate posts.',
     ], 2, 'A timeout is not proof the request failed to arrive: the provider can create the charge and simply lose the response on the way back, so every retried POST creates another charge and the caller still ends up with an exception; an idempotency key turns the second and third attempts into a read of the first result instead of a new write.'),
     q('A controller calls authorizeResource(Invoice::class, \'invoice\') and the InvoicePolicy checks the invoice\'s team in every method. show, update and destroy are correctly locked down, yet customers still see each other\'s invoices on the list endpoint. Which explanation fits?', [
       'authorizeResource skips index unless the policy declares it, so the list endpoint runs with no gate at all.',
       'Policies run after the controller returns on collection routes, so the denial arrives too late to filter the results.',
       'Route model binding is not applied to index, so the policy receives an empty Invoice whose team check passes.',
-      'viewAny is handed no model, so index can only ask whether the user may see invoices at all; the query must scope rows.',
+      'viewAny gets no model, so index can only ask if the user may list invoices; the query must scope rows.',
     ], 3, 'authorizeResource maps index to viewAny, and viewAny receives no model because there is no single record to check, so it can only answer whether this user may see invoices in general before the controller returns the whole table; a collection endpoint is guarded by scoping the query itself, for example Invoice::where(\'team_id\', $user->current_team_id)->paginate(25).'),
     q('A release renames users.name to users.full_name in one migration, and the deploy runs migrations first and then rolls the new code across four web servers over about ninety seconds. Roughly two thousand requests return 500 during that window. What broke, and what would have prevented it?', [
       'Migrations only run after the last server updates, so early requests read a column that is not there yet; run them first.',
@@ -5922,7 +5922,7 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
     q('A team adds the \'encrypted\' cast to customers.iban and widens the column to text. Writes and reads work fine, but Customer::where(\'iban\', $iban)->first() returns null even for a row saved seconds earlier. What is going on, and what is the standard fix?', [
       'The cast decrypts only on read, so the comparison runs against a truncated column; widen it from string to text and retry.',
       'config:cache hides APP_KEY from the query builder, so decryption fails silently and nothing matches; clear the config cache.',
-      'Every write uses a fresh random IV, so the same IBAN stores different ciphertext; search an HMAC blind index column instead.',
+      'Each write uses a fresh random IV, so one IBAN stores different ciphertext; search an HMAC blind index column instead.',
       'The where clause runs before the cast, so it compares against the raw envelope; use whereEncrypted so each row is decrypted.',
     ], 2, 'Laravel generates a new random initialisation vector on every encryption, so the same plaintext produces different ciphertext each time it is written and there is nothing for SQL to match on; the usual answer is a deterministic blind index, a hash_hmac of the value stored and indexed in a second column, which you search while the real value stays encrypted.'),
     q('Which Composer files belong in a Laravel application\'s Git repository?', [
@@ -6061,7 +6061,7 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
       'A commentable table linking comments to each parent table',
       'commentable_id and commentable_type columns with an index',
       'Three foreign keys: post_id, video_id and invoice_id',
-      'A JSON column that stores the parent model\'s attributes',
+      'A JSON column that stores the parent model\'s attributes for each comment row',
     ], 1, 'morphs() adds the id and type pair a polymorphic relation needs, plus an index over the pair; no foreign key is possible because the parent table varies.'),
     q('A Country has many Users, and each User has many Posts. Which relation on Country returns all posts written by its users?', [
       '$this->hasMany(Post::class, \'country_id\')',
@@ -6088,20 +6088,20 @@ Then delete as you go. A module is not migrated when the new one works, it is mi
       'Encoded with base64 so they are not readable at a glance',
     ], 1, 'Passwords must be hashed one-way, for example with bcrypt, so nobody including the application can reverse them; encryption and encoding are reversible.'),
     q('Someone replaces APP_KEY on production and does not set APP_PREVIOUS_KEYS. Which data can no longer be read?', [
-      'Passwords hashed with bcrypt in the users table',
+      'Passwords hashed with bcrypt in the users table, which need the old key to verify',
       'Rows in tables that have no encrypted columns',
       'Files stored on the public disk under avatars/',
       'Encrypted-cast columns and existing session cookies',
     ], 3, 'APP_KEY encrypts cookies and encrypted attributes, so old ciphertext fails to decrypt and users are logged out; bcrypt hashes do not use APP_KEY and keep working.'),
     q('In an expand and contract rename of users.name to full_name, when is it safe to drop the old name column?', [
       'In a later release, once no deployed code reads or writes name',
-      'In the same migration that adds the new full_name column',
+      'In the same migration that adds the new full_name column, to keep one schema step',
       'As soon as the backfill job has started running',
       'Before deploying the code that writes to full_name',
     ], 0, 'The contract step comes last, after the backfill has finished and every running release uses only full_name, so no server still depends on the old column.'),
     q('A new checkout ships behind a feature flag and starts saving wrong totals. Why is switching the flag off better than rolling back the deploy?', [
       'Rolling back is impossible once a deploy has finished',
-      'The flag also repairs the orders saved with wrong totals',
+      'The flag also repairs the orders saved with wrong totals while it is switched off',
       'It disables the feature in seconds without reverting other fixes',
       'Feature flags make every database migration reversible',
     ], 2, 'A flag turns off just the faulty path immediately, while a rollback takes longer and also reverts unrelated fixes that shipped in the same release.'),

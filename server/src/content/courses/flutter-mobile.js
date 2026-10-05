@@ -5392,7 +5392,7 @@ Treat the first release after an SDK upgrade as risky even when the diff looks e
   ],
   final: [
     q('Why are widget fields declared final?', [
-      'Dart requires it for all classes',
+      'Dart requires it for all classes, because every Flutter class must be immutable',
       'To make them private',
       'A widget is an immutable description that is rebuilt rather than edited',
       'final fields render faster',
@@ -5405,7 +5405,7 @@ Treat the first release after an SDK upgrade as risky even when the diff looks e
     ], 0, 'The mounted flag tells you the State is still in the tree; checking it after every await prevents updating a disposed widget.'),
     q('A Row overflows on a narrow phone because one title is long. Which fix survives translation and large text settings?', [
       'A fixed-width SizedBox around the title',
-      'Setting mainAxisAlignment to center',
+      'Setting mainAxisAlignment to center, so the title sits in the middle of the row',
       'A smaller font size',
       'Expanded plus TextOverflow.ellipsis on the text',
     ], 3, 'Expanded bounds the child to whatever space remains and ellipsis handles any excess, so no string length or text scale can overflow.'),
@@ -5419,7 +5419,7 @@ Treat the first release after an SDK upgrade as risky even when the diff looks e
       'By calling setState on the caller',
       'It calls pop(value), and the caller awaits the Future from push',
       'Through a global variable',
-      'By rebuilding the caller with new props',
+      'By rebuilding the caller with new props that the pushed screen supplies',
     ], 1, 'Navigator.push returns a Future that completes with the value passed to pop.'),
     q('In Provider, which call belongs inside an onPressed handler?', [
       'Consumer<T>',
@@ -5429,7 +5429,7 @@ Treat the first release after an SDK upgrade as risky even when the diff looks e
     ], 2, 'read performs a one-off lookup with no subscription, which is exactly right in a callback; watch is only legal during build.'),
     q('Casting jsonDecode output straight to List<Map<String, dynamic>> throws. Why?', [
       'The runtime type is List<dynamic>, so each element must be cast individually',
-      'Dart cannot cast generics at all',
+      'Dart cannot cast generic collection types at all, so each list needs a manual loop',
       'jsonDecode returns a String',
       'The JSON was malformed',
     ], 0, 'Generic types are checked at runtime and the decoder really produced a List<dynamic>, regardless of what the elements are.'),
@@ -5449,33 +5449,33 @@ Treat the first release after an SDK upgrade as risky even when the diff looks e
       'A new controller every frame leaks memory and resets the field',
       'Controllers must be const',
       'It disables validation',
-      'build cannot create objects',
+      'build cannot create objects, because it must only return widgets and nothing else',
     ], 0, 'build runs constantly, so each rebuild discards the old controller and its text; create it in initState and dispose it in dispose.'),
     q('Your release build ships an API key in a Dart string. What does an attacker need to read it?', [
-      'A jailbroken or rooted device and a debugger attached at runtime',
-      'Nothing beyond the shipped binary, because strings survive compilation and are trivially dumped',
+      'A jailbroken or rooted device, with a debugger attached to the app at runtime',
+      'Just the shipped binary, because strings survive compilation and are easily dumped',
       'The signing key the bundle was published with',
-      'A man in the middle proxy and a device that trusts a custom certificate',
+      'A man in the middle proxy, plus a device that has been set to trust a custom certificate',
     ], 1, 'A compiled binary is a distribution format, not a safe: anyone can pull the file and run strings over it, which is why a secret that ships is a secret that has leaked.'),
     q('A push notification tapped from a terminated app opens the home screen instead of the linked course. What was omitted?', [
       'Reading FirebaseMessaging.instance.getInitialMessage() during startup',
       'A second call to requestPermission',
-      'Registering the FCM token with your server',
+      'Registering the FCM token with your server after every login on each device',
       'A foreground notification channel',
     ], 0, 'The message that started the process is never delivered to the stream listeners, so getInitialMessage is the only way to read it.'),
     q('Why is a build number taken from the CI run number better than bumping it by hand?', [
       'It shortens the build time',
       'It is required for obfuscation to work',
-      'It sets the version name users see in the store',
+      'It sets the version name users see in the store listing and in the app\'s settings',
       'It always increases, so an upload can never be rejected as a duplicate',
     ], 3, 'Stores require a strictly increasing build number, and generating it in the pipeline removes the manual step that gets skipped on a hotfix.'),
     q('Your crash-free rate reads 100% but users keep reporting failures. Which hook is most likely missing?', [
       'FlutterError.onError',
-      'runZonedGuarded plus PlatformDispatcher.instance.onError, which catch errors outside the framework',
-      'setCustomKey breadcrumbs on each screen',
+      'runZonedGuarded plus PlatformDispatcher.instance.onError for errors outside the framework',
+      'setCustomKey breadcrumbs on each screen, so every report carries the user\'s recent path',
       'A debug symbol upload step',
     ], 1, 'Errors thrown across an async gap or from platform callbacks bypass FlutterError.onError entirely, so they go unreported until the zone and dispatcher handlers are installed.'),
-      q('A golden test of a lesson card passes on a laptop and fails in the nightly CI run, and the masked diff shows that only the "2 hours ago" label changed. Which fix removes the failure without weakening the test?', [
+    q('A golden test of a lesson card passes on a laptop and fails in the nightly CI run, and the masked diff shows that only the "2 hours ago" label changed. Which fix removes the failure without weakening the test?', [
       'Raise the comparator tolerance until the label stops tripping it',
       'Call pumpAndSettle before expectLater so the text has settled',
       'Regenerate the golden with --update-goldens on every CI run',
@@ -5488,8 +5488,8 @@ Treat the first release after an SDK upgrade as risky even when the diff looks e
       'The drain breaks at that op and nothing else on the device syncs',
     ], 1, 'An idempotency key only suppresses duplicate work when it stays identical across every attempt, so it must be generated once when the user taps and stored on the outbox row rather than minted inside the retry loop.'),
     q('A scrolling grid logs build=3.6ms and raster=62ms per frame. The team adds const constructors, moves to ListView.builder and strips work out of build, and the timings do not move. Why?', [
-      'Those changes cut UI-thread work, while the cost sits in offscreen save layers on the raster thread',
-      'Frame timings only mean something in a debug build, not in a profile one',
+      'Those changes cut UI-thread work, but the cost sits in offscreen save layers on the raster thread',
+      'Frame timings only mean something in a debug build, not in a profile one, so the numbers are misleading',
       'const widgets stop being reused once the list has started scrolling',
       'A 120Hz panel makes the 8.3ms budget unreachable on that hardware',
     ], 0, 'Build and raster run on separate threads, so a flat build time with a tall raster time points at opacity layers, antialiased clips and stacked shadows that force the rasteriser to allocate and composite offscreen buffers, which no amount of cheaper build methods will fix.'),
@@ -5506,8 +5506,8 @@ Treat the first release after an SDK upgrade as risky even when the diff looks e
       'It re-runs the migration from the stored version, so every step must be repeatable',
     ], 3, 'SQLite stamps the new user_version only when the surrounding transaction commits, so an upgrade killed halfway leaves the old version on disk and the whole chain runs again on the next launch, which is safe only if each guarded step tolerates being applied a second time.'),
     q('A routine plugin bump quietly merges com.google.android.gms.permission.AD_ID into your release manifest. What is the real consequence, and where is it caught cheaply?', [
-      'Nothing changes for the store, though a lint rule in the app module would flag it',
-      'It pulls you into the advertising ID part of Data safety, and a CI diff of the merged manifest flags it',
+      'Nothing changes for the store, though a lint rule in the app module would flag it before release',
+      'It adds advertising ID duties to Data safety, and a CI diff of the merged manifest flags it',
       'The upload fails outright, and flutter pub outdated would have listed the permission',
       'It only affects the iOS privacy manifest, and pod install would have surfaced it',
     ], 1, 'Permissions arrive through dependencies rather than through your own code, and the store forms must describe the whole binary rather than your intentions, so diffing the merged manifest against an allow list in CI is what catches the change before a reviewer does.'),

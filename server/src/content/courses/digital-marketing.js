@@ -4174,20 +4174,20 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
   ],
   final: [
     q('A site converts 2.15% of visitors and loses 85% of product-page visitors before the basket. The best next move is to', [
-      'buy twice as much traffic',
+      'buy twice as much paid traffic and keep the product page exactly as it is today',
       'fix the product page to basket step before increasing spend',
       'add a second social platform',
       'rewrite the homepage headline',
     ], 1, 'Improving a step rate multiplies traffic you have already paid for, while more traffic multiplies the same leak.'),
     q('Which sentence is real positioning?', [
       'Premium quality at an affordable price',
-      'The leading provider of coffee solutions',
+      'The leading provider of coffee solutions for homes, offices and cafes across the whole country',
       'Passionate about great coffee since 2011',
       'Roasted Tuesday, in your kitchen Thursday — for people who own a grinder',
     ], 3, 'It names a specific buyer and makes a falsifiable claim, which is exactly what the other three cannot do.'),
     q('Every result for a keyword is a product or category page. What should you build to target it?', [
       'A product or category page, because the results reveal the intent Google has already decided on',
-      'A long-form blog post, which gives more room for the keyword',
+      'A long-form blog post, which gives more room for the keyword and a better chance of naturally earning links',
       'A homepage section, since the homepage is strongest',
       'A PDF guide gated behind an email form',
     ], 0, 'You cannot outrank a page type by offering a different one; matching intent is the entry requirement, not an optimisation.'),
@@ -4195,10 +4195,10 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
       'noindex only works on the homepage',
       'The sitemap is overriding the tag',
       'Googlebot cannot crawl the page, so it never reads the noindex directive',
-      'Canonical tags always take precedence over noindex',
+      'Canonical tags take precedence over noindex, so the page is kept in the index as the canonical',
     ], 2, 'Crawling and indexing are separate steps, and a directive on a page Google is forbidden to fetch can never be seen.'),
     q('PageSpeed Insights shows a Lighthouse score of 96 but the field data fails LCP. Which drives ranking?', [
-      'The Lighthouse score, since it is measured directly',
+      'The Lighthouse score, since it is measured directly under controlled lab conditions on every run',
       'The field data, because it reflects real visitors at the 75th percentile over 28 days',
       'Whichever number is higher',
       'Neither — Core Web Vitals is not a ranking input',
@@ -4206,29 +4206,29 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
     q('Which internal linking change usually produces the biggest gain?', [
       'Adding contextual links from strong pages to pages with fewer than two inlinks',
       'Adding 200 links to the site footer',
-      'Linking every mention of the main keyword to the homepage',
+      'Linking every mention of the main keyword to the homepage, so that it gathers the most anchor text',
       'Nofollowing navigation links to conserve authority',
     ], 0, 'Orphaned and near-orphaned pages are where authority and discovery are missing, and contextual body links carry the most weight.'),
     q('Publishing two posts a week on whatever topic is convenient tends to fail because', [
       'Google penalises frequent publishing',
-      'Posts under 2,000 words cannot rank',
+      'Posts under 2,000 words cannot rank for competitive queries, however well they match search intent',
       'Search Console cannot track more than one post a week',
       'unclustered posts stay orphaned and reinforce no topic, so relevance never accumulates',
     ], 3, 'Relevance builds at the topic level through interlinked clusters, not by adding unrelated pages to a calendar.'),
     q('Untagged links in an email campaign will show up in analytics as', [
       'Organic Search',
-      'Referral from the email provider',
+      'Email, because analytics reads the sender\'s name from the message and files the visit under the Email channel',
       'Direct, because Direct collects any traffic with no identifying source',
       'Paid Social',
     ], 2, 'Direct is the junk drawer for untracked traffic, which is why an unexplained Direct spike usually means a tagging failure.'),
     q('Two advertisers compete: one bids high with a poor landing page, one bids low with a tightly matched ad and page. Who typically wins the position at a lower cost?', [
       'The low bidder, because Quality Score multiplies the bid into a higher Ad Rank',
-      'The high bidder, because auctions are decided by budget',
+      'The high bidder, because auctions are decided by budget and the highest bid takes the top position',
       'Neither — position rotates evenly',
       'Whoever has been advertising longer',
     ], 0, 'Ad Rank is bid multiplied by Quality Score, so relevance functions as a direct discount on cost per click.'),
     q('Which metric best shows that organic social is doing its job?', [
-      'Follower count growth',
+      'Follower count growth, because a larger audience shows that people like the content being posted',
       'Growth in branded search volume and email signups attributable to social',
       'Total impressions per month',
       'Likes per post',
@@ -4241,7 +4241,7 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
     ], 2, 'A handful of extra conversions on a few hundred sessions produces huge percentage swings that carry almost no information.'),
     q('An ad promises "1kg Ethiopian, $28, free delivery". Where should the click land?', [
       'On a page whose headline repeats that promise in the same words, with one action',
-      'On the homepage, because it carries the most authority',
+      'On the homepage, because it carries the most authority and lets visitors browse the whole range',
       'On a blog post about Ethiopian coffee regions',
       'On the category page listing all 12 origins',
     ], 0, 'Message match confirms within seconds that the visitor clicked the right thing, and it lifts Quality Score as well as conversion rate.'),
@@ -4254,10 +4254,10 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
     q('Non-brand search averages a $16 CPA, but the last $500 added cost $23 per customer against a $16 ceiling. What should you do?', [
       'Increase spend, since the average is still under the ceiling',
       'Hold spend where the marginal cost crosses the ceiling, rather than scaling on the average',
-      'Cut the channel entirely, because part of its spend is unprofitable',
+      'Cut the channel entirely, because part of its spend is unprofitable at the current margin level',
       'Move the budget to whichever channel reports the highest ROAS',
     ], 1, 'Scaling decisions are made on the cost of the next customer, not on the blended average of the customers you have already bought.'),
-      q('Log analysis shows filter URLs eating most of the crawl budget, so a team blocks them in robots.txt. Those filtered listings were also the only internal links reaching 12,000 product pages, which remain in the XML sitemap. What happens next?', [
+    q('Log analysis shows filter URLs eating most of the crawl budget, so a team blocks them in robots.txt. Those filtered listings were also the only internal links reaching 12,000 product pages, which remain in the XML sitemap. What happens next?', [
       'The crawl budget freed by the block is reassigned to the product pages, which then rank better',
       'Nothing changes for the products, because a sitemap entry carries the same weight as an internal link',
       'Google keeps following the links on those URLs, since robots.txt governs indexing rather than crawling',
@@ -4306,13 +4306,13 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
       '15%',
     ], 1, 'The steps multiply, so moving one rate from 15% to 18% multiplies orders by 18 / 15 = 1.2, a 20% rise.'),
     q('A new roaster\'s website has only a handful of referring domains. Which keyword should it target first?', [
-      '"coffee": 450,000 searches, results dominated by Wikipedia and news sites',
+      '"coffee": 450,000 searches, and results dominated by Wikipedia, big retailers and news sites',
       '"best coffee grinder": 27,000 searches, top ten are major magazine listicles',
       '"grind size for aeropress": 900 searches, weakest top-ten page has 6 referring domains',
       '"history of coffee": 12,000 searches, weak competition but no buyers at all',
     ], 2, 'The long tail is where a small site wins: a specific, relevant query with weak competition is winnable this year, while the others are unwinnable or worthless to the business.'),
     q('Which alt text best suits a product photo of a 1kg bag of Ethiopian Yirgacheffe beans?', [
-      'Best Ethiopian coffee beans UK buy online cheap free delivery 1kg',
+      'Best Ethiopian coffee beans UK buy online cheap free delivery 1kg Yirgacheffe roasted fresh',
       'Image of product, coffee, beans, bag, Ethiopia, roaster, shop, UK',
       'Photo showing one of the products available in our online shop',
       '1kg bag of Ethiopian Yirgacheffe beans with the roast date on the front',
@@ -4336,7 +4336,7 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
       'A noindex tag on the clean URL so the other versions take over',
     ], 0, 'A canonical tag names the real page among duplicates and consolidates their signals onto it, which is exactly the job here.'),
     q('Shoppers tap Add to basket on mobile and the page takes about 600ms to respond. Which Core Web Vital suffers, and what usually causes it?', [
-      'LCP, usually a hero image far larger than the size it is displayed at',
+      'LCP, usually a hero image far larger than the size it is displayed at on the page',
       'CLS, usually images inserted without any width and height attributes',
       'INP, usually heavy JavaScript such as third-party tags on the main thread',
       'TTFB, usually a slow server that needs better caching or a CDN',
@@ -4348,19 +4348,19 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
       'Freshness, since posts must go out daily',
     ], 0, 'The map pack ranks on relevance, distance and prominence, and distance from the searcher is the one factor a business cannot change from a single address.'),
     q('Which addition gives a grinder buying guide the strongest evidence of first-hand experience?', [
-      'An author box reading "By Admin" added beneath the final paragraph',
+      'An author box reading "By Admin" added beneath the final paragraph of each guide on the site',
       'Photos and sieve results from grinding the same beans through each model tested',
       'A longer introduction defining what a coffee grinder is and does',
       'The main keyword repeated in more of the headings and image names',
     ], 1, 'Experience is shown by evidence that someone actually did the thing, such as original photos and test results, not by bylines or extra words.'),
     q('When writing a measurement plan, where should you start?', [
-      'Every event the analytics tool can track by default',
+      'Every event the analytics tool can track by default, so that nothing is missed later',
       'The metrics competitors publish in their case studies',
       'The business goal and the decision the number will inform',
       'The dashboard layout the team would most like to see',
     ], 2, 'Analytics is worth having only if it changes decisions, so the plan runs from business goal to KPI to event to threshold, never from the tool outward.'),
     q('A customer sees an Instagram post, reads a guide from Google two weeks later, then searches the brand name and buys. What is the risk of relying on last-click attribution here?', [
-      'Instagram gets all the credit, so you over-invest at the top of the funnel',
+      'Instagram gets all the credit, so you over-invest at the top of the funnel and under-fund search',
       'Each touch gets equal credit, so a glance counts as much as a decision',
       'The sale is dropped from the report because it involved several touches',
       'Brand search gets all the credit, so you may cut the channels that created demand',
@@ -4374,17 +4374,17 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
     q('With limited time for email, which work usually earns the most over a year?', [
       'Sending a weekly newsletter blast to the entire list',
       'Testing subject lines until open rates pass 40%',
-      'Buying a large list of verified coffee buyers to mail',
+      'Buying a large list of verified coffee buyers to mail every month for the next year',
       'Setting up welcome, abandoned basket and post-purchase flows',
     ], 3, 'Automated flows are written once and trigger on behaviour for every customer, so they earn more than one-off campaigns, and open rates are an unreliable target anyway.'),
     q('A two-person team is starting on social media. Which approach does the course recommend?', [
       'Two platforms where buyers already are, posting there every week',
-      'Accounts on six platforms, so that no audience is ever missed',
+      'Accounts on six platforms, so that no audience is ever missed and every channel is covered',
       'Offers in every post, since social should drive last-click sales',
       'Occasional posting until the follower count is large enough',
     ], 0, 'Two platforms done consistently beat six done occasionally, chosen by where buyers are and which format the team can sustain weekly.'),
     q('A test runs its full planned sample over two whole weeks. The variant shows a 4% relative lift, but the result is not statistically significant. What is the honest conclusion?', [
-      'Ship the variant anyway, since any positive lift is better than none',
+      'Ship the variant anyway, since any positive lift is better than none and shipping costs nothing',
       'Keep the test running until the variant finally reaches significance',
       'It cannot be told apart from noise, so log it as flat and keep the control',
       'Call it a win, because two full weeks remove all of the noise',
@@ -4396,7 +4396,7 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
       'About 720',
     ], 0, 'With p = 0.10 and d = 0.02, n = 16 × 0.10 × 0.90 / 0.0004 = 3,600 sessions per variant.'),
     q('A checkout makes every buyer create an account before paying. What does the course recommend?', [
-      'Keep the account step but relax the password rules',
+      'Keep the account step but relax the password rules so that signing up feels quicker for buyers',
       'Offer guest checkout and invite account creation after payment',
       'Move account creation to the first page of the site',
       'Add a discount code box to reward people who sign up',
@@ -4414,13 +4414,13 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
       'Splitting it into sessions, conversion and order value, each with an assumption',
     ], 3, 'A forecast is a set of written assumptions about the drivers, so breaking the total into sessions, conversion rate and order value makes each one checkable monthly.'),
     q('A product has en-gb, de-de and fr-fr versions with a complete hreflang set. What is the x-default entry for?', [
-      'The version Google should rank highest in every market',
+      'The version Google should rank highest in every market where the site sells its products',
       'The fallback page for visitors whose language or region is not listed',
       'The page that replaces the canonical tag on all three versions',
       'A marker telling Google which version was published first',
     ], 1, 'x-default names the page to show every visitor who matches none of the listed language and region pairs.'),
     q('A retailer has en-GB and en-US product pages that differ only in spelling. What makes them genuinely separate pages rather than duplicates?', [
-      'Rewriting every heading so the wording differs by at least half',
+      'Rewriting every heading so the wording differs by at least half, with a new meta description',
       'A noindex tag on one version so that only the other one ranks',
       'Hosting the US version on a server located in the United States',
       'Market-specific prices, currency, delivery terms and returns policy',
@@ -4433,7 +4433,7 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
     ], 0, 'In basic mode tags do not load until someone accepts, so a visitor who declines produces no data; the cookieless ping belongs to advanced mode.'),
     q('A wholesale deal closes six weeks after an enquiry that came from a Google Ads click. What must be uploaded so the ad platform can learn from the sale?', [
       'The customer\'s company name and the sales rep who closed the deal',
-      'A screenshot of the CRM record showing the deal marked as won',
+      'A screenshot of the CRM record showing the deal marked as won, with the close date visible',
       'The gclid from that click, with the conversion time and the deal value',
       'The landing page URL and the keyword the rep believes was used',
     ], 2, 'Offline conversion upload matches the stored click identifier to the original click, and the value lets bidding optimise to revenue instead of form fills.'),
@@ -4444,7 +4444,7 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
       'About 13.6',
     ], 0, 'Incremental revenue is 400 × $34 = $13,600, and dividing by the $10,000 spend gives an incremental ROAS of about 1.36.'),
     q('When choosing regions for a geo holdout test, which approach does the course recommend?', [
-      'Put the biggest cities in the test group so the effect is easy to spot',
+      'Put the biggest cities in the test group so the effect is easy to spot and the lift is larger',
       'Pair regions with similar volume, trend and seasonality, then randomise within pairs',
       'Choose regions that sit next to each other, since geography drives buying',
       'Let the ad platform choose the regions, since it knows its own audiences',
@@ -4458,17 +4458,17 @@ Write the ceiling table with your own numbers and circle the row that fits. Then
     q('A dashboard shows the March cohort\'s cumulative repeat rate at 31% in month 4 and 28% in month 5. What does that tell you?', [
       'Three per cent of the cohort churned between month 4 and month 5',
       'The cohort is discount-dependent and has now started to lapse',
-      'Retention is healthy, because the curve is settling into a floor',
+      'Retention is healthy, because the curve is settling into a floor and the dip is only noise',
       'The chart is wrong, because a cumulative repeat rate can never fall',
     ], 3, 'Cumulative repeat rate counts everyone who has ever ordered again by month N, so it can only rise; a fall means the chart is showing something else or is miscalculated.'),
     q('A roaster wants AI assistants to name it when people ask for the best coffee subscription. Where does most of that work happen?', [
-      'In hidden text on its homepage listing every phrasing of the question',
+      'In hidden text on its homepage listing every phrasing of the question that buyers might type',
       'In third-party sources the assistants draw on, such as roundups and forums',
       'In blocking AI crawlers so assistants must send people to the site',
       'In buying search ads on the query, which assistants copy into answers',
     ], 1, 'Assistants repeat the consensus of pages that are mostly not yours, so the job is being named accurately in the roundups, reviews and forums they draw on.'),
     q('Traffic has grown steadily for six months, but orders have not. Which growth ceiling is this, and where is the work?', [
-      'Channel: move budget into a brand new paid channel',
+      'Channel: move budget into a brand new paid channel to find buyers who are not yet reached',
       'Demand: expand into a new segment or geography',
       'Retention: lifecycle emails and reorder frequency',
       'Conversion: message match and checkout fixes on the site',

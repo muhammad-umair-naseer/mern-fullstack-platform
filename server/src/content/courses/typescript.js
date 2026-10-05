@@ -5747,7 +5747,7 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
   ],
   final: [
     q('TypeScript catches a bug that JavaScript would only surface at runtime. When does the check happen?', [
-      'At runtime, via generated assertions',
+      'At runtime, via assertions that the compiler generates for each annotated function parameter',
       'At compile time only — types are erased and nothing is checked while the program runs',
       'On the first call to the function',
       'Whenever a value crosses a module boundary',
@@ -5762,11 +5762,11 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
       'A type alias — interfaces can only describe object shapes',
       'An interface with optional properties',
       'A Record with boolean values',
-      'An enum, since unions cannot hold strings',
+      'An enum, since unions cannot hold string values and enums compile to a lookup object',
     ], 0, 'Only a type alias can name a union; interfaces are limited to object shapes and merging.'),
     q('A state type uses loading, data, and error as independent optional fields. What is the core problem?', [
       'Optional fields are slower to check',
-      'The fields cannot be narrowed with typeof',
+      'The fields cannot be narrowed with typeof, so the compiler cannot tell which of the three is set',
       'It permits impossible combinations, so every consumer must defensively guess the real state',
       'TypeScript cannot infer optional properties',
     ], 2, 'Three independent flags encode eight states when only a few are real; a discriminated union makes the rest unrepresentable.'),
@@ -5774,25 +5774,25 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
       'A default branch that throws',
       'Assigning the value to a never-typed variable in the default branch',
       'Marking the discriminant as readonly',
-      'Annotating each case with its variant type',
+      'Annotating each case with its variant type so the compiler checks every branch for you',
     ], 1, 'Once every known case is handled the value narrows to never, so an unhandled variant no longer fits that assignment.'),
     q('A narrowed session.user is read after a call that may have set it to null, and TypeScript reports nothing. The cleanest fix is to', [
       'destructure user into a const local before the check',
-      'add a non-null assertion with session.user!.name',
+      'add a non-null assertion with session.user!.name inside the handler after the call returns',
       'cast with as User',
       'wrap logVisit in a try/catch',
     ], 0, 'TypeScript keeps property narrowings across calls, so the guarantee only becomes real once the value lives in a const local nothing else can reassign.'),
     q('Which type should you use for a value from an untrusted source before validating it?', [
       'any, so you can inspect it freely',
       'object, to guarantee it is not a primitive',
-      'never, since its type is not yet established',
+      'never, since its type is not yet established and no operation on it is allowed yet',
       'unknown, which accepts any value but permits no operations until narrowed',
     ], 3, 'unknown forces a narrowing step, whereas any silently disables checking for everything derived from the value.'),
     q('function first<T>(arr: T[]): T | undefined — what does the type parameter accomplish?', [
       'It makes the function faster for large arrays',
       'It constrains arr to arrays of objects',
       'It links the input element type to the return type, so the caller keeps full type information',
-      'It allows the function to be called without arguments',
+      'It allows the function to be called without arguments by supplying an empty array as its default value',
     ], 2, 'A type parameter earns its place by appearing in at least two positions and relating them.'),
     q('You need the shape a create endpoint accepts: User without its server-generated id. Which is best?', [
       'Omit<User, "id">',
@@ -5804,7 +5804,7 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
       'wrapping setUser in useCallback',
       'useState<User | null>(null), because inference takes the state type from the initial value',
       'moving the state into useReducer',
-      'initialising with undefined instead of null',
+      'initialising with undefined instead of null, because setUser rejects values that are not undefined',
     ], 1, 'null and [] infer to useless types, so those two initial values need an explicit type argument.'),
     q('type ToArray<T> = T extends unknown ? T[] : never. What does ToArray<string | number> evaluate to?', [
       '(string | number)[]',
@@ -5827,10 +5827,10 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
     q('A refactor silently changes a helper\'s return type to any and every runtime test still passes. What catches it?', [
       'Adding more assertions about the returned value',
       'A type-level assertion such as expectTypeOf(...).not.toBeAny() checked by tsc in CI',
-      'Enabling sourceMap so stack traces point at the source',
+      'Enabling sourceMap so that stack traces and type errors both point back at the original source files',
       'Running tsc in watch mode during development',
     ], 1, 'Runtime tests cannot observe types, so only an assertion evaluated by the type checker can fail when a signature degrades to any.'),
-      q('A schema gives `theme` a `.default(\'light\')` and reads `retries` with `.transform(Number)`. You type your SDK\'s options parameter as `z.infer<typeof schema>`, and callers now report that they are forced to pass `theme` and that their `retries` string is rejected. What went wrong?', [
+    q('A schema gives `theme` a `.default(\'light\')` and reads `retries` with `.transform(Number)`. You type your SDK\'s options parameter as `z.infer<typeof schema>`, and callers now report that they are forced to pass `theme` and that their `retries` string is rejected. What went wrong?', [
       '`.default()` and `.transform()` only take effect under `safeParse`, so the SDK has to parse before the two ends agree.',
       'The schema needs `as const` before inference runs, otherwise keys with defaults are emitted as required properties.',
       '`z.infer` is the output type, which describes data after parsing, so the callable surface should use `z.input` instead.',
@@ -5903,7 +5903,7 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
       'never',
     ], 2, 'The in operator narrows a union to the members that declare that property, so only Fish remains in the true branch and Bird in the else branch.'),
     q('`document.getElementById(\'app\')!.append(el)` compiles. What does the `!` do if the element is missing at runtime?', [
-      'It creates an empty element so that append still succeeds',
+      'It creates an empty element so that append still succeeds without any error being reported',
       'Nothing: it is erased, so append throws a TypeError on null',
       'It skips the append call, as optional chaining would',
       'It throws a descriptive assertion error before append runs',
@@ -5929,7 +5929,7 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
     q('`function len<T>(x: T) { return x.length; }` is rejected. Which change fixes it while keeping the function generic and type-safe?', [
       'Annotate the return type of len as number',
       'Constrain the parameter: <T extends { length: number }>',
-      'Call it as len<string>(...) at every call site',
+      'Call it as len<string>(...) at each call site so T is known to be a string there',
       'Give the parameter a default: <T = string>',
     ], 1, 'Without a constraint T could be any type, so .length is not known to exist; the constraint admits only types with a numeric length while still preserving the caller\'s own type.'),
     q('`const users = ids.map(async (id) => getUser(id));` where getUser returns `Promise<User>`. What is the type of users?', [
@@ -5969,14 +5969,14 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
       'never',
     ], 0, 'The conditional type distributes over the union: \'user_42\' matches the pattern and yields \'42\', while \'order_7\' does not and yields never, which drops out of the result.'),
     q('What does `skipLibCheck: true` give up in exchange for faster type-checking?', [
-      'Types from node_modules are ignored, so imports become any',
+      'Types from node_modules are ignored, so imports from those packages become any and lose autocomplete',
       'Your own .ts source files are no longer type-checked',
       'Errors inside .d.ts files, including your own, go unreported',
       'Declaration files are no longer emitted for your package',
     ], 2, 'skipLibCheck skips checking the contents of declaration files while still using their types, so a mistake inside any .d.ts, yours included, is no longer reported.'),
     q('Why pin `typescript` to an exact version such as 5.6.3 in devDependencies rather than a caret range?', [
       'npm ignores caret ranges for anything in devDependencies',
-      'Exact versions make tsc check the project noticeably faster',
+      'Exact versions make tsc check the project noticeably faster, since no range has to be resolved',
       'Editors refuse to load a TypeScript installed from a range',
       'A minor release can add errors, so a fresh install may break',
     ], 3, 'Minor TypeScript releases routinely tighten inference, so a caret range lets a machine without the lockfile pull a newer compiler and see errors nobody else has.'),
@@ -5988,24 +5988,24 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
     ], 1, 'safeParse never throws; it returns { success: true, data } or { success: false, error }, so the handler can branch to a 400 with the issues.'),
     q('Where in an application should incoming JSON be parsed with a schema?', [
       'Once, at the boundary where it enters, so inner code gets typed values',
-      'Inside every function that reads it, just before each use',
+      'Inside every function that reads it, just before each use, in case callers passed bad data',
       'Only in tests, since types already cover production code',
       'In the database layer, after the data has been stored',
     ], 0, 'Parsing at the edge turns untrusted input into a checked value once, so everything inside can rely on its type; scattered checks let one path skip them.'),
     q('`[1, 2, 3].forEach((n) => console.log(n))` passes a one-parameter callback where forEach supplies three arguments. Why does it compile?', [
-      'forEach is declared with any, so its callback is never checked',
+      'forEach is declared with any, so its callback is never checked against the arguments it receives',
       'Extra arguments are only an error when strict mode is off',
       'TypeScript rewrites the callback to accept all three arguments',
       'Callbacks may declare fewer parameters than are passed to them',
     ], 3, 'Ignoring extra arguments is always safe in JavaScript, so a function with fewer parameters is assignable to a function type that supplies more.'),
     q('`const handlers: Array<() => void> = [() => 42];` compiles. Why?', [
       '42 is converted to undefined when the array is created',
-      'Arrays of functions are never checked for their return types',
+      'Arrays of functions are never checked for their return types when the array literal is built',
       'A void return in a function type means the result is ignored',
       'void is treated as an alias of any in return positions',
     ], 2, 'A function type returning void promises only that callers will not use the result, so a function that returns something is still assignable and its value is simply ignored.'),
     q('`const DEFAULTS = Object.freeze({ headers: { auth: \'\' } });` Later, a handler runs `DEFAULTS.headers.auth = token;`. What happens?', [
-      'TypeScript rejects it, since freeze makes every level readonly',
+      'TypeScript rejects it, since freeze makes every level readonly, nested objects included',
       'It compiles and runs; freeze is shallow, so headers still changes',
       'It compiles, then throws at runtime because headers is frozen',
       'It compiles, but the write is silently dropped at runtime',
@@ -6032,7 +6032,7 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
       'The function cannot be called from outside the package',
       'They cannot name the type to annotate their own variables',
       'TypeScript treats the options parameter as any for them',
-      'Their builds fail until they install the package\'s source',
+      'Their builds fail until they install the package\'s source files alongside the compiled output',
     ], 1, 'Callers can still pass an object literal, but to store options in a variable or wrap the function they must resort to Parameters<typeof fn>[0]; exporting the type fixes that.'),
     q('A ts-morph codemod runs without errors and logs every rename, but no file on disk has changed. What was most likely left out?', [
       'Running tsc --noEmit before the codemod started',
@@ -6041,7 +6041,7 @@ Generate the key union into a \`.d.ts\` so a typo fails the build, and run the p
       'Calling await project.save() after making the edits',
     ], 3, 'ts-morph applies edits to its in-memory project, and nothing is written to disk until project.save() (or a source file\'s save) is called.'),
     q('A codemod selects calls with `call.getExpression().getText() === \'track\'`. What does that get wrong?', [
-      'Calls inside template literals, which the AST does not contain',
+      'Calls inside template literals, which the AST does not contain, so the codemod skips them',
       'Nothing, since getText resolves the symbol behind the name',
       'It misses aliased imports and matches unrelated functions named track',
       'It only fails for .tsx files, which ts-morph cannot parse',

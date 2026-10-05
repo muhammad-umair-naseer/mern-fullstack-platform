@@ -4694,8 +4694,8 @@ System design is never finished. New tools appear, scales grow, and every real s
       'Adding an optional query parameter',
     ], 2, 'Removing a field breaks clients that depend on it, so it is a breaking change.'),
     q('How does an idempotency key prevent duplicate orders on retry?', [
-      'It blocks all retries',
-      'It makes the network reliable',
+      'It blocks all retries from the client app, so duplicates cannot arrive',
+      'It makes the network reliable enough that the client stops needing to retry',
       'It speeds up the database',
       'The server returns the original result for a repeated key',
     ], 3, 'Recognised keys replay the first response instead of creating another order.'),
@@ -4708,12 +4708,12 @@ System design is never finished. New tools appear, scales grow, and every real s
     q('A large table query shows a sequential scan. What is the likely fix?', [
       'Add more OFFSET',
       'Remove all indexes',
-      'Switch to a graph database',
+      'Switch the table to a graph database so that scans are avoided',
       'Add an index on the filtered column',
     ], 3, 'Sequential scans on big tables usually mean the filter lacks a suitable index.'),
     q('What is a cache stampede?', [
       'Many simultaneous misses after a hot key expires',
-      'A cache running out of disk space',
+      'A cache running out of disk space and evicting its newest entries',
       'Two caches sharing the same key',
       'A CDN purging all of its content',
     ], 0, 'Expiry of a popular key can flood the database with identical queries at once.'),
@@ -4725,8 +4725,8 @@ System design is never finished. New tools appear, scales grow, and every real s
     ], 1, 'A new build yields a new name, so old cached versions are never served.'),
     q('What must be true for a service to scale horizontally?', [
       'It runs on one very large server',
-      'It keeps sessions in local memory',
-      'Any instance can handle any request, with state stored elsewhere',
+      'It keeps sessions in local memory so each instance can answer faster',
+      'Any instance can serve any request, with state held elsewhere',
       'It avoids databases',
     ], 2, 'Stateless, interchangeable instances behind a load balancer are the basis of scaling out.'),
     q('What happens when a consumer crashes before acknowledging a message?', [
@@ -4743,12 +4743,12 @@ System design is never finished. New tools appear, scales grow, and every real s
     ], 3, 'Reliable delivery avoids loss at the cost of occasional duplicates, so consumers must be idempotent.'),
     q('A user updates their profile and immediately sees old data. What is the likely cause?', [
       'The read came from a lagging replica',
-      'The write was rejected',
+      'The write was rejected, so the old profile stayed in the database',
       'The cache was too large',
       'The load balancer failed',
     ], 0, 'Asynchronous replication means replicas briefly hold older data than the primary.'),
     q('Why is city a poor shard key for a Pakistan-wide service?', [
-      'Cities cannot be hashed',
+      'Cities cannot be hashed, so rows could not be assigned to shards',
       'It has too many values',
       'A few cities carry most traffic, creating hot shards',
       'Cities change names often',
@@ -4760,13 +4760,13 @@ System design is never finished. New tools appear, scales grow, and every real s
       'Reads and writes',
     ], 1, 'Partition tolerance is mandatory, so the trade-off is consistency versus availability when partitions occur.'),
     q('What is a compensating action in a saga?', [
-      'A retry of the failed step',
+      'A retry of the failed step, repeated until the service finally recovers',
       'A distributed lock',
       'A step that undoes an earlier completed step',
       'A database backup',
     ], 2, 'Sagas reverse completed steps through explicit compensations instead of rolling back a transaction.'),
     q('What does an open circuit breaker do?', [
-      'Sends all calls to the dependency immediately',
+      'Sends all calls to the dependency immediately, to find out whether it has recovered',
       'Doubles the timeout',
       'Restarts the dependency',
       'Fails calls fast without contacting the dependency for a cooling period',
@@ -4780,20 +4780,20 @@ System design is never finished. New tools appear, scales grow, and every real s
     q('What is an error budget?', [
       'The cost of bug fixes',
       'The amount of failure an SLO allows over its period',
-      'The number of servers allowed to fail',
+      'The number of servers allowed to fail before an outage is declared',
       'A customer penalty',
     ], 1, 'A 99.9% SLO permits 0.1% failures, which teams can spend on risk and change.'),
     q('In a news feed, how is the celebrity fan-out problem handled?', [
       'Celebrities are blocked from posting',
       'Every follower\'s feed is written synchronously',
       'Their posts are pulled at read time instead of pushed to all followers',
-      'Their posts are stored in a separate database only',
+      'Their posts are stored in a separate database and left out of follower feeds',
     ], 2, 'A hybrid pulls high-follower accounts\' posts while pushing for normal accounts.'),
     q('What should follow every technology mentioned in a design interview?', [
       'Its version number',
       'Its price',
       'The requirement that justifies choosing it',
-      'A diagram of its internals',
+      'A diagram of its internals, drawn on the whiteboard in full detail',
     ], 2, 'Tying choices to requirements is what turns assertions into reasoning.'),
     q('A photo app receives 5 million uploads a day, averaging 2 MB each. Roughly how much new storage does it need per year, before any replication?', [
       'About 3.6 PB',
@@ -4841,7 +4841,7 @@ System design is never finished. New tools appear, scales grow, and every real s
       'Add more read replicas so that the full scan is shared out',
       'Rebuild the existing index on email every night',
       'Index the expression LOWER(email), or store emails already normalised',
-      'Put email first in every composite index on the table',
+      'Put email first in every composite index on the table, whatever the query',
     ], 2, 'A function applied to an indexed column means the plain index no longer matches, so index the expression itself or normalise the stored value.'),
     q('A wide-column table of sensor readings is partitioned by device_id and clustered by timestamp. Someone asks for every reading above 90°C across all devices last week. What is the problem?', [
       'The query ignores the partition key, so it must scan every partition',
@@ -4893,7 +4893,7 @@ System design is never finished. New tools appear, scales grow, and every real s
     ], 2, 'Ordering is guaranteed only within a partition, so keying by order ID keeps each order in sequence while spreading orders across partitions.'),
     q('For which workload is at-most-once delivery a reasonable choice?', [
       'Live-stream comments, where dropping a few during a spike is fine',
-      'Payment confirmations that must never be lost',
+      'Payment confirmations that must never be lost, even during a traffic spike',
       'One-time SMS passcodes that users need to log in',
       'Order records that finance reconciles each month',
     ], 0, 'At-most-once can lose messages, so it suits only data where occasional loss is acceptable and speed matters more.'),
@@ -4901,10 +4901,10 @@ System design is never finished. New tools appear, scales grow, and every real s
       'Add read replicas to the partition that holds the counter',
       'Split the key with a random suffix across partitions and sum on read',
       'Raise the counter\'s TTL so that it is written less often',
-      'Move the counter next to the post\'s comments on one partition',
+      'Move the counter next to the post\'s comments on one partition, to keep them together',
     ], 1, 'Appending a random suffix spreads one logical key across several partitions, and reads merge the pieces, which suits counters and append-heavy data.'),
     q('Logs are sharded by the hour in which they were written. What goes wrong as traffic grows?', [
-      'Old shards fill up faster than the newest one',
+      'Old shards fill up faster than the newest one, which sits almost empty',
       'Queries for a single hour must visit every shard',
       'Every current write lands on the shard holding the current hour',
       'Hourly keys collide once the date rolls over',
@@ -4941,7 +4941,7 @@ System design is never finished. New tools appear, scales grow, and every real s
     ], 2, 'Load shedding drops the lowest-priority work first, keeping orders and payments served while recommendations and analytics can wait.'),
     q('Which is the best SLI for a checkout journey?', [
       'Share of checkout requests succeeding within 300 ms, measured at the edge',
-      'Average CPU utilisation across all of the checkout servers',
+      'Average CPU utilisation across all of the checkout servers during the busiest hour',
       'Number of checkout deployments that completed each week',
       'Mean query time on the orders table in the database',
     ], 0, 'An SLI should measure what users experience, as close to them as possible, and users do not experience CPU or query times directly.'),
@@ -4953,7 +4953,7 @@ System design is never finished. New tools appear, scales grow, and every real s
     ], 1, 'The budget is the 0.05% that may fail, and 0.0005 × 50 million is 25,000 requests.'),
     q('A phone loses signal without ever closing its chat connection. How does the system eventually show that user as offline?', [
       'The server polls every client\'s phone directly once a minute',
-      'The connection always sends a close frame when signal is lost',
+      'The connection always sends a close frame when signal is lost, and the server sees it',
       'Heartbeats refresh a presence key with a short expiry, which lapses',
       'Other users\' clients report the user offline to the server',
     ], 2, 'Presence is kept alive by heartbeats and stored with a short expiry, so when heartbeats stop the key expires and the user shows as offline.'),
@@ -4971,7 +4971,7 @@ System design is never finished. New tools appear, scales grow, and every real s
     ], 1, 'Deep dives should go to the hardest problem specific to the system, and for ride-hailing that is locating nearby drivers and matching them.'),
     q('What belongs in the last few minutes of a system design interview?', [
       'A new component that was never discussed, to show extra breadth',
-      'A switch to a different architecture that you now happen to prefer',
+      'A switch to a different architecture that you now happen to prefer over the first',
       'Silence, so that the interviewer can decide on the next topic',
       'A summary, the key trade-offs, the main risks and next improvements',
     ], 3, 'The wrap-up summarises the design, restates its trade-offs and names its risks and what you would improve with more time.'),

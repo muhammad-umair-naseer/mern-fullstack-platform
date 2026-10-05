@@ -5514,18 +5514,21 @@ There is no percentage rollout on wordpress.org and no remote button that revert
       'Directly in wp-config.php',
     ], 1, 'init runs after WordPress loads but before the URL is parsed into the main query, which routing and rewrite rules depend on.'),
     q('Which template does WordPress use for a single "event" post when single-event.php does not exist?', [
-      'archive-event.php', 'page.php', 'single.php', '404.php',
+      'archive-event.php',
+      'page.php',
+      'single.php',
+      '404.php',
     ], 2, 'The hierarchy falls from the most specific name to single.php, then singular.php, and only then index.php.'),
     q('Why is wp_reset_postdata() required after a secondary WP_Query loop?', [
-      'It frees database connections',
-      'It restores the global $post so later template tags describe the right post',
+      'It frees database connections held open by the secondary query\'s results',
+      'It restores the global $post so later template tags use the right post',
       'It clears the object cache',
       'It re-runs the main query',
     ], 1, 'The secondary loop leaves the global $post on its last result, so everything after it silently renders that post.'),
     q('A filter callback returns nothing on one branch. What happens?', [
       'WordPress keeps the original value',
-      'The next filter in the chain is skipped',
-      'null replaces the value, so the output disappears on that path',
+      'The next filter in the chain is skipped and the original value returned',
+      'null replaces the value, so output disappears on that path',
       'A fatal error is thrown',
     ], 2, 'apply_filters uses whatever the callback returns, and a missing return means null.'),
     q('Which enqueue helper resolves to the child theme when one is active?', [
@@ -5536,9 +5539,9 @@ There is no percentage rollout on wordpress.org and no remote button that revert
     ], 1, 'get_template_* always points at the parent; get_stylesheet_* points at the active theme.'),
     q('Why use get_template_part() rather than include() for a reusable fragment?', [
       'It is faster',
-      'It lets a child theme override the file and fires the associated hooks',
-      'It automatically escapes output',
-      'include() does not work inside the Loop',
+      'It lets a child theme override the file and fires related hooks',
+      'It automatically escapes all output printed inside the template part',
+      'include() does not work inside the Loop or in child themes',
     ], 1, 'get_template_part() runs the theme lookup, so child themes can replace the fragment; a hardcoded include cannot be overridden.'),
     q('You need to filter thousands of posts by an attribute users browse. Best model?', [
       'Post meta with a meta_query',
@@ -5547,8 +5550,8 @@ There is no percentage rollout on wordpress.org and no remote button that revert
       'A serialised array in wp_options',
     ], 1, 'Term relationships are indexed and built for grouping; meta_value has no index and degrades as content grows.'),
     q('What does omitting permission_callback from register_rest_route cause?', [
-      'The route returns a 404',
-      'The route is effectively public and WordPress reports incorrect usage',
+      'The route returns a 404 until a permission_callback is registered later',
+      'The route is effectively public and WordPress logs incorrect usage',
       'The args array is ignored',
       'The response is not cached',
     ], 1, 'permission_callback is the route\'s only authorisation gate, so leaving it out exposes the endpoint to anyone.'),
@@ -5565,31 +5568,31 @@ There is no percentage rollout on wordpress.org and no remote button that revert
       'Flushing rewrite rules',
     ], 1, 'A nonce proves the request origin; only a capability check proves the user is allowed to perform the action.'),
     q('Where does a static block\'s markup actually live?', [
-      'In post_content, which is why changing save() invalidates every existing instance',
-      'In wp_postmeta, keyed by the block name',
+      'In post_content, so changing save() invalidates every existing instance',
+      'In wp_postmeta, keyed by the block name and the post ID of each page using it',
       'In the styles section of theme.json',
       'In the render file named by block.json',
     ], 0, 'Static blocks serialise their HTML into the post, so the editor compares a fresh save() against the stored markup and flags any difference.'),
     q('What does declaring a colour palette in theme.json give you that add_theme_support("editor-color-palette") does not?', [
-      'Automatic regeneration of existing image sizes',
+      'Automatic regeneration of existing image sizes and thumbnails whenever the palette changes',
       'Support for the classic editor',
-      'Preset CSS custom properties and utility classes applied in both the editor and the front end',
+      'Preset CSS custom properties and utility classes in both editor and front end',
       'A REST endpoint returning the palette',
     ], 2, 'theme.json presets emit --wp--preset--color--* variables and has-*-color classes everywhere, and they supersede the older add_theme_support call entirely.'),
     q('You are copying a production database down to staging. Which step must not be skipped?', [
       'Regenerating thumbnails',
-      'Deactivating every plugin',
+      'Deactivating every plugin and switching to a default theme before the copy',
       'Clearing the browser cache',
-      'A serialisation-aware search-replace of the domain, followed by a rewrite flush',
+      'A serialisation-aware search-replace of the domain, then a rewrite flush',
     ], 3, 'URLs are stored throughout the database including inside serialised options, and only a serialisation-aware replace rewrites them without corrupting the values.'),
     q('A live site goes blank straight after a plugin update. What is the correct first move?', [
       'Reinstall WordPress core',
       'Read debug.log and the PHP error log, then bisect by deactivating plugins with WP-CLI',
-      'Enable WP_DEBUG_DISPLAY so visitors can report the message',
+      'Enable WP_DEBUG_DISPLAY on the live site so visitors can report the exact error message they see',
       'Increase posts_per_page on the affected archive',
     ], 1, 'A white screen is a hidden fatal error, and the logs name the exact file and line before any guessing starts.'),
-      q('A team is converting slow integration tests into fast unit tests that stub get_post_meta() with Brain Monkey. Which of these tests loses essentially all of its value in that conversion?', [
-      'One asserting that a sold count above the seat count still reads as sold out',
+    q('A team is converting slow integration tests into fast unit tests that stub get_post_meta() with Brain Monkey. Which of these tests loses essentially all of its value in that conversion?', [
+      'One asserting that a sold count above the seat count still reads as sold out, not negative',
       'One asserting the save handler stores the seat count under the key the badge reads',
       'One asserting the urgency label appears once ten or fewer seats remain unsold',
       'One asserting the label reads as available while most of the seats are unsold',
@@ -5739,15 +5742,15 @@ There is no percentage rollout on wordpress.org and no remote button that revert
       'WP_ENVIRONMENT_TYPE',
     ], 3, 'WP_ENVIRONMENT_TYPE, set to local, development, staging or production, is what wp_get_environment_type() reports, so code can behave differently per environment.'),
     q('What does Brain Monkey let a WordPress unit test do?', [
-      'Stub WordPress functions such as get_post_meta without loading WordPress',
-      'Run the test inside a real browser against a live WordPress install',
+      'Stub WordPress functions like get_post_meta without loading WordPress',
+      'Run the test inside a real browser against a live WordPress install on staging',
       'Create posts in a real database and roll them back after each test',
       'Check that PHP files follow the WordPress coding standards',
     ], 0, 'Brain Monkey fakes WordPress functions and hooks so plain PHP logic can be tested in milliseconds without booting WordPress or a database.'),
     q('cortex_event_badge( $post_id ) reads two meta values and then decides which badge label to show. Which change makes the decision logic testable with plain PHPUnit?', [
       'Call the function from a browser test instead of a unit test',
-      'Add a global flag that skips get_post_meta while tests are running',
-      'Move the decision into a function that takes the two values as arguments',
+      'Add a global flag that makes the function skip get_post_meta while tests run',
+      'Move the decision into a function taking the two values as arguments',
       'Load WordPress inside every unit test so get_post_meta works',
     ], 2, 'Splitting the pure decision from the WordPress calls lets you test it with plain values and no WordPress at all, while the thin wrapper that reads meta is covered by integration tests.'),
     q('composer.json maps the namespace prefix Cortex\\Events\\ to the src/ folder under psr-4. Where must the class Cortex\\Events\\Admin\\SettingsPage live?', [
@@ -5777,7 +5780,7 @@ There is no percentage rollout on wordpress.org and no remote button that revert
     q('A fully cached product page must still greet the logged-in visitor by name and show their cart count. What does the course recommend?', [
       'Turn off page caching for the product page entirely',
       'Cache the shell and fill those slots from an uncached REST call',
-      'Cache one copy of the page per visitor, keyed by their cookie',
+      'Write the first visitor\'s name and cart count into the shared cached copy that everyone then receives',
       'Print the greeting from PHP and set a longer cache lifetime',
     ], 1, 'Caching the shared page for everyone and loading the few personal bits through one small uncached request keeps the page cacheable without leaking anyone\'s details.'),
     q('Behind your load balancer, why should the code trust only the X-Forwarded-For hop that your own balancer appended?', [

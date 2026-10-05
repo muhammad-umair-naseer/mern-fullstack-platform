@@ -4774,20 +4774,20 @@ The most valuable data engineers are not those who know the most tools, but thos
     q('What is the main job of a data engineer?', [
       'Designing company logos',
       'Building systems that deliver trustworthy data',
-      'Training every machine learning model',
+      'Training every machine learning model in the company',
       'Managing office networks',
     ], 1, 'Data engineers build and run the pipelines and platform others rely on.'),
     q('Why keep raw source data unchanged in the platform?', [
       'Raw data is faster to query',
-      'Warehouses cannot edit tables',
+      'Warehouses cannot edit tables after the first load completes',
       'Analysts prefer raw tables',
-      'Transformations can be fixed and re-run from the original',
+      'Transformations can be fixed and re-run from source',
     ], 3, 'Preserving raw copies makes every later layer reproducible.'),
     q('Joining orders to order items before summing order totals causes what problem?', [
       'Totals are inflated by fan-out',
       'The query fails to run',
       'NULLs replace every total',
-      'Rows are dropped silently',
+      'Rows are dropped silently when the keys repeat',
     ], 0, 'One-to-many joins repeat order values per item; aggregate the many side first.'),
     q('In a star schema, what must be declared for every fact table?', [
       'Its colour',
@@ -4810,8 +4810,8 @@ The most valuable data engineers are not those who know the most tools, but thos
     q('What is the rule every load should follow?', [
       'Run only once per day',
       'Always reload the full table',
-      'Advance the watermark before loading',
-      'Safe to run twice and possible for any past window',
+      'Advance the watermark before loading, to save time on retries',
+      'Safe to run twice, for any past window',
     ], 3, 'Idempotent, window-based loads recover from failures by re-running.'),
     q('Why is Parquet the standard format for analytical files?', [
       'It is human-readable in text editors',
@@ -4827,7 +4827,7 @@ The most valuable data engineers are not those who know the most tools, but thos
     ], 0, 'A metadata layer gives database-like guarantees on open storage.'),
     q('What does partition pruning achieve?', [
       'Deleting old partitions',
-      'Compressing each partition',
+      'Compressing each partition to reduce storage and query time',
       'Reading only partitions that match the filter',
       'Sorting rows within files',
     ], 2, 'Skipping irrelevant partitions is the biggest saving for large tables.'),
@@ -4844,7 +4844,7 @@ The most valuable data engineers are not those who know the most tools, but thos
       'relationships',
     ], 3, 'The relationships test enforces referential integrity between models.'),
     q('Why should Airflow tasks use the data interval instead of the current time?', [
-      'The current time is unavailable',
+      'The current time is unavailable inside scheduled tasks',
       'Intervals make tasks faster',
       'Airflow blocks the system clock',
       'Backfills then process exactly the right period',
@@ -4858,8 +4858,8 @@ The most valuable data engineers are not those who know the most tools, but thos
     q('Why do stream processors need watermarks?', [
       'To encrypt events',
       'To compress state',
-      'To decide when a window is complete despite late events',
-      'To choose the partition count',
+      'To decide when a window can close despite late events',
+      'To choose how many partitions the output topic should have',
     ], 2, 'Watermarks balance completeness against latency for event-time windows.'),
     q('Which failure succeeds technically but produces wrong numbers?', [
       'A missing password',
@@ -4869,12 +4869,12 @@ The most valuable data engineers are not those who know the most tools, but thos
     ], 1, 'Duplicate loads pass every task while doubling totals.'),
     q('What do data contracts mainly prevent?', [
       'Producers breaking data that others depend on',
-      'Slow dashboards',
+      'Slow dashboards when many analysts query at once',
       'High storage costs',
       'Missing documentation colours',
     ], 0, 'Explicit, owned interfaces stop upstream changes from silently breaking consumers.'),
     q('What is the first step in controlling cloud data costs?', [
-      'Shrinking every compute size',
+      'Shrinking every compute size to the smallest option',
       'Deleting all dashboards',
       'Moving data to spreadsheets',
       'Making spend visible by team and pipeline',
@@ -4886,7 +4886,7 @@ The most valuable data engineers are not those who know the most tools, but thos
       'Copied into source code',
     ], 1, 'Lookup-optimised stores give low latency and protect the warehouse.'),
     q('What causes data leakage in a training dataset?', [
-      'Encrypting training data',
+      'Encrypting training data with a key the model cannot see',
       'Using Type 2 dimensions',
       'Using information from after the prediction moment',
       'Sampling rows randomly',
@@ -4907,13 +4907,13 @@ The most valuable data engineers are not those who know the most tools, but thos
       'SUM(amount) OVER (PARTITION BY customer_id ORDER BY order_date)',
       'SUM(amount) OVER (PARTITION BY customer_id, order_date)',
       'SUM(amount) OVER (ORDER BY customer_id, order_date)',
-      'SUM(amount) OVER (PARTITION BY order_date ORDER BY customer_id)',
+      'SUM(amount) OVER (PARTITION BY order_date ORDER BY customer_id, order_id)',
     ], 0, 'PARTITION BY customer_id restarts the sum for each customer and ORDER BY order_date makes it cumulative; the other forms either never accumulate or run across customers.'),
     q('`SELECT c.customer_id, o.order_id FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = \'paid\'` should list every customer, with paid orders where they exist. Customers with no orders are missing. Why?', [
       'A LEFT JOIN keeps only customers matching at least one order',
       'The query needs DISTINCT to keep customers without orders',
-      'WHERE drops the NULL rows the join produced; filter in the ON clause',
-      'Text columns must be compared with LIKE rather than = in a join',
+      'WHERE drops the join\'s NULL rows; filter in the ON clause',
+      'Text columns must be compared with LIKE rather than = in any join condition',
     ], 2, 'For customers without orders o.status is NULL, so the WHERE condition removes them; putting the status condition in the ON clause keeps every customer.'),
     q('A customer CSV is loaded with automatic type inference, and phone numbers such as 03001234567 arrive as 3001234567. What is the right fix?', [
       'Add the missing zero back with a string function in the dashboard',
@@ -4923,18 +4923,18 @@ The most valuable data engineers are not those who know the most tools, but thos
     ], 1, 'Inference treated the column as a number and dropped the leading zero; explicit schemas prevent this kind of silent type drift at the edge.'),
     q('fact_order_items holds one row per item in an order. An analyst reports the number of orders as COUNT(*) on this table. What is wrong?', [
       'COUNT(*) skips any row in which a measure column is NULL',
-      'Fact tables must always be counted through the date dimension',
+      'Fact tables should be counted through the date dimension table, not directly',
       'Nothing is wrong, because every row carries an order_id value',
-      'It counts items, so an order with several items counts several times',
+      'It counts items, so multi-item orders are counted repeatedly',
     ], 3, 'The table\'s grain is one row per item, so counting rows counts items; orders need COUNT(DISTINCT order_id) or an order-grain fact.'),
     q('A customer\'s name was loaded with a spelling mistake, and the source has now corrected it. How should dim_customer handle the change?', [
-      'Overwrite it in place as a Type 1 change, since the old value was an error',
-      'Add a new Type 2 row so that reports keep the misspelled version',
+      'Overwrite it as a Type 1 change, since the old value was an error',
+      'Add a new Type 2 row so that reports keep showing the misspelled version',
       'Create a separate history table holding every spelling ever seen',
       'Leave the dimension unchanged, because dimensions are append-only',
     ], 0, 'Type 1 overwriting suits corrections and attributes whose history has no analytical value.'),
     q('dim_customer is a Type 2 dimension, and a customer who moved city has two rows. A report joins fact_orders to it on the natural key customer_id alone, and that customer\'s revenue doubles. What fixes this without losing history?', [
-      'Add DISTINCT to the report query to remove the repeated rows',
+      'Add DISTINCT to the report query to remove the repeated customer rows',
       'Convert the dimension to Type 1 so each customer has one row',
       'Join on the surrogate customer_key stored in the fact at load time',
       'Filter the dimension to the oldest version of every customer',
@@ -4948,23 +4948,23 @@ The most valuable data engineers are not those who know the most tools, but thos
     q('A large table\'s initial snapshot was taken from a replica on Monday at 09:00, but incremental loads were started from Wednesday at 09:00. What is the problem?', [
       'Rows from Monday will be loaded twice and duplicated',
       'Snapshots taken from a replica always miss deleted rows',
-      'Incremental loads cannot follow a snapshot from a replica',
-      'Changes made between the snapshot and Wednesday are never loaded',
+      'Incremental loads cannot follow a snapshot that came from a replica',
+      'Changes made between snapshot and Wednesday are never loaded',
     ], 3, 'Incremental loads must start from the snapshot\'s exact point in time; a gap between the two silently loses every change made in between.'),
     q('A local point-of-sale vendor exposes a simple, well-documented REST API, no managed connector supports it, and volume is a few thousand rows a day. What is the sensible approach?', [
-      'A small custom extractor, perhaps built with a framework such as dlt',
+      'A small custom extractor, perhaps using a framework like dlt',
       'Wait until a managed connector vendor adds support for it',
       'Have staff download a CSV export by hand every morning',
-      'Stream it through a new Kafka cluster for extra reliability',
+      'Stream it through a new Kafka cluster for extra reliability and replay',
     ], 0, 'With no connector available and a simple, low-volume API, a small custom pipeline following the usual watermark and retry practices is the practical choice.'),
     q('On a warehouse that bills by bytes scanned, an analyst runs SELECT * with LIMIT 10 on a date-partitioned, unclustered 2 TB table of 80 columns to "keep it cheap", and the bill is large. What would actually cut the cost?', [
-      'Lowering the LIMIT from 10 rows down to just 1 row',
+      'Lowering the LIMIT from 10 rows down to just 1 row to scan less',
       'Adding ORDER BY so the engine stops reading sooner',
-      'Selecting only needed columns and filtering on the partition date',
+      'Select only needed columns and filter on the partition date',
       'Running the same query during off-peak hours',
     ], 2, 'A columnar engine reads every requested column across every scanned partition before LIMIT applies, so fewer columns and a partition filter are what reduce bytes read.'),
     q('A nightly job rewrites a day\'s Parquet files in a plain lake folder while analysts query it, and some queries return only half of that day\'s rows. What solves this most directly?', [
-      'Converting the files to CSV so they are written faster',
+      'Converting the files to CSV so they are written much faster than Parquet',
       'Managing the folder as an open table format with atomic commits',
       'Splitting the day into many more, smaller Parquet files',
       'Asking analysts to avoid querying the table during loads',
@@ -4976,7 +4976,7 @@ The most valuable data engineers are not those who know the most tools, but thos
       'Leave it unpartitioned and rely on selecting fewer columns',
     ], 0, 'Date partitioning lets queries skip whole days, and clustering on customer_id lets the engine skip blocks within a day without creating millions of tiny partitions.'),
     q('fct_orders.status must only ever be \'completed\', \'cancelled\' or \'refunded\', and a new value such as \'on_hold\' should fail the build. Which dbt test fits?', [
-      'not_null on the status column of fct_orders',
+      'not_null on the status column of fct_orders, so no row is blank',
       'unique on the status column of fct_orders',
       'relationships from status to dim_customers',
       'accepted_values listing the three allowed statuses',
@@ -4984,8 +4984,8 @@ The most valuable data engineers are not those who know the most tools, but thos
     q('An incremental dbt model re-reads a three-hour overlap window on each run, and duplicate order rows keep appearing. What is the most likely missing piece?', [
       'A materialized=\'view\' setting on the model',
       'A not_null test on the updated_at column',
-      'A unique_key such as order_id, so rows merge instead of append',
-      'A source freshness check on the raw orders table',
+      'A unique_key such as order_id, so rows merge not append',
+      'A source freshness check on the raw orders table each run',
     ], 2, 'Without a unique_key, dbt appends the overlap rows again; with one, it merges them on the key so repeats update in place.'),
     q('A dbt model selects from the hard-coded name raw.shop.orders instead of using {{ source(\'shop\', \'orders\') }}. What does the project lose?', [
       'Lineage from that source and freshness checks on it',
@@ -5012,10 +5012,10 @@ The most valuable data engineers are not those who know the most tools, but thos
       'So the file is copied faster once it finally arrives',
     ], 2, 'A timeout makes the sensor give up and fail, which alerts someone instead of leaving the run silently waiting; releasing the slot is what reschedule mode does.'),
     q('A topic has 6 partitions. To help a lagging consumer group, the team scales it from 6 to 10 consumers. What happens?', [
-      'Only 6 consumers are assigned partitions; the other 4 sit idle',
+      'Only 6 consumers get partitions; the other 4 sit idle',
       'Each partition is split evenly across the 10 consumers',
       'Throughput rises by about two thirds straight away',
-      'Kafka adds 4 partitions automatically to match the consumers',
+      'Kafka adds 4 partitions automatically to match the consumer count',
     ], 0, 'Within one consumer group each partition goes to a single consumer, so the partition count caps parallelism at six.'),
     q('A fraud rule needs, for each wallet, the number of payments in the last 10 minutes, refreshed every minute. Which window type fits?', [
       'Tumbling: fixed 10-minute blocks that never overlap',
@@ -5060,10 +5060,10 @@ The most valuable data engineers are not those who know the most tools, but thos
       'Copying the CRM into the warehouse with a managed connector',
     ], 1, 'Reverse ETL pushes modelled warehouse data into operational tools such as CRMs on a schedule, so people see it where they work.'),
     q('A storage bucket\'s lifecycle rule is defined in Terraform. An engineer edits that rule by hand in the cloud console. What happens at the next plan and apply?', [
-      'Terraform rewrites its own code to match the console change',
+      'Terraform rewrites its own code to match the console change made',
       'Terraform ignores the change because a person made it',
       'The apply deletes and recreates the bucket and its data',
-      'The plan shows the difference and apply restores the coded value',
+      'The plan shows the drift and apply restores the coded value',
     ], 3, 'Terraform compares real infrastructure with the code, reports drift in the plan, and applying brings the resource back to what the code declares.'),
     q('Right after a dbt deployment, a key mart fails its post-deploy check and dashboards are affected. What should the deployment process make easy?', [
       'Redeploying the previous version while a fix is prepared',

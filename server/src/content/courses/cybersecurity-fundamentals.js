@@ -4429,27 +4429,27 @@ Sending the prompt to security review. The prompt is not the attack surface. The
   ],
   final: [
     q('Which pairing of incident to violated property is correct?', [
-      'A leaked customer list is primarily an integrity failure',
+      'A leaked customer list is primarily an integrity failure, as outsiders now hold the records',
       'A silently altered payment amount is primarily an integrity failure',
       'A DDoS is primarily a confidentiality failure',
       'A stolen password is primarily an availability failure',
     ], 1, 'Integrity is about unauthorised or undetected modification, which is exactly what an altered amount represents.'),
     q('A checkout endpoint trusts a price field sent by the client. The underlying principle being violated is', [
-      'that anything crossing a trust boundary from a client is attacker-controlled and must be re-derived server-side',
-      'that JSON is an insecure serialisation format',
+      'that client data is attacker-controlled, so the server must re-derive the price itself',
+      'that JSON is an insecure serialisation format, so numbers should travel inside signed envelopes',
       'that prices should be integers',
-      'that POST bodies should be encrypted separately',
+      'that POST bodies should be encrypted separately from the TLS session, using a key held by the client',
     ], 0, 'Clients can send anything, so authoritative values must come from server-side records rather than the request.'),
     q('A login endpoint sees one wrong password attempted once against 12,000 accounts. The correct detection is', [
-      'per-account lockout after five failures',
+      'per-account lockout after five failures, applied to every account that sees an attempt',
       'a CAPTCHA on the third attempt per session',
       'blocking the user agent string',
       'a global failure-rate alarm plus per-IP and per-account tracking together',
     ], 3, 'Spraying stays under per-account thresholds by design, so it is only visible in aggregate across the endpoint.'),
     q('Which defence removes SQL injection rather than merely filtering it?', [
       'Escaping quote characters in input',
-      'Rejecting requests containing the word SELECT',
-      'Parameterised queries, which send values separately from the statement',
+      'Rejecting requests containing the word SELECT, UNION or DROP in any parameter',
+      'Parameterised queries, which send values apart from the statement',
       'Encrypting the database at rest',
     ], 2, 'Binding values means the interpreter never parses them as syntax, so no filter bypass exists to find.'),
     q('An authenticated user changes an id in a URL and reads another customer record. This is', [
@@ -4461,58 +4461,58 @@ Sending the prompt to security review. The prompt is not the attack surface. The
     q('An image-import feature lets users supply a URL and the server fetches it. The main risk is', [
       'stored XSS in the image filename',
       'CSRF against the import endpoint',
-      'a denial of service from large files',
+      'reflected XSS because the fetched image is echoed back into the page',
       'SSRF reaching internal services and cloud metadata endpoints',
     ], 3, 'The server sits inside the perimeter, so an attacker-chosen URL can reach hosts the internet cannot.'),
     q('Why does an HttpOnly flag reduce the impact of an XSS bug?', [
-      'It sanitises the injected markup',
-      'Injected JavaScript cannot read the cookie, so the session is harder to steal',
+      'It sanitises the injected markup before the browser renders it in the page, removing the script tags',
+      'Injected scripts cannot read the cookie, so stealing the session is harder',
       'It forces the cookie over HTTPS',
       'It blocks cross-site requests',
     ], 1, 'HttpOnly hides the cookie from document.cookie; Secure handles HTTPS and SameSite handles cross-site sending.'),
     q('A database of bcrypt hashes leaks. Why is this far better than leaking SHA-256 hashes?', [
       'bcrypt hashes are shorter to transmit',
-      'bcrypt output cannot be compared offline',
-      'bcrypt is deliberately slow and per-user salted, so mass offline cracking is impractical',
+      'bcrypt output cannot be compared offline, so a stolen database gives attackers nothing to test',
+      'bcrypt is slow by design and salted, so mass offline cracking is impractical',
       'bcrypt hashes expire automatically',
     ], 2, 'Cost and unique salts destroy the economics of GPU cracking and rainbow tables that fast hashes enable.'),
     q('Which statement about TLS and encryption at rest is accurate?', [
       'TLS at rest replaces field-level encryption',
       'Full-disk encryption protects a running app from SQL injection',
-      'Reusing an AES-GCM nonce with the same key is safe if the plaintext differs',
-      'TLS protects data on the wire; a database dump needs separate encryption to stay confidential',
+      'Reusing an AES-GCM nonce with the same key is safe if the plaintext differs between messages',
+      'TLS protects data on the wire, but a database dump needs its own encryption',
     ], 3, 'They defend different phases: transit versus storage, and neither substitutes for the other.'),
     q('A server is confirmed compromised at 09:00. Which sequence is correct?', [
-      'Isolate from the network, capture memory and a disk snapshot, revoke sessions and rotate credentials, then eradicate',
+      'Isolate, capture memory and a disk image, revoke sessions and rotate credentials, then eradicate',
       'Reimage immediately, then review logs from the backup',
-      'Power off, reinstall, restore from backup, notify nobody until confirmed',
+      'Power off the server, reinstall it, restore from backup, and notify nobody until the cause is confirmed',
       'Delete the malware, restart the service, monitor for a week',
     ], 0, 'Containment must precede eradication, and volatile evidence is lost the moment the machine is powered off or rebuilt.'),
     q('A leaked CI credential lets an attacker assume a cloud role that carries s3:* on Resource "*". Which statement is correct?', [
-      'The damage is limited because the credential was short-lived',
+      'The damage is limited because the credential was short-lived and the role session expires soon after',
       'The role only works from inside the VPC that issued it',
-      'The blast radius is set by the policy, so the wildcard turns one leak into full control of every bucket',
+      'The policy sets the blast radius, so the wildcard turns one leak into control of every bucket',
       'S3 permissions cannot be used without console access',
     ], 2, 'Credentials carry whatever the policy granted, which is why least privilege decides the outcome of an identical compromise.'),
     q('A workflow triggered by pull_request_target checks out the pull request head commit and runs the test suite. What is the risk?', [
-      'Any fork can execute its own code in a job that holds your repository secrets',
-      'The workflow will not trigger for contributors outside the organisation',
+      'Any fork can run its own code in a job that holds your repository secrets',
+      'The workflow will not trigger for contributors outside the organisation, so forks are skipped',
       'The base branch is checked out instead of the contributor changes',
       'There is none, because forks cannot open pull requests',
     ], 0, 'That trigger runs in the context of the base repository with its secrets, so checking out untrusted code hands them to the submitter.'),
     q('Which change most limits what a remote code execution bug inside a container can reach?', [
-      'Rebuilding the image on a nightly schedule',
+      'Rebuilding the image on a nightly schedule so that every package stays current',
       'Serving the image from a private registry',
       'Adding a CVE scan to the build pipeline',
-      'Running as a non-root user with capabilities dropped and a read-only root filesystem',
+      'Running as non-root with capabilities dropped and a read-only root filesystem',
     ], 3, 'Scanning and rebuilding reduce known flaws beforehand, while the runtime context is what constrains an attacker who already executes code.'),
     q('You have just fixed an IDOR bug. Which single follow-up makes the fix durable?', [
-      'Record the incident in the risk register',
-      'Add a regression test that replays the request with a second account and expects 404',
+      'Record the incident in the risk register and have the owning team sign it off',
+      'Add a test that replays the request with a second account and expects 404',
       'Rotate the API keys for the affected service',
       'Replace the sequential ids with UUIDs',
     ], 1, 'An automated cross-account replay fails the build if anyone removes the ownership constraint again, which a note or an opaque id will not do.'),
-      q('A rule with 0.2 percent precision is muted rather than retired, and the technique it names still shows as covered on the purple team matrix. Why is that combination worse than never having written the rule?', [
+    q('A rule with 0.2 percent precision is muted rather than retired, and the technique it names still shows as covered on the purple team matrix. Why is that combination worse than never having written the rule?', [
       'Muted rules keep consuming ingest volume, so the licence cost stays while the value goes',
       'The coverage matrix now reports the technique as defended while nothing is watching it',
       'A muted rule cannot be exported from the console into the detection repository for review',
@@ -4585,7 +4585,7 @@ Sending the prompt to security review. The prompt is not the attack surface. The
       'Limit bios to 160 characters with a check in the browser',
     ], 0, 'textContent makes the browser treat the value as text, never markup, which removes the stored XSS; HttpOnly only limits the damage.'),
     q('A request to `GET /files?name=../../etc/passwd` returns the server\'s password file. What is the correct fix?', [
-      'Require users to log in before downloading any file',
+      'Require users to log in before they are allowed to download any file',
       'Base64-encode the name parameter before it is sent',
       'Return 404 instead of 403 when a file is missing',
       'Resolve the path and check it stays inside the files folder',
@@ -4611,13 +4611,13 @@ Sending the prompt to security review. The prompt is not the attack surface. The
     q('A team puts each customer\'s national ID number in a signed JWT, reasoning that the signature protects it. What is wrong?', [
       'Signed tokens cannot be stored in HttpOnly cookies',
       'The HS256 signature can be reversed to reveal the ID',
-      'Servers cannot verify tokens that carry personal data',
+      'Servers cannot verify tokens that carry personal data inside their payload claims',
       'A signature proves integrity only; anyone can decode the payload',
     ], 3, 'A JWT payload is signed, not encrypted, so anyone holding the token can Base64-decode it and read the ID.'),
     q('Why should the company\'s domain registrar account be protected as a tier-zero credential?', [
       'It stores the private keys for every TLS certificate you hold',
-      'Whoever controls DNS can reroute traffic and email and obtain valid certificates',
-      'Losing it would only take the marketing website offline for a while',
+      'Whoever controls DNS can reroute traffic and mail and get valid certificates',
+      'It holds the company payment cards and the billing details of every paying customer',
       'It holds the SSH keys your team uses to reach production',
     ], 1, 'Control of DNS lets an attacker point the domain anywhere, change MX records to receive email, and prove domain control to get real certificates.'),
     q('Which control catches a known-vulnerable version of a library before the code ships?', [
@@ -4628,7 +4628,7 @@ Sending the prompt to security review. The prompt is not the attack surface. The
     ], 2, 'Dependency audits in CI compare the lockfile against known advisories, catching vulnerable packages before release.'),
     q('Code running on a cloud VM needs to read one storage bucket. What is the best way to give it credentials?', [
       'Attach a role scoped to that bucket, with auto-rotated credentials',
-      'Put an admin user\'s access key in the VM\'s .env file',
+      'Put an admin user\'s access key in the VM\'s .env file so the app can read it',
       'Bake a scoped access key into the image at build time',
       'Share one long-lived key across all of the team\'s VMs',
     ], 0, 'An attached role supplies short-lived credentials that rotate automatically, and scoping it to one bucket limits the blast radius if the VM is compromised.'),
@@ -4646,7 +4646,7 @@ Sending the prompt to security review. The prompt is not the attack surface. The
     ], 3, 'A software bill of materials inventories each artefact\'s components, turning the question into a query instead of an investigation.'),
     q('Why issue a distinct API key per vendor and per environment?', [
       'Revoking one leaked key does not break every other integration',
-      'Vendors charge less when keys are kept separate',
+      'Vendors charge less when keys are kept separate for each of their customers',
       'Separate keys remove the need to rotate them',
       'Requests signed with separate keys run faster',
     ], 0, 'Separate keys keep revocation surgical: a leak at one vendor or in staging can be shut off without an outage everywhere else.'),
@@ -4659,7 +4659,7 @@ Sending the prompt to security review. The prompt is not the attack surface. The
     q('A new detection rule has just been written. How should it be introduced?', [
       'Page the on-call analyst on every match from day one',
       'Enable it only after an intrusion proves it is needed',
-      'Deploy it with a high threshold and lower it if nothing fires',
+      'Deploy it straight into blocking mode so that attacker activity is stopped from the first day',
       'Run it to a dashboard for 7 to 14 days, review matches, then promote it',
     ], 3, 'Audit mode is a canary deploy for detections: you learn its real match volume and false positives before it can wake anyone up.'),
     q('High and Medium alerts go to the same queue with the same response target. What does that tell you?', [
@@ -4688,9 +4688,9 @@ Sending the prompt to security review. The prompt is not the attack surface. The
     ], 0, 'The emergency contact clause names a person reachable at any hour who can stop or adjust the test before it becomes the incident.'),
     q('Why are secrets safer mounted as read-only files than passed to a service in environment variables?', [
       'Environment variables are capped at 255 characters',
-      'Mounted files are encrypted automatically by the kernel',
+      'Mounted files are encrypted automatically by the kernel when the volume is attached',
       'Environment variables cannot change without a reboot',
-      'Env vars are inherited by child processes and leak into crash reports',
+      'Env vars are inherited by child processes and appear in crash reports',
     ], 3, 'Environment variables are readable from /proc, inherited by every child process and often shipped to error trackers, so they leak where nobody is watching.'),
     q('A reporting service verifies callers with mTLS, then trusts a userId field the calling service puts in the request. What is the flaw?', [
       'mTLS cannot be combined with any other identity check',
@@ -4719,13 +4719,13 @@ Sending the prompt to security review. The prompt is not the attack surface. The
     q('An employee emails a customer list to their personal address to finish a presentation at home. Which control fits this kind of insider risk best?', [
       'Deviation detection on every employee\'s activity',
       'A retrospective look-back triggered by resignation',
-      'Separation of duties on all customer data exports',
+      'Hiring an outside penetration tester to attack the mail system once a year',
       'Blocking it at the mail gateway and offering a sanctioned path',
     ], 3, 'This is a negligent insider, the most common type, and friction plus an easy approved route works better than detection aimed at malicious insiders.'),
     q('A support chatbot writes the model\'s markdown reply into the page with innerHTML. A retrieved ticket contained a hostile HTML payload. What is the flaw?', [
       'Model output is treated as trusted, creating stored XSS',
       'The model\'s temperature is set too high for support',
-      'The retrieval step returned too many tickets at once',
+      'The retrieval step returned too many tickets at once for the context window',
       'Markdown cannot be rendered safely in any browser',
     ], 0, 'Model output is untrusted input; writing it into innerHTML lets a payload planted in a ticket run in the browser, so the usual escaping rules apply.'),
   ],

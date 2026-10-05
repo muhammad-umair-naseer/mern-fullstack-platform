@@ -4644,18 +4644,21 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
   ],
   final: [
     q('arr has shape (4, 6). What shape does arr.mean(axis=1) return?', [
-      '(4,)', '(6,)', '(4, 1)', '(1, 6)',
+      '(4,)',
+      '(6,)',
+      '(4, 1)',
+      '(1, 6)',
     ], 0, 'axis=1 is the axis consumed by the reduction, leaving one mean per row.'),
     q('Why does np.nan == np.nan return False?', [
       'It is a bug retained for backwards compatibility',
-      'NaN equals only itself inside arrays, not as a scalar',
+      'NaN equals only itself inside arrays, whereas the scalar comparison is unordered and false',
       'Comparison requires the same dtype on both sides',
       'NaN is defined as unequal to everything, so np.isnan is the only correct test',
     ], 3, 'IEEE-754 defines NaN as not equal to any value including itself, which is why isna/isnan exist.'),
     q('Why must each condition be parenthesised in df[(df.a > 1) & (df.b < 5)]?', [
       'pandas requires parentheses in all boolean indexing',
       'The & operator binds more tightly than the comparisons, so it would be evaluated first',
-      'Without them pandas falls back to label-based indexing',
+      'Without them pandas falls back to label-based indexing and raises a KeyError on the first column name',
       'Parentheses force a copy rather than a view',
     ], 1, 'Python gives & higher precedence than > and <, so the unparenthesised form tries to AND a number with a Series.'),
     q('Your frame has one column per month and you need it long for groupby and plotting. Which reshapes it?', [
@@ -4673,7 +4676,7 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
     q('In what order should text normalisation and drop_duplicates run?', [
       'Deduplicate first, so there is less text to clean',
       'Order does not matter for string columns',
-      'Deduplicate first, then normalise the survivors',
+      'Deduplicate first, then normalise the survivors so each distinct row is cleaned once',
       'Normalise first, or "Acme " and "Acme" both survive as distinct rows',
     ], 3, 'Deduplication compares exact values, so trailing spaces and case differences defeat it unless the text is cleaned first.'),
     q('You need to show the relationship between two numeric columns across 60,000 rows. Best approach?', [
@@ -4685,7 +4688,7 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
     q('A colleague plots revenue and churn rate on a dual y-axis to argue they move together. The problem is:', [
       'Dual axes are unsupported in matplotlib',
       'The two scales are arbitrary, so any apparent alignment can be manufactured',
-      'Churn rate must be plotted as bars, not a line',
+      'Churn rate must be plotted as bars, not a line, since it is a proportion rather than a trend',
       'Revenue should always be shown on a log scale',
     ], 1, 'With two independently chosen ranges you can slide either series until they overlap; two stacked panels sharing the x-axis is honest.'),
     q('Which statement correctly defines a p-value?', [
@@ -4702,7 +4705,7 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
     ], 2, 'A wide interval spanning zero means the study was inconclusive, which is different from having demonstrated no effect.'),
     q('df.info() reports 40 MB but df.info(memory_usage="deep") reports 610 MB. Why?', [
       'The deep figure counts the index twice',
-      'The shallow figure excludes rows containing NaN',
+      'The shallow figure excludes rows containing NaN, which object columns are much more likely to hold',
       'Deep measurement includes compression overhead',
       'Object columns store pointers, so only the deep count follows them to the actual strings',
     ], 3, 'A shallow count sees 8 bytes per pointer; the text those pointers reference is only measured with deep=True.'),
@@ -4724,7 +4727,7 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
       'Production samples are always too large for git',
       'Hand-written frames avoid dtype inference entirely',
     ], 1, 'A fixture exists to pin one behaviour, so it should contain the awkward case deliberately rather than whatever a random export happened to include.'),
-      q('Four ingestion runs failed, and the daily series was built with resample(\'D\').sum(), so those days read 0.0. A boosted forecaster then beats seasonal naive on MAE across eight rolling origins. Why is that still not evidence the model is better?', [
+    q('Four ingestion runs failed, and the daily series was built with resample(\'D\').sum(), so those days read 0.0. A boosted forecaster then beats seasonal naive on MAE across eight rolling origins. Why is that still not evidence the model is better?', [
       'MAE is the wrong metric for daily demand, so the comparison has to be rerun using MAPE instead',
       'Eight rolling origins are far too few folds, so any gap between the two scores is inside the noise',
       'Some evaluation days hold a fabricated zero, so part of the score measures who predicts outages',
@@ -4745,7 +4748,7 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
     q('An upstream job swaps two warehouse columns. The scoring code passes X.to_numpy() into the fitted pipeline, and drift monitoring computes PSI per feature from the warehouse table. Why does no alert fire?', [
       'PSI needs several weeks of scored rows before it can react to a change of this particular kind',
       'The array skips the feature name check, and PSI still sees each column\'s own distribution intact',
-      'PSI compares output scores rather than inputs, so swapping two input columns cannot ever move it',
+      'PSI compares output scores rather than inputs, so swapping two input columns cannot ever move it at all',
       'The fitted pipeline reorders incoming columns by name, so the scores it returned never changed',
     ], 1, 'A DataFrame is validated against feature_names_in_ while a NumPy array is only checked for width, and PSI is computed per column upstream of the swap, so every monitored distribution looks unchanged while the model reads tenure where spend belongs.'),
     q('Only 8 percent of users ever reach a redesigned screen. The test was sized for a 3 percent lift across all randomised users, ran three weeks, and returned plus 0.4 percent with a confidence interval of minus 1.9 to plus 2.7. What is the most useful change for the rerun?', [
@@ -4912,7 +4915,7 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
     ], 2, 'Review pays off when the expected loss p × 500 exceeds the 20 review cost, which happens when p > 20 / 500 = 0.04.'),
     q('Two analysts can review about 200 alerts a day. Which evaluation best matches that constraint?', [
       'Precision among the 200 highest-scored cases each day',
-      'ROC AUC across every transaction in the test set',
+      'ROC AUC across every transaction in the test set, since it ignores the threshold choice',
       'Accuracy of the model at the default 0.5 threshold',
       'Recall at whichever threshold maximises the F1 score',
     ], 0, 'Only the top 200 scores are ever acted on, so the metric that matters is how many of those are real cases, not performance at thresholds nobody uses.'),
@@ -4937,7 +4940,7 @@ Six lines, and a reviewer can find the weak point in under a minute. That is the
     q('A checkout experiment lifts conversion, but refund requests also rise. What role should the refund rate have had in the design?', [
       'A guardrail, declared up front, that can block the launch',
       'The primary metric, replacing conversion once it moves',
-      'A secondary metric, reported only if it improves',
+      'A secondary metric, reported only if it improves and the primary metric has already won',
       'None, since only the primary metric should be read',
     ], 0, 'One primary metric decides the call, while guardrails such as refunds are declared in advance and can only veto a launch that harms them.'),
   ],

@@ -5662,7 +5662,7 @@ The honest position today: processes still carry most production workloads, free
   ],
   final: [
     q('Why does 0.1 + 0.2 == 0.3 evaluate to False?', [
-      'Python rounds the result to two decimal places',
+      'Python rounds the result to two decimal places, then compares it with the unrounded literal on the right',
       'Floats are binary approximations, so neither operand is exactly the decimal you wrote',
       '== is not defined for floats',
       'The addition happens as integers first',
@@ -5671,7 +5671,7 @@ The honest position today: processes still carry most production workloads, free
       'The sorted list',
       'None, because .sort() sorts in place and returns nothing',
       'A copy of the original, unsorted',
-      'A generator over the sorted values',
+      'A generator that yields the sorted values lazily, so it must be wrapped in list()',
     ], 1, '.sort() mutates and returns None; sorted() is the one that returns a new list.'),
     q('Which default parameter value is safe to write directly in a def line?', [
       'basket=[]',
@@ -5683,28 +5683,37 @@ The honest position today: processes still carry most production workloads, free
       'Python reserves standard library names',
       'The script directory precedes the standard library on sys.path, so your file wins',
       'The file needs an __init__.py',
-      'Only packages may shadow modules',
+      'Only packages may shadow standard library modules, a plain file cannot take a name that is already used',
     ], 1, 'Imports resolve in sys.path order and the current directory comes first, so your module shadows the standard library one.'),
     q('A subclass defines __init__ and never calls super().__init__(). What breaks?', [
       'Nothing; Python calls it automatically',
       'The parent never sets its attributes, so inherited methods raise AttributeError',
-      'The subclass cannot be instantiated',
+      'The subclass cannot be instantiated until the parent\'s __init__ is called explicitly somewhere',
       'Only type hints stop working',
     ], 1, 'Python does not chain initialisers for you; skipping super() leaves the parent half of the object uninitialised.'),
     q('Which dunder method most improves your debugging output for a new class?', [
-      '__str__', '__repr__', '__hash__', '__call__',
+      '__str__',
+      '__repr__',
+      '__hash__',
+      '__call__',
     ], 1, '__repr__ is what the REPL, lists, and failing assertions display, and __str__ falls back to it when undefined.'),
     q('Which file mode appends without destroying the existing contents?', [
-      '"w"', '"a"', '"x"', '"r+"',
+      '"w"',
+      '"a"',
+      '"x"',
+      '"r+"',
     ], 1, '"a" appends to the end; "w" truncates the file to zero the moment it opens.'),
     q('What does raise NewError(...) from err preserve?', [
       'The original exception as the cause, so the traceback shows both failures',
-      'The local variables of the failing frame',
+      'The local variables of the failing frame, so they can be inspected after the exception is handled',
       'The exit code of the process',
       'Nothing; it is purely stylistic',
     ], 0, 'Explicit chaining keeps the low-level cause attached to your high-level error instead of discarding the real origin.'),
     q('You need to generate a password-reset token. Which module?', [
-      'random', 'secrets', 'uuid4 from uuid', 'hashlib',
+      'random',
+      'secrets',
+      'uuid4 from uuid',
+      'hashlib',
     ], 1, 'secrets is the purpose-built module, drawing from the OS cryptographically secure source. random is reconstructible from its own output stream, and uuid4, while random, is a fixed-format identifier rather than a documented secret-generation API.'),
     q('What does @pytest.mark.parametrize give you that a for loop inside one test does not?', [
       'Faster execution',
@@ -5722,7 +5731,7 @@ The honest position today: processes still carry most production workloads, free
       'A coroutine object that never runs, plus a "was never awaited" RuntimeWarning',
       'The return value, computed synchronously',
       'A TypeError at the call site',
-      'A Task already scheduled on the running loop',
+      'A Task already scheduled on the running loop, which finishes in the background without an await',
     ], 0, 'A coroutine only starts executing when it is awaited or wrapped in a task, so the call itself just builds the object.'),
     q('What does @lru_cache require of the function it decorates?', [
       'That it be defined at module level',
@@ -5736,7 +5745,7 @@ The honest position today: processes still carry most production workloads, free
       'GitHub will not merge a pull request without a workflow file',
       'Local tools cannot produce coverage reports',
     ], 1, 'Automation removes the one afternoon somebody skips the checks, which is exactly when the breakage lands.'),
-      q('A suite was made fast with a session scoped engine fixture plus pytest -n auto, and now two tests fail intermittently: the one binding port 8000 and the one writing /tmp/report.json. What is going on?', [
+    q('A suite was made fast with a session scoped engine fixture plus pytest -n auto, and now two tests fail intermittently: the one binding port 8000 and the one writing /tmp/report.json. What is going on?', [
       'The session scoped fixture leaks rows across workers, so rollback stops working',
       'Python\'s per process hash seed reorders those two tests on every single run',
       'Each worker is its own process, so both are fighting over one fixed name',
@@ -5744,7 +5753,7 @@ The honest position today: processes still carry most production workloads, free
     ], 2, 'Under xdist several processes run the suite at once, so a hardcoded port or a hardcoded path is a single shared resource with a fixed name and the workers collide on it; binding port 0 and writing under tmp_path gives each worker its own copy.'),
     q('You need a chart of failed checkouts per plan for yesterday, and you also need to open one specific failed checkout end to end. Which arrangement does both without melting the metrics backend?', [
       'A counter labelled by plan and outcome, with user_id and request_id in the logs',
-      'A counter labelled by plan, outcome and user_id, and no change to the logging',
+      'A counter labelled by plan, outcome and user_id, and no change to the logging, since the label already identifies the checkout',
       'A gauge holding the mean failure rate, plus one trace kept for every request',
       'Log lines only, sampled at one percent per line, with no counters exported',
     ], 0, 'Series count is the product of the label cardinalities, so identity such as user_id belongs in logs and span attributes rather than on a metric, while a low cardinality counter answers the aggregate question and the request id is what lets you pull one story back out of the logs.'),
@@ -5785,7 +5794,7 @@ The honest position today: processes still carry most production workloads, free
       'True, because in searches both keys and values',
     ], 1, 'Membership on a dict tests its keys; to search values you would write 120 in prices.values().'),
     q('A login loop is written as `while attempts < 3:` with a `break` on success, followed by `else: lock_account()`. When does lock_account() run?', [
-      'Only when break was executed inside the loop',
+      'Only when break was executed inside the loop on the final permitted attempt',
       'Every time the success check inside fails',
       'Always, straight after the loop finishes',
       'Only when the loop ends without hitting break',
@@ -5809,7 +5818,7 @@ The honest position today: processes still carry most production workloads, free
       'Once for every function used from utils',
     ], 1, 'A module executes once per process on its first import; later imports reuse the cached module object.'),
     q('A dataclass named Cart declares the field `items: list = []`. What happens?', [
-      'Every Cart silently shares the same single list object',
+      'Every Cart silently shares the same single list object, as with a mutable default argument',
       'Each Cart gets its own new empty list automatically',
       'It runs normally, though type checkers may warn',
       'It raises ValueError at class creation; use default_factory',
@@ -5824,7 +5833,7 @@ The honest position today: processes still carry most production workloads, free
       'Course subclasses EmailSender to inherit send()',
       'EmailSender subclasses Course to reach its data',
       'Course holds an EmailSender passed to its constructor',
-      'Course copies EmailSender\'s methods into its body',
+      'Course copies EmailSender\'s methods into its own body, so it no longer needs an instance',
     ], 2, 'Composition gives Course an EmailSender to use, which keeps the classes separate and lets tests pass in a fake sender.'),
     q('In a try / except / else / finally statement, when does the else block run?', [
       'Only when one of the except blocks caught something',
@@ -5845,7 +5854,7 @@ The honest position today: processes still carry most production workloads, free
       '\'{"paid": 0, "active": true}\'',
     ], 0, 'The json module maps None to null and True to true, because JSON has its own lowercase literals.'),
     q('Why use collections.deque rather than a list for a first-in, first-out queue?', [
-      'A deque can hold items of several different types',
+      'A deque can hold items of several different types, which a list cannot do',
       'A list cannot be shared between threads at all',
       'Removing from the front is O(1), while list.pop(0) is O(n)',
       'A deque keeps its items sorted as they are added',
@@ -5854,11 +5863,11 @@ The honest position today: processes still carry most production workloads, free
       'assert enrol(student_id=1, course=full) == CourseFull',
       'with pytest.raises(CourseFull): enrol(student_id=1, course=full)',
       'try: enrol(student_id=1, course=full) except CourseFull: pass',
-      'assert isinstance(enrol(student_id=1, course=full), CourseFull)',
+      'assert isinstance(enrol(student_id=1, course=full), CourseFull) after the call returns',
     ], 1, 'pytest.raises fails the test unless the block raises that exception; a try/except that passes would also pass when nothing is raised.'),
     q('Why pass `params={"q": term}` to requests.get instead of building the query string with an f-string?', [
       'It switches the request to HTTPS automatically',
-      'It caches the response for repeated identical searches',
+      'It caches the response for repeated identical searches, so the server is hit once per term',
       'It sends the parameters in the request body instead',
       'It percent-encodes values, so a space or & cannot corrupt the query',
     ], 3, 'params= builds the query string with correct percent-encoding, whereas hand-built URLs break silently on spaces, & or #.'),
@@ -5882,7 +5891,7 @@ The honest position today: processes still carry most production workloads, free
     ], 1, 'asyncio.run starts and closes the event loop, so a program calls it once at the top and uses await everywhere below.'),
     q('Given `def double(x: int) -> int: return x * 2`, what does `double("ab")` return at runtime?', [
       'A TypeError, because x is annotated as int',
-      '0, because the string is converted to int first',
+      '0, because the string is converted to int first and ab has no numeric value',
       'None, because the return type does not match',
       '\'abab\', because hints are not enforced at runtime',
     ], 3, 'Type hints are read by checkers such as mypy; the interpreter ignores them, so the string is simply repeated.'),
@@ -5905,14 +5914,14 @@ The honest position today: processes still carry most production workloads, free
       'Running the whole suite with pytest -n auto',
     ], 1, 'A plain Mock invents any attribute you ask for, while an autospec mirrors the real class and raises AttributeError on unknown names.'),
     q('A batch job crashes reproducibly. Which command runs it under the debugger and stops only at the exception, with every local still available?', [
-      'python -X faulthandler -m myapp.import_run',
+      'python -X faulthandler -m myapp.import_run, which pauses at the exception',
       'python -m cProfile -m myapp.import_run',
       'python -O -m myapp.import_run',
       'python -m pdb -c continue -m myapp.import_run',
     ], 3, 'pdb with -c continue runs normally and drops you into the frame that raised, so you can inspect its locals.'),
     q('Which log call lets an aggregator answer \'how many checkouts failed for plan=free yesterday\'?', [
       'log.info("checkout.failed", extra={"plan": user.plan, "retries": n})',
-      'log.info(f"user {user.id} on {user.plan} failed after {n} retries")',
+      'log.info(f"user {user.id} on {user.plan} failed after {n} retries", extra={})',
       'print(f"checkout failed for plan {user.plan}, retries {n}")',
       'log.info("checkout failed for plan " + user.plan + " today")',
     ], 0, 'A stable event name with values in separate fields can be filtered and counted, while values welded into prose cannot.'),
@@ -5923,7 +5932,7 @@ The honest position today: processes still carry most production workloads, free
       'Silently ignores the assignment and keeps no value',
     ], 2, '__slots__ replaces the per-instance __dict__ with fixed storage, so only the declared names can be assigned.'),
     q('When does `Base.__init_subclass__` run for `class Child(Base): ...`?', [
-      'Each time a Child instance is created',
+      'Each time a Child instance is created, just before __init__ runs on it',
       'When the class Child statement executes',
       'When a method is first called on Child',
       'When Base itself is first defined',

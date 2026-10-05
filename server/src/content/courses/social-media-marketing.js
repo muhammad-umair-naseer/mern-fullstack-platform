@@ -4339,7 +4339,7 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
     ], 0, 'Sales offers only work for people already ready to buy.'),
     q('Which goal statement gives a social team the clearest direction?', [
       'Be more active on social media this year than last',
-      'Get as many likes as possible on every single post',
+      'Get as many likes as possible on every post, whichever platform it goes out on',
       'Raise Instagram leads from 40 to 70 a month by September',
       'Become the most popular brand in the whole country',
     ], 2, 'A specific, measurable, time-bound target guides decisions.'),
@@ -4363,7 +4363,7 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
     ], 0, 'Advertisers rarely keep funding ads that lose money.'),
     q('What should an Instagram bio for a clothing brand state clearly?', [
       'What it sells, for whom, and delivery and payment options',
-      'The founder\'s full life story in several paragraphs',
+      'The founder\'s full life story in several paragraphs, with photos of the early days',
       'A list of every competitor the brand outperforms',
       'Only a single emoji to keep it looking minimal',
     ], 0, 'The bio works as a landing page for new visitors.'),
@@ -4383,10 +4383,10 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
       'Send the same sales pitch to everyone daily',
       'Post only company announcements from the page',
       'Share lessons and results, then engage thoughtfully',
-      'Avoid commenting on other people\'s posts entirely',
+      'Avoid commenting on other people\'s posts entirely so the page stays professional',
     ], 2, 'Personal insight and genuine engagement build trust and leads.'),
     q('Which content mix is most balanced for a new brand?', [
-      '90% offers and 10% everything else',
+      '90% offers and 10% everything else, since offers are what bring in the sales',
       'Mostly value content, some trust content, fewer offers',
       'Only memes and trends with no products shown',
       'Only product photos with prices, posted daily',
@@ -4405,7 +4405,7 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
     ], 3, 'An easy, specific question encourages replies.'),
     q('Which caption helps a Karachi café appear in social search?', [
       '"Best cold coffee in DHA Karachi, open till 1 am"',
-      '"Our latest little creation for you all 😍☕"',
+      '"Our latest little creation for you all 😍☕ made fresh in the kitchen today"',
       '"Something special is waiting for you here"',
       '"Vibes only, come and see for yourself today"',
     ], 0, 'Product, area and city terms match what people search for.'),
@@ -4436,19 +4436,19 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
     q('A customer asks a price question in the comments. What is the best public reply?', [
       '"DM" with no other information at all',
       'The price, plus an offer to help further in DM',
-      'Ignore it and reply only to positive comments',
+      'Ignore it and reply only to the positive comments so the thread stays upbeat',
       '"Check our website" with no link provided',
     ], 1, 'A direct answer builds trust for everyone reading.'),
     q('What is a pre-filled WhatsApp message link used for?', [
       'Letting customers start an order chat with one tap',
       'Sending broadcast messages to all followers',
       'Adding customers to groups automatically',
-      'Hiding the business phone number from customers',
+      'Hiding the business phone number from customers so chats stay private',
     ], 0, 'Pre-filled messages remove friction from starting an order.'),
     q('A complaint about a late order is gaining many comments. What is the best approach?', [
       'Delete the post so others stop commenting on it',
       'Reply that delays are the courier\'s fault',
-      'Wait until the comments stop before replying',
+      'Wait until the comments stop before replying, so the reply is not buried again',
       'Apologise publicly, resolve privately, then follow up',
     ], 3, 'Calm, visible care followed by resolution protects reputation.'),
     q('Followers keep asking for a new colour. The brand makes it. What builds community most?', [
@@ -4459,13 +4459,13 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
     ], 2, 'Showing that feedback matters encourages more participation.'),
     q('Which creator is likely the best fit for a Lahore delivery brand?', [
       'A celebrity with mostly international followers',
-      'A creator with huge followers but very low views',
+      'A creator with huge followers but very low views on recent posts and reels',
       'A creator whose audience is mostly in Canada',
       'A local micro creator with an engaged Lahore audience',
     ], 3, 'Audience location and engagement matter more than size.'),
     q('What should a creator brief give the creator?', [
       'Key messages and must-haves, with room for their style',
-      'A word-for-word script that cannot be changed',
+      'A word-for-word script that cannot be changed, so the message stays identical',
       'Only the payment amount and nothing else',
       'Instructions to hide that the post is sponsored',
     ], 0, 'Creators perform best with clear direction and creative freedom.'),
@@ -4489,12 +4489,12 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
     ], 0, 'The objective is set at the campaign level and guides optimisation.'),
     q('Why should you provide both 9:16 and 4:5 creative for Meta ads?', [
       'Meta rejects ads that have only one size',
-      'Two sizes always halve the cost per result',
+      'Two sizes always halve the cost per result in every campaign you run',
       'Ads then look right across feeds, Stories and Reels',
       'Each size is shown to a different country',
     ], 2, 'Matching placement shapes keeps ads looking native everywhere.'),
     q('Which audience is best for a "complete your order" reminder ad?', [
-      'Broad audience of all adults across Pakistan',
+      'Broad audience of all adults across Pakistan, regardless of past activity',
       'Lookalike of the brand\'s Facebook Page fans',
       'People who added to cart recently, excluding buyers',
       'Interest audience of general fashion lovers',
@@ -4524,7 +4524,7 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
       'Snapchat, because of young audiences',
     ], 1, 'Precise professional targeting justifies higher costs for valuable clients.'),
     q('Which formula gives engagement rate by reach?', [
-      'Followers divided by total posts',
+      'Followers divided by total posts, then multiplied by 100 to give a percentage',
       'Reach divided by followers',
       'Interactions divided by reach, times 100',
       'Likes divided by comments',
@@ -4536,21 +4536,21 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
       'One with the campaign name in capital letters only',
     ], 1, 'Consistent, descriptive UTMs keep traffic correctly grouped.'),
     q('Meta reports 120 purchases but the store recorded 95 from all sources. What explains this?', [
-      'The store\'s system is losing orders',
+      'The store\'s system is losing orders before they are written to its database',
       'Customers cancelled exactly 25 orders',
       'Meta adds purchases from other brands',
       'Attribution windows credit conversions generously',
     ], 3, 'Platform attribution can overstate results compared with real orders.'),
     q('Why add the Conversions API alongside the Meta Pixel?', [
       'It replaces the need for a website',
-      'It makes ads appear in more countries',
+      'It makes ads appear in more countries without changing the targeting settings',
       'It recovers events that browser tracking misses',
       'It lowers the price of each impression',
     ], 2, 'Server-side events improve data despite browser privacy limits.'),
     q('Which monthly report summary is most useful to an owner?', [
       '"We posted 30 times and got lots of likes"',
       '"Here are screenshots of every insight page"',
-      '"Engagement was good and content looked great"',
+      '"Engagement was good and content looked great, with plenty of positive feedback"',
       '"Orders from Instagram rose 18% to 214, beating target"',
     ], 3, 'Results against goals in plain language matter most.'),
     q('A brand runs Live sales during a new collection launch. What preparation matters most?', [
@@ -4572,7 +4572,7 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
       'Customers prefer to receive parcels after Eid',
     ], 0, 'Clear cut-offs prevent promises that cannot be met.'),
     q('Which payment approach can reduce refused deliveries in high-risk areas?', [
-      'Removing cash on delivery for every city at once',
+      'Removing cash on delivery for every city at once, whatever the order size',
       'Doubling delivery charges for all customers',
       'Partial advance payment for new or high-value orders',
       'Shipping orders without confirming them',
@@ -4585,7 +4585,7 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
     ], 1, 'Promotions during a crisis appear careless and inflame anger.'),
     q('Which practice best protects a brand\'s social accounts?', [
       'Sharing one password among all staff members',
-      'Using SMS codes and giving them to anyone who asks',
+      'Using SMS codes and giving them to anyone who asks for help logging in',
       'Making a freelancer the only admin of the Page',
       'Two-factor authentication and individual access roles',
     ], 3, 'Strong authentication and proper roles prevent hacks and lockouts.'),
@@ -4602,7 +4602,7 @@ Satisfied clients refer others. Ask happy clients for testimonials and introduct
       'Putting all information inside the image',
     ], 0, 'Alt text lets screen reader users understand the image.'),
     q('Which deal structure protects a freelancer managing a client\'s Meta ads?', [
-      'The freelancer pays all ad spend and invoices later',
+      'The freelancer pays all ad spend upfront and invoices the client for it later',
       'No written scope, to stay flexible for the client',
       'Payment only if the campaign goes viral',
       'The client pays ad spend directly; fees are agreed in writing',

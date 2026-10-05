@@ -5503,7 +5503,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
       'Algorithms operate on iterators and cannot change a container size',
       'std::remove is deprecated',
       'erase is faster than remove',
-      'std::remove only works on sorted ranges',
+      'std::remove only works on sorted ranges, so the data must be sorted before the call',
     ], 0, 'remove just partitions the survivors to the front and returns the new end; the container must drop the tail itself.'),
     q('Two Node objects hold shared_ptrs to each other and then go out of scope. What happens?', [
       'Both are destroyed normally',
@@ -5518,7 +5518,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
       'const std::unique_ptr<std::string>& s',
     ], 1, 'A const lvalue reference binds without copying and, unlike a pointer, cannot be null.'),
     q('for (auto row : table) where table is a std::vector<std::string> is', [
-      'the recommended form for reading elements',
+      'the recommended form for reading elements, since the compiler elides the copy of each string',
       'required in order to modify each row',
       'faster than binding a reference',
       'copying every string; use const auto& unless you need a copy',
@@ -5527,11 +5527,11 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
       'default-constructs and inserts an entry, changing the map',
       'throws std::out_of_range',
       'returns an end iterator',
-      'is a compile error on a non-const map',
+      'is a compile error on a non-const map, since operator[] needs a key that already exists',
     ], 0, 'operator[] value-initialises and inserts missing keys, which is why read-only lookups should use find, at or contains.'),
     q('target_include_directories(core PUBLIC include) means', [
       'only core itself can include those headers',
-      'the directory is added to every target in the project',
+      'the directory is added to every target in the project, whether or not it links core',
       'anything linking core also gets include/ on its include path',
       'the headers are copied into the build directory',
     ], 2, 'PUBLIC usage requirements are applied to the target and propagated to every consumer that links it.'),
@@ -5559,7 +5559,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
       'Rebuild the tests with -fsanitize=address,undefined and run them again',
       'Switch the build type to Debug and ship that instead',
     ], 2, 'Sanitizers report use-after-free and undefined behaviour at the moment it happens, on the error paths the suite already exercises.'),
-      q('A server moves its hot parse path onto one long lived std::pmr::monotonic_buffer_resource and builds std::pmr::vector<std::pmr::string> rows from it. Throughput improves by a third, and resident memory climbs to 40 GB over a day of steady traffic. Which explanation fits both observations at once?', [
+    q('A server moves its hot parse path onto one long lived std::pmr::monotonic_buffer_resource and builds std::pmr::vector<std::pmr::string> rows from it. Throughput improves by a third, and resident memory climbs to 40 GB over a day of steady traffic. Which explanation fits both observations at once?', [
       'polymorphic_allocator costs one virtual call per allocation, so each row\'s bytes get rounded up to a whole page.',
       'std::pmr::string ignores the resource it is handed, so every row is still served by plain operator new underneath.',
       'Move assignment between pmr containers copies rather than steals, so each row ends up stored twice in the buffer.',
@@ -5575,7 +5575,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
       'The stop token has to be taken by value so it lives in the frame; a reference to it dies with the caller\'s expression.',
       'The awaitable needs a stop_callback that finishes the pending read with an error, as the loop check runs only between awaits.',
       'handle.destroy() is the only way to end a suspended coroutine, so a stop request can never reach one that is parked.',
-      'The loop condition is evaluated once when the coroutine is first resumed, so a stop request made later is never observed.',
+      'The loop condition is evaluated once when the coroutine is first resumed, so a stop request made later is never observed by it.',
     ], 1, 'Cancellation in C++ coroutines is cooperative, so it can only take effect at a point where the coroutine actually runs, and a frame suspended on a read that nobody will complete never reaches the next stop_requested check; the awaitable itself has to register a std::stop_callback that completes the outstanding operation with an error so the coroutine resumes and can return.'),
     q('A patch release of libcore.so adds one private steady_clock::time_point to an exported class. Consumer headers compile, the link succeeds, the loader raises nothing, and two services then crash in destructors. Why did every stage say yes?', [
       'The mangled names of the exported functions changed with the new member, so the loader bound the calls to older symbols.',
@@ -5615,7 +5615,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
     ], 1, 'The literal decays to const char*, which reaches bool by a standard conversion, while reaching std::string needs a user-defined constructor conversion, and a standard conversion sequence always ranks higher.'),
     q('A class has a `const int id_;` member, and its constructor sets it with `id_ = id;` inside the constructor body. What happens?', [
       'It compiles, and id_ holds the value assigned in the body',
-      'It compiles, but id_ is briefly zero before the assignment',
+      'It compiles, but id_ is briefly zero before the assignment in the body overwrites it',
       'It fails only if the class also has a default constructor',
       'It fails: a const member must be set in the initialiser list',
     ], 3, 'Members are initialised before the constructor body runs, and a const member can only receive its value there, so it must appear in the member initialiser list; assigning to it in the body is a compile error.'),
@@ -5656,7 +5656,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
       'Nothing, because emplace_back accepts a single value only',
     ], 0, 'emplace_back forwards its arguments to a std::string constructor, and string(3, \'a\') is the count-and-character constructor, so "aaa" is built in place.'),
     q('`std::sort(lst.begin(), lst.end());` on a `std::list<int> lst` does not compile. Why, and what is the fix?', [
-      'std::list is not a real container, so copy it into an array first',
+      'std::list is not a real container, so copy it into an array first before sorting',
       'std::sort needs a comparator for lists, so pass std::less<int>{}',
       'A list keeps itself sorted on insert, so no sort call is needed',
       'std::sort needs random-access iterators, so call lst.sort() instead',
@@ -5675,14 +5675,14 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
     ], 2, 'PRIVATE keeps fmt\'s usage requirements, including its include directories, inside core; because core\'s public header exposes fmt to consumers, fmt should be linked PUBLIC.'),
     q('A constructor runs `a_ = new Foo; b_ = new Bar;` into raw pointer members, and `new Bar` throws. What happens to the Foo?', [
       'It leaks, since no destructor runs for an object whose constructor threw',
-      'The destructor runs and deletes it, since a_ was already assigned',
+      'The destructor runs and deletes it, since a_ was already assigned and members are cleaned up first',
       'Stack unwinding deletes it automatically along with the members',
       'It is deleted when the caller\'s catch block finishes running',
     ], 0, 'The object was never fully constructed, so its destructor is skipped; its members are destroyed, but destroying a raw pointer frees nothing. Owning both objects through std::unique_ptr members fixes it.'),
     q('Inside `catch (const std::exception& e)`, why rethrow with `throw;` rather than `throw e;`?', [
       'throw e; is not allowed on a reference bound to a const object',
       'throw; runs every destructor a second time before rethrowing',
-      'throw e; rethrows the same object but loses the original message',
+      'throw e; rethrows the same object but loses the original message text',
       'throw e; copies only the std::exception part, losing the real type',
     ], 3, 'throw e; creates a new exception of the static type std::exception, slicing off the derived class, so an outer handler for a type such as std::runtime_error no longer matches; throw; rethrows the original object unchanged.'),
     q('`auto f = std::async(work);` is called without a launch policy. What may happen?', [
@@ -5717,12 +5717,12 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
     ], 1, 'A property test asserts something true for every input, and the round trip must hold for any value a generator produces; the other checks each test one fixed example or a timing.'),
     q('A hot loop sums only the `price` field across a `std::vector<Order>`, where each Order is 96 bytes. It is memory bound. Which change helps most?', [
       'Keep prices in their own std::vector<double> next to the orders',
-      'Replace the vector with a std::list so orders load on demand',
+      'Replace the vector with a std::list so orders load on demand from the heap',
       'Call orders.reserve() with the element count before the loop',
       'Loop with an index variable instead of a range-based for',
     ], 0, 'With 96-byte orders each fetched 64-byte cache line carries at most one useful price; a structure-of-arrays layout packs eight prices per line, so far fewer lines cross the memory bus.'),
     q('`double a[1000][1000];` is summed with `for (j ...) for (i ...) sum += a[i][j];`. Swapping the two loops makes it several times faster. Why?', [
-      'The compiler can only unroll loops whose outer index is j',
+      'The compiler can only unroll loops whose outer index is j, and the swap removes that limit',
       'Row indices are cheaper to multiply than column indices',
       'The inner loop now walks memory contiguously, using whole cache lines',
       'Swapping the loops reduces the total number of iterations',
@@ -5734,7 +5734,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
       'Another thread may still be reading that node\'s next pointer',
     ], 3, 'Other threads may have loaded the same head pointer and be about to dereference it, so freeing it at once is a use-after-free; hazard pointers or epoch-based reclamation delay the delete until nobody can hold it.'),
     q('A hand-written lock is taken with an acquire exchange on a `std::atomic<bool>`. Which order should the unlocking `store(false, ...)` use so the next owner sees the writes made inside the critical section?', [
-      'std::memory_order_relaxed',
+      'std::memory_order_relaxed, which is the cheapest order',
       'std::memory_order_release',
       'std::memory_order_acquire',
       'std::memory_order_consume',
@@ -5748,7 +5748,7 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
     q('Why can a service keep 10,000 suspended coroutine tasks in far less memory than 10,000 blocked threads?', [
       'A suspended task keeps only a small frame, not a full reserved stack',
       'Coroutines hold their locals in CPU registers while suspended',
-      'The compiler merges identical coroutine frames into a single frame',
+      'The compiler merges identical coroutine frames into a single shared frame at link time',
       'Suspended coroutines are paged to disk until they are resumed',
     ], 0, 'Each thread reserves its own stack, often 8 MB of address space, while a suspended coroutine needs only a heap frame holding the locals that live across its suspend points.'),
     q('An executable links a static library, and the library later ships a security fix. What must happen for the executable to get the fix?', [
@@ -5766,11 +5766,11 @@ Fuzz the pair, not the halves. The harness shape from Chapter 7 drives \`parse_h
     q('A parser reads a 32-bit element count from an uploaded file and immediately calls `items.reserve(count)`. What is the risk, and the fix?', [
       'A hostile count forces a huge allocation; reject counts above a limit',
       'reserve reads uninitialised memory; zero-fill the vector first',
-      'reserve throws above 1000 elements; call resize one item at a time',
+      'reserve throws above 1000 elements; call resize one item at a time instead',
       'No risk: reserve silently ignores requests it cannot satisfy',
     ], 0, 'An attacker-chosen count can demand gigabytes and exhaust memory before a single byte is validated; check it against a sane maximum and against the bytes actually remaining in the input.'),
     q('A legacy `computeInvoice()` calls `Database::instance().query(...)` directly, and you need a unit test before refactoring it. What is the smallest safe first step?', [
-      'Rewrite the module in modern C++ and test only the new version',
+      'Rewrite the module in modern C++ first and test only the new version afterwards',
       'Run the test against the production database in read-only mode',
       'Pass the database in through an interface so a test can use a fake',
       'Delete the singleton and make every caller construct a Database',

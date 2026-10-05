@@ -4726,13 +4726,13 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
   final: [
     q('Which pair of DORA metrics move together in high-performing teams, rather than trading off?', [
       'Deployment frequency and time to restore service — speed and stability improve together',
-      'Deployment frequency and change failure rate, which must be traded against each other',
+      'Deployment frequency and change failure rate, which must be traded against each other as teams ship faster',
       'Lead time and team size',
       'Change failure rate and number of environments',
     ], 0, 'The research finding is that shipping more often and recovering faster reinforce each other, because both come from small batches and automation.'),
     q('What actually isolates a container from the host and from other containers?', [
       'A lightweight hypervisor bundled with the runtime',
-      'A separate guest kernel per container',
+      'A separate guest kernel per container, booted from the image layers whenever the container starts',
       'A chroot jail and a firewall rule',
       'Kernel namespaces for its view of processes and network, plus cgroups for resource limits',
     ], 3, 'Containers share the host kernel; namespaces restrict what the process can see and cgroups cap what it can consume.'),
@@ -4740,11 +4740,11 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
       'npm ci skips the lockfile when run early',
       'The dependency layer stays cached because its inputs did not change when source files did',
       'Docker runs early instructions in parallel',
-      'Alpine images cache node_modules on the host',
+      'Alpine images cache node_modules on the host between builds, so any base image gives the same speedup',
     ], 1, 'Layer cache keys are content-based, so ordering stable inputs before volatile ones keeps the expensive layer valid.'),
     q('A pipeline runs `docker build` separately for staging and for production. What is wrong?', [
       'It uses twice the registry storage',
-      'Production images must be built on a production runner',
+      'Production images must be built on a dedicated production runner, with its own base image pulls and layer cache',
       'The two builds can differ, so the artifact tested in staging is not the artifact running in production',
       'Docker cannot tag the same Dockerfile twice',
     ], 2, 'Base images and transitive dependencies move between builds; only promoting one identical artifact preserves what testing proved.'),
@@ -4752,7 +4752,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
       'Injected as an environment variable at container start, from a secret manager or CI secret store',
       'A build ARG so it is available to the whole image',
       'A .env file committed alongside .env.example for consistency',
-      'Hardcoded in config.js and excluded from the repository search index',
+      'Hardcoded in config.js and excluded from the repository search index, so only maintainers can find it',
     ], 0, 'Image layers are immutable and readable, so anything baked in at build time is permanently exposed; runtime injection keeps it out of the artifact.'),
     q('Why must a service take its listening port from PORT and bind 0.0.0.0 rather than 127.0.0.1?', [
       'Node cannot bind loopback in production mode',
@@ -4780,7 +4780,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
     ], 0, 'Additive changes leave the old code path intact, which is exactly what makes an application rollback possible.'),
     q('An alert fires whenever CPU exceeds 80% and has never once led to an action. What should you do?', [
       'Raise the threshold to 95% and keep paging',
-      'Route it to a second on-call engineer for confirmation',
+      'Route it to a second on-call engineer for confirmation, and page the first only if both agree it matters',
       'Add a longer for: duration and keep it as a page',
       'Replace it with a symptom-based alert on error rate or p95 latency, and stop paging on the cause',
     ], 3, 'Pages must be urgent and actionable; alerting on user-visible symptoms rather than resource causes is what prevents alert fatigue.'),
@@ -4792,12 +4792,12 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
     ], 2, 'Kubernetes is a set of control loops closing the gap between declared and actual state, so removing something permanently means changing the declaration.'),
     q('A container is killed with exit code 137 and the reason OOMKilled. What happened?', [
       'It exceeded its own memory limit and was killed, so raise the limit or fix the leak',
-      'The node ran out of disk and the kubelet evicted it',
+      'The node ran out of disk space, so the kubelet evicted the Pod to reclaim storage for other workloads',
       'The liveness probe failed three consecutive times',
       'The image was built for the wrong CPU architecture',
     ], 0, '137 is 128+9, a SIGKILL, and the OOMKilled reason points at this container passing its own memory limit rather than at any node-level pressure.'),
     q('Why can autoscaling an API from 5 to 20 replicas take the database down instead of absorbing the traffic?', [
-      'More replicas multiply cross-zone egress charges until the network saturates',
+      'More replicas multiply cross-zone egress charges until the network between the zones becomes saturated',
       'The HPA scales on CPU, which a Node process cannot report accurately',
       'Rolling updates run any pending migration once per replica',
       'Each replica opens its own connection pool, so total connections multiply past the database limit',
@@ -4808,32 +4808,32 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
       'A secret baked into a build layer from being extracted later',
       'A rollout from continuing when the readiness probe fails',
     ], 1, 'A signature attests to provenance — that your pipeline produced these exact bytes — so only images your build identity signed are ever admitted.'),
-      q('An internal admin tool serving about 20 requests a minute has its availability target raised from 99.9% to 99.99% to show that the team takes reliability seriously. What follows from that decision?', [
+    q('An internal admin tool serving about 20 requests a minute has its availability target raised from 99.9% to 99.99% to show that the team takes reliability seriously. What follows from that decision?', [
       'The burn-rate alert needs only a longer long window, since four nines just moves the ratio threshold',
-      'Detection gets sharper, because a tighter target lets the same short window resolve smaller regressions',
+      'Detection gets sharper, because a tighter target lets the same short window resolve smaller regressions earlier',
       'The target is finer than the traffic can measure, so one retryable failure pages a rotation that cannot act',
       'Nothing operational changes until the error budget policy is renegotiated with product in a quiet week',
     ], 2, 'Four nines is about 4.3 minutes a month and only around 100 requests land in a five minute window, so a single failed request reads as a 10x burn rate; the alert is measuring noise, and every page it produces spends the rotation\'s page budget while giving nobody anything to fix.'),
     q('A canary takes 5% of traffic and its analysis query filters only on job="api", with no rollouts_pod_template_hash label. A build that errors on 20% of the requests it serves passes every check. Why?', [
       'The query measures both versions at once, so nineteen parts of clean stable traffic dilute the canary failures',
-      'The failureLimit of 2 tolerates two consecutive scrapes above the success condition before it aborts',
+      'The failureLimit of 2 tolerates two consecutive scrapes above the success condition before it aborts the analysis run',
       'The canary served too few requests for the interval and count settings to finish ten measurements',
       'The baseline Pod running the old image absorbs the errors, since both report under the same job label',
     ], 0, 'The pod template hash label is what scopes the ratio to the new version; without it the stable version\'s healthy requests sit in the same numerator and denominator, so a 20% canary error rate averages down to roughly 1% overall and the threshold is never crossed no matter how broken the build is.'),
     q('A production stack calls a shared module with a git source and no ref argument, on a pipeline that runs terraform init from a clean checkout. A colleague merges an unrelated change into that module repo\'s main branch. What happens next?', [
-      'Nothing until somebody bumps the version, because the state file records the module source it applied',
+      'Nothing until somebody bumps the version, because the state file records the exact module source it last applied',
       'terraform init fails with a checksum mismatch against the dependency lock file until it is upgraded',
       'The next plan is unaffected, since the dependency lock file pins module sources as well as providers',
       'The next plan can propose changes to files nobody edited, since the source resolves to whatever main is now',
     ], 3, 'An unpinned git source is re-resolved every time init runs, and the dependency lock file pins provider versions only, so a merge in a repository the consuming team does not watch turns into a production diff that no reviewer in that repository asked for.'),
     q('A search backend sits at about 92% utilisation and its p99 is the tail everyone complains about. Someone proposes hedging each call at the measured p95 to collapse that tail. What is the likely result?', [
-      'The tail collapses, because the duplicate lands on a different replica that is not garbage collecting',
+      'The tail collapses, because the duplicate lands on a different replica that is not garbage collecting at that moment',
       'It adds about 5% more load to a queue already priced at a 12x wait multiplier, so the tail gets worse',
       'Nothing measurable, since the hedged copy is aborted the moment the first response wins the race',
       'Latency improves but correctness suffers, because a hedged call is not idempotent by default',
     ], 1, 'Hedging buys a shorter tail by spending spare capacity, and at 92% utilisation there is none left: the extra copies join the same queue whose wait already multiplies service time roughly twelvefold, so the remedy feeds the saturation that produced the tail in the first place.'),
     q('A platform runs 16 cells spread across three regions, and a feature flag flipped at 14:00 takes every cell down inside ninety seconds. What does that outage reveal about the design?', [
-      'Cells isolate data but never code, so any rollout mechanism reaches all of them simultaneously',
+      'The three regions are too close together, so a single regional failure still reaches every cell within ninety seconds',
       'The cell count is too low, so each poisoned cell still holds too large a share of the tenants',
       'The flag delivery path is a global failure domain, and cells only help when a change rolls cell by cell',
       'The tenant hash needs a version component so that a bad flag reshards traffic onto healthy cells',
@@ -4841,7 +4841,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
     q('Across sixty services, a page for a failing service takes about twenty-five minutes to reach a team that can act on it. Which change addresses the cause rather than the symptom?', [
       'Add a manager tier to every escalation policy so an unacknowledged page reaches someone with authority',
       'Have the service scaffold emit a catalog entry naming owner, tier and rota, so routing becomes a lookup',
-      'Raise the severity of ambiguous alerts so that more of the organisation wakes and someone recognises it',
+      'Raise the severity of ambiguous alerts so that more of the organisation wakes up and someone recognises it',
       'Cut the primary acknowledgement window from five minutes to two so that escalation begins much sooner',
     ], 1, 'Escalation tiers and shorter acknowledgement timers only move a page faster once it is already on the correct rotation, whereas those twenty-five minutes are ownership archaeology, and a catalog entry generated by the golden path is what lets the paging system resolve owner and rota itself.'),
     q('A company creates a new "DevOps team" whose job is to take finished code from developers and handle every deployment for them. Why does this miss what DevOps means?', [
@@ -4857,14 +4857,14 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
       'The read fails and the write succeeds, because group bits govern writes',
     ], 1, 'In 640 the owner has read and write (6), the group has read only (4) and everyone else has nothing (0), so a group member can read the file but not write it.'),
     q('`curl https://orders.internal/healthz` fails straight away with `Could not resolve host`. What does that tell you?', [
-      'The service is running, but nothing is listening on port 443',
+      'The service is running, but nothing is listening on port 443 of that host',
       'A firewall dropped the packets before they reached the host',
       'The name did not resolve, so no connection was even attempted',
       'The TLS certificate does not match the hostname requested',
     ], 2, 'Name resolution is the first connectivity question; if the name does not resolve, curl never gets an address to connect to, so ports, firewalls and TLS have not been tested yet.'),
     q('An app container writes uploaded files to `/app/uploads`, with no volume or bind mount. The container is removed and a new one is started from the same image. What does the new container find in `/app/uploads`?', [
       'All of the earlier uploads, because Docker commits changes back into the image',
-      'The uploads from the last clean shutdown, which Docker snapshots automatically',
+      'The uploads from the last clean shutdown, which Docker snapshots automatically on stop',
       'A read-only copy of the old files that must be remounted before writing',
       'Only what the image shipped with, since the uploads died with the old container',
     ], 3, 'A container\'s writes go to its own writable layer, which is deleted along with the container, so anything that must outlive it belongs in a volume or in object storage.'),
@@ -4887,7 +4887,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
       'deploy runs only after test has finished, but it ignores the result',
     ], 2, 'Jobs run in parallel by default and only `needs` creates an ordering between them, so without `needs: test` the deploy job never waits for the tests.'),
     q('Workflows triggered by `pull_request` from forks get no secrets, so someone switches the trigger to `pull_request_target` and checks out the fork\'s code to run its tests. What have they done?', [
-      'Fixed it safely, since pull_request_target runs jobs in a read-only sandbox',
+      'Fixed it safely, since pull_request_target runs jobs in a read-only sandbox with no write access',
       'Broken the workflow, since pull_request_target cannot check out fork code',
       'Nothing risky, since GitHub masks every secret value in the job logs',
       'Let any outside contributor run their own code with the repository\'s secrets',
@@ -4923,7 +4923,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
       'B has no Prometheus metric label recording the incoming trace ID',
     ], 0, 'Spans join one trace only when the caller passes the trace context, via the W3C traceparent header, and the receiver continues it; without that, B starts a fresh trace.'),
     q('Tracing keeps 1% of requests, decided at the start of each trace, and the rare slow checkout requests you need to study are almost never kept. What fixes that?', [
-      'Raising the head sampling rate to 2% so twice as many are captured',
+      'Raising the head sampling rate to 2% so twice as many of the slow traces are captured',
       'Tail sampling, which decides at the end and keeps every slow or failed trace',
       'Adding request duration as a label on the checkout latency metric',
       'Logging each full request body so slow ones can be rebuilt later',
@@ -4949,7 +4949,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
     q('A load test shows one instance holds its latency target up to about 200 requests per second and degrades sharply beyond that. Peak traffic is 1,000 requests per second. What is wrong with running exactly five instances?', [
       'Five instances cannot share one load balancer without sticky sessions',
       'Each instance would sit at its knee, with no room for a deploy, a failure or growth',
-      'Load tests overstate capacity, so the real knee is always half the measured one',
+      'Load tests overstate capacity, so the real knee is always half the measured one in production',
       'Databases always hit their connection limit at five application instances',
     ], 1, 'Five times 200 is exactly peak, so every instance runs where latency climbs and one lost instance or rollout surge pushes the rest past it; capacity needs headroom below the knee.'),
     q('A payments client calls `POST /charges`. Sometimes the charge succeeds but the response is lost to a timeout, and the client retries with backoff. What must be in place so the customer is never charged twice?', [
@@ -4960,7 +4960,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
     ], 2, 'Retrying a non-idempotent POST repeats the charge, so the request needs an idempotency key that lets the server recognise the repeat and return the original result.'),
     q('When right-sizing a service\'s instances, which figure should the size be based on?', [
       'The highest utilisation ever recorded, so the service never runs short',
-      'Average utilisation over the last day, since it reflects current traffic',
+      'Average utilisation over the last day, since it reflects the current traffic pattern best',
       'The instance type used in the load test, whatever production shows',
       'p95 utilisation over a fortnight, plus headroom for a surge and a lost zone',
     ], 3, 'Sizing from p95 over a representative period, plus headroom for the rollout surge and one zone failing, avoids paying every hour for a peak that happened once.'),
@@ -4997,7 +4997,7 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
     q('A refactor moves `aws_s3_bucket.logs` into a module, so its address becomes `module.logging.aws_s3_bucket.this`. With no `moved` block, what does the next plan propose?', [
       'Nothing, because Terraform matches resources by their cloud ID',
       'Destroying the existing bucket and creating a new one at the new address',
-      'Renaming the address in state, since the bucket name is unchanged',
+      'Renaming the address in state, since the bucket name is unchanged and Terraform tracks it by name',
       'An error that halts planning until the old address is imported',
     ], 1, 'Terraform tracks resources by address, so the vanished address is planned for destruction and the new one for creation unless a moved block says they are the same object.'),
     q('A service receives 300 requests per second, and each request holds a database connection for its whole 200ms duration. On average, how many connections are in use?', [
@@ -5007,19 +5007,19 @@ Exactly one step is irreversible, and it happens a fortnight later on a Tuesday 
       'About 15',
     ], 2, 'Little\'s Law says concurrency equals arrival rate times latency, so 300 per second times 0.2 seconds is 60 connections in use on average.'),
     q('Why is a sampling profiler that captures stacks about a hundred times a second safe to run on a live production service?', [
-      'It records every function call but writes the results asynchronously',
+      'It records every function call but writes the results asynchronously to disk',
       'It runs only while the service is idle, so it never competes for CPU',
       'It profiles a forked copy of the process rather than the live one',
       'Its cost follows the sample rate rather than how much work the code does',
     ], 3, 'A sampling profiler interrupts at a fixed rate and records the stack, so its overhead is set by that rate, unlike instrumentation, which pays on every call.'),
     q('Customers in Europe and America can edit the same records, and the team runs active-active writes in Frankfurt and Virginia with last-writer-wins. What goes wrong, and what is the usual fix?', [
       'Concurrent edits are silently lost; give each record one home region for writes',
-      'Every write gets slower; switch the two regions to synchronous replication',
+      'Every write gets slower; switch the two regions to synchronous replication across the Atlantic',
       'Reads return stale data; send every read to the region holding the primary',
       'Nothing goes wrong, because last-writer-wins merges conflicting edits safely',
     ], 0, 'Last-writer-wins resolves conflicts by discarding one version without any error, so the usual answer is a single writer per key, with each row homed in one region.'),
     q('In a live database migration, the bulk copy has finished and continuous replication is keeping the new store current. What should happen before any reads move to it?', [
-      'Switch all writes over first, since reads are harmless to move afterwards',
+      'Switch all writes over first, since reads are harmless to move afterwards anyway',
       'Compare data between the two stores to prove they match, rather than assume',
       'Stop replication so the new store holds a stable snapshot for testing',
       'Drop the old database so that replication cannot drift back into it',

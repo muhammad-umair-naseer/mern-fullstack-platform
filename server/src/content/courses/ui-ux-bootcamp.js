@@ -4276,33 +4276,33 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
   final: [
     q('Which interview question produces the most reliable evidence?', [
       'Would you use a study-streak feature?',
-      'Do you find the current dashboard confusing?',
+      'Do you find the current dashboard confusing, and which parts would you change first?',
       'Tell me about the last time you tried to keep up with an online course.',
       'How often do you usually study?',
     ], 2, 'Asking about a specific recent event retrieves behaviour from memory instead of a hypothetical answer people give to be agreeable.'),
     q('What makes a persona capable of settling a design argument?', [
       'Observed behaviour and context that rule specific design options in or out',
       'A realistic photograph and a memorable name',
-      'Demographic detail such as age, city and hobbies',
+      'Demographic detail such as age, city, income, hobbies and favourite apps for every user type',
       'Being written by the most senior stakeholder',
     ], 0, 'A persona is useful only when it constrains decisions — "studies in 20-minute blocks on a phone" answers questions that "loves yoga" cannot.'),
     q('A journey map shows sign-up as smooth and week two as flat and frustrating, with no broken feature. What does this indicate?', [
       'The map is wrong, since nothing is broken',
-      'That sign-up needs further optimisation',
+      'That sign-up needs further optimisation, because the first impression decides week-two retention',
       'That the emotion row should be removed',
-      'A gap where the product does nothing to help, which is where users quietly drop out',
+      'A gap where the product does nothing to help, where users quietly drop out',
     ], 3, 'Drop-off often happens where nothing fails but nothing helps — the trough in the emotion row, not the visible funnel step.'),
     q('Card sorting produced clean groups, but a tree test shows high success with low directness. What do you change?', [
-      'The grouping — merge the categories',
-      'The labels — people guess wrong first and recover by backtracking',
+      'The grouping, by merging the categories so there are fewer places to look in the tree',
+      'The labels, since people guess wrong first and recover by backtracking',
       'The visual design of the navigation',
       'Nothing; success rate is what matters',
     ], 1, 'Backtracking means the first guess was wrong, which is a naming problem rather than a structural one.'),
     q('Why should wireframes stay low-fidelity while the structure is still in question?', [
-      'Polish creates commitment and moves critique to colour and radius instead of the flow',
+      'Polish invites commitment and pulls critique towards colour instead of the flow',
       'Low-fidelity files are smaller',
       'High-fidelity tools are harder to learn',
-      'Clients cannot understand high-fidelity mockups',
+      'Clients cannot understand high-fidelity mockups until the structure is signed off in writing',
     ], 0, 'A finished-looking screen gets critiqued on surface detail, and hours invested make you defend a layout you should discard.'),
     q('Body text is #999999 on white (2.85:1). Which change makes it WCAG AA compliant?', [
       'Increase the size to 18px to qualify as large text',
@@ -4312,24 +4312,24 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     ], 2, 'AA demands 4.5:1 for normal text, and the 3:1 large-text exemption only starts at 24px (or 18.66px bold).'),
     q('Adjacent text levels sized 16px and 17px produce what problem?', [
       'A broken baseline grid',
-      'Failure of the contrast requirement',
+      'Failure of the contrast requirement, because similar sizes lower the ratio between levels',
       'Inconsistent line lengths',
-      'No perceptible hierarchy — the eye reads them as the same level',
+      'No perceptible hierarchy, as the eye reads them as the same level',
     ], 3, 'Hierarchy steps need a clear jump — roughly 1.25x — or the difference reads as an error rather than a level.'),
     q('Why does a design system need a semantic token tier between primitives and components?', [
-      'It reduces the total number of colours',
-      'It lets one redefinition retheme everything, so dark mode and rebrands do not touch components',
+      'It reduces the total number of colours the brand can use, keeping every theme consistent',
+      'It lets one redefinition retheme everything without touching components',
       'Primitive values cannot be referenced directly',
       'It makes the CSS file smaller',
     ], 1, 'Components referencing roles rather than raw values mean a theme change is a token edit instead of a hunt through every usage.'),
     q('Which of these is a design decision rather than a development detail, and so belongs in handoff?', [
       'What the screen shows when the list is empty and when a request fails',
-      'Which CSS framework to use',
+      'Which CSS framework and component library the developers should use to build the screen',
       'The database schema for courses',
       'Whether to use REST or GraphQL',
     ], 0, 'Empty and error states are designed content; leaving them out means a developer improvises them, usually as a raw error string.'),
     q('You have ten participants and a two-week timeline. What is the most effective plan?', [
-      'Test all ten at the end, once the design is finished',
+      'Test all ten participants at the end, once the design is finished and signed off',
       'Skip testing and rely on an automated accessibility scan',
       'Send a survey to 200 users instead',
       'Test five now, fix what you find, and test five more on the revision',
@@ -4342,23 +4342,23 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     ], 1, 'A bare 16rem minimum is 256px and refuses to shrink, so it overflows any container narrower than that; min(16rem, 100%) lets the track collapse to the room it actually has.'),
     q('A failed save shows "Error 422: unprocessable entity". What is the main problem?', [
       'The message should be shown in red rather than grey',
-      'Status codes should be shown only to signed-in users',
+      'Status codes should be shown only to signed-in users, with a separate message for guests',
       'It needs a friendlier tone and an emoji',
       'It names the plumbing instead of saying what failed and what to do next',
     ], 3, 'An error message has three jobs — what happened, why, and the next action — and an internal status code does none of them.'),
     q('A two-week experiment crosses p = 0.05 on day three. Why is stopping there unsafe?', [
-      'Repeated looks at accumulating data let random noise cross the threshold, so the real false-positive rate is far above 5%',
-      'Three days is never long enough to reach the sample size',
+      'Peeking repeatedly lets noise cross the threshold, so false positives exceed 5%',
+      'Three days is never long enough to reach the planned sample size, whatever the traffic is',
       'Significance must be measured at the end of a calendar month',
       'The effect will always be larger later in a test',
     ], 0, 'The 5% threshold assumes a single planned look; peeking daily turns it into many chances for noise to look like a result.'),
     q('Which design QA bug report is most likely to be fixed correctly?', [
       '"The course card spacing looks a bit tight in the grid."',
       '"Please make the metadata text darker and add more space above it."',
-      '"Course card at 375px: title-to-metadata gap renders 13px, should be --space-2; metadata is #999999 (2.85:1), should be --color-text-secondary."',
-      '"Card spacing should be 8px and the grey should be darker."',
+      '"Card at 375px: title-to-metadata gap is 13px, should be --space-2; metadata #999999 fails contrast."',
+      '"The course cards feel cramped on phones and the grey text is hard to read, so please tidy up the spacing and make the text darker."',
     ], 2, 'Naming the screen, the measured value and the token means the fix lands on the system rather than being re-typed as a one-off number.'),
-      q('A side drawer is built with `transition: left 280ms linear` and closes with the same 280ms linear curve. It judders on a mid-range Android, and anyone who taps close straight after opening says the drawer keeps arguing with them. Which combination of changes addresses both complaints?', [
+    q('A side drawer is built with `transition: left 280ms linear` and closes with the same 280ms linear curve. It judders on a mid-range Android, and anyone who taps close straight after opening says the drawer keeps arguing with them. Which combination of changes addresses both complaints?', [
       'Keep the left transition but add will-change, ease both directions, and queue the close behind the open',
       'Animate margin-left with ease-out, raise both durations to 400ms, and restart the close from its declared start',
       'Animate transform instead of left, ease-out in and ease-in out at around 200ms, and close from the current value',
@@ -4397,17 +4397,17 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     q('When using the five whys in an interview, why stop after two or three rounds of asking why?', [
       'Pushed further, people invent reasons to satisfy you',
       'Interviews have to finish within 30 minutes',
-      'Answers always start repeating after three rounds',
+      'Answers always start repeating after three rounds, so further questions add nothing new',
       'Research ethics rules limit follow-up questions',
     ], 0, 'A couple of whys turn a preference into a real context; beyond that, participants start making up reasons to please the interviewer.'),
     q('Which statement is written in jobs-to-be-done form?', [
       'Sarah, 34, a marketing manager from Lahore who loves yoga',
-      'Users want a beautiful, modern and intuitive learning app',
+      'Users want a beautiful, modern and intuitive learning app they can open on any device',
       'When I commute, I want to resume where I stopped, so I finish a lesson',
       'The team wants to raise daily active users by next quarter',
     ], 2, 'A job statement drops demographics and keeps the situation, the motivation and the outcome: when, I want to, so I can.'),
     q('A team proposes a bottom tab bar reading Home | Search | New | Settings | Log out. What is the core problem?', [
-      'Five tabs is more than a bottom bar can hold',
+      'Five tabs is more than a bottom bar can hold on small phones without truncating labels',
       'New and Log out are actions, but tabs should be destinations',
       'The tab labels are missing their icons',
       'Search should live inside a hamburger drawer',
@@ -4420,7 +4420,7 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     ], 3, 'Every page is a landing page, and a linked breadcrumb shows where the page sits and gives a route to its siblings.'),
     q('Why write behaviour notes beside a wireframe, such as what happens on submit, when the list is empty, and where focus goes after a dialog closes?', [
       'Without them, it gets built as a static picture of itself',
-      'They replace the need for any usability testing',
+      'They replace the need for any usability testing, because the behaviour is written down',
       'Developers cannot open wireframes that lack notes',
       'They let the wireframe skip real content',
     ], 0, 'A picture cannot show behaviour, so annotations carry the rules and states that would otherwise be invented or missed during the build.'),
@@ -4444,12 +4444,12 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     ], 3, 'Elevation expresses hierarchy: rows sit flat, cards at level 1, menus at level 2, and modals and sheets with a scrim at the top.'),
     q('You are preparing a Figma prototype for a five-task usability test in a 40-screen file. What should you wire up?', [
       'The tested route, plus one likely wrong turn as a dead end',
-      'Every button and link on all 40 screens in the file',
+      'Every button and link on all 40 screens, so participants cannot reach a broken screen',
       'Only the first screen of each of the five tasks',
       'The happy path alone, with no way to take a wrong turn',
     ], 0, 'Testers follow the task, not the whole product, and watching them recover from a wrong turn is often the most informative moment.'),
     q('A new component only makes sense in one product. Where should it live?', [
-      'In the shared library from the day it is made',
+      'In the shared library from the day it is made, so other products can find and reuse it',
       'In a personal draft file that nobody else opens',
       'In that product\'s file, promoted to the library if others need it',
       'Copied into every product file just in case',
@@ -4463,12 +4463,12 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     q('Which usability finding is written in the most useful way?', [
       'Users found the navigation confusing and hard to use overall',
       'The navigation is broken and needs a complete redesign',
-      'Most participants did not like the wording of the menu labels',
+      'Most participants did not like the wording of the menu labels and suggested several alternatives',
       '4/5 looked for the syllabus under Courses; two gave up; mean time 71s',
     ], 3, 'Reporting what happened, with counts and times, points to the fix, while conclusions invite a debate won by seniority.'),
     q('Which source of usability-test participants should you try first?', [
       'Your own users, segmented by behaviour in your data',
-      'Friends and colleagues who are easy to book',
+      'Friends and colleagues who are easy to book and happy to give honest feedback',
       'A paid panel of practised testers',
       'Anyone who replies to a social media post',
     ], 0, 'Your own users give the highest fidelity at almost no cost; panels come next, and your personal network last.'),
@@ -4487,18 +4487,18 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     q('Why place form labels above their inputs rather than beside them?', [
       'They let each field be half as wide',
       'They remove the need for error messages',
-      'They allow two columns of fields per row',
+      'They allow two columns of fields per row, which shortens long forms on desktop',
       'They survive longer translations and narrow screens',
     ], 3, 'Labels above stay visible while typing and do not break when text grows in translation or the screen narrows.'),
     q('Which A/B test hypothesis is written correctly?', [
       'Showing the outline above the fold lifts starts from 25% to 28%+, refunds flat',
       'Let\'s move the outline up and see whether anything changes',
       'Users will prefer the new outline placement to the old one',
-      'The new layout looks more modern, so it should perform better',
+      'The new layout looks more modern, so it should perform better with every segment we test',
     ], 0, 'A proper hypothesis is a prediction with one primary metric, a baseline, an expected effect and a guardrail, written before the test.'),
     q('A redesign moves certificates from Courses to Profile. Which announcement works best?', [
       'A blog post saying \'We have refreshed the experience\'',
-      'A full-screen modal on load listing every change',
+      'A full-screen modal on first load listing every change in the redesign with screenshots',
       'A dismissible in-product bar: \'Your certificates now live under Profile\'',
       'No notice, so that users discover it naturally',
     ], 2, 'Say exactly what moved, where the confused user already is, without blocking the screen.'),
@@ -4509,7 +4509,7 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
       'A 600ms ease-out that restarts from zero each time',
     ], 1, 'Springs finish when the physics finishes, so a dragged sheet keeps its momentum instead of restarting a timed animation.'),
     q('A search may return zero results or two hundred. Which loading indicator fits?', [
-      'A three-row skeleton of result cards',
+      'A three-row skeleton of result cards, since skeletons tend to feel faster than spinners',
       'A full-page skeleton that replaces the header',
       'A progress bar showing percent complete',
       'A spinner, because the shape of the result is unknown',
@@ -4535,7 +4535,7 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     q('How should Undo for a bulk delete be built so that it works reliably?', [
       'Delete at once, then re-create the records if Undo is clicked',
       'Ask \'Are you sure?\' twice before deleting anything',
-      'Delete at once and keep a log so support can restore it',
+      'Delete at once and keep a log so support staff can restore the records if a user complains',
       'Hide rows now; commit the delete after ~10 seconds unless undone',
     ], 3, 'Undo works as a delay: nothing is actually deleted until the window closes, so cancelling it restores the rows exactly.'),
     q('A developer sets `tabindex="1"` on a search field so it receives focus first. What is the problem?', [
@@ -4564,13 +4564,13 @@ Hiring a design ops person to fix a strategy problem. If nobody has decided what
     ], 3, 'A drawing app that needs the whole canvas qualifies; matching a design file or another platform does not.'),
     q('Why write a feature\'s kill criteria before the build starts?', [
       'Without them a weak feature never dies; it just gets redesigned',
-      'They guarantee the feature will reach its target',
+      'They guarantee the feature will reach its target, because the team knows the bar in advance',
       'They replace the need to measure after launch',
       'They let engineering skip estimating the work',
     ], 0, 'A kill line agreed in advance turns a later review into a decision instead of an endless series of rescues.'),
     q('You need a decision on onboarding from a product lead. Which presentation is most likely to get one?', [
       'One polished design and a request to build it',
-      'A full research deck covering every finding',
+      'A full research deck covering every finding, so the lead can reach the decision alone',
       'Two or three options with costs and a recommendation',
       'A live demo with no written summary afterwards',
     ], 2, 'Options plus a recommendation give the decider something to do, while a single design leaves only approve or object.'),

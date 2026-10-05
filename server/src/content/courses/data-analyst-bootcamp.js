@@ -4706,7 +4706,7 @@ Many analysts start with small freelance gigs, build a track record, and then mo
       'Loop back to refine the question or collect different data',
     ], 3, 'The workflow is iterative, so discoveries in later steps often send you back to earlier ones.'),
     q('A daily_sales table has one row per store per day. What is the total of its rows for one store over March?', [
-      'The number of orders that store took in March',
+      'The number of orders that store took in March, which needs a join to the orders table',
       'The number of days in March with a record for that store',
       'The number of products that store sold in March',
       'The number of customers who visited in March',
@@ -4714,11 +4714,11 @@ Many analysts start with small freelance gigs, build a track record, and then mo
     q('A request says "send me last quarter\'s returns". What should your reply confirm first?', [
       'The file format they prefer',
       'Which colour scheme to use in charts',
-      'Whether they want rows sorted by date',
+      'Whether they want rows sorted by date, since that affects how the table is read',
       'What decision the returns data will inform',
     ], 3, 'Confirming the decision turns a data dump into a focused, useful analysis.'),
     q('"Would customers pay for a premium plan?" arrives, but no such plan has ever existed. What is the best response?', [
-      'Use total revenue as a proxy and estimate it',
+      'Use total revenue as a proxy and estimate the premium plan\'s likely uptake from it',
       'Decline the request with no explanation',
       'Ask engineering to build the plan first',
       'Explain the data gap and suggest a survey or landing-page test',
@@ -4743,7 +4743,7 @@ Many analysts start with small freelance gigs, build a track record, and then mo
     ], 3, 'Known data gaps belong under risks so stakeholders see them before results.'),
     q('Which formula counts returned orders from Karachi?', [
       '=SUMIFS(D:D, B:B, "Karachi")',
-      '=AVERAGEIFS(D:D, B:B, "Karachi")',
+      '=AVERAGEIFS(D:D, B:B, "Karachi", E:E, "Returned")',
       '=COUNTIFS(B:B, "Karachi", E:E, "Returned")',
       '=COUNT(B:B, "Karachi", "Returned")',
     ], 2, 'COUNTIFS counts rows that meet several criteria at once.'),
@@ -4751,7 +4751,7 @@ Many analysts start with small freelance gigs, build a track record, and then mo
       'Delete the unmatched orders silently',
       'Investigate the mismatches and resolve or report them',
       'Replace them with the most common category',
-      'Ignore them because 3% is too small to matter',
+      'Ignore them because 3% is too small to matter for any total that gets reported',
     ], 1, 'Unmatched rows can bias totals, so they need fixing or clear disclosure.'),
     q('A PivotTable\'s Count of customer_id per city is higher than the true number of customers. Why?', [
       'Count includes repeat orders from the same customers',
@@ -4761,7 +4761,7 @@ Many analysts start with small freelance gigs, build a track record, and then mo
     ], 0, 'A plain count counts rows, so repeat buyers are counted once per order.'),
     q('A workbook formula reads =D2*0.17 in two hundred cells. What is the main risk?', [
       'Updating the rate means finding every hidden constant',
-      'The formula calculates more slowly than a lookup',
+      'The formula calculates more slowly than a lookup because the constant is recomputed in each cell',
       'Decimals cannot be multiplied in spreadsheets',
       'The file will exceed the row limit',
     ], 0, 'Hard-coded constants are easy to miss when a value changes.'),
@@ -4784,7 +4784,7 @@ Many analysts start with small freelance gigs, build a track record, and then mo
       'In the HAVING clause after GROUP BY',
     ], 3, 'Conditions on aggregates are applied to groups with HAVING.'),
     q('Which query pattern finds products that have never been sold?', [
-      'INNER JOIN products to order_items and count rows',
+      'INNER JOIN products to order_items and count the rows that come back for each product',
       'GROUP BY product with HAVING COUNT(*) = 0',
       'LEFT JOIN order_items and keep rows where the item key IS NULL',
       'SELECT DISTINCT product FROM order_items',

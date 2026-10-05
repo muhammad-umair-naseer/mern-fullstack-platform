@@ -4230,9 +4230,9 @@ Some editors love editing and choose to stay solo, focusing on premium clients a
     ], 0, 'Lights on 50 Hz mains flicker in step with 25 and 50 fps, preventing visible flicker.'),
     q('What is the difference between a container and a codec?', [
       'They are the same thing',
-      'The codec is the file extension',
+      'The codec is the file extension, such as .mp4 or .mov files',
       'Containers only hold audio',
-      'The container wraps streams; the codec compresses the video',
+      'The container wraps streams; the codec compresses video',
     ], 3, 'MP4 or MOV are containers, while H.264 or ProRes are codecs describing the compression.'),
     q('What is the most important rule for recording clear speech?', [
       'Record at the maximum level',
@@ -4259,13 +4259,13 @@ Some editors love editing and choose to stay solo, focusing on premium clients a
       'Type',
     ], 0, 'Ripple Edit adjusts the clip and shifts later clips so no gap remains.'),
     q('What is the purpose of proxy media?', [
-      'Final delivery to social platforms',
+      'Final delivery of the finished edit to social platforms in full quality',
       'Backing up the project database',
-      'Smooth editing with lightweight copies of heavy footage',
+      'Smooth editing using lightweight copies of heavy footage',
       'Adding motion blur to graphics',
     ], 2, 'Proxies play smoothly while editing, and exports use the full-quality originals.'),
     q('In an L-cut, what happens?', [
-      'The next shot\'s audio starts before its picture',
+      'The next shot\'s audio starts before its picture appears on screen',
       'The video fades to black',
       'Two cameras play side by side',
       'The current audio continues after the picture changes',
@@ -4292,16 +4292,16 @@ Some editors love editing and choose to stay solo, focusing on premium clients a
       'Ten seconds of any song is always allowed',
       'Crediting the artist makes it legal',
       'A commercial licence is needed; suggest licensed alternatives',
-      'Songs found on YouTube are free to use',
+      'Songs found on YouTube are free to use in adverts if the upload is public',
     ], 2, 'Commercial use of copyrighted music requires permission, so licensed tracks protect the client.'),
     q('Why should correction come before creative grading?', [
-      'Grading cannot be applied to corrected footage',
+      'Grading cannot be applied to corrected footage without losing quality',
       'Correction exports faster',
       'Platforms require corrected footage',
-      'A consistent base makes the look behave the same on every shot',
+      'A consistent base makes the look work the same on every shot',
     ], 3, 'Correcting first means the creative grade produces consistent results across shots.'),
     q('Where do skin tones of all complexions tend to fall on a vectorscope?', [
-      'At the very centre of the circle',
+      'At the very centre of the circle, where every colour is neutral',
       'Near the skin tone line between red and yellow',
       'Towards the green edge',
       'Towards the blue edge',
@@ -4319,10 +4319,10 @@ Some editors love editing and choose to stay solo, focusing on premium clients a
       'A clear hook in visuals, text and audio',
     ], 3, 'Viewers decide almost instantly, so the hook must start immediately across picture, text and sound.'),
     q('Why export clean versions instead of reposting with another platform\'s watermark?', [
-      'Platforms favour original content and may limit watermarked reposts',
+      'Platforms favour original content and limit watermarked reposts',
       'Watermarks double the file size',
       'Watermarked videos have no audio',
-      'Platforms cannot play other apps\' files',
+      'Platforms cannot play other apps\' files, so they re-encode everything',
     ], 0, 'Clean, original uploads avoid reduced reach that watermarked reposts can suffer.'),
     q('A retention graph drops steeply in the first seconds. What should change next time?', [
       'The ending',
@@ -4332,7 +4332,7 @@ Some editors love editing and choose to stay solo, focusing on premium clients a
     ], 1, 'Early drop-off points directly to the opening, so the hook and first frame need work.'),
     q('What helps keep client revisions under control?', [
       'Refusing all feedback',
-      'Unlimited free changes',
+      'Unlimited free changes until the client feels happy with it',
       'Agreed rounds with consolidated, timecoded feedback',
       'Skipping drafts entirely',
     ], 2, 'Clear limits and structured feedback keep revisions focused and fairly paid.'),

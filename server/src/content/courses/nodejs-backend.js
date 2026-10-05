@@ -5083,7 +5083,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
   ],
   final: [
     q('A route handler runs a 400 ms synchronous loop. What happens to the other 30 requests currently in flight?', [
-      'They are handled by libuv worker threads',
+      'They are handed to libuv worker threads, which run the handlers in parallel',
       'They all wait, because the single event loop is blocked',
       'Only requests to the same route wait',
       'Node spawns an additional process automatically',
@@ -5095,15 +5095,15 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'express.json() was registered after the route',
     ], 3, 'Middleware runs in registration order, so a parser registered below the route never touched that request.'),
     q('GET /users/me returns a database cast error. What is wrong?', [
-      'A /users/:id route was registered first and matched "me" as an id',
-      'The route needs mergeParams',
+      'A /users/:id route came first and matched "me" as an id',
+      'The route needs mergeParams enabled so the nested path is matched correctly',
       'req.params is read-only',
       'Express cannot match two-segment paths',
     ], 0, 'First match wins, so literal segments must be registered before dynamic ones.'),
     q('Which response correctly signals that an authenticated user may not touch a resource they do not own?', [
-      '200 with { success: false }',
+      '200 with { success: false } and a message explaining that access was denied',
       '400 Bad Request',
-      '404 or 403, with the query scoped to the authenticated user',
+      '403 or 404, with the query scoped to the current user',
       '401 Unauthorized',
     ], 2, 'Authentication succeeded, so 401 is wrong; the real defence is scoping the query by req.user rather than trusting the id.'),
     q('A schema uses .strict() to reject unknown keys. Which attack does that block?', [
@@ -5113,16 +5113,16 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'Oversized request payloads',
     ], 1, 'Unknown keys spread into a database write let a caller set columns the endpoint never intended to expose.'),
     q('Why is argon2 or bcrypt preferred over SHA-256 for storing passwords?', [
-      'They are deliberately slow and salted, making offline brute force impractical',
+      'They are slow by design and salted, which blunts offline brute force',
       'They produce shorter digests',
-      'They can be reversed with the server key',
-      'They are the only algorithms Node ships with',
+      'They can be reversed with the server key when a user forgets a password',
+      'They are the only algorithms Node ships with, so no extra package is needed',
     ], 0, 'Speed is a liability for password hashing; a fast general-purpose hash lets a GPU test billions of guesses per second.'),
     q('Every value is parameterised, yet a sort parameter allows injection. Why?', [
       'The driver does not support arrays',
-      'Placeholders only work on SELECT statements',
+      'Placeholders only work on SELECT statements, so the sorting clause fell outside them',
       'The body parser decoded the value twice',
-      'Placeholders bind values, not identifiers, so ORDER BY was string-interpolated',
+      'Placeholders bind values, not identifiers, so ORDER BY was interpolated',
     ], 3, 'Column names and sort direction cannot be bound; they must be mapped through an allow-list.'),
     q('Which correctly moves a large file to the client without loading it into memory?', [
       'readFile then res.send',
@@ -5137,36 +5137,36 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'The database rejects new connections with a syntax error',
     ], 0, 'Leaked connections are never returned to the pool, so new requests wait indefinitely for one.'),
     q('An in-memory Map cache works on one server but shows users stale, inconsistent data after scaling to four instances. Why?', [
-      'Map has a maximum size of 1,000 entries',
+      'Map has a maximum size of 1,000 entries, so older keys are dropped on each instance',
       'Node clears module state between requests',
       'The cache keys collide across processes',
-      'Each process holds its own copy, so an invalidation only reaches the instance that handled it',
+      'Each process holds its own copy, so invalidation reaches only one instance',
     ], 3, 'Process-local caches diverge across instances; shared state belongs in Redis or another shared store.'),
     q('p95 latency has doubled, CPU sits at 20%, and the event loop delay histogram reports a p99 of 1 ms. Where is the time going?', [
       'The loop is blocked by synchronous work in a handler',
       'Waiting on something external, such as a slow query or an upstream call',
-      'Garbage collection, because the heap is near its limit',
+      'Garbage collection, because the heap is near its limit and pauses are stacking up each minute',
       'The process needs more cluster workers',
     ], 1, 'A near-zero loop delay means callbacks are served promptly, so the latency belongs to a dependency the process is merely awaiting.'),
     q('RSS climbs all week and the heap floor after each major GC is higher than the last. A module-level Map memoises every user ever fetched. What is the fix?', [
       'Call global.gc() on a timer',
-      'Raise --max-old-space-size so the heap has room',
+      'Raise --max-old-space-size so the heap has room for the growing map of users',
       'Write a heap snapshot on every request',
       'Bound the cache with a maximum size and a TTL so entries can be evicted',
     ], 3, 'A module-scope Map lives for the life of the process, so entries must be evicted deliberately or the leak grows with traffic variety.'),
     q('A queue worker sends a welcome email, crashes before acknowledging the job, and the retried job sends it again. Which change prevents the duplicate?', [
-      'Make the handler idempotent — re-read the user and skip if welcomeSentAt is already set',
+      'Make the handler idempotent, skipping the send if welcomeSentAt is already set',
       'Set attempts to 1 so the job is never retried',
-      'Increase the job timeout',
+      'Increase the job timeout so the worker has more time to acknowledge before any crash',
       'Run the worker inside the API process',
     ], 0, 'Queues deliver at least once, so the handler must be safe to run twice instead of relying on delivery never repeating.'),
     q('A webhook route verifies an HMAC signature and every request fails the check, although the secret is correct. What is wrong?', [
       'The signature header is lower-cased by Express',
-      'timingSafeEqual cannot compare hex-encoded digests',
-      'express.json() consumed the body, so the exact bytes the sender signed no longer exist',
-      'The provider signs the response rather than the request',
+      'timingSafeEqual cannot compare hex-encoded digests, so the comparison throws an error',
+      'express.json() consumed the body, so the exact signed bytes no longer exist',
+      'The provider signs the response rather than the request, so the digests differ',
     ], 2, 'The signature covers the raw request bytes, and re-serialising a parsed object changes whitespace and key order, so the digest never matches.'),
-      q('A hot Redis key with a 60 second TTL fronts a 40 ms query on a service taking 9,000 requests a second. The team adds SET lock:<key> <id> NX PX 5000 so that only one instance rebuilds the key. Latency still spikes once a minute. What did the lock fail to address?', [
+    q('A hot Redis key with a 60 second TTL fronts a 40 ms query on a service taking 9,000 requests a second. The team adds SET lock:<key> <id> NX PX 5000 so that only one instance rebuilds the key. Latency still spikes once a minute. What did the lock fail to address?', [
       'The lock is per instance, so twelve instances still run twelve separate rebuilds',
       'Redis serialises the SET NX calls, so waiting requests now queue inside Redis',
       'The key still expires, so everyone who lost the lock has nothing left to serve',
@@ -5188,7 +5188,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'Eight pods is too small a sample for a p99, so it swings on every scrape interval',
       'A histogram cannot represent latency, which is the job of a summary instrument',
       'The 5 second top edge caps the estimate, so slower requests are read as 5 seconds',
-      'Percentiles do not average across pods, and no bucket edge sits at the 300 ms line',
+      'Percentiles do not average across pods, and no bucket edge sits at 300 ms',
     ], 3, 'A fleet percentile has to be computed by summing each bucket counter across pods first, because averaging per-pod quantiles produces a number that describes no request anywhere, and with no edge at 300 ms the count of requests inside the objective can only be interpolated; writing the SLI as the proportion of requests below a 300 ms bucket edge fixes both, since counts add up across instances and percentiles do not.'),
     q('A storage migration runs the whole backfill overnight, switches dual writes on when it finishes, and flips reads to the new store an hour later. Which rows are absent from the new store on cutover day?', [
       'Those written after the backfill read a row but before dual writing was switched on',
@@ -5200,11 +5200,11 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'Hashing is not stable across replicas, so the canary sample changed on every request',
       'The canary pods were still cold, so warm-up noise hid the regression for that hour',
       'Two percent is below the request volume any automated comparison can call a signal',
-      'Two percent of tenants left out every large one, so no query ran at their row counts',
+      'Two percent of tenants excluded every large one, so no query ran at their size',
     ], 3, 'Bucketing by tenant makes the sample representative of tenants rather than of data volume, so a query whose plan only degrades into a sequential scan at the largest tenants\' row counts is never exercised by the canary; when the risk depends on data size, either bucket per request or put the big tenants into the canary group deliberately.'),
     q('A login handler hashes passwords with `crypto.pbkdf2Sync`, costing about 200 ms per call. Why does switching to the callback-based `crypto.pbkdf2` help other requests?', [
       'The hash runs on a libuv pool thread, so the event loop stays free',
-      'The async version uses a faster algorithm and finishes sooner',
+      'The async version uses a faster algorithm and finishes sooner, freeing the loop',
       'Node spawns a separate child process for each async hash call',
       'The async version skips hashing whenever the event loop is busy',
     ], 0, 'pbkdf2 is one of the operations Node hands to the libuv thread pool, so the 200 ms of work no longer pins the single JavaScript thread that serves every request.'),
@@ -5215,7 +5215,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'It loads the package twice, once as ESM and once as CJS',
     ], 1, 'With type module every .js file is an ES module, where require and __dirname are not defined, so the file must use import instead.'),
     q('A service reads its config file with readFileSync once at startup, and reads an email template with readFileSync inside a busy request handler. Which read is the problem?', [
-      'Only the startup read, because sync calls are forbidden before listen',
+      'Only the startup read, because sync calls are forbidden before the server starts listening',
       'Both, since any synchronous file read blocks requests the same way',
       'Only the handler read, which blocks every in-flight request while it runs',
       'Neither, because file reads always run on the libuv thread pool',
@@ -5235,7 +5235,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
     q('On Express 5, an async route handler awaits a repository call that rejects, and the handler has no try/catch. What happens?', [
       'The request hangs until the client eventually times out',
       'The process crashes with an unhandled promise rejection',
-      'Express retries the handler once before reporting an error',
+      'Express retries the handler once before reporting an error to the client',
       'Express passes the rejection on to the error-handling middleware',
     ], 3, 'Express 5 forwards rejected promises from handlers to the error pipeline automatically, which Express 4 does not do without a wrapper.'),
     q('`DELETE /api/notes/42` succeeds and there is nothing useful to send back. Which response follows the course\'s REST conventions?', [
@@ -5245,7 +5245,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       '410 with no body',
     ], 0, 'A successful delete with nothing to say is 204 No Content; 201 means something was created, 202 means work was only accepted, and 410 describes a resource already gone.'),
     q('Why generate a password reset token with `crypto.randomBytes(32)` rather than from `Math.random()`?', [
-      'Math.random only returns integers, which are too short for a token',
+      'Math.random only returns small integers, which are too short to use as a token',
       'randomBytes tokens expire on their own after fifteen minutes',
       'Math.random is predictable, so an attacker could work out valid tokens',
       'randomBytes makes the token safe to store in the database as is',
@@ -5259,7 +5259,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
     q('A transfer debits account 1 and credits account 2 with two separate queries and no transaction. The process crashes between them. What is the result?', [
       'Postgres rolls back the debit because the credit never ran',
       'The debit is saved and the credit is lost, so the money disappears',
-      'Both updates are lost, since the app never confirmed either',
+      'Both updates are lost, since the app never confirmed either one to the database',
       'The credit runs automatically when the process restarts',
     ], 1, 'Without BEGIN and COMMIT each statement commits on its own, so only a transaction makes the two updates succeed or fail together.'),
     q('An upload route uses multer with disk storage and no `limits` option. What can a single client do?', [
@@ -5269,14 +5269,14 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'Skip authentication, since limits also enforce the login',
     ], 2, 'multer accepts files of any size unless limits such as fileSize, files and fields are set, which is why limits come before anything else.'),
     q('A migration backfills a new column with one `UPDATE notes SET status = \'draft\' WHERE status IS NULL` across 12 million rows. What is the problem, and the fix?', [
-      'Postgres rejects any single UPDATE touching over a million rows',
+      'Postgres rejects any single UPDATE touching over a million rows with a timeout',
       'Nothing, since Postgres only rewrites the column metadata here',
       'It must run on a read replica so the primary is not affected',
       'One long transaction bloats the table; update in batches walked by id',
     ], 3, 'A single UPDATE over millions of rows holds one transaction for minutes, blocks vacuum and leaves dead tuples, so backfills run in small batches keyed by id.'),
     q('On SIGTERM during a deploy, which shutdown order avoids dropping requests?', [
       'Close the database pool first, then stop accepting new connections',
-      'Stop accepting, let in-flight requests finish, close the pool, then exit',
+      'Stop accepting, finish in-flight requests, close the pool, then exit',
       'Exit immediately, since the platform replays any dropped requests',
       'Keep accepting new requests until the process has been idle a while',
     ], 1, 'server.close stops new connections and waits for in-flight ones, the pool is closed after that, and a hard timeout caps the whole drain.'),
@@ -5294,7 +5294,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
     ], 0, 'Since Node 15 an unhandled rejection is treated like an uncaught exception and takes the whole process down.'),
     q('Why must the Node inspector never be started with `--inspect=0.0.0.0` on a production host?', [
       'It doubles memory use, because a second V8 heap is created',
-      'It disables the JIT, so every request runs several times slower',
+      'It disables the JIT, so every request runs several times slower than before',
       'Anyone who can reach the port can run arbitrary code in the process',
       'It blocks the event loop until a debugger client has attached',
     ], 2, 'The inspector protocol can evaluate code, so a publicly bound inspector is remote code execution; bind it to 127.0.0.1 and tunnel over SSH.'),
@@ -5348,7 +5348,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
     ], 2, 'FOR UPDATE SKIP LOCKED makes each worker ignore rows another transaction holds, so ten workers claim ten different jobs instead of queuing on one.'),
     q('A webhook feature fetches URLs that users supply. Which defence holds up against server-side request forgery?', [
       'Resolve the name yourself and reject private and link-local addresses',
-      'Block any URL whose text contains 169.254.169.254 or localhost',
+      'Block any URL whose text contains 169.254.169.254 or localhost before fetching it',
       'Accept only URLs that start with https:// instead of http://',
       'Validate the URL against a strict regex before calling fetch',
     ], 0, 'A text blocklist is defeated by DNS names, alternative IP forms and redirects, so the check has to apply to the address the connection will actually reach.'),
@@ -5360,8 +5360,8 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
     ], 1, 'Express parses query strings with qs, which turns bracket syntax into nested objects, so a schema such as z.string() must reject it at the edge.'),
     q('A service computes and exports its own `requests_per_second` gauge instead of a request counter. What has it lost?', [
       'Gauges are dropped by Prometheus unless they carry a unit suffix',
-      'A gauge can only hold whole numbers, so fractional rates are lost',
-      'It cannot be re-aggregated across pods; export a counter and use rate()',
+      'A gauge can only hold whole numbers, so fractional rates are lost on export',
+      'It cannot be re-aggregated across pods; export a counter, use rate()',
       'Nothing, since gauges and counters are stored the same way',
     ], 2, 'A counter read through rate() at query time can be summed across pods and survives restarts, while a precomputed rate cannot be combined and lies after every deploy.'),
     q('Rate, errors and duration per route show what users feel. Which additional signal warns you before latency turns vertical?', [
@@ -5377,7 +5377,7 @@ Stop dual writing only after a full week of clean comparisons at 100 percent rea
       'A 301 redirect from the old endpoint to its v2 replacement',
     ], 1, 'Machine-readable Deprecation and Sunset headers, with a link to the migration guide, reach every integration that calls the endpoint, while emails and changelogs go unread.'),
     q('A bucketing helper hashes only the user id, not the flag name, to decide every percentage rollout. What happens across many 1 percent rollouts?', [
-      'Users flip between the old and new versions on each request',
+      'Users flip between the old and new versions on each request, because buckets reshuffle',
       'Each rollout reaches a different random 1 percent of users',
       'Rollouts stop being deterministic across the replicas',
       'The same small group of users gets every rollout, and every bug, first',

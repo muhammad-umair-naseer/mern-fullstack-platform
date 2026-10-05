@@ -5922,13 +5922,13 @@ Java evolves every six months, and Spring Boot releases regularly. Follow the re
     q('What is the main benefit of encapsulation?', [
       'Faster compilation',
       'Objects protect their own valid state',
-      'Fields become public automatically',
+      'Fields become public automatically so other classes can read them',
       'Classes no longer need constructors',
     ], 1, 'Private fields changed only through rule-enforcing methods keep objects valid.'),
     q('When is a record the right choice?', [
       'For a JPA entity with changing state',
       'For a service with dependencies',
-      'For a class meant for deep inheritance',
+      'For a class meant for deep inheritance with several subclasses beneath it',
       'For an immutable data carrier such as an API response',
     ], 3, 'Records are concise, immutable data classes, ideal for DTOs and value objects.'),
     q('Which collection gives fast lookups of books by ISBN?', [
@@ -5947,7 +5947,7 @@ Java evolves every six months, and Spring Boot releases regularly. Follow the re
       'Failures are hidden and data can become inconsistent',
       'The compiler rejects it',
       'It slows the program down',
-      'It deletes the stack trace from disk',
+      'It deletes the stack trace from disk and from the log files',
     ], 0, 'Swallowed exceptions hide real problems until they cause larger damage.'),
     q('What does findById(id).orElseThrow(...) do when the entity is missing?', [
       'Returns null',
@@ -5959,13 +5959,13 @@ Java evolves every six months, and Spring Boot releases regularly. Follow the re
       'Classes create all their own dependencies',
       'Controllers call the database directly',
       'Spring creates objects and supplies their dependencies',
-      'The user decides the order of method calls',
+      'The user decides the order of method calls through the application\'s menus',
     ], 2, 'Spring manages object creation and wiring, injecting dependencies into constructors.'),
     q('Why is constructor injection preferred?', [
       'Dependencies are explicit, final and easy to mock',
       'Field injection is not supported',
       'Constructors run faster',
-      'It removes the need for annotations',
+      'It removes the need for annotations anywhere in the application',
     ], 0, 'Constructor injection makes required dependencies clear and supports simple testing.'),
     q('Where should a production database password come from?', [
       'A hard-coded constant',
@@ -5986,22 +5986,22 @@ Java evolves every six months, and Spring Boot releases regularly. Follow the re
       '500 Internal Server Error',
     ], 1, '409 signals a conflict with the current state of the resource.'),
     q('What is the N+1 query problem?', [
-      'One extra column in each table',
+      'One extra column in each table, added for every foreign key relation',
       'A query with N+1 parameters',
       'N+1 database servers',
       'One query for a list plus one per item for related data',
     ], 3, 'Accessing lazy relationships in a loop multiplies queries, slowing requests.'),
     q('What does @Transactional guarantee?', [
       'Related changes commit together or roll back together',
-      'The method never throws exceptions',
+      'The method never throws exceptions, because Spring catches them all',
       'Results are cached permanently',
       'The method runs asynchronously',
     ], 0, 'Transactions make grouped database changes atomic.'),
     q('Why add new Flyway migrations instead of editing applied ones?', [
       'Flyway only reads the newest file',
       'Editing files deletes data',
-      'Flyway detects changes to applied migrations and refuses to start',
-      'Migrations cannot be edited on Windows',
+      'Flyway detects edits to applied migrations and refuses to start',
+      'Migrations cannot be edited on Windows, because the files are locked',
     ], 2, 'Applied migrations are checksummed, so changes must go in new versioned scripts.'),
     q('What is the difference between 401 and 403?', [
       'They mean exactly the same thing',
@@ -6011,18 +6011,18 @@ Java evolves every six months, and Spring Boot releases regularly. Follow the re
     ], 3, 'Authentication failures return 401, authorisation failures return 403.'),
     q('How should passwords be stored?', [
       'In plain text',
-      'With reversible encryption',
+      'With reversible encryption, using a key kept in the application',
       'With a slow, salted hash such as BCrypt',
       'With a single SHA-256 hash',
     ], 2, 'Password hashing algorithms like BCrypt resist guessing attacks.'),
     q('Why test against PostgreSQL with Testcontainers rather than H2?', [
       'Database differences can hide bugs that appear in production',
       'H2 cannot store data',
-      'Testcontainers needs no Docker',
+      'Testcontainers needs no Docker, because it embeds its own database engine',
       'Spring does not support H2',
     ], 0, 'Testing with the real database engine catches dialect and behaviour differences.'),
     q('Why use a multi-stage Dockerfile?', [
-      'To run two apps in one container',
+      'To run two apps in one container, one for building and one for serving',
       'The final image excludes build tools and source code',
       'To skip the Java runtime',
       'To run tests in production',

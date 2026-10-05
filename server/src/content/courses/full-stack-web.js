@@ -4911,28 +4911,35 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
     ),
   ],
   final: [
-    q('Which status code should a successful POST that creates a resource return?', ['200', '201', '204', '302'], 1,
-      '201 Created signals a new resource exists, and the response should include it.'),
+    q('Which status code should a successful POST that creates a resource return?', [
+      '200',
+      '201',
+      '204',
+      '302, which redirects the client to the new resource',
+    ], 1, '201 Created signals a new resource exists, and the response should include it.'),
     q('const y = x assigns an object. Mutating y.count also changes x.count. Why?', [
-      'Objects are copied by value',
+      'Objects are copied by value on each assignment',
       'Both names reference the same object',
       'const makes objects shared',
       'It is a JavaScript bug',
     ], 1, 'Objects are assigned by reference; both bindings point at one object in memory.'),
     q('Which array method returns a new array rather than mutating in place?', [
-      'push', 'sort', 'map', 'splice',
+      'push',
+      'sort',
+      'map',
+      'splice',
     ], 2, 'map returns a new array. push, sort, and splice all mutate the original.'),
     q('A fetch call gets a 404. What does the promise do?', [
       'Rejects, triggering catch',
       'Resolves with res.ok === false',
       'Throws a TypeError',
-      'Retries automatically',
+      'Retries automatically up to three times',
     ], 1, 'fetch only rejects on network failure. Check res.ok for HTTP error statuses.'),
     q('Why does React require stable keys in lists?', [
       'To sort the list',
-      'To match elements across renders and preserve their state',
+      'To match elements across renders and keep their state',
       'To make map() faster',
-      'To generate unique CSS classes',
+      'To generate a unique CSS class for each item in the list',
     ], 1, 'Keys tell React which DOM node corresponds to which item; unstable keys lose input state and focus.'),
     q('Where does a network request belong in a React component?', [
       'Directly in the component body',
@@ -4941,7 +4948,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
       'In useState initialiser',
     ], 1, 'Rendering must stay pure. Side effects such as fetching belong in useEffect.'),
     q('What does ON DELETE CASCADE do?', [
-      'Prevents deleting the parent row',
+      'Prevents deleting the parent row while children exist',
       'Deletes child rows when the parent is deleted',
       'Copies rows to a backup table',
       'Marks rows as archived',
@@ -4950,7 +4957,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
       'Parameters are faster to parse',
       'Values are sent separately from the statement, so input cannot become SQL',
       'It keeps queries shorter',
-      'It enables indexes',
+      'It enables the database to use indexes on every column named in the WHERE clause',
     ], 1, 'Parameterisation is the defence against SQL injection — the value can never be interpreted as code.'),
     q('Which belongs in an environment variable rather than source code?', [
       'The port number for local development',
@@ -4959,7 +4966,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
       'The list of route paths',
     ], 1, 'Secrets must never be committed. A leaked JWT secret lets anyone forge tokens for any account.'),
     q('In production, why serve the React build from the Express server?', [
-      'React cannot run without Node',
+      'React cannot run in the browser without a Node server delivering the files',
       'It gives one origin, avoiding CORS and allowing relative API URLs',
       'It disables client-side routing',
       'Static files require Express',
@@ -4972,23 +4979,23 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
     ], 3, 'A correct response proves every server layer succeeded, leaving only how the component stores and renders that data.'),
     q('Why do API tests import a createApp() factory instead of the module that calls app.listen()?', [
       'A listening server keeps an open handle, so the test run never exits',
-      'Supertest requires the app to be running on port 3000',
+      'Supertest requires the app to be running on port 3000 before it can send requests',
       'app.listen() removes middleware from the stack',
       'Express applications cannot be exported from ES modules',
     ], 0, 'Supertest binds its own ephemeral port, so importing a module that listens leaves Node alive after the suite finishes.'),
     q('An endpoint issues one query for the list and one more per row. What is wrong, and why does it only hurt in production?', [
-      'A deadlock — the per-row queries lock each other',
+      'A deadlock: the per-row queries lock each other, which only happens under real production traffic',
       'A connection leak — every query opens a new pool',
-      'An N+1 query — round trips are near-free locally but cost milliseconds each over a network',
+      'An N+1 query: round trips are near-free locally but cost milliseconds each over a network',
       'A cache miss — the rows were evicted between queries',
     ], 2, 'The cost is latency per round trip, invisible against a local database and worth seconds against a remote one.'),
     q('Which sequence lets you roll the application back safely after a schema change?', [
-      'Rename the column and deploy the code using the new name in the same release',
-      'Add the new column, deploy code that writes to both, backfill, then drop the old column in a later release',
+      'Rename the column and deploy the code using the new name in the same release, then run the migration',
+      'Add the new column, write to both, backfill, then drop the old column in a later release',
       'Drop the old column first so nothing can read stale data',
       'Apply every migration only after the new code has finished rolling out',
     ], 1, 'Expand, migrate, contract keeps the previous version working against the new schema, which is exactly what a rollback needs.'),
-      q('An offline-capable client queues credit top-ups in IndexedDB and flushes them on reconnect, generating a fresh UUID for the Idempotency-Key header each time it sends an item. One flush times out after the server has already committed the charge, so the item is sent again. What is the result?', [
+    q('An offline-capable client queues credit top-ups in IndexedDB and flushes them on reconnect, generating a fresh UUID for the Idempotency-Key header each time it sends an item. One flush times out after the server has already committed the charge, so the item is sent again. What is the result?', [
       'The server matches the request fingerprint instead of the key and returns the first response',
       'The unique constraint on the key table rejects the second attempt with a 409 conflict',
       'The queue discards the item, because a timeout is treated the same way as a 4xx failure',
@@ -5020,7 +5027,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
     ], 3, 'Shadow traffic is only safe for reads and pure computations, because a shadowed path that sends mail or charges a card performs that effect a second time, so the candidate must run in a dry run mode that touches nothing outside itself.'),
     q('A mentor is removed from cohort 42 at 14:05, and from that instant every HTTP request they make is refused. Their already open WebSocket keeps receiving cohort 42 messages until they close the tab. What explains it, and what closes the gap?', [
       'Redis pub/sub replayed the backlog to them after removal, so backfill from a cursor instead',
-      'The socket was authorised once at join time and never rechecked, so emit a revoke that leaves the room',
+      'The socket was authorised only at join time, so emit a revoke that removes it from the room',
       'Rooms are per instance, so the removal reached one process only; publish the change on the bus',
       'Their session cookie is valid until Max-Age expires, so shorten it and the socket will drop',
     ], 1, 'A socket is authorised at the handshake or at join time and then stays open for hours without consulting the database again, so a permission revoked mid session has no effect until something removes the socket from the room or forces a reconnect.'),
@@ -5038,7 +5045,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
     ], 3, 'HTTPS encrypts the path, query, headers, cookies and body, but the DNS lookup and the TLS handshake still reveal which hostname was visited.'),
     q('`ids.forEach(async (id) => { await save(id); }); console.log(\'all saved\');` What is wrong with this code?', [
       '\'all saved\' logs before the saves finish, as forEach ignores promises',
-      'The saves run one after another, so it is slow but correct',
+      'The saves run one after another, so it is slow but correct, and the log line prints last',
       'forEach throws, since it cannot accept an async callback',
       'Only the first id is saved, since await stops the forEach loop',
     ], 0, 'forEach calls each async callback and discards the promise it returns, so nothing waits; use for...of with await to run in order, or await Promise.all(ids.map(save)) to run them together.'),
@@ -5052,11 +5059,11 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
       '[1, 9, 10, 100]',
       '[1, 10, 100, 9]',
       '[100, 10, 9, 1]',
-      '[10, 9, 1, 100]',
+      '[10, 9, 1, 100], unchanged because sort needs a compare function',
     ], 1, 'Without a compare function, sort converts elements to strings and orders them character by character, so "100" comes before "9"; pass (a, b) => a - b for numeric order.'),
     q('An input is rendered as `<input value={email} />`, where email is a string held in state, and there is no onChange handler. What happens when the user types into it?', [
       'The text appears, and email state updates automatically',
-      'The text appears, but the email state keeps its old value',
+      'The text appears, but the email state keeps its old value until you submit',
       'React throws an error and unmounts the whole form',
       'Nothing changes, since React holds the field at the state value',
     ], 3, 'A value prop makes the input controlled, so React keeps it equal to email; without an onChange that updates state, every keystroke is discarded and the field is effectively read-only.'),
@@ -5110,7 +5117,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
     ], 3, 'Hiding a button is presentation, not security; the server must check the user\'s role on every request, because anyone can send the request with curl.'),
     q('A component fetches courses on mount and then renders \'React Basics\'. Which assertion correctly waits for that text to appear?', [
       'expect(await screen.findByText(\'React Basics\')).toBeInTheDocument()',
-      'expect(screen.getByText(\'React Basics\')).toBeInTheDocument()',
+      'expect(screen.getByText(\'React Basics\')).toBeInTheDocument(); // runs immediately',
       'expect(screen.queryByText(\'React Basics\')).toBeNull()',
       'expect(screen.getAllByText(\'React Basics\')).toHaveLength(0)',
     ], 0, 'findBy queries return a promise that retries until the element appears or a timeout passes; getBy throws at once, before the fetch has resolved.'),
@@ -5121,7 +5128,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
       'End-to-end tests only work on pages that need no login',
     ], 2, 'A browser test is the only proof that the layers join up, but it is slow and has many moving parts, so detail is cheaper and more reliable to check lower down.'),
     q('A course list endpoint already returns 30 rows per page, but it runs `SELECT *`, and each row carries a 200 KB body column the list never shows. What is the fix?', [
-      'Add an index on the body column',
+      'Add an index on the body column to speed up each row read',
       'Select only the columns the list renders',
       'Cache the full rows in localStorage',
       'Switch the endpoint from GET to POST',
@@ -5134,7 +5141,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
     ], 3, 'Route-level code splitting with lazy(() => import(...)) moves the admin code into its own chunk that downloads only when an admin page is opened.'),
     q('Behind a load balancer with three API instances, avatars saved to each instance\'s local `uploads/` folder load only about a third of the time. What is the fix?', [
       'Store uploads in shared object storage all instances use',
-      'Enable gzip so the images transfer faster',
+      'Enable gzip so the images transfer faster between the instances and users',
       'Raise the body size limit in express.json()',
       'Restart the instances so their folders sync',
     ], 0, 'A file on one machine\'s disk 404s whenever the load balancer sends the request elsewhere; a process may hold nothing the next request needs, so files belong in a shared store.'),
@@ -5158,7 +5165,7 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
     ], 3, 'CORS only tells browsers whether scripts from another origin may read a response; curl ignores it, so the API must still authenticate and authorise every request.'),
     q('An XSS bug lets an attacker\'s script run on your pages, but the session cookie is HttpOnly. What can the script still do?', [
       'Send requests as the victim, since the browser attaches the cookie',
-      'Nothing, since HttpOnly blocks every request a script makes',
+      'Nothing, since HttpOnly blocks every request a script makes to your own API',
       'Read the cookie value, but not use it in any request',
       'Act only on the attacker\'s own account, not the victim\'s',
     ], 0, 'HttpOnly stops script from reading the cookie, but requests the script makes from the victim\'s page still carry it, so the attacker can act as the victim while the page is open.'),
@@ -5175,14 +5182,14 @@ Record what you expect: "moving PDF rendering to a queue should bring checkout p
       'Both changes, since the database replays the missing statement',
     ], 1, 'Without a transaction each statement commits on its own, so the first survives and the second never runs; wrapping both in one transaction makes them succeed or fail together.'),
     q('Two instructors open the same course description and both save; the second save silently overwrites the first. Which change makes the second save fail visibly instead?', [
-      'Wrap each save in its own database transaction',
+      'Wrap each save in its own database transaction with a retry on failure',
       'Add a unique index on the course\'s id column',
       'Save each edit twice to confirm that it stuck',
       'Update only WHERE version matches, else return 409',
     ], 3, 'Sending the version the editor loaded and updating only when it still matches turns a silent lost update into a 409 the client can show, reload and merge.'),
     q('Service A calls service B over HTTP, but B\'s spans show up as separate traces rather than as children of A\'s request. What is the most likely cause?', [
       'A\'s outgoing call does not pass on the traceparent header',
-      'B writes its logs in a different time zone from A',
+      'B writes its logs in a different time zone from A, so timestamps cannot line up',
       'B listens on a different port and host from A',
       'B runs on a newer Node.js release than A does',
     ], 0, 'Trace context travels in the W3C traceparent header; if the caller does not send it, B has no parent span to attach to and starts a fresh trace.'),

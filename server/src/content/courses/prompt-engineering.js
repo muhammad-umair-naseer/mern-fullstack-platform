@@ -4466,14 +4466,14 @@ Approach new tools with curiosity and healthy scepticism. Try them, test them on
   ],
   final: [
     q('A colleague says prompting is about finding magic words. What is the better description?', [
-      'Memorising phrases that unlock hidden model features',
+      'Memorising phrases that unlock hidden model features for better answers',
       'Clear communication of goal, context, examples and format',
       'Writing prompts that are as short as possible',
       'Repeating the request until the model agrees',
     ], 1, 'Effective prompts give the model what a capable colleague would need.'),
     q('You paste an 80-page manual to answer a question about one section. What is the likely effect?', [
       'Answers always improve with more text',
-      'The model refuses documents over 50 pages',
+      'The model refuses documents over 50 pages and returns an error message',
       'Extra material adds noise and can lower answer quality',
       'The model reads only the first page',
     ], 2, 'Irrelevant text dilutes attention and uses up context without helping.'),
@@ -4502,7 +4502,7 @@ Approach new tools with curiosity and healthy scepticism. Try them, test them on
       'Avoid complicated words wherever possible',
     ], 0, 'Describing the target vocabulary is clearer than naming what to avoid.'),
     q('Why name blocks such as <policy> and <message> in a support prompt?', [
-      'It lets the model skip reading the policy',
+      'It lets the model skip reading the policy and answer from memory',
       'It makes the reply appear in a table',
       'It reduces the reply to one sentence',
       'Instructions can point to the exact material to use',
@@ -4538,7 +4538,7 @@ Approach new tools with curiosity and healthy scepticism. Try them, test them on
       'The model refused to review prices',
     ], 0, 'Self-critique cannot catch errors the model has no information to detect.'),
     q('A fast model gives shallow answers on a complex contract review. What is a sensible next step?', [
-      'Ask the fast model to write longer answers',
+      'Ask the fast model to write longer answers and add more detail',
       'Raise the temperature on the fast model',
       'Remove the contract from the prompt',
       'Test a reasoning model on the same task and compare',
@@ -4562,7 +4562,7 @@ Approach new tools with curiosity and healthy scepticism. Try them, test them on
       'Sound caring and kind to the customer',
     ], 1, 'Describing the behaviour makes tone concrete and repeatable.'),
     q('Which check needs a model rather than simple code?', [
-      'Whether a reply is under 100 words',
+      'Whether a reply is under 100 words, counted across the full text',
       'Whether the reply answered every customer question',
       'Whether the word "cheap" appears',
       'Whether the output is valid JSON',
@@ -4622,7 +4622,7 @@ Approach new tools with curiosity and healthy scepticism. Try them, test them on
       'With a request to sound human',
     ], 1, 'Rules plus real examples capture voice far better than adjectives.'),
     q('Six ad captions are needed for testing. Which request gives the most useful results?', [
-      'Six captions that are all as different as possible',
+      'Six captions that copy the same wording with one swapped word in each',
       'Six captions written in the same style',
       'Six captions with as many emojis as possible',
       'Six captions across three labelled angles, two per angle',
@@ -4670,7 +4670,7 @@ Approach new tools with curiosity and healthy scepticism. Try them, test them on
       'Wide 16:9 shot of a tea stall at dawn, warm light, space on the right for text',
     ], 3, 'It covers subject, setting, light, format and composition.'),
     q('A campaign needs twelve illustrations that look like one set. What helps most?', [
-      'Writing a new style description for each image',
+      'Writing a new style description for each image in the series',
       'Reusing one fixed style block and a reference image',
       'Using a different tool for each illustration',
       'Generating each image weeks apart',
@@ -4688,7 +4688,7 @@ Approach new tools with curiosity and healthy scepticism. Try them, test them on
       'Presenting a generated person as a real customer misleads',
     ], 3, 'Synthetic people must not be presented as real customers.'),
     q('What should a test set for a support prompt include besides typical questions?', [
-      'Only messages that the prompt already handles well',
+      'Only messages that the prompt already handles well, to confirm it still works',
       'Edge cases, missing information, angry and adversarial messages',
       'Messages written by the prompt author only',
       'Questions copied from other companies\' websites',

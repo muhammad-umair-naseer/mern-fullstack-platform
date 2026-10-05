@@ -3932,7 +3932,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
     q('What makes a portfolio piece persuasive to a client?', [
       'Including every project you have ever done',
       'Using only stock images of finished products',
-      'Hiding the problem so the result looks effortless',
+      'Hiding the problem so the finished result looks effortless to the client reviewing it',
       'Showing the problem, your approach and the result',
     ], 3, 'Clients relate to a clear problem and result, which proves you can deliver the outcome they need.'),
     q('How should practice or concept work be shown in a portfolio?', [
@@ -3942,7 +3942,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
       'Credited to a well-known brand without permission',
     ], 1, 'Honest labelling keeps trust intact while still demonstrating your skills.'),
     q('What should an Upwork profile title communicate?', [
-      'Every skill you have, separated by commas',
+      'Every skill you have, separated by commas so that clients can scan them quickly',
       'The problem you solve for a specific client',
       'Your full name and city only',
       'That you can do any job at all',
@@ -3950,12 +3950,12 @@ The skills that won your first clients will not stay in demand forever. Set asid
     q('Why does Upwork allow only one account per person?', [
       'To limit how many proposals you can read',
       'Because profiles cannot be edited later',
-      'To keep freelancers from using specialised profiles',
+      'To keep freelancers from using specialised profiles for different kinds of client work',
       'To keep identities verified and trustworthy for clients',
     ], 3, 'Verified single accounts protect clients from fake identities, and duplicate accounts can lead to suspension.'),
     q('How should a strong Upwork proposal open?', [
       'With the client\'s problem and how you would solve it',
-      'With your life story and qualifications',
+      'With your life story and qualifications, so the client knows who you are before the pitch',
       'With a request for the client\'s budget',
       'With a generic greeting copied for every job',
     ], 0, 'Opening with the client\'s problem shows you read the post and immediately signals relevance.'),
@@ -3966,7 +3966,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
       'On jobs with the most proposals already',
     ], 2, 'Connects cost money, so applying where your fit is strongest gives the best chance of a return.'),
     q('On Fiverr, why does the middle package matter?', [
-      'Fiverr only shows the middle package in search',
+      'Fiverr only shows the middle package in search, so the other two are hidden from most buyers',
       'Buyers cannot purchase the other packages',
       'It must always be the cheapest option',
       'Many buyers choose it, so it should be your best-value offer',
@@ -3996,14 +3996,14 @@ The skills that won your first clients will not stay in demand forever. Set asid
       'Accept, then quietly deliver lower quality work',
     ], 0, 'Adjusting what is delivered keeps your prices credible while giving the client a workable option.'),
     q('What should follow every discovery call?', [
-      'An invoice for the time spent on the call',
+      'An invoice for the time spent on the call, sent before any scope is agreed',
       'Starting work before the client replies',
       'A second call to repeat everything discussed',
       'A written summary of goal, scope and deadline',
     ], 3, 'A written summary records what was agreed and prevents misunderstandings about scope later.'),
     q('A client asks for new work outside the agreed scope. What is the recommended approach?', [
       'Do it silently for free to keep them happy',
-      'Refuse and close the contract immediately',
+      'Refuse and close the contract immediately, because extra requests breach the agreement',
       'Treat it as an add-on with price and timing options',
       'Ignore the request until the project ends',
     ], 2, 'Framing extra work as an optional add-on keeps the relationship warm while protecting your time and pricing.'),
@@ -4014,7 +4014,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
       'When the client promises to fund it later',
     ], 1, 'A funded milestone is held in escrow by the platform, so waiting for funding means your payment is protected.'),
     q('What is the most common first sign of a freelance scam?', [
-      'A detailed written job description',
+      'A detailed written job description with clear deliverables, a budget and a deadline',
       'A client with a verified payment method',
       'A small, funded first milestone',
       'A request to move off the platform before hiring',
@@ -4028,14 +4028,14 @@ The skills that won your first clients will not stay in demand forever. Set asid
     q('Why is filing taxes with FBR usually worthwhile for freelancers?', [
       'It removes the need to keep any records',
       'Filers generally pay lower withholding and can prove income',
-      'It guarantees more clients on every platform',
+      'It makes clients on most platforms hire you more often because buyers can check you pay tax',
       'It replaces the need for a bank account',
     ], 1, 'Filers on the Active Taxpayers List generally face lower withholding and can document income for visas, loans and growth.'),
     q('What most improves a freelancer\'s income stability over time?', [
       'Taking every job regardless of price',
       'Relying on a single platform for all clients',
       'Repeat clients, retainers and several client sources',
-      'Changing services every month to follow trends',
+      'Changing services each month to follow trends, so your offer matches whatever is popular',
     ], 2, 'Long-term clients, retainers and multiple channels create predictable income that survives changes on any one platform.'),
     q('Nadia has a part-time job and one month of savings. After seeing big earnings screenshots online, she wants to quit and freelance full-time right away. What does the course advise?', [
       'Quit now, because full-time focus guarantees clients within weeks',
@@ -4046,7 +4046,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
     q('Which description narrows a video editing service by the result it delivers?', [
       'Short-form video editor for Reels, TikTok and Shorts',
       'Video editor for real estate agents\' property tours',
-      'Professional video editor with five years of experience',
+      'Professional video editor with five years of experience in films, adverts and weddings',
       'Video editor who turns long podcasts into daily short clips',
     ], 3, 'Turning long podcasts into daily clips names the outcome the client gets; the other descriptions narrow by skill or industry, or stay broad.'),
     q('Amna offers logo design and social media templates, and she knows many clients open only one portfolio piece. How should she order her portfolio?', [
@@ -4062,28 +4062,28 @@ The skills that won your first clients will not stay in demand forever. Set asid
       'Round small improvements up to an impressive percentage',
     ], 2, 'Real figures come from the client\'s own results or your before-and-after measurements; invented or borrowed numbers damage trust.'),
     q('While writing his Upwork overview, who does the course suggest Hamza should picture as his reader?', [
-      'Every possible client, so that nobody feels left out',
+      'Every possible client, so that nobody feels left out and the overview stays broad',
       'Other freelancers who might refer work to him later',
       'Upwork\'s search algorithm rather than a real person',
       'One ideal client, such as a UK clothing brand on Shopify',
     ], 3, 'Writing to one specific ideal client makes the overview concrete and similar clients recognise themselves; a profile written for everyone speaks to no one.'),
     q('What kind of Upwork introduction video does the course recommend?', [
       'A natural one-minute phone video on who you help and how',
-      'A polished script read word for word, even if nervously',
+      'A polished script read word for word, even if nervously, so nothing is forgotten on camera',
       'A ten-minute tour covering every skill you have learned',
       'A slideshow of your certificates set to background music',
     ], 0, 'A short, friendly, slightly imperfect introduction builds trust faster than text, while a polished script read nervously comes across worse.'),
     q('A job post includes three screening questions. What is the best way to handle them?', [
       'Write \'See my proposal\' so the answers are not repeated',
       'Answer each one specifically, as part of a careful reply',
-      'Skip them, since clients rarely read the answers anyway',
+      'Skip them, since clients rarely read the answers anyway and the proposal is what counts',
       'Paste the same short general answer into all three boxes',
     ], 1, 'Specific answers show the client you read and cared about their post; one-word or copied answers signal the opposite.'),
     q('You are applying for a Shopify speed optimisation job. What should you attach to the proposal?', [
       'Every portfolio piece you have, to show your full range',
       'Nothing, since attachments make a proposal look pushy',
       'One or two relevant pieces, such as a speed before-and-after',
-      'Your CV plus certificates from every course you completed',
+      'Your CV plus certificates from every course you completed, to show how much you have studied',
     ], 2, 'One precise match looks like the answer to the client\'s problem, while many attachments look like a scattergun.'),
     q('Your tracker shows clients view most of your proposals, but almost none reply. Which stage should you improve first?', [
       'Your opening lines, since clients are not opening proposals',
@@ -4093,7 +4093,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
     ], 3, 'Viewed but unanswered proposals mean the opening worked but the proof or plan did not convince, so better-matched samples and a clearer plan come next.'),
     q('Your gig title is \'I will fix and speed up your slow Shopify store\'. Which set of tags follows the course\'s advice?', [
       'shopify speed, page speed, shopify optimization, store fix',
-      'professional, best, top quality, cheap, fast delivery',
+      'professional, best, top quality, cheap, fast delivery, trusted, expert seller',
       'logo design, video editing, data entry, seo, wordpress',
       'fiverr, gig, seller, online service, freelancer',
     ], 0, 'Tags should be the specific phrases buyers type for this service, not vague praise words, platform words or unrelated services.'),
@@ -4116,7 +4116,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
       'Most small clothing brands lose sales because their store is slow.',
     ], 3, 'The About section should open with the client\'s problem in plain language, then explain how you solve it, rather than describing yourself.'),
     q('A week ago you sent a store owner a helpful LinkedIn message and have had no reply. What does the course advise?', [
-      'Message them every day until they finally answer',
+      'Message them every day until they finally answer, so your pitch stays at the top of their inbox',
       'Message each of their staff members with the same pitch',
       'Send one friendly follow-up, then keep engaging with posts',
       'Tag them in a public post so they cannot ignore you',
@@ -4140,7 +4140,7 @@ The skills that won your first clients will not stay in demand forever. Set asid
       'USD 300',
     ], 3, '16 hours plus a 25 percent buffer is 20 hours, and 20 × USD 15 is USD 300; quoting USD 240 leaves no room for revisions or surprises.'),
     q('Clients keep haggling over the single price you quote for a project. What does the course suggest presenting instead?', [
-      'A lower price straight away, before they ask for one',
+      'A lower price straight away, before they ask for one, to show you are flexible',
       'Your hourly rate only, and no estimate of the total',
       'Two or three options, with the middle one you want to sell',
       'A long list of what competitors charge for the work',

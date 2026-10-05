@@ -5325,13 +5325,13 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
     q('Which change turns const missing = a.filter(x => !b.includes(x)) from O(n·m) into O(n + m)?', [
       'Building a Set from b and calling has()',
       'Sorting b first',
-      'Using forEach instead of filter',
+      'Using forEach with a push instead of filter, so no result array is built up',
       'Reversing a before filtering',
     ], 0, 'A Set gives O(1) average membership, replacing the linear scan hidden inside includes.'),
     q('Why is arr.shift() a poor choice for the dequeue step of BFS?', [
-      'It returns elements in the wrong order',
+      'It returns elements in the wrong order once the queue holds duplicate nodes',
       'It cannot be used on arrays of objects',
-      'It is O(n), because every remaining element shifts left one slot',
+      'It is O(n), as every remaining element shifts left',
       'It mutates the visited set',
     ], 2, 'Shifting re-indexes the whole array, so draining an n-element queue costs O(n²) instead of O(n).'),
     q('The variable sliding-window template nests a while inside a for. Why is it still O(n)?', [
@@ -5365,14 +5365,14 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
       'It removes the special case where the node to delete is the head',
     ], 3, 'With a node in front of the real head, every deletion is a uniform prev.next = prev.next.next.'),
     q('Which check correctly validates a binary search tree?', [
-      'Every node is greater than its left child and less than its right child',
+      'Every node is greater than its left child and less than its right child, at each level',
       'Every node is checked against a min/max range narrowed by its ancestors',
       'The tree is balanced and every level is full',
       'Preorder traversal produces sorted output',
     ], 1, 'The invariant covers whole subtrees, so a node must satisfy every ancestor, not only its parent.'),
     q('Inserting 1, 2, 3, 4, 5 in order into a plain BST produces what?', [
       'A degenerate tree behaving like a linked list, with O(n) search',
-      'A perfectly balanced tree',
+      'A perfectly balanced tree, since inserting in order keeps both sides level',
       'An error, because duplicates are ignored',
       'A tree of height 2',
     ], 0, 'Each value is larger than the last, so every node gains only a right child — height n, no halving.'),
@@ -5397,30 +5397,30 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
     q('A randomised test compares a fast function against a brute-force oracle and reports only "expected 7, got 6". What is missing?', [
       'The elapsed time of each run',
       'A fixed number of trials',
-      'The generated input, without which the failure cannot be reproduced or shrunk',
-      'A larger value range for the random numbers',
+      'The generated input, without which the failure cannot be reproduced',
+      'A larger value range for the random numbers, so the generator hits more edge cases',
     ], 2, 'Math.random regenerates different data on the next run, so a failure that does not print its input is a bug you have found and immediately lost.'),
     q('Why is a plain Map used as a cache in a long-running server a problem?', [
       'Map lookups degrade to O(n) as it grows',
-      'Nothing evicts old keys, so it retains every entry it has ever seen',
+      'Nothing evicts old keys, so it keeps every entry it has seen',
       'Map cannot store object values',
-      'Insertion order makes reads slower over time',
+      'Insertion order makes reads slower over time as the key list grows longer',
     ], 1, 'A cache needs a bound and an eviction rule; without them the structure only grows and the retained keys are a memory leak.'),
-      q('A leaderboard holds 500,000 players in memory. It must answer "how many players score above X" constantly, page results out in score order, and absorb 2,000 score changes a second. Which design fits?', [
+    q('A leaderboard holds 500,000 players in memory. It must answer "how many players score above X" constantly, page results out in score order, and absorb 2,000 score changes a second. Which design fits?', [
       'A single Fenwick tree over score buckets, using prefix sums for the counts and walking the bucket array in order to page the results',
       'A red-black tree keyed by score, recomputing the rank of X by counting the nodes below it on every lookup, which stays O(log n)',
-      'A skip list ordered by score for the paged scans, alongside a Fenwick tree over score buckets whose prefix sums answer the rank query',
+      'A skip list ordered by score for paged scans, plus a Fenwick tree over score buckets whose prefix sums answer the rank query',
       'A sorted array of scores with a prefix sum array beside it, rebuilding the prefix sums after each of the 2,000 changes a second',
     ], 2, 'The rank question is a prefix count, which a Fenwick tree both answers and updates in about 19 array touches, while paging by score needs ordered traversal of the members themselves, which a skip list gives as a plain forward walk at level 0; a Fenwick tree stores counts and not members, counting nodes in an unaugmented tree is O(n), and rebuilding a prefix sum array is O(n) per change, so only the pairing satisfies all three demands.'),
     q('Rabin-Karp compares window hashes and only then calls startsWith, and a Bloom filter answers either "probably present" or "definitely absent". What do the two share, and what does it force on the caller?', [
-      'Both can claim a hit that is not real but never miss a real one, so every positive has to be confirmed against the source data before it is trusted',
+      'Both can claim a hit that is not real but never miss a real one, so every positive must be confirmed against the source data',
       'Both can miss a real hit but never claim one that is absent, so every negative has to be re-checked against the source data before it is trusted',
       'Both become exact once the modulus or bit array is sized correctly, so the confirming comparison exists only to hold the constant factor down',
       'Both grow more accurate as the input grows larger, so the confirming comparison can safely be dropped once the data set passes a few million items',
     ], 0, 'Two different windows can share a hash and a Bloom filter\'s bits can all have been set by other keys, so both structures produce false positives and neither can produce a false negative, which is exactly why Rabin-Karp verifies a hash match with startsWith and why a Bloom filter hit must be confirmed against the real store before you act on it.'),
     q('A search backend intersects two posting lists drawn from an 8,000,000 document id space: the term `error` matches about 4,000,000 documents and `mmap` matches 40. Which storage and intersection choice is right?', [
       'Store both lists as bitsets and AND all 250,000 machine words, since a word AND is the cheapest operation the CPU offers',
-      'Store the dense list as a bitset and the sparse one as sorted ids, then test each of the 40 rare ids against that bitset',
+      'Hold the dense list as a bitset and the sparse one as sorted ids, then test the 40 rare ids against the bitset',
       'Store both lists as sorted id arrays and run a two pointer merge, which walks about 4,000,040 entries in a single pass',
       'Store the sparse list as a bitset and the dense one as sorted ids, then walk the 4,000,000 ids testing one bit for each',
     ], 1, 'A bitset over the whole 8,000,000 id space costs 1 MB regardless of density, which makes it the right home for the 4,000,000 hit term, while 40 ids sit happily in a sorted array; probing the dense bitset with those 40 ids is 40 constant time tests, whereas ANDing 250,000 words or merging 4,000,040 entries does thousands of times more work to reach the same answer, which is the same lesson as starting an intersection from the shorter posting list.'),
@@ -5428,10 +5428,10 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
       'The accumulator overflowed the 32 bit integer range, so widening sum and sumSq to BigInt restores both the sign and the true value',
       'The records arrived out of order, so buffering and sorting the stream before accumulating restores a non negative result',
       'n is off by one against the sample convention, so dividing by n - 1 rather than n restores a non negative result',
-      'Two quantities near 10^12 are subtracted for an answer near 0.06, so rounding error swamps it; Welford\'s update never forms that difference',
+      'Two quantities near 10^12 are subtracted for an answer near 0.06, so rounding swamps it; Welford\'s update avoids that difference',
     ], 3, 'A double carries only about 15 significant digits, so subtracting two values near 10^12 whose true difference is near 0.06 leaves almost nothing but rounding error and the sign can flip negative; Welford\'s algorithm updates the running mean and m2 incrementally, so that catastrophic subtraction is never formed, and it still costs one pass and three numbers of state.'),
     q('A routing service already uses Dijkstra for shortest paths. Product now asks for the longest simple route between two depots on the same weighted graph. What is the correct response?', [
-      'Longest simple path is NP-hard, so no reworking of Dijkstra reaches it and the job becomes pruned search or an approximation with a stated bound',
+      'Longest simple path is NP-hard, so no tweak of Dijkstra reaches it; use pruned search or an approximation with a stated bound',
       'Negate every edge weight and run the existing Dijkstra code unchanged, since a minimum over negated weights is a maximum over the original ones',
       'Swap the min heap for a max heap so the furthest node settles first, which keeps the O((V + E) log V) bound and the settle once invariant intact',
       'Run Bellman-Ford instead, which absorbs the negative weights that maximisation introduces and reports any negative cycle it happens to find',
@@ -5474,7 +5474,7 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
     ], 2, 'prefix[k] holds the sum of the first k elements, so prefix[j + 1] covers nums[0..j] and subtracting prefix[i] removes nums[0..i - 1].'),
     q('You count pairs with a sum below a target in a sorted array using converging pointers lo and hi. When `sorted[lo] + sorted[hi] < target`, how many valid pairs does that single check establish?', [
       'hi - lo, pairing sorted[lo] with every index from lo + 1 to hi',
-      'Exactly 1, the pair made of sorted[lo] and sorted[hi]',
+      'Exactly 1, the pair made of sorted[lo] and sorted[hi], with no further pairs counted',
       'hi - lo + 1, pairing sorted[lo] with every index from lo to hi',
       'lo + 1, pairing sorted[hi] with every index from 0 to lo',
     ], 0, 'Every element from lo + 1 to hi is at most sorted[hi], so each pairs with sorted[lo] below the target: hi - lo pairs, after which lo can advance.'),
@@ -5492,7 +5492,7 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
     ], 3, 'After two iterations fast is on node 5, which has no next node, and slow has moved twice to node 3, the middle of the list.'),
     q('What happens when `function sum(arr, i) { return arr[i] + sum(arr, i + 1); }` is called as `sum([1, 2, 3], 0)`?', [
       'It recurses until the stack overflows with a RangeError',
-      'It returns NaN once i passes the end of the array',
+      'It returns NaN once i passes the end of the array, because undefined plus a number is NaN',
       'It returns 6, because undefined values are treated as 0',
       'It returns undefined after reading the last element',
     ], 0, 'There is no base case, so every call makes another call and none ever returns to perform the addition; the engine throws RangeError: Maximum call stack size exceeded.'),
@@ -5511,7 +5511,7 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
     q('With coins [1, 3, 4] and amount 6, what do a largest-coin-first greedy and a dynamic programming solution return?', [
       'Greedy uses 3 coins (4+1+1); DP finds 2 coins (3+3)',
       'Both return 2 coins, since 4 is the largest coin',
-      'Greedy uses 2 coins (3+3); DP finds 3 coins (4+1+1)',
+      'Greedy uses 2 coins (3+3); DP finds 3 coins (4+1+1), since DP prefers larger coins',
       'Both return 3 coins, since 6 is not divisible by 4',
     ], 0, 'Greedy takes 4 and then needs 1 and 1, while DP considers every coin at every amount and finds 3 + 3; this coin set lacks the greedy-choice property.'),
     q('ways(n) = ways(n - 1) + ways(n - 2) counts the ways to climb n stairs taking 1 or 2 steps at a time. Computed bottom-up, what is the minimum extra space needed?', [
@@ -5530,7 +5530,7 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
       'Topological sort, such as Kahn\'s algorithm',
       'Dijkstra\'s shortest-path algorithm',
       'Kruskal\'s minimum spanning tree',
-      'Binary search over the course list',
+      'Binary search over the course list, comparing each course against its prerequisites',
     ], 0, 'Prerequisites form a directed graph, and a topological sort orders it so every course follows its prerequisites; if it cannot place every node, there is a cycle.'),
     q('What is the running time of Dijkstra\'s algorithm using a binary heap on a graph with V vertices and E edges?', [
       'O(V · E) in all cases',
@@ -5540,8 +5540,8 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
     ], 3, 'Each vertex is settled once and each edge can push one heap entry, and every heap operation costs O(log V), giving O((V + E) log V).'),
     q('A helper runs 10 times per request on arrays of about 5 items, and a teammate wants to replace its O(n²) loop with a complex O(n log n) version. What should decide it?', [
       'Big-O alone, since O(n log n) is faster at every input size',
-      'Measure first; at n = 5 constant factors dominate and it may not matter',
-      'Always replace O(n²) code, whatever the input size turns out to be',
+      'Measure first; at n = 5 constant factors dominate, so it may not matter',
+      'Always replace O(n²) code, whatever the input size turns out to be in production',
       'Rewrite it in a lower-level language before changing the algorithm',
     ], 1, 'Big-O describes growth, not speed at small n; with five items the simple loop may be as fast or faster, so profiling should show whether it matters at all.'),
     q('A server sorts user-submitted arrays with a quicksort that always picks the first element as its pivot. Which input lets an attacker force O(n²) time?', [
@@ -5600,7 +5600,7 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
     ], 1, 'Admitting record i with probability k / i into a random slot keeps every record seen so far equally likely to be in the sample.'),
     q('You must sort 42 GB of records on a machine with 8 GB of RAM. What is the standard approach?', [
       'Sort memory-sized chunks into sorted runs on disk, then k-way merge the runs',
-      'Read everything into one array and let the operating system swap to disk',
+      'Read everything into one array and let the operating system swap pages to disk as needed',
       'Build a hash map of every record, then read its keys back out in order',
       'Sort the file in place with quicksort, reading one record at a time',
     ], 0, 'External sorting sorts chunks that fit in memory and writes them as runs, then merges the runs with a heap, reading each record a bounded number of times.'),
@@ -5620,7 +5620,7 @@ Search that calls \`Math.random()\` directly hands back a different plan for ide
       'It is the shortest possible tour for these stops',
       'It is within a factor of 2 of the shortest tour',
       'It is 2-opt optimal, but not necessarily the best tour',
-      'It beats every tour simulated annealing could find',
+      'It beats every tour simulated annealing could find, since 2-opt checks every swap',
     ], 2, 'Local search stops at a local optimum: no neighbouring tour is shorter, but a better tour may still exist, and the stopping rule gives no ratio guarantee.'),
   ],
 });
