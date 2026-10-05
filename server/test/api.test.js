@@ -167,12 +167,24 @@ test('enrolment and lesson gating', async () => {
 test('play the whole course through to a certificate', async () => {
   const chapters = await q('SELECT id, position FROM chapters WHERE courseId = ? ORDER BY position').all(course.id);
   let failedOnce = false;
+  let checkedReadingTime = false;
 
   for (const chapter of chapters) {
     const lessons = await q('SELECT id FROM lessons WHERE chapterId = ? ORDER BY position').all(chapter.id);
     for (const lesson of lessons) {
       const read = await api('GET', `/api/learn/lessons/${lesson.id}`, { token });
       assert.equal(read.status, 200, `lesson ${lesson.id} readable: ${JSON.stringify(read)}`);
+      assert.ok(read.data.readSecondsLeft > 0, 'opening a topic starts its reading clock');
+
+      if (!checkedReadingTime) {
+        const tooSoon = await api('POST', `/api/learn/lessons/${lesson.id}/complete`, { token });
+        assert.equal(tooSoon.status, 403, 'a topic cannot be marked read straight after opening it');
+        assert.ok(tooSoon.data.readSecondsLeft > 0, 'the refusal says how long is left');
+        checkedReadingTime = true;
+      }
+      // Stand in for the reading time rather than waiting it out.
+      await q(`UPDATE lesson_opens SET openedAt = openedAt - INTERVAL '2 minutes'
+               WHERE lessonId = ? AND userId = (SELECT id FROM users WHERE email = ?)`).run(lesson.id, learner.email);
 
       const done = await api('POST', `/api/learn/lessons/${lesson.id}/complete`, { token });
       assert.equal(done.status, 200, `lesson ${lesson.id} complete: ${JSON.stringify(done)}`);

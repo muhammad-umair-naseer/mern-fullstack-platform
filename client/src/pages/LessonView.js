@@ -21,6 +21,10 @@ const LessonView = () => {
   // enough, which is what stops a learner clicking straight through.
   const [quizPassed, setQuizPassed] = useState(false);
   const [read, setRead] = useState(false);
+  // Seconds before the topic can be marked read. The server starts the clock
+  // when the topic is first opened and refuses an early "I've read this"; this
+  // copy only drives the countdown on the button.
+  const [waitLeft, setWaitLeft] = useState(0);
 
   // Presentation only. `pressing` plays the button's press, `acted` records
   // that the learner changed the topic's state during this visit rather than
@@ -43,6 +47,7 @@ const LessonView = () => {
           setLesson(data);
           setQuizPassed(Boolean(data.quizPassed));
           setRead(Boolean(data.completed));
+          setWaitLeft(data.completed ? 0 : data.readSecondsLeft || 0);
           setStatus('ready');
           window.scrollTo({ top: 0 });
         }
@@ -169,6 +174,17 @@ const LessonView = () => {
 
   useEffect(() => () => window.clearTimeout(pressTimer.current), []);
 
+  // The reading countdown ticks only while the page is in view, so a topic left
+  // open in a background tab does not count as read.
+  const waiting = status === 'ready' && !read && waitLeft > 0;
+  useEffect(() => {
+    if (!waiting) return undefined;
+    const tick = window.setInterval(() => {
+      if (document.visibilityState === 'visible') setWaitLeft((s) => Math.max(0, s - 1));
+    }, 1000);
+    return () => window.clearInterval(tick);
+  }, [waiting]);
+
   // Marking the topic read is what unlocks its quiz.
   const markRead = useCallback(async () => {
     setSaving(true);
@@ -176,6 +192,10 @@ const LessonView = () => {
       await api(`/learn/lessons/${lessonId}/complete`, { method: 'POST' });
       setRead(true);
       setLesson((l) => ({ ...l, completed: true }));
+    } catch (err) {
+      // The server keeps its own clock; if it says to keep reading, show its count.
+      if (err.data?.readSecondsLeft) setWaitLeft(err.data.readSecondsLeft);
+      else throw err;
     } finally {
       setSaving(false);
     }
@@ -221,6 +241,7 @@ const LessonView = () => {
   const footerState = !read ? 'read' : quizPassed ? 'next' : 'gate';
 
   const pad = (n) => String(n).padStart(2, '0');
+  const clock = (s) => `${Math.floor(s / 60)}:${pad(s % 60)}`;
   const nextLabel = lesson.next ? 'Next topic' : 'Finish chapter';
 
   return (
@@ -308,10 +329,10 @@ const LessonView = () => {
               <button
                 type="button"
                 onClick={handleRead}
-                disabled={saving}
+                disabled={saving || waitLeft > 0}
                 className={`btn lx-btn cx-lv-press${pressing ? ' is-pressing' : ''}`}
               >
-                {saving ? 'Saving…' : "I've read this"}
+                {waitLeft > 0 ? `Quiz unlocks in ${clock(waitLeft)}` : saving ? 'Saving…' : "I've read this"}
                 <span className="lx-btn-disc" aria-hidden="true">
                   <Check size={15} />
                 </span>

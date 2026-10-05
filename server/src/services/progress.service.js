@@ -9,6 +9,28 @@ import { getDB } from '../setup/db.js';
 
 export const PASS_MARK = 0.7;
 
+// A topic cannot be marked read until it has been open this long, so a learner
+// cannot click straight through to its quiz.
+export const MIN_READ_SECONDS = 90;
+
+// Seconds left before this learner may mark the topic read. The first call
+// records when the topic was opened; later calls count from that moment, so
+// reloading the page does not restart the wait.
+export const readSecondsLeft = async (userId, lessonId) => {
+  const db = getDB();
+  await db
+    .prepare(
+      `INSERT INTO lesson_opens (userId, lessonId, openedAt) VALUES (?, ?, ?)
+       ON CONFLICT(userId, lessonId) DO NOTHING`
+    )
+    .run(userId, lessonId, new Date().toISOString());
+  const { openedAt } = await db
+    .prepare('SELECT openedAt FROM lesson_opens WHERE userId = ? AND lessonId = ?')
+    .get(userId, lessonId);
+  const elapsed = (Date.now() - new Date(openedAt).getTime()) / 1000;
+  return Math.max(0, Math.ceil(MIN_READ_SECONDS - elapsed));
+};
+
 export const courseBySlug = (slug) => getDB().prepare('SELECT * FROM courses WHERE slug = ?').get(slug);
 
 export const enrollmentFor = (userId, courseId) =>

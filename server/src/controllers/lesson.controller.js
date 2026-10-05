@@ -5,6 +5,7 @@ import {
   lessonCountFor,
   computeGates,
   finishedLessonIds,
+  readSecondsLeft,
   PASS_MARK,
 } from '../services/progress.service.js';
 
@@ -64,6 +65,8 @@ export const getLesson = async (req, res) => {
     data: {
       ...lesson,
       completed: Boolean(done),
+      // Opening the topic starts its reading clock; the client counts this down.
+      readSecondsLeft: done ? 0 : await readSecondsLeft(req.user.id, lesson.id),
       quizQuestionCount,
       // A topic with no quiz counts as passed, so older content still advances.
       quizPassed: quizQuestionCount === 0 ? true : quizPassed,
@@ -94,6 +97,21 @@ export const completeLesson = async (req, res) => {
   const gate = (await computeGates(req.user.id, course)).lessons[lesson.id];
   if (!gate?.unlocked) {
     return res.status(403).json({ message: gate?.reason || 'This lesson is locked' });
+  }
+
+  // Enforced here, not only in the UI, so calling the API directly cannot skip
+  // the reading time. A topic already marked read stays read.
+  const already = await db
+    .prepare('SELECT 1 AS ok FROM lesson_progress WHERE userId = ? AND lessonId = ?')
+    .get(req.user.id, lesson.id);
+  if (!already) {
+    const left = await readSecondsLeft(req.user.id, lesson.id);
+    if (left > 0) {
+      return res.status(403).json({
+        message: `Keep reading: you can mark this topic read in ${left} seconds`,
+        data: { readSecondsLeft: left },
+      });
+    }
   }
 
   await db.prepare(

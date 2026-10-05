@@ -250,6 +250,16 @@ export const TABLES = {
     CREATE INDEX IF NOT EXISTS idx_progress_user ON lesson_progress (userId);
     CREATE INDEX IF NOT EXISTS idx_progress_user_lesson ON lesson_progress (userId, lessonId);
   `,
+  // When a learner first opened each topic. Marking a topic read is refused
+  // until MIN_READ_SECONDS have passed since then (see progress.service.js).
+  lesson_opens: `
+    CREATE TABLE IF NOT EXISTS lesson_opens (
+      userId   BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      lessonId BIGINT NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+      openedAt TIMESTAMPTZ NOT NULL,
+      PRIMARY KEY (userId, lessonId)
+    );
+  `,
   quiz_attempts: `
     CREATE TABLE IF NOT EXISTS quiz_attempts (
       id        BIGSERIAL PRIMARY KEY,

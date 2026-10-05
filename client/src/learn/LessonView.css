@@ -343,6 +343,11 @@
   cursor: progress;
 }
 
+/* The reading countdown ticks inside the button; even digit widths stop it jittering. */
+.cx-lv-press {
+  font-variant-numeric: tabular-nums;
+}
+
 /* The click itself resolves against the network, so the press is also played
    as a one-shot: the button gives way and comes back whether or not the save
    has answered yet. */
