@@ -1370,6 +1370,9 @@ function handleGameEvents(events) {
       case 'golden_miss':
         callout('bonus word missed', 'miss', 900);
         break;
+      case 'mistake':
+        track.pop(myId(), `−${ev.cost}`, 'miss');
+        break;
       case 'nitro':
         callout('Boost!', 'nitro', 1200);
         track.pop(myId(), 'BOOST', 'nitro');
@@ -1422,14 +1425,14 @@ if (window.visualViewport) {
 el.passageWrap.addEventListener('click', refocusTyping);
 document.addEventListener('keydown', (e) => {
   if (document.activeElement === el.chatInput) return;
-  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.ctrlKey || e.metaKey) return; // Option still types letters (é, ß), so it is not a shortcut here
   const st = S.room?.state;
   if (st === 'waiting' || st === 'countdown') {
     if (e.key.length === 1) rev();
     return;
   }
   if (st !== 'racing' || S.local.done) return;
-  if (document.activeElement !== typing.input && e.key.length === 1) typing.focus();
+  if (document.activeElement !== typing.input && (e.key.length === 1 || e.key === 'Dead')) typing.focus();
 });
 
 /* Pre-race engine revving: instant locally, throttled on the wire. */
@@ -1450,6 +1453,9 @@ function refocusTyping() {
   if (!S.room) return;
   if (S.room.state === 'racing' && !S.local.done) typing.focus();
   else if (S.room.state === 'countdown') typing.focus(true);   // keyboard readiness on phones
+  // Focusing an input that already has the keyboard fires no focus event, so a
+  // cover left up over a passage that is taking keys would never go: drop it.
+  if (document.activeElement === typing.input && document.hasFocus()) el.focusOverlay.hidden = true;
 }
 
 /*
@@ -1469,7 +1475,10 @@ onSiteKey((key) => {
     return;
   }
   if (st !== 'racing' || S.local.done || key === 'Enter') return;
-  typing.focus();
+  // No focus() here: taking the keyboard back on the first forwarded key let a
+  // key typed straight into the game overtake forwarded ones still on their
+  // way. The website hands it back after the last one (GameFrame.js), and the
+  // window focus that follows lands on the passage (refocusTyping).
   const value = key === 'Backspace' ? typing.input.value.slice(0, -1) : typing.input.value + key;
   typing.input.value = value;
   typing.handle(value);
@@ -1715,6 +1724,7 @@ function updateCountdown(m, now) {
     el.cdNum.textContent = n > 0 ? String(n) : 'GO!';
     restartAnim(el.cdNum);
     if (n > 0 && n <= 5) sound.count();
+    if (n === 0) typing.arm(); // GO shows before the start lands: keys typed now still count
   }
 }
 
@@ -1731,11 +1741,12 @@ function updateRacing(m, now) {
 
   // game HUD
   if (game.score !== S.lastScoreShown) {
+    const fell = game.score < S.lastScoreShown; // a wrong key cost points
     S.lastScoreShown = game.score;
     el.hudScore.textContent = game.score.toLocaleString();
-    el.hudScore.classList.remove('bump');
+    el.hudScore.classList.remove('bump', 'drop');
     void el.hudScore.offsetWidth;
-    el.hudScore.classList.add('bump');
+    el.hudScore.classList.add(fell ? 'drop' : 'bump');
   }
   if (game.combo !== S.lastComboShown) {
     S.lastComboShown = game.combo;

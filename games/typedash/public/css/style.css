@@ -977,6 +977,7 @@ body.nitro-shake .track-wrap { animation: shake-x 0.12s linear infinite; }
 .car-pop.combo { background: var(--ink); }
 .car-pop.golden { background: var(--gold-tint); color: var(--gold-ink); }
 .car-pop.nitro { background: linear-gradient(90deg, var(--copper-2), var(--copper)); letter-spacing: 0.14em; }
+.car-pop.miss { background: var(--brick-tint); color: var(--brick); }
 @keyframes pop-up { 0% { opacity: 0; transform: translate(-50%, 10px) scale(0.6); } 16% { opacity: 1; transform: translate(-50%, -4px) scale(1.06); } 72% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -38px) scale(1); } }
 .emote {
   position: absolute; left: 0; bottom: 6px; transform: translateX(-50%); font-size: 1.7rem; line-height: 1;
@@ -1037,6 +1038,8 @@ body.nitro-shake .track-wrap { animation: shake-x 0.12s linear infinite; }
 .score-stat span { display: inline-block; }
 .score-stat span.bump { animation: score-bump 0.32s var(--ease-snap); }
 @keyframes score-bump { 0% { transform: scale(1.22); color: var(--copper); } 100% { transform: scale(1); } }
+.score-stat span.drop { animation: score-drop 0.32s var(--ease-snap); }
+@keyframes score-drop { 0% { transform: scale(0.84); color: var(--brick); } 100% { transform: scale(1); } }
 .nitro-stat { gap: 4px; padding-inline: 14px; border-radius: 16px; transition: background-color var(--dur-base) var(--ease); }
 .nitro-meter { width: 100%; height: 10px; margin: 6px 0 2px; border-radius: 999px; background: var(--sand-2); overflow: hidden; box-shadow: inset 0 1px 2px rgba(22, 19, 15, 0.08); }
 .nitro-meter i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--gold-tint), var(--copper-light), var(--copper-2)); transition: width 0.25s var(--ease); }
@@ -1063,6 +1066,10 @@ body.nitro-shake .track-wrap { animation: shake-x 0.12s linear infinite; }
 .passage .c.ok { color: var(--ink); }
 .passage .c.bad { color: var(--brick); background: var(--brick-tint); text-decoration: underline 2px; text-decoration-color: rgba(163, 66, 58, 0.55); text-underline-offset: 4px; }
 .passage .c.cur { color: var(--ink); background: var(--copper-tint); }
+/* a wrong key was pressed: the letter you need shows red until you type it,
+   and keeps a red underline afterwards so you can see where you slipped */
+.passage .c.cur.miss { color: var(--brick); background: var(--brick-tint); }
+.passage .c.ok.miss { text-decoration: underline 2px rgba(163, 66, 58, 0.55); text-underline-offset: 4px; }
 .passage .c.cur::before {
   content: ''; position: absolute; left: -1px; top: 10%; height: 80%; width: 2px; border-radius: 2px; background: var(--copper-2);
   animation: caret 1s steps(2) infinite;

@@ -2,18 +2,40 @@
  * Renders the passage as per-character spans and turns a hidden <input>'s
  * value into race progress.
  *
- *  - `correct` is the length of the longest prefix of the input that matches
- *    the passage; only that counts as progress (the server uses the same
- *    definition).
- *  - Trailing mistakes are allowed (so you can see and fix them) but capped at
- *    MAX_TRAIL so a runaway typo does not scroll the whole passage red.
- *  - Keystrokes and errors are counted on insertion only, which is the usual
- *    definition of accuracy in typing games.
+ *  - Only right letters go in. A wrong key never enters the text: it counts
+ *    as a mistake (the game layer takes points for it), the letter you need
+ *    turns red, and pressing the right key carries on. Nothing ever has to be
+ *    fixed with Backspace, so a typo can never leave a player stuck behind
+ *    letters the game is quietly refusing.
+ *  - `correct` is how far into the passage the player has typed; the server
+ *    uses the same number for race progress.
+ *  - Keystrokes and errors are counted per key pressed: every wrong key is
+ *    one error, the usual definition of accuracy in typing games.
  *  - Words are tracked so the game layer can reward flawless words and golden
- *    (bonus) words: a word is "committed" once its trailing space is part of
- *    the correct prefix (or the passage ends).
+ *    (bonus) words: a word is "committed" once its trailing space is typed (or
+ *    the passage ends), and it is flawless if no wrong key was pressed in it.
+ *  - A letter also accepts its plain form, so any passage can be typed on any
+ *    keyboard: é takes e, ş takes s, ı takes i, ß takes s.
+ *  - Keys pressed once GO is on screen but a moment before the race starts
+ *    (arm) wait in the box and are judged when typing is enabled.
+ *  - Keys that move the hidden caret (arrows, Home, End, select all) do
+ *    nothing, so every key lands at the end of the text.
+ *  - Text an input method is still composing (dead keys for accented letters,
+ *    phone keyboards) is judged as it arrives, except its last character,
+ *    which may still change (a dead key's ´ becoming é): that one is judged
+ *    once another follows it or the composition ends. The input box is only
+ *    rewritten when no composition is open, since rewriting it mid-composition
+ *    breaks the input method.
  */
-const MAX_TRAIL = 8;
+// A key fits a letter if it is the letter or the letter's plain form.
+const plain = (ch) => ch.normalize('NFD').replace(/\p{M}/gu, '').replace(/ı/g, 'i').replace(/ß/g, 's');
+const fits = (key, letter) => key === letter || plain(key) === plain(letter);
+
+// Keys whose default action moves the caret or selects text in the hidden input.
+const movesCaret = (e) =>
+  /^(Arrow|Home$|End$|Page)/.test(e.key) ||
+  ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') ||
+  (e.ctrlKey && !e.metaKey && /^[befnp]$/i.test(e.key)); // macOS Ctrl text navigation
 
 export class TypingArea {
   constructor(passageEl, inputEl) {
@@ -29,16 +51,25 @@ export class TypingArea {
     this.wordCommitAt = []; // correct-prefix length at which word i is committed
     this.wordsCommitted = 0;
     this.errorsInWord = 0;
-    this.typed = '';
+    this.typed = '';           // the right letters typed so far: always a prefix of the passage
+    this.seen = '';            // the input's value when last judged, so each key is judged once
+    this.missed = new Set();   // letters a wrong key was pressed on
     this.correct = 0;
     this.keystrokes = 0;
     this.errors = 0;
     this.enabled = false;
     this.done = false;
+    this.composing = false;
+    this.armed = false;        // GO is showing; keys wait in the box for the start
 
-    this.input.addEventListener('input', () => this.handle(this.input.value));
+    this.input.addEventListener('input', (e) => this.handle(this.input.value, e.isComposing || this.composing));
+    this.input.addEventListener('compositionstart', () => { this.composing = true; });
+    this.input.addEventListener('compositionend', () => {
+      this.composing = false;
+      this.handle(this.input.value);
+    });
     this.input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === 'Tab') e.preventDefault();
+      if (e.key === 'Enter' || e.key === 'Tab' || movesCaret(e)) e.preventDefault();
     });
     this.input.addEventListener('paste', (e) => e.preventDefault());
     this.input.addEventListener('drop', (e) => e.preventDefault());
@@ -56,7 +87,9 @@ export class TypingArea {
     this.done = false;
     this.wordsCommitted = 0;
     this.errorsInWord = 0;
-    this.input.value = '';
+    this.missed = new Set();
+    this.armed = false;
+    this.setInput('');
     this.el.innerHTML = '';
     this.chars = [];
     this.words = [];
@@ -108,7 +141,25 @@ export class TypingArea {
   setEnabled(v) {
     this.enabled = v;
     this.el.classList.toggle('locked', !v);
-    if (v) this.focus();
+    const held = this.armed;
+    this.armed = false;
+    if (v) {
+      this.focus();
+      // keys pressed between GO and the start are judged now
+      if (held && this.input.value !== this.seen) this.handle(this.input.value, this.composing);
+    }
+  }
+
+  /**
+   * GO is on screen, but the race starts a moment later (the server's start
+   * crosses the network; a practice run starts on its own timer). Take keys
+   * from now on: they wait in the box and count once typing is enabled,
+   * instead of being lost and leaving every key after them one letter off.
+   */
+  arm() {
+    if (this.enabled || this.done || !this.text || this.armed) return;
+    this.armed = true;
+    this.focus(true);
   }
 
   /**
@@ -121,44 +172,90 @@ export class TypingArea {
     this.input.focus({ preventScroll: true });
   }
 
-  handle(value) {
+  /** Put `value` in the input box and remember it as judged. */
+  setInput(value) {
+    this.input.value = value;
+    this.seen = value;
+  }
+
+  /**
+   * Judge the keys added to the input since the last call. Each one either
+   * matches the next letter of the passage and is typed, or is a mistake: it
+   * is counted, the letter it was pressed on is marked, and it goes no
+   * further. `composing` is true while an input method owns the box.
+   */
+  handle(value, composing = false) {
     if (!this.enabled || this.done || !this.text) {
-      this.input.value = this.typed;
+      if (this.armed) return;           // GO is up: keep the keys for the start
+      if (composing) this.seen = value; // leave a composition alone; cleared when it ends
+      else this.setInput(this.typed);
       return;
     }
 
-    let correct = 0;
-    const n = Math.min(value.length, this.text.length);
-    while (correct < n && value[correct] === this.text[correct]) correct++;
+    // Keys pressed since the last call were appended to the value we saw then.
+    // An input method may instead rewrite its whole composition (an
+    // autocorrected word): then everything after the typed letters is new. A
+    // shorter value (Backspace) or an edit inside the text adds nothing, and
+    // right letters stay typed.
+    let base = null;
+    if (value.startsWith(this.seen)) base = this.seen;
+    else if (value.startsWith(this.typed)) base = this.typed;
+    // While composing, the last character may still change: hold it back.
+    const end = composing ? value.length - 1 : value.length;
+    const fresh = base === null ? '' : value.slice(base.length, Math.max(base.length, end));
+    if (base !== null) this.seen = base + fresh;
 
-    if (value.length > this.text.length || value.length - correct > MAX_TRAIL) {
-      this.input.value = this.typed; // reject: too many trailing mistakes
-      return;
-    }
-
-    // first index where the new value differs from what was typed before
-    let diff = 0;
-    const m = Math.min(value.length, this.typed.length);
-    while (diff < m && value[diff] === this.typed[diff]) diff++;
-
+    const from = this.typed.length;
     let added = 0;
+    let wrong = 0;
     let lastKeyOk = true;
-    if (value.length > this.typed.length) {
-      for (let i = diff; i < value.length; i++) {
-        this.keystrokes++;
-        added++;
-        if (value[i] !== this.text[i]) { this.errors++; this.errorsInWord++; lastKeyOk = false; }
+    let wordDone = null;
+    for (let k = 0; k < fresh.length && this.typed.length < this.text.length; k++) {
+      added++;
+      this.keystrokes++;
+      const letter = this.text[this.typed.length];
+      if (fits(fresh[k], letter)) {
+        this.typed += letter; // the passage's own letter, so typed stays a prefix of it
+        lastKeyOk = true;
+        wordDone = this.commitWords() || wordDone;
+      } else {
+        wrong++;
+        this.errors++;
+        this.errorsInWord++;
+        this.missed.add(this.typed.length);
+        lastKeyOk = false;
       }
     }
 
-    const prevLen = this.typed.length;
-    this.typed = value;
-    this.correct = correct;
-    this.done = value === this.text;
+    if (!composing) this.setInput(this.typed); // a wrong key never stays in the box
+    if (!added) return;
 
-    // word commits (a single keystroke commits at most one word, but loop anyway)
+    this.correct = this.typed.length;
+    this.done = this.correct === this.text.length;
+    this.paint(from, this.correct);
+    if (this.correct > from) this.keepCaretVisible();
+
+    if (this.done) this.enabled = false;
+    if (this.onChange) {
+      this.onChange({
+        correct: this.correct,
+        typed: this.correct,
+        keystrokes: this.keystrokes,
+        errors: this.errors,
+        done: this.done,
+        added,
+        wrong,
+        ok: wrong === 0,
+        lastKeyOk,
+        wordDone,
+      });
+    }
+  }
+
+  /** Commit every word the typed letters now cover; returns the last one, or null. */
+  commitWords() {
     let wordDone = null;
-    while (this.wordsCommitted < this.words.length && correct >= this.wordCommitAt[this.wordsCommitted]) {
+    while (this.wordsCommitted < this.words.length && this.typed.length >= this.wordCommitAt[this.wordsCommitted]) {
       const index = this.wordsCommitted;
       const flawless = this.errorsInWord === 0;
       const w = this.words[index];
@@ -168,36 +265,19 @@ export class TypingArea {
       this.wordsCommitted++;
       this.errorsInWord = 0;
     }
-
-    this.paint(diff, Math.max(prevLen, value.length));
-    this.keepCaretVisible();
-
-    if (this.done) this.enabled = false;
-    if (this.onChange) {
-      this.onChange({
-        correct,
-        typed: value.length,
-        keystrokes: this.keystrokes,
-        errors: this.errors,
-        done: this.done,
-        added,
-        ok: lastKeyOk,
-        lastKeyOk,
-        wordDone,
-      });
-    }
+    return wordDone;
   }
 
   /** Repaint character classes in [lo, hi] (inclusive). */
   paint(lo, hi) {
-    const t = this.typed;
+    const n = this.typed.length;
     const end = Math.min(hi, this.chars.length - 1);
     for (let i = Math.max(0, lo); i <= end; i++) {
-      const el = this.chars[i];
       let cls = this.text[i] === ' ' ? 'c sp' : 'c';
-      if (i < t.length) cls += t[i] === this.text[i] ? ' ok' : ' bad';
-      else if (i === t.length) cls += ' cur';
-      el.className = cls;
+      if (i < n) cls += ' ok';
+      else if (i === n) cls += ' cur';
+      if (this.missed.has(i)) cls += ' miss'; // the letter a wrong key was pressed on
+      this.chars[i].className = cls;
     }
   }
 

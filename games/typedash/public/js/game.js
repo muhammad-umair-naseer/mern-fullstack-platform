@@ -5,7 +5,8 @@
  * on any of this).
  *
  * Rules
- *  - Every correct keystroke adds to the combo; a wrong one resets it.
+ *  - Every correct keystroke adds to the combo; a wrong one resets it and
+ *    costs MISTAKE_COST points (the score never drops below zero).
  *  - Combo tiers (10/25/50/100) raise the score multiplier and trigger a pop.
  *  - Nitro meter fills with flawless words. When full, nitro fires for
  *    NITRO_MS: x2 score, flames on your car, everyone in the lobby sees it.
@@ -13,6 +14,7 @@
  */
 export const NITRO_MS = 3200;
 export const NITRO_WORDS = 5;   // flawless words to fill the meter
+export const MISTAKE_COST = 20; // points a wrong key takes off the score
 
 export const COMBO_TIERS = [
   { at: 10,  label: '10 words in a row',  mult: 1.25 },
@@ -61,9 +63,10 @@ export class RaceGame {
 
   /**
    * Feed a keystroke result from TypingArea. Returns a list of events for the
-   * UI: {type:'combo', label}, {type:'nitro'}, {type:'golden', word}, {type:'word'}.
+   * UI: {type:'combo', label}, {type:'nitro'}, {type:'golden', word}, {type:'word'},
+   * {type:'mistake', cost}.
    */
-  onKey({ ok, added, wordDone }) {
+  onKey({ ok, added, wordDone, wrong = 0 }) {
     const events = [];
     if (!added) return events;
 
@@ -81,6 +84,9 @@ export class RaceGame {
       this.combo = 0;
       this.tier = 0;
       this.meter = Math.max(0, this.meter - 1 / (NITRO_WORDS * 2)); // a typo costs half a word of charge
+      const cost = MISTAKE_COST * Math.max(1, wrong);
+      this.score = Math.max(0, this.score - cost);
+      events.push({ type: 'mistake', cost });
     }
 
     if (wordDone) {

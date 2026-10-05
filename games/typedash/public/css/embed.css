@@ -72,6 +72,8 @@ body {
 .passage .c.ok { color: var(--ink); }
 .passage .c.bad { color: var(--brick); background: var(--brick-tint); text-decoration: underline 2px rgba(163, 66, 58, 0.5); text-underline-offset: 3px; }
 .passage .c.cur { background: var(--copper-tint); box-shadow: -2px 0 0 var(--copper-2); }
+.passage .c.cur.miss { color: var(--brick); background: var(--brick-tint); }
+.passage .c.ok.miss { text-decoration: underline 2px rgba(163, 66, 58, 0.5); text-underline-offset: 3px; }
 .passage .w.gold { background: rgba(243, 230, 196, 0.65); box-shadow: inset 0 -2px 0 rgba(160, 122, 44, 0.5); }
 .passage .w.gold .c { color: #83652A; }
 .passage .w.gold .c.ok { color: var(--gold-ink); }

@@ -197,7 +197,10 @@ export default function GameFrame() {
         if (h > 0 && h <= 1400) setGameHeight(h);
       }
       if (e.data && e.data.type === 'cortexis:reveal') reveal(e.data);
-      if (e.data && e.data.type === 'cortexis:typing') gameTyping.current = Boolean(e.data.active);
+      if (e.data && e.data.type === 'cortexis:typing') {
+        gameTyping.current = Boolean(e.data.active);
+        keysInFlight.current = 0; // a fresh start: a lost confirmation cannot keep the keyboard here
+      }
       if (e.data && e.data.type === 'cortexis:key-done') {
         keysInFlight.current = Math.max(0, keysInFlight.current - 1);
         // every forwarded key has landed: the next one can go straight to the game.

@@ -790,7 +790,7 @@ function howPage({ origin }) {
   </section>
 
   <ol class="how how-steps">
-    ${step('how-type', '<span class="ha-text"><i>t</i><i>y</i><i>p</i><i class="fix"><b>o</b><b>e</b></i></span><span class="ha-car" data-car="dash" style="--c:#B8612E"></span>', 'Type what you see', 'Right letters move your car. Fix the red ones.')}
+    ${step('how-type', '<span class="ha-text"><i>t</i><i>y</i><i>p</i><i class="fix"><b>o</b><b>e</b></i></span><span class="ha-car" data-car="dash" style="--c:#B8612E"></span>', 'Type what you see', 'Right letters move your car. A wrong key costs points.')}
     ${step('how-combo', '<span class="ha-combo"><b>12</b><small>in a row</small><em>2×</em></span>', 'Keep a clean run', 'Words in a row with no mistakes are worth more.')}
     ${step('how-boost', '<span class="ha-meter"><i></i></span><span class="ha-flame"></span>', 'Fill the boost', 'Full bar: a faster car and double points.')}
     ${step('how-gold', '<span class="ha-gold">letter<em>+250</em></span>', 'Catch the ✦ words', 'Three per paragraph. No mistakes, bonus points.')}
