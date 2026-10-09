@@ -311,6 +311,7 @@ export default function PresentationConverter() {
               <iframe
                 title="Presentation Preview"
                 srcDoc={previewHtml}
+                sandbox=""
                 className="w-full h-80 rounded-2xl bg-slate-900 border border-slate-800"
               />
             </div>

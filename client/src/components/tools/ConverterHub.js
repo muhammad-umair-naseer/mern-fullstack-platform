@@ -4,12 +4,8 @@ import { validateFile } from '../../lib/fileValidation';
 import { runFfmpegCommand } from '../../lib/ffmpegEngine';
 import { loadVendorScript } from '../../lib/dynamicVendor';
 import { jsPDF } from 'jspdf';
-import * as pdfjsLib from 'pdfjs-dist';
+import { pdfjsLib } from '../../lib/pdfCommon';
 import { dropHandlers } from '../../lib/dropzone';
-
-if (pdfjsLib.GlobalWorkerOptions) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-}
 
 const CATEGORY_MAP = {
   image: {

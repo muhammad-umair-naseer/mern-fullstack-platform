@@ -2,19 +2,36 @@
  * Shared Client-Side PDF Utilities & PDF.js Worker Configuration
  */
 
-import * as pdfjsLib from 'pdfjs-dist';
+import * as pdfjs from 'pdfjs-dist';
 
-// Ensure PDF.js worker is properly configured
+// The worker, fonts and image decoders are served from /vendor so no PDF work
+// leaves the site. public/vendor/pdf.worker.min.mjs must match the pinned
+// pdfjs-dist version exactly: copy it from node_modules/pdfjs-dist/build on upgrade.
+const VENDOR = `${process.env.PUBLIC_URL || ''}/vendor`;
+
 if (typeof window !== 'undefined') {
   try {
-    if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+      pdfjs.GlobalWorkerOptions.workerSrc = `${VENDOR}/pdf.worker.min.mjs`;
     }
   } catch (e) {
     console.warn('PDF.js worker initialization:', e);
   }
 }
+
+// Every PDF the tools open goes through here. isEvalSupported: false keeps
+// font code from being compiled with eval (CVE-2024-4367); pdf.js 4.2.67+ no
+// longer does that anyway, so this guards against a downgrade.
+function getDocument(src) {
+  return pdfjs.getDocument({
+    ...src,
+    isEvalSupported: false,
+    standardFontDataUrl: `${VENDOR}/standard_fonts/`,
+    wasmUrl: `${VENDOR}/pdfjs-wasm/`,
+  });
+}
+
+const pdfjsLib = { ...pdfjs, getDocument };
 
 export { pdfjsLib };
 

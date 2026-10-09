@@ -21,7 +21,13 @@ export async function performPdfOcr(file, options = {}, onProgress, signal) {
   onProgress?.({ progress: 10, message: 'Initializing OCR Engine (Tesseract)…' });
   await yieldToMain();
 
-  const worker = await createWorker(language);
+  // The worker script is served from /vendor (copied from
+  // node_modules/tesseract.js/dist on upgrade) instead of a blob that imports
+  // it from a CDN, so the page's Content-Security-Policy needs no CDN script.
+  const worker = await createWorker(language, 1, {
+    workerPath: `${process.env.PUBLIC_URL || ''}/vendor/tesseract/worker.min.js`,
+    workerBlobURL: false,
+  });
   if (signal?.aborted) {
     await worker.terminate();
     throw new Error('Operation aborted');

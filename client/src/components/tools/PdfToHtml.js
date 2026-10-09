@@ -307,6 +307,7 @@ export default function PdfToHtml({ formats = ['html'] }) {
                 <iframe
                   title="HTML Preview"
                   srcDoc={resultHtml}
+                  sandbox=""
                   className="w-full h-80 rounded-2xl bg-white border border-slate-700"
                 />
               )}

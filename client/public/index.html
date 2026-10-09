@@ -6,6 +6,16 @@
          copy here would be appended to rather than replaced, leaving two of
          each, and a crawler reads the first one it finds. -->
     <meta charset="utf-8" />
+    <!-- Content-Security-Policy. Scripts only from this site, so an injected
+         tag cannot run. Elsewhere: the API on :5000 in local dev (same origin
+         in production), the three games on :3001/:4001/:5001 of whichever host
+         served the page, Google Fonts, and microlink for the web capture
+         tools. Images may come from any https host. Inline styles stay allowed
+         because React and the prerendered pages write style attributes. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' data: blob: http://*:5000 https://*:5000 http://*:3001 http://*:4001 http://*:5001 https://api.microlink.io https://*.microlink.io; frame-src 'self' blob: http://*:3001 http://*:4001 http://*:5001; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'"
+    />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico?v=2" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png?v=2" />
     <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png?v=2" />
@@ -17,22 +27,9 @@
     <meta name="color-scheme" content="only light" />
     <meta name="darkreader-lock" />
     <!-- cx-intro:head -->
-    <script>
-      /* The logo intro. It plays once per browser session, only when the visit
-         starts on the home page, and never for automated browsers (the
-         prerender among them), so no snapshot ever carries it. Decided here,
-         before the first paint, so the page never flashes the wrong state. */
-      (function () {
-        var root = document.documentElement;
-        if (location.pathname !== '%PUBLIC_URL%/' || navigator.webdriver) return;
-        try {
-          if (sessionStorage.getItem('cx-intro') === '1') return;
-          sessionStorage.setItem('cx-intro', '1');
-        } catch (e) { return; }
-        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        root.classList.add(reduce ? 'intro-reduced' : 'intro');
-      })();
-    </script>
+    <!-- The intro's scripts are files, not inline, so the Content-Security-Policy
+         above can keep script-src to 'self'. -->
+    <script src="%PUBLIC_URL%/cx-intro-head.js" data-home="%PUBLIC_URL%/"></script>
     <style>
       /* Self-contained: this paints before the site's own CSS exists, so it
          carries its own palette and motion values (motion-craft tokens). */
@@ -164,111 +161,7 @@
       </div>
       <button class="cxi-skip" type="button" id="cxi-skip">Skip intro</button>
     </div>
-    <script>
-      (function () {
-        var root = document.documentElement;
-        if (!root.classList.contains('intro')) {
-          if (root.classList.contains('intro-reduced')) setTimeout(function () { root.classList.remove('intro-reduced'); }, 400);
-          return;
-        }
-        var $ = function (id) { return document.getElementById(id); };
-        var mark = $('cxi-mark'), word = $('cxi-word'), stage = document.querySelector('.cxi-stage');
-        var t0 = performance.now(), drawn = false, state = 'draw', timer = 0;
-        if (document.fonts && document.fonts.load) document.fonts.load('600 24px Poppins').catch(function () {});
-
-        // The navbar lockup is ready to be landed on once React has rendered
-        // it, its logo image has loaded and Poppins has loaded. The navbar's
-        // own entrance may still be nudging it, so aim for where it will come
-        // to rest: its box minus whatever translate the entrance has left.
-        function target() {
-          var img = document.querySelector('.navbar .nav-logo-badge img');
-          var wrap = document.querySelector('.navbar .nav-logo-wrap');
-          var logo = document.querySelector('.navbar .nav-logo');
-          if (!img || !wrap || !logo || !img.complete || !img.naturalWidth) return null;
-          if (document.fonts && !document.fonts.check('600 24px Poppins')) return null;
-          var tf = getComputedStyle(logo).transform, dx = 0, dy = 0;
-          if (tf && tf !== 'none' && window.DOMMatrixReadOnly) { var mx = new DOMMatrixReadOnly(tf); dx = mx.m41; dy = mx.m42; }
-          var r = img.getBoundingClientRect(), w = wrap.getBoundingClientRect();
-          if (!r.width || !w.width) return null;
-          r = { left: r.left - dx, top: r.top - dy, width: r.width, height: r.height };
-          w = { left: w.left - dx, top: w.top - dy, width: w.width };
-          // The mark is drawn object-fit: contain inside its box.
-          var ratio = 222 / 212, iw = r.width, ih = r.height, mw, mh;
-          if (iw / ih > ratio) { mh = ih; mw = ih * ratio; } else { mw = iw; mh = iw / ratio; }
-          return { mark: { x: r.left + (iw - mw) / 2, y: r.top + (ih - mh) / 2, w: mw }, word: { x: w.left, y: w.top, w: w.width } };
-        }
-        function aim(el, to) {
-          var from = el.getBoundingClientRect();
-          el.style.setProperty('--fx', (to.x - from.left).toFixed(2) + 'px');
-          el.style.setProperty('--fy', (to.y - from.top).toFixed(2) + 'px');
-          el.style.setProperty('--fs', (to.w / from.width).toFixed(4));
-        }
-        function poll() {
-          timer = 0;
-          if (state !== 'draw') return;
-          var t = drawn && target();
-          if (t) {
-            aim(mark, t.mark); aim(word, t.word);
-            state = 'go';
-            root.classList.add('intro-go');
-            return;
-          }
-          if (performance.now() - t0 > 10000) return bail();
-          timer = setTimeout(poll, 50);
-        }
-        // Hold on the finished lockup for a beat before it flies.
-        var HOLD = 650;
-        $('cxi-cover-2').addEventListener('animationend', function () { setTimeout(function () { drawn = true; if (!timer) poll(); }, HOLD); });
-        word.addEventListener('animationend', function (e) {
-          if (e.target !== word || state !== 'go') return;
-          state = 'docked';
-          root.classList.add('intro-docked');
-        });
-        stage.addEventListener('animationend', function (e) { if (e.target === stage) finish(); });
-        timer = setTimeout(poll, 50);
-        var safety = setTimeout(bail, 11000);
-
-        function bail() {
-          if (state === 'done' || state === 'bail') return;
-          state = 'bail';
-          root.classList.add('intro-bail');
-          setTimeout(finish, 240);
-        }
-        function finish() {
-          if (state === 'done') return;
-          state = 'done';
-          clearTimeout(timer);
-          clearTimeout(safety);
-          root.classList.remove('intro', 'intro-go', 'intro-docked', 'intro-bail');
-          ['keydown', 'click', 'wheel', 'touchstart'].forEach(function (t) { document.removeEventListener(t, onInput, true); });
-          window.dispatchEvent(new Event('cortexis:intro-end'));
-        }
-        // Skip: the button, any click or tap, Esc, Enter, Space, or trying to
-        // scroll. The page underneath jumps to its finished state.
-        function skip() {
-          if (state === 'done') return;
-          finish();
-          if (document.getAnimations) document.getAnimations().forEach(function (a) {
-            var el = a.effect && a.effect.target;
-            if (!el || !el.closest || !el.closest('.lx-hero')) return;
-            var end = a.effect.getComputedTiming().endTime;
-            if (isFinite(end)) { try { a.finish(); } catch (e) {} }
-          });
-        }
-        var KEYS = { Escape: 1, Enter: 1, ' ': 1, ArrowDown: 1, ArrowUp: 1, PageDown: 1, PageUp: 1, Home: 1, End: 1 };
-        function onInput(e) {
-          if (e.type === 'keydown') {
-            if (!KEYS[e.key]) return;
-            e.preventDefault();
-          } else if (e.type === 'click') {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-          skip();
-        }
-        ['keydown', 'click', 'wheel', 'touchstart'].forEach(function (t) { document.addEventListener(t, onInput, { capture: true, passive: t === 'wheel' || t === 'touchstart' }); });
-      })();
-    </script>
+    <script src="%PUBLIC_URL%/cx-intro.js"></script>
     <!-- /cx-intro:body -->
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>

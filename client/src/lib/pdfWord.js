@@ -24,14 +24,7 @@ async function getDocx() {
         if (window.docx) resolve(window.docx);
         else reject(new Error('docx library failed to expose global'));
       };
-      script.onerror = () => {
-        // Fallback to unpkg CDN if local file is missing
-        const cdnScript = document.createElement('script');
-        cdnScript.src = 'https://unpkg.com/docx@9.1.1/build/index.js';
-        cdnScript.onload = () => resolve(window.docx);
-        cdnScript.onerror = reject;
-        document.head.appendChild(cdnScript);
-      };
+      script.onerror = () => reject(new Error('docx library failed to load'));
       document.head.appendChild(script);
     });
   }

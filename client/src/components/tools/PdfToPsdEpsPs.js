@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Layers, Download, RefreshCw, AlertCircle, CheckCircle2} from 'lucide-react';
-import * as pdfjsLib from 'pdfjs-dist';
+import { pdfjsLib } from '../../lib/pdfCommon';
 import JSZip from 'jszip';
 import { validateFile } from '../../lib/fileValidation';
 import { dropHandlers } from '../../lib/dropzone';
-
-if (pdfjsLib.GlobalWorkerOptions) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-}
 
 // Generate Adobe Photoshop PSD binary file (RGB 8-bit, 3 channels)
 function generatePsd(canvas) {

@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Presentation, Download, RefreshCw, AlertCircle, CheckCircle2, Eye } from 'lucide-react';
-import * as pdfjsLib from 'pdfjs-dist';
+import { pdfjsLib } from '../../lib/pdfCommon';
 import JSZip from 'jszip';
 import { validateFile } from '../../lib/fileValidation';
 import { dropHandlers } from '../../lib/dropzone';
-
-if (pdfjsLib.GlobalWorkerOptions) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-}
 
 export default function PdfToPptx() {
   const [file, setFile] = useState(null);

@@ -4,12 +4,17 @@ import { loadXlsxLib } from '../../lib/dynamicVendor';
 import { formatFileSize } from '../../lib/fileValidation';
 import { triggerDownload } from '../../lib/pdfCommon';
 
+// The preview is built from cell text and rendered by React, never from
+// SheetJS's HTML: a file someone sends you can carry hyperlinks and markup,
+// and those must not reach the page.
+const sheetRows = (XLSX, ws) => XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
+
 export default function SpreadsheetConverter() {
   const [file, setFile] = useState(null);
   const [workbook, setWorkbook] = useState(null);
   const [sheetNames, setSheetNames] = useState([]);
   const [activeSheet, setActiveSheet] = useState('');
-  const [previewHtml, setPreviewHtml] = useState('');
+  const [previewRows, setPreviewRows] = useState([]);
   const [showPreview, setShowPreview] = useState(true);
   const [outputFormat, setOutputFormat] = useState('csv'); // 'csv' | 'xlsx' | 'json' | 'tsv' | 'ods' | 'html'
   const [allSheets, setAllSheets] = useState(false);
@@ -41,8 +46,7 @@ export default function SpreadsheetConverter() {
       const firstSheet = wb.SheetNames[0];
       setActiveSheet(firstSheet);
 
-      const html = XLSX.utils.sheet_to_html(wb.Sheets[firstSheet], { editable: false });
-      setPreviewHtml(html);
+      setPreviewRows(sheetRows(XLSX, wb.Sheets[firstSheet]));
 
       setStatus('ready');
       setStatusMsg(`Loaded ${wb.SheetNames.length} sheet(s) from ${selectedFile.name}.`);
@@ -55,8 +59,7 @@ export default function SpreadsheetConverter() {
   const handleSheetChange = (sheet) => {
     setActiveSheet(sheet);
     if (workbook && window.XLSX) {
-      const html = window.XLSX.utils.sheet_to_html(workbook.Sheets[sheet], { editable: false });
-      setPreviewHtml(html);
+      setPreviewRows(sheetRows(window.XLSX, workbook.Sheets[sheet]));
     }
   };
 
@@ -107,7 +110,7 @@ export default function SpreadsheetConverter() {
     setWorkbook(null);
     setSheetNames([]);
     setActiveSheet('');
-    setPreviewHtml('');
+    setPreviewRows([]);
     setStatus('idle');
     setStatusMsg('');
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -246,10 +249,19 @@ export default function SpreadsheetConverter() {
             </div>
 
             {showPreview && (
-              <div
-                className="max-h-72 overflow-auto rounded-2xl bg-slate-950/80 border border-slate-800 p-3 text-xs font-mono text-slate-300 custom-scrollbar spreadsheet-preview"
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
-              />
+              <div className="max-h-72 overflow-auto rounded-2xl bg-slate-950/80 border border-slate-800 p-3 text-xs font-mono text-slate-300 custom-scrollbar spreadsheet-preview">
+                <table>
+                  <tbody>
+                    {previewRows.map((row, r) => (
+                      <tr key={r}>
+                        {row.map((cell, c) => (
+                          <td key={c} className="px-2 py-0.5 whitespace-nowrap">{String(cell)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>

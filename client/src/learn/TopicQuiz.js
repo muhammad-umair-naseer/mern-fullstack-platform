@@ -174,7 +174,7 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
           <p className="cx-tq-verdict">
             {result.passed
               ? 'Passed. The next topic is unlocked.'
-              : `You need ${passMark}%. Review the answers below and try again.`}
+              : `You need ${passMark}%. The ones marked ✕ need another look. Try again.`}
           </p>
 
           <ol className="cx-tq-review">
@@ -184,7 +184,7 @@ const TopicQuiz = ({ lessonId, onPassed, onContinue, continueLabel }) => {
                   <span className="cx-tq-mark" aria-hidden="true">{r.right ? '✓' : '✕'}</span>
                   <span>{r.prompt}</span>
                 </p>
-                {!r.right && (
+                {!r.right && r.correct != null && (
                   <p className="cx-tq-correct">
                     Correct answer: <strong>{r.options[r.correct]}</strong>
                   </p>

@@ -105,7 +105,7 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark, a
             {passMark ? ` · ${passMark}% needed to pass` : ''}
           </p>
           <p className="cx-qz-verdict">
-            {result.passed ? 'Passed.' : 'Not passed yet. Review the answers and try again.'}
+            {result.passed ? 'Passed.' : 'Not passed yet. The ones marked ✕ need another look.'}
           </p>
         </div>
 
@@ -132,7 +132,7 @@ const Quiz = ({ questions, onSubmit, submitLabel = 'Submit answers', passMark, a
                     {r.your >= 0 ? r.options[r.your] : 'Not answered'}
                   </span>
                 </p>
-                {!r.right && (
+                {!r.right && r.correct != null && (
                   <p>
                     Correct answer: <span className="cx-qz-good">{r.options[r.correct]}</span>
                   </p>
