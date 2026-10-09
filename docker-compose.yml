@@ -10,20 +10,20 @@ services:
     environment:
       - PORT=5000
       - NODE_ENV=production
-      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:-cortexis_postgres_secret}@postgres:5432/cortexis
-      - JWT_SECRET=${JWT_SECRET:-cortexis_jwt_secret_dev_3829104820194820184920184028401928401928}
+      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/cortexis
+      - JWT_SECRET=${JWT_SECRET:?set JWT_SECRET in .env to a long random value}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-cortexis_redis_secret}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
       - SMTP_HOST=${SMTP_HOST:-}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
       - SMTP_PASS=${SMTP_PASS:-}
       - CONTACT_TO=${CONTACT_TO:-}
       - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
-      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:?set ADMIN_EMAIL in .env}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
       # the admin portal's Games section reads players from each game over the internal network
       - GOTCHA_URL=http://gotcha-rush:3000
       - TYPEDASH_URL=http://typedash:4000
@@ -49,7 +49,7 @@ services:
       - DATA_FILE=/data/gotcharush.json
       - RUNNER=off
       - NODE_ENV=production
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
       - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
       - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
       - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
@@ -75,7 +75,7 @@ services:
       - PORT=4000
       - DATA_FILE=/data/typedash.json
       - NODE_ENV=production
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
       - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
       - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
       - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
@@ -101,7 +101,7 @@ services:
       - PORT=3000
       - DATA_FILE=/data/pickparty.json
       - NODE_ENV=production
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
       - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
       - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
       - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
@@ -143,7 +143,7 @@ services:
     environment:
       - POSTGRES_DB=cortexis
       - POSTGRES_USER=cortexis
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cortexis_postgres_secret}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     # Security: No public ports exposed to host. Only accessible within the internal docker network.
     volumes:
       - cortexis_pg_data:/var/lib/postgresql/data
@@ -159,14 +159,14 @@ services:
     image: redis:7-alpine
     container_name: cortexis-redis
     restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:-cortexis_redis_secret} --maxmemory 256mb --maxmemory-policy volatile-lru
+    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:?set REDIS_PASSWORD in .env} --maxmemory 256mb --maxmemory-policy volatile-lru
     # Security: No public ports exposed to host. Only accessible within the internal docker network.
     volumes:
       - cortexis_redis_data:/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-cortexis_redis_secret}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5

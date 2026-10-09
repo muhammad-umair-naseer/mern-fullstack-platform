@@ -7,9 +7,9 @@
     "build": "npm install --prefix server && npm install --include=dev --prefix client && npm run build --prefix client",
     "start": "npm start --prefix server",
     "start:client": "npm start --prefix client",
-    "start:gotcha": "cross-env PORT=3001 node games/gotcha-rush/server/index.js",
-    "start:typedash": "cross-env PORT=4001 node games/typedash/server/index.js",
-    "start:pickparty": "cross-env PORT=5001 node games/pickparty/server/index.js",
+    "start:gotcha": "cross-env PORT=3001 node --env-file-if-exists=server/.env games/gotcha-rush/server/index.js",
+    "start:typedash": "cross-env PORT=4001 node --env-file-if-exists=server/.env games/typedash/server/index.js",
+    "start:pickparty": "cross-env PORT=5001 node --env-file-if-exists=server/.env games/pickparty/server/index.js",
     "start:admin": "cross-env PORT=6001 node admin/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
