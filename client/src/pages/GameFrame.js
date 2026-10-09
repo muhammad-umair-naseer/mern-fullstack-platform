@@ -29,6 +29,21 @@ const GAME_CONFIG = {
   },
 };
 
+/*
+ * Dead keys on a Mac (Option+e then e is é). On this page there is no text
+ * box to compose in, so the accent is put on the next letter here and the
+ * game gets the finished letter, as if it had been typed in the game
+ * (games' js/typing.js; a letter's plain form is accepted there too).
+ * By key position: [combining mark, the accent on its own].
+ */
+const DEAD_KEYS = {
+  KeyE: ['\u0301', '\u00B4'],      // acute
+  Backquote: ['\u0300', '`'],       // grave
+  KeyI: ['\u0302', '\u02C6'],      // circumflex
+  KeyU: ['\u0308', '\u00A8'],      // diaeresis
+  KeyN: ['\u0303', '\u02DC'],      // tilde
+};
+
 /* How long the frame may take before the loading state offers a way out. */
 const SLOW_MS = 9000;
 
@@ -248,16 +263,34 @@ export default function GameFrame() {
    */
   useEffect(() => {
     if (!gameOrigin) return undefined;
+    let dead = null;   // the accent of a dead key pressed last, waiting for its letter
+    const forward = (frame, key) => {
+      keysInFlight.current += 1;
+      frame.contentWindow.postMessage({ type: 'cortexis:key', key }, gameOrigin);
+    };
     const onKey = (e) => {
       const frame = iframeRef.current;
       if (!gameTyping.current || !frame || !frame.contentWindow) return;
-      if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
-      if (e.key !== 'Backspace' && e.key !== 'Enter' && e.key.length !== 1) return;
+      // Option types letters on a Mac (Option+2 is ™) and AltGr arrives as
+      // Ctrl+Alt on Windows: only Cmd, or Ctrl without Alt, is a shortcut.
+      if (e.metaKey || (e.ctrlKey && !e.altKey) || e.isComposing) return;
       const t = e.target;
       if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]')) return;
+      if (e.key === 'Dead') {
+        dead = DEAD_KEYS[e.code] || null;
+        return;
+      }
+      if (e.key !== 'Backspace' && e.key !== 'Enter' && e.key.length !== 1) return;
       e.preventDefault();
-      keysInFlight.current += 1;
-      frame.contentWindow.postMessage({ type: 'cortexis:key', key: e.key }, gameOrigin);
+      const accent = dead;
+      dead = null;
+      if (!accent || e.key === 'Enter') return forward(frame, e.key);
+      if (e.key === 'Backspace') return;                          // it takes back the accent, as in a text box
+      if (e.key === ' ') return forward(frame, accent[1]);         // the accent on its own
+      const one = (e.key + accent[0]).normalize('NFC');
+      if (e.key.normalize('NFD').length > 1) forward(frame, e.key); // the browser composed it already
+      else if (one.length === 1) forward(frame, one);
+      else { forward(frame, accent[1]); forward(frame, e.key); }   // no such letter: both, as macOS types them
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);

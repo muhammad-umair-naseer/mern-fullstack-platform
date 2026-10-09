@@ -854,6 +854,17 @@ input::placeholder { color: var(--ink-5); }
 .seats { font: 400 0.8rem var(--mono); color: var(--ink-4); font-variant-numeric: tabular-nums; }
 .series { font: 400 0.76rem var(--mono); color: var(--copper); }
 .status { text-align: center; color: var(--ink-3); font-size: 0.92rem; font-variant-numeric: tabular-nums; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* the race clock: once the first racer is home, the rest have this long */
+.end-clock {
+  display: inline-flex; align-items: center; gap: 10px; max-width: 100%; height: 40px; padding: 0 18px 0 14px; border-radius: 999px;
+  background: var(--copper-tint); color: var(--copper); box-shadow: inset 0 0 0 1px rgba(184, 97, 46, 0.24);
+  font: 500 0.86rem var(--font); animation: fade-in var(--dur-base) var(--ease);
+}
+.end-clock i { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--copper-2); animation: ping 1s var(--ease) infinite; }
+.end-clock b { font: 400 1.7rem/1 var(--display); color: var(--copper-3); font-variant-numeric: tabular-nums; }
+.end-clock.last { background: var(--brick-tint); color: var(--brick); box-shadow: inset 0 0 0 1px rgba(163, 66, 58, 0.28); }
+.end-clock.last i { background: var(--brick); animation-duration: 0.5s; }
+.end-clock.last b { color: var(--brick); }
 #screen-race.solo .room-code, #screen-race.solo .chat-toggle, #screen-race.solo .emote-bar { display: none !important; }
 
 .host-bar {
@@ -896,6 +907,7 @@ input::placeholder { color: var(--ink-5); }
 .lane-info .name { font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tag { flex-shrink: 0; padding: 3px 7px; border-radius: 999px; font: 500 0.56rem var(--mono); letter-spacing: 0.12em; background: var(--sand); color: var(--ink-4); }
 .tag.you { background: var(--ink); color: var(--ivory); }
+.tag.left { background: var(--brick-tint); color: var(--brick); }
 .lane.pacer .tag.bot { background: var(--sand-2); color: var(--ink-3); }
 .lane.ghost .tag.bot { background: var(--copper-tint); color: var(--copper); }
 .lane.ghost .car { opacity: 0.62; }

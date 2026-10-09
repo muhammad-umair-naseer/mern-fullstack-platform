@@ -58,7 +58,8 @@ class Room {
 
   /* ------------------------------------------------------------ members */
 
-  get humans() { return [...this.players.values()].filter((p) => !p.isBot); }
+  /** Humans still connected; a racer who dropped mid race is kept for the results only. */
+  get humans() { return [...this.players.values()].filter((p) => !p.isBot && !p.dropped); }
 
   /**
    * Public races are ranked: they feed the worldwide boards. Private rooms are
@@ -97,6 +98,17 @@ class Room {
     if (!this.players.has(player.id)) return;
     this.players.delete(player.id);
     player.room = null;
+
+    // Gone mid race (the connection dropped, Leave, or off to another room):
+    // the racer stays in this race as `dropped`, placed below every finisher
+    // and every racer still connected, and settled in last place. A copy is
+    // kept, since the same connection may go on to race elsewhere. Coming
+    // back is a new connection, and a race already running takes no one in
+    // (RoomManager.join, quickMatch), so a racer who reconnects stays dropped
+    // for this race and simply races the next one.
+    if (this.state === 'racing' && !player.isBot) {
+      this.players.set(player.id, Object.assign(Object.create(Object.getPrototypeOf(player)), player, { ws: null, room: null, dropped: true }));
+    }
 
     if (this.hostId === player.id) {
       const h = this.humans[0];
@@ -166,12 +178,13 @@ class Room {
 
   endRace(now) {
     // Rank anyone still on the track by distance covered, then by speed.
+    // Racers who dropped come last, whatever distance they had covered.
     const unfinished = [...this.players.values()]
       .filter((p) => !p.finished)
-      .sort((a, b) => b.correct - a.correct || b.wpm - a.wpm);
+      .sort((a, b) => !!a.dropped - !!b.dropped || b.correct - a.correct || b.wpm - a.wpm);
     for (const p of unfinished) {
       p.rank = ++this.finishOrder;
-      this.updateWpm(p, now);
+      if (!p.dropped) this.updateWpm(p, now); // a dropped racer keeps the speed they left with
     }
 
     const len = this.passage.length;
@@ -181,7 +194,7 @@ class Room {
         id: p.id, name: p.name, country: p.country, isBot: p.isBot, color: p.color,
         rank: p.rank, wpm: p.wpm, accuracy: p.accuracy, time: p.finishTime,
         progress: p.correct / len, finished: p.finished,
-        score: p.score, bestCombo: p.bestCombo, golden: p.golden, skin: p.skin,
+        score: p.score, bestCombo: p.bestCombo, golden: p.golden, skin: p.skin, dropped: !!p.dropped,
       }));
 
     for (const r of this.results) {
@@ -203,7 +216,7 @@ class Room {
   settleAccounts() {
     const accounts = this.manager.accounts;
     if (!accounts) return;
-    const humans = this.humans;
+    const humans = [...this.players.values()].filter((p) => !p.isBot); // dropped racers too, in last place
     const order = [...this.players.values()].sort((a, b) => a.rank - b.rank);
     const len = this.passage.length;
 
@@ -276,7 +289,7 @@ class Room {
 
   resetForNext(now) {
     for (const p of [...this.players.values()]) {
-      if (p.isBot) { this.players.delete(p.id); p.room = null; }
+      if (p.isBot || p.dropped) { this.players.delete(p.id); p.room = null; }
     }
     this.state = 'waiting';
     this.passage = null;
@@ -379,6 +392,20 @@ class Room {
 
   /* --------------------------------------------------------------- tick */
 
+  /**
+   * When the running race ends, by the server's clock: the hard timeout, or
+   * sooner once someone has finished (AFTER_FIRST_FINISH_MS) or every human
+   * is done (HUMANS_DONE_GRACE_MS). Racers see it counting down once the
+   * first one is home, so it is sent with every snapshot from then on.
+   */
+  get closesAt() {
+    return Math.min(
+      this.endAt,
+      this.firstFinishAt ? this.firstFinishAt + cfg.AFTER_FIRST_FINISH_MS : Infinity,
+      this.humansDoneAt ? this.humansDoneAt + cfg.HUMANS_DONE_GRACE_MS : Infinity,
+    );
+  }
+
   tick(now) {
     const dt = now - this.lastTick;
     this.lastTick = now;
@@ -402,23 +429,16 @@ class Room {
             p.tick(now, dt, this.startAt, len);
             if (!p.finished && p.correct >= len) this.finishPlayer(p, now);
           }
-          if (!p.finished) this.updateWpm(p, now);
+          if (!p.finished && !p.dropped) this.updateWpm(p, now);
         }
-        this.broadcastSnapshot(now);
 
         const everyone = [...this.players.values()];
-        const allDone = everyone.every((p) => p.finished);
+        const allDone = everyone.every((p) => p.finished || p.dropped);
         const humansDone = this.humans.every((p) => p.finished);
         if (humansDone && !this.humansDoneAt) this.humansDoneAt = now;
+        this.broadcastSnapshot(now);
 
-        if (
-          allDone ||
-          now >= this.endAt ||
-          (this.firstFinishAt && now >= this.firstFinishAt + cfg.AFTER_FIRST_FINISH_MS) ||
-          (this.humansDoneAt && now >= this.humansDoneAt + cfg.HUMANS_DONE_GRACE_MS)
-        ) {
-          this.endRace(now);
-        }
+        if (allDone || now >= this.closesAt) this.endRace(now);
         break;
       }
 
@@ -487,6 +507,7 @@ class Room {
       countdownEndsAt: this.countdownEndsAt,
       startAt: this.startAt,
       endAt: this.endAt,
+      closesAt: this.state === 'racing' && this.firstFinishAt ? this.closesAt : null,
       resultsUntil: this.resultsUntil,
       results: this.results,
       serverTime: now,
@@ -498,7 +519,9 @@ class Room {
   }
 
   broadcastSnapshot(now) {
-    this.broadcast({ type: 'snap', t: now, p: [...this.players.values()].map((p) => p.snap()) });
+    const msg = { type: 'snap', t: now, p: [...this.players.values()].map((p) => p.snap()) };
+    if (this.state === 'racing' && this.firstFinishAt) msg.e = this.closesAt; // the race ends then (server time)
+    this.broadcast(msg);
   }
 
   broadcast(msg) {

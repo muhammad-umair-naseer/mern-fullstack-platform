@@ -1,4 +1,4 @@
-import { toast } from './ui.js';
+import { toast, whenFree } from './ui.js';
 
 /**
  * Share dialog: link + card image for a settled result (race, practice or
@@ -22,7 +22,7 @@ export class ShareDialog {
     this.btnNative.addEventListener('click', () => this.native());
     this.btnLink.addEventListener('click', () => this.copyLink());
     this.btnImage.addEventListener('click', () => this.copyImage());
-    net.on('share', (m) => this.show(m));
+    net.on('share', (m) => whenFree(() => this.show(m))); // never over a race
   }
 
   /** Ask the server to publish a result (it remembers settled results for a while). */

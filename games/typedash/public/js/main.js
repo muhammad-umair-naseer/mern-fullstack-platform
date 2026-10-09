@@ -11,7 +11,7 @@ import { Account, pointsForLevel } from './account.js';
 import { SKINS } from './skins.js';
 import { carSvg, paint, SHOWROOM } from './cars.js';
 import { COUNTRIES, flag, detectCountry } from './countries.js';
-import { $, escapeHtml, fmtTime, toast, medal } from './ui.js';
+import { $, escapeHtml, fmtTime, toast, medal, holdPopups, whenFree } from './ui.js';
 import { Solo, PACERS } from './solo.js';
 import { DailyCard } from './daily.js';
 import { ShareDialog } from './share.js';
@@ -65,6 +65,9 @@ const S = {
   emotesRendered: false,
   lastRevAt: 0,
   lastResultId: null,  // the settled result the Share button publishes
+  closesAt: null,      // server time the race ends, once the first racer is home
+  firstHome: null,     // that racer's name
+  endClock: '',        // what the race clock last showed
 };
 
 /** Touch devices need the keyboard raised inside a tap, and a layout that survives the keyboard. */
@@ -659,6 +662,7 @@ async function practiceOrNotice(opts) {
 
 let lockNext = null;
 function showLockNotice(id, next, nextNo = null) {
+  if (S.room && (S.room.state === 'countdown' || S.room.state === 'racing')) return whenFree(() => showLockNotice(id, next, nextNo));
   lockNext = next;
   const n = solo.chainNo(id);
   const nn = solo.chainNo(next.id) || nextNo;
@@ -755,7 +759,7 @@ function canLeave(url) {
     return true;
   }
   if ((r.state === 'countdown' || r.state === 'racing') && !S.local.done && currentScreen === 'race' && !toRace) {
-    toast('The race is on. Everything else opens after the finish.', 'warn', 2600);
+    toast('The race is on. Everything else opens after the finish.', 'warn', 2600, true);
     return false;
   }
   return true;
@@ -1129,7 +1133,7 @@ net.on('renamed', (m) => { // an admin changed this player's name or country
 net.on('online', (m) => { el.online.textContent = m.n; });
 net.on('error', (m) => (m.locked ? onLockRefused(m) : toast(m.message || 'Something went wrong', 'error')));
 net.on('left', () => { if (S.room) goHome(); });
-net.on('player_left', (m) => { if (S.room) toast(`${m.name} left the room`, 'info', 2000); });
+net.on('player_left', (m) => { if (S.room && S.room.state !== 'racing') toast(`${m.name} left the room`, 'info', 2000); }); // mid race the results say so
 net.on('room', onRoom);
 net.on('snap', onSnap);
 net.on('finished', onFinished);
@@ -1191,6 +1195,8 @@ function enterState(m) {
   el.countdown.classList.remove('go');
   el.focusOverlay.hidden = true;
   S.goUntil = 0;
+  S.closesAt = m.closesAt || null;
+  S.firstHome = null;
 
   if (st === 'waiting') {
     resetLocal();
@@ -1199,6 +1205,10 @@ function enterState(m) {
     track.reset();
     clearInterp();
   } else if (st === 'countdown') {
+    // a dialog left open on the results screen does not stay over the passage
+    share.close();
+    el.lockNotice.hidden = true;
+    el.levelup.hidden = true;
     resetLocal();
     typing.setPassage(S.passage, m.bonusWords || []);
     game.start(m.bonusWords || []);
@@ -1256,7 +1266,10 @@ function refreshStateUI(m) {
     if (m.state === 'finished') el.status.textContent = `${what} — finished`;
     return;
   }
-  if (m.state === 'racing') el.status.textContent = `Race #${m.raceNo} — type!`;
+  if (m.state === 'racing') {
+    el.status.textContent = `Race #${m.raceNo} — type!`;
+    S.endClock = '';   // the race clock paints itself again on the next frame
+  }
   if (m.state === 'countdown') el.status.textContent = `Race #${m.raceNo} starts in a moment`;
 }
 
@@ -1281,6 +1294,7 @@ function restartAnim(node) {
 
 function onSnap(m) {
   if (!S.room) return;
+  S.closesAt = m.e || null;
   const len = S.passage.length || 1;
   for (const p of m.p) {
     if (p.id === myId()) {
@@ -1297,6 +1311,7 @@ function onFinished(m) {
   const p = S.players.get(m.id);
   if (!p) return;
   track.updateMeta(m.id, { rank: m.rank, finished: true, wpm: m.wpm, nitro: false });
+  if (m.rank === 1) S.firstHome = m.id === myId() ? 'You' : p.name;
   if (m.id === myId()) {
     S.myFinish = m;
     S.local.done = true;
@@ -1311,8 +1326,6 @@ function onFinished(m) {
       <span class="bonus">+${bonus.place} place bonus${bonus.clean ? ` · +${bonus.clean} clean bonus` : ''}</span></div>`;
     el.finishBanner.hidden = false;
     if (m.rank === 1) { confetti.burst(160); sound.win(); } else sound.finish();
-  } else {
-    toast(`${flag(p.country)} ${p.name} finished ${medal(m.rank)} · ${m.wpm} words a minute`, 'info', 2600);
   }
 }
 
@@ -1472,6 +1485,8 @@ function refocusTyping() {
 function syncSiteTyping() {
   const st = S.room?.state;
   tellSiteTyping(!!S.room && (st === 'countdown' || (st === 'racing' && !S.local.done)));
+  // and nothing pops up over the race: toasts and dialogs wait for the results (ui.js)
+  holdPopups(!!S.room && (st === 'countdown' || st === 'racing'));
 }
 onSiteKey((key) => {
   const st = S.room?.state;
@@ -1563,7 +1578,7 @@ function showResults(m) {
   el.resultsBody.innerHTML = results.map((r) => `
     <tr class="${r.id === myId() ? 'me' : ''}" style="--c:${escapeHtml(paint(r.color))}">
       <td>${medal(r.rank)}</td>
-      <td><span class="swatch"></span>${flag(r.country)} ${escapeHtml(r.name)}${r.isBot ? ' <span class="tag bot">BOT</span>' : ''}</td>
+      <td><span class="swatch"></span>${flag(r.country)} ${escapeHtml(r.name)}${r.isBot ? ' <span class="tag bot">BOT</span>' : ''}${r.dropped && !r.finished ? ' <span class="tag left" title="Lost the connection during the race, so placed last">LEFT</span>' : ''}</td>
       <td class="num">${r.wpm}</td>
       <td class="num">${r.accuracy}%</td>
       <td class="num score">${(r.id === myId() ? game.score : r.score || 0).toLocaleString()}</td>
@@ -1678,7 +1693,7 @@ function onRaceResult(msg) {
 
   // the streak and achievement chips are on the results screen itself; a sound is enough here
   if (out.unlocked.length) setTimeout(() => sound.achievement(), 400);
-  if (out.leveledUp) setTimeout(() => showLevelUp(out), 900);
+  if (out.leveledUp) setTimeout(() => whenFree(() => showLevelUp(out)), 900);
 }
 
 function showLevelUp(out) {
@@ -1777,11 +1792,29 @@ function updateRacing(m, now) {
   // rate ceiling) can never leave the car stranded short of the line.
   if (!S.myFinish && S.local.typed > 0 && performance.now() - S.lastSendAt > 250) scheduleSend(true);
 
+  renderEndClock(now);
+
   if (S.goUntil && performance.now() > S.goUntil) {
     el.countdown.hidden = true;
     el.countdown.classList.remove('go');
     S.goUntil = 0;
   }
+}
+
+/**
+ * Once the first racer is home the race ends AFTER_FIRST_FINISH_MS later
+ * (server/config.js). The server sends that moment (snap.e, room.closesAt)
+ * and the clock counts down to it on the synced server clock, for racers
+ * still typing and for those already home.
+ */
+function renderEndClock(now) {
+  if (!S.closesAt) return;
+  const secs = Math.max(0, Math.ceil((S.closesAt - now) / 1000));
+  const who = S.firstHome ? `${escapeHtml(S.firstHome)} ${S.firstHome === 'You' ? 'are' : 'is'} home · ` : '';
+  const html = `<span class="end-clock${secs <= 10 ? ' last' : ''}" role="timer"><i aria-hidden="true"></i>${who}Race ends in <b>${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</b></span>`;
+  if (html === S.endClock) return;
+  S.endClock = html;
+  el.status.innerHTML = html;
 }
 
 function updateFinished(m, now) {

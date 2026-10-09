@@ -11,7 +11,7 @@ process.env.PORT = process.env.PORT || '0';
 process.env.DATA_FILE = process.env.DATA_FILE || '/tmp/typedash-test/race.json';
 const assert = require('assert');
 const WebSocket = require('ws');
-const { server } = require('../server/index.js');
+const { server, accounts } = require('../server/index.js');
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -30,6 +30,7 @@ class Client {
       const m = JSON.parse(raw);
       this.msgs.push(m);
       if (m.type === 'welcome') this.id = m.id;
+      if (m.type === 'account') this.accountId = m.id;
       if (m.type === 'room') this.room = m;
       if (m.type === 'snap') this.snaps++;
       if (m.type === 'finished') this.finished.push(m);
@@ -64,6 +65,10 @@ class Client {
   b.send({ type: 'quick' });
   await b.until((c) => c.room && c.room.code === a.room.code, 5000, 'Bob matched into same room');
   console.log('✓ quick match put both players in room', a.room.code);
+  const c = new Client(url, 'Carol', 'TR');
+  await c.ready;
+  c.send({ type: 'quick' });
+  await c.until((x) => x.room && x.room.code === a.room.code && x.accountId, 5000, 'Carol matched into same room');
 
   await a.until((c) => c.room.state === 'countdown', 8000, 'countdown');
   assert.ok(a.room.passage && a.room.passage.length > 50, 'passage delivered on countdown');
@@ -86,6 +91,14 @@ class Client {
     if (ac >= passage.length) clearInterval(aliceTimer);
   }, 100);
 
+  // Carol races ahead at ~200 WPM, then her connection drops halfway
+  let cc = 0;
+  const carolTimer = setInterval(() => {
+    cc = Math.min(passage.length, cc + 2);
+    c.send({ type: 'progress', c: cc, t: cc, k: cc, e: 0 });
+    if (cc >= passage.length / 2) { clearInterval(carolTimer); c.ws.terminate(); }
+  }, 120);
+
   await wait(300);
   b.send({ type: 'progress', c: passage.length, t: passage.length, k: passage.length, e: 0 });
   await wait(300);
@@ -107,10 +120,33 @@ class Client {
   console.log(`✓ Alice finished #${myFinish.rank} at ${myFinish.wpm} WPM in ${(myFinish.time / 1000).toFixed(1)}s`);
   assert.ok(a.snaps > 10, `snapshots streamed (${a.snaps})`);
 
+  // the race clock: from the first finish on, every snapshot carries the server's end time
+  await b.until((x) => x.finished.length > 0, 60000, 'first racer home');
+  const first = b.finished[0];
+  const firstAt = b.msgs.lastIndexOf(first);
+  await b.until((x) => x.msgs.slice(firstAt).some((m) => m.type === 'snap'), 3000, 'snapshot after the first finish');
+  const endSnap = b.msgs.slice(firstAt).find((m) => m.type === 'snap');
+  const expectEnd = b.room.startAt + first.time + Number(process.env.AFTER_FIRST_FINISH_MS);
+  assert.strictEqual(endSnap.e, expectEnd, `race end sent with the snapshot (${endSnap.e} vs ${expectEnd})`);
+  assert.ok(!b.msgs.slice(0, firstAt).some((m) => m.type === 'snap' && m.e), 'no end time before anyone finished');
+  console.log(`✓ race clock: ${first.id === a.id ? 'Alice' : 'a bot'} home, race ends ${endSnap.e - endSnap.t} ms later by the server's clock`);
+
   await a.until((c) => c.room.state === 'finished', 90000, 'race finished');
+  const endedAt = a.room.serverTime;
+  assert.ok(endedAt >= endSnap.e && endedAt < endSnap.e + 1000, `race ended on the announced time (${endedAt - endSnap.e} ms after)`);
   assert.strictEqual(a.room.results.length, a.room.players.length, 'results cover every racer');
   assert.ok(a.room.results.every((r) => r.rank >= 1), 'everyone ranked');
   console.log('✓ results:', a.room.results.map((r) => `#${r.rank} ${r.name} ${r.wpm}wpm`).join(' | '));
+
+  // Carol was furthest along when she dropped, and still comes last
+  const carol = a.room.results.find((r) => r.id === c.id);
+  assert.ok(carol && carol.dropped && !carol.finished, 'dropped racer kept in the results, marked dropped');
+  assert.strictEqual(carol.rank, a.room.results.length, 'dropped racer placed last');
+  assert.ok(a.room.results.some((r) => !r.dropped && !r.finished && r.progress < carol.progress), 'placed below a connected racer who had typed less');
+  const carolAcc = accounts.accounts[c.accountId];
+  assert.strictEqual(carolAcc.races, 1, 'dropped racer settled');
+  assert.strictEqual(carolAcc.wins + carolAcc.podiums, 0, 'no win or podium for a dropped racer');
+  console.log(`✓ dropped racer placed last (#${carol.rank}, ${Math.round(carol.progress * 100)}% typed), settled with ${carolAcc.points} points and no podium`);
 
   const settled = [...a.msgs].reverse().find((m) => m.type === 'race_result');
   assert.ok(settled && settled.ranked && settled.points > 0, 'ranked points awarded for a public race');
@@ -120,6 +156,7 @@ class Client {
 
   await a.until((c) => c.room.state === 'waiting', 10000, 'room reset for next race');
   assert.ok(a.room.players.every((p) => !p.isBot), 'bots removed between races');
+  assert.ok(!a.room.players.some((p) => p.id === c.id), 'dropped racer removed between races');
   console.log('✓ room cycled back to waiting, bots removed');
 
   a.send({ type: 'leave' });
