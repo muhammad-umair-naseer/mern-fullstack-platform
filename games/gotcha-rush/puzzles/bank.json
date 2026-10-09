@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-09-24T09:25:37.739Z",
+ "generatedAt": "2026-10-03T10:49:26.155Z",
  "runner": "local",
  "runtimes": {
-  "js": "v22.22.2",
-  "py": "3.12.3"
+  "js": "v22.19.0",
+  "py": "3.14.6"
  },
  "puzzles": [
   {
@@ -30,7 +30,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 54
   },
   {
    "id": "js-015-typeof-trio",
@@ -57,7 +57,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 53
   },
   {
    "id": "js-020-float-sum",
@@ -82,7 +82,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 53
   },
   {
    "id": "js-025-default-sort",
@@ -108,7 +108,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 55
   },
   {
    "id": "js-030-array-holes",
@@ -135,7 +135,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 24
+   "ms": 53
   },
   {
    "id": "js-035-var-hoisting",
@@ -161,7 +161,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 53
   },
   {
    "id": "js-040-loop-closures",
@@ -192,7 +192,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 57
   },
   {
    "id": "js-045-microtasks",
@@ -220,7 +220,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 56
   },
   {
    "id": "js-050-string-math",
@@ -247,7 +247,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 54
   },
   {
    "id": "js-055-nan-identity",
@@ -277,7 +277,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 52
   },
   {
    "id": "js-060-parseint-map",
@@ -303,7 +303,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 24
+   "ms": 53
   },
   {
    "id": "js-065-truthiness",
@@ -332,7 +332,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 29
+   "ms": 53
   },
   {
    "id": "js-070-loose-equality",
@@ -361,7 +361,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 52
   },
   {
    "id": "js-075-detached-method",
@@ -386,7 +386,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 53
   },
   {
    "id": "js-080-string-immutable",
@@ -411,7 +411,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 53
   },
   {
    "id": "js-085-length-assignment",
@@ -437,7 +437,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 53
   },
   {
    "id": "js-090-key-order",
@@ -462,7 +462,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 52
   },
   {
    "id": "js-095-pre-post-increment",
@@ -486,7 +486,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 53
   },
   {
    "id": "js-100-switch-fallthrough",
@@ -512,7 +512,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 24
+   "ms": 52
   },
   {
    "id": "js-105-const-object",
@@ -538,7 +538,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 55
   },
   {
    "id": "js-110-default-params",
@@ -564,7 +564,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 53
   },
   {
    "id": "js-115-tostring-radix",
@@ -591,7 +591,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 52
   },
   {
    "id": "js-120-promise-chain",
@@ -621,7 +621,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 30
+   "ms": 54
   },
   {
    "id": "js-125-comma-and-arrays",
@@ -648,7 +648,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 24
+   "ms": 53
   },
   {
    "id": "js-130-bigint",
@@ -675,7 +675,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 52
   },
   {
    "id": "js-135-math-max-min",
@@ -702,7 +702,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 53
   },
   {
    "id": "js-140-json-stringify",
@@ -729,7 +729,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 54
   },
   {
    "id": "js-145-closure-counters",
@@ -753,7 +753,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 57
   },
   {
    "id": "js-150-chained-comparison",
@@ -779,7 +779,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 30
+   "ms": 68
   },
   {
    "id": "js-155-delete-element",
@@ -805,7 +805,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 61
   },
   {
    "id": "js-160-string-comparison",
@@ -834,7 +834,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 31
+   "ms": 53
   },
   {
    "id": "js-165-async-order",
@@ -864,7 +864,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 56
   },
   {
    "id": "js-170-float-limits",
@@ -891,7 +891,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 52
   },
   {
    "id": "js-175-array-coercion",
@@ -917,7 +917,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 28
+   "ms": 54
   },
   {
    "id": "js-180-reduce-empty",
@@ -944,7 +944,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 27
+   "ms": 53
   },
   {
    "id": "js-185-function-hoisting",
@@ -969,7 +969,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 24
+   "ms": 52
   },
   {
    "id": "js-190-set-dedupe",
@@ -995,7 +995,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 24
+   "ms": 53
   },
   {
    "id": "js-195-spread-from",
@@ -1021,7 +1021,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 26
+   "ms": 52
   },
   {
    "id": "js-200-labelled-optional",
@@ -1048,7 +1048,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 30
+   "ms": 53
   },
   {
    "id": "js-205-object-reference",
@@ -1073,7 +1073,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 53
   },
   {
    "id": "js-210-string-number-mix",
@@ -1098,7 +1098,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 25
+   "ms": 53
   },
   {
    "id": "py-010-mutable-default",
@@ -1125,7 +1125,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-015-is-vs-equals",
@@ -1151,7 +1151,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-020-late-binding",
@@ -1177,7 +1177,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 48
   },
   {
    "id": "py-025-floor-division",
@@ -1202,7 +1202,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 11
+   "ms": 46
   },
   {
    "id": "py-030-round-half-even",
@@ -1227,7 +1227,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 46
   },
   {
    "id": "py-035-bool-is-int",
@@ -1252,7 +1252,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 48
   },
   {
    "id": "py-040-sequence-multiply",
@@ -1278,7 +1278,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-045-nested-list-alias",
@@ -1303,7 +1303,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 46
   },
   {
    "id": "py-050-tuple-augmented",
@@ -1330,7 +1330,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 48
   },
   {
    "id": "py-055-finally-wins",
@@ -1357,7 +1357,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 59
   },
   {
    "id": "py-060-chained-comparisons",
@@ -1382,7 +1382,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-065-dict-order",
@@ -1407,7 +1407,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 46
   },
   {
    "id": "py-070-slicing",
@@ -1432,7 +1432,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-075-class-attribute",
@@ -1457,7 +1457,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 47
   },
   {
    "id": "py-080-for-else",
@@ -1482,7 +1482,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-085-exhausted-generator",
@@ -1507,7 +1507,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 48
   },
   {
    "id": "py-090-star-unpacking",
@@ -1533,7 +1533,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 46
   },
   {
    "id": "py-095-float-vs-int",
@@ -1558,7 +1558,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 49
   },
   {
    "id": "py-100-not-precedence",
@@ -1583,7 +1583,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 49
   },
   {
    "id": "py-105-string-methods",
@@ -1600,7 +1600,7 @@
    "distractors": [
     "hELLO ['a', 'b', 'c'] x|",
     "HELLO ['a', 'b-c'] x |",
-    "hELLO ['a', 'b-c']   x |"
+    "Hello ['a', 'b-c'] x|"
    ],
    "explain": "swapcase flips the case of every letter. split with maxsplit=1 stops after the first separator. strip removes surrounding whitespace before the \"|\" is appended.",
    "output": [
@@ -1608,7 +1608,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 46
   },
   {
    "id": "py-110-get-vs-setdefault",
@@ -1633,7 +1633,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-115-sorted-stable",
@@ -1659,7 +1659,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-120-dict-key-collision",
@@ -1685,7 +1685,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-125-exception-hierarchy",
@@ -1711,7 +1711,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-130-nonlocal-unbound",
@@ -1737,7 +1737,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-135-format-spec",
@@ -1753,7 +1753,7 @@
    ],
    "distractors": [
     "3.14|3.1|hi|42",
-    "3.14|     3.1|hi   |00042",
+    "3.1|     3.1|   hi|00042",
     "3.142|     3.1|   hi|42"
    ],
    "explain": ".2f rounds to two decimals; 8.1f pads to width 8; >5 right-aligns in a field of 5; 05d zero-pads an integer to width 5.",
@@ -1762,7 +1762,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 46
   },
   {
    "id": "py-140-range-tricks",
@@ -1787,7 +1787,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-145-all-any-empty",
@@ -1812,7 +1812,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 67
   },
   {
    "id": "py-150-set-of-equals",
@@ -1837,7 +1837,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 58
   },
   {
    "id": "py-155-zip-shortest",
@@ -1863,7 +1863,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 47
   },
   {
    "id": "py-160-remove-while-iterating",
@@ -1888,7 +1888,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-165-join-needs-strings",
@@ -1915,7 +1915,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 47
   },
   {
    "id": "py-170-shallow-deep-copy",
@@ -1940,7 +1940,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 14
+   "ms": 54
   },
   {
    "id": "py-175-print-sep-end",
@@ -1964,7 +1964,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-180-str-vs-repr",
@@ -1989,7 +1989,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 48
   },
   {
    "id": "py-185-inplace-vs-new",
@@ -2016,7 +2016,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 59
   },
   {
    "id": "py-190-truthy-strings",
@@ -2041,7 +2041,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 51
   },
   {
    "id": "py-195-nested-comprehension",
@@ -2065,7 +2065,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-200-power-precedence",
@@ -2090,7 +2090,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 49
   },
   {
    "id": "py-205-global-shadow",
@@ -2116,7 +2116,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 12
+   "ms": 47
   },
   {
    "id": "py-210-string-identity",
@@ -2141,7 +2141,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 49
   },
   {
    "id": "py-215-walrus",
@@ -2167,7 +2167,7 @@
    ],
    "verified": true,
    "problems": [],
-   "ms": 13
+   "ms": 47
   }
  ]
 }

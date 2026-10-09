@@ -37,12 +37,18 @@ const race = (rank, wpm = 70) => ({ rank, wpm, accuracy: 97, errors: 3, finished
   const A = await mint('Umair', 'PK');
   const B = await mint('Sara', 'SA');
   const C = await mint('Kenji', 'JP');
-  const aug = new Date('2026-08-20T10:00:00Z');
+  // Two months relative to today, so the test does not go stale: the 20th of
+  // last month ("aug") and the 2nd of this month ("sep"), whatever they are.
+  const today = new Date();
+  const aug = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, 20, 10));
+  const sep = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 2, 9));
+  const AUG = seasonKey(aug);
+  const SEP = seasonKey(sep);
   const r1 = accounts.recordRace(A, race(1), aug);
   accounts.recordRace(A, race(2), aug);
   accounts.recordRace(B, race(1), aug);
   accounts.recordRace(C, race(3), aug);
-  assert.strictEqual(A.season.key, '2026-08');
+  assert.strictEqual(A.season.key, AUG);
   assert.ok(A.season.points > B.season.points && B.season.points > C.season.points, 'season points accumulate');
   assert.strictEqual(A.season.races, 2);
   assert.strictEqual(A.season.wins, 1);
@@ -50,22 +56,21 @@ const race = (rank, wpm = 70) => ({ rank, wpm, accuracy: 97, errors: 3, finished
   console.log(`✓ season counters: A ${A.season.points} pts / ${A.season.races} races, B ${B.season.points}, C ${C.season.points} (${r1.points} for a win)`);
 
   /* ---------------- rollover archives the old season ---------------- */
-  store.data.seasonCurrent = '2026-08';                 // pretend the server has been running since August
-  const sep = new Date('2026-09-02T09:00:00Z');
+  store.data.seasonCurrent = AUG;                       // pretend the server has been running since last month
   accounts.rollWindows(A, sep);                          // an account touching the new month triggers the archive first
-  const arch = seasons.data['2026-08'];
+  const arch = seasons.data[AUG];
   assert.ok(arch, 'August archived');
-  assert.strictEqual(arch.number, 0 + seasonNumber('2026-08'));
+  assert.strictEqual(arch.number, 0 + seasonNumber(AUG));
   assert.deepStrictEqual(arch.top.map((t) => t.name), ['Umair', 'Sara', 'Kenji'], 'ranked by season points');
   assert.strictEqual(arch.top[0].rank, 1);
   assert.strictEqual(arch.players, 3);
-  assert.deepStrictEqual(A.season, { key: '2026-09', points: 0, races: 0, wins: 0 }, 'A starts September at zero');
+  assert.deepStrictEqual(A.season, { key: SEP, points: 0, races: 0, wins: 0 }, 'A starts the new month at zero');
   assert.ok(A.points > 0, 'all-time points untouched');
-  assert.deepStrictEqual(A.badges, [{ season: '2026-08', number: arch.number, rank: 1 }], 'winner badge');
+  assert.deepStrictEqual(A.badges, [{ season: AUG, number: arch.number, rank: 1 }], 'winner badge');
   assert.strictEqual(C.badges[0].rank, 3);
   assert.ok(A.achievements.includes('season_win') && A.achievements.includes('season_top10') && A.achievements.includes('season_top100'), `season achievements (${A.achievements})`);
   assert.ok(!C.achievements.includes('season_win') && C.achievements.includes('season_top10'));
-  assert.strictEqual(seasons.current, '2026-09');
+  assert.strictEqual(seasons.current, SEP);
   assert.strictEqual(seasons.check(sep), null, 'idempotent');
   accounts.rollWindows(B, sep);
   assert.strictEqual(B.season.points, 0);
@@ -87,7 +92,7 @@ const race = (rank, wpm = 70) => ({ rank, wpm, accuracy: 97, errors: 3, finished
   assert.strictEqual(api.number, seasonNumber(seasonKey()));
   assert.strictEqual(api.top[0].name, 'Sara');
   assert.strictEqual(api.me.rank, 1);
-  assert.strictEqual(api.past[0].key, '2026-08');
+  assert.strictEqual(api.past[0].key, AUG);
   assert.strictEqual(api.past[0].top[0].name, 'Umair');
   assert.ok(api.endsAt > Date.now(), 'endsAt in the future');
   console.log('✓ season board window, standings, /api/season with past seasons');

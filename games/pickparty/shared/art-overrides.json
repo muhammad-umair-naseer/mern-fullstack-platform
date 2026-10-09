@@ -1,0 +1,141 @@
+{
+ "desserts:6": {
+  "page": "Doughnut"
+ },
+ "sports:1": {
+  "page": "Association football"
+ },
+ "sports:2": {
+  "page": "Formula One"
+ },
+ "sports:7": {
+  "page": "Badminton"
+ },
+ "sports:12": {
+  "page": "Chess"
+ },
+ "instruments:0": {
+  "page": "Guitar"
+ },
+ "instruments:1": {
+  "page": "Piano"
+ },
+ "instruments:3": {
+  "page": "Violin"
+ },
+ "instruments:11": {
+  "page": "Harp"
+ },
+ "instruments:12": {
+  "page": "Bagpipes"
+ },
+ "pets:10": {
+  "page": "Owl"
+ },
+ "sidekicks:7": {
+  "page": "Owl"
+ },
+ "sidekicks:1": {
+  "page": "Eagle"
+ },
+ "sidekicks:2": {
+  "page": "Wolf"
+ },
+ "sidekicks:10": {
+  "page": "Fox"
+ },
+ "wild:5": {
+  "page": "Wolf"
+ },
+ "wild:4": {
+  "page": "Giant panda"
+ },
+ "fruit:3": {
+  "page": "Cherry"
+ },
+ "weather:7": {
+  "page": "Fog"
+ },
+ "rides:0": {
+  "page": "Roller coaster"
+ },
+ "drinks:10": {
+  "page": "Golden milk"
+ },
+ "gadgets:4": {
+  "page": "Coffeemaker"
+ },
+ "fastfood:6": {
+  "page": "Buffalo wing"
+ },
+ "cars:3": {
+  "page": "Tesla, Inc."
+ },
+ "accessories:10": {
+  "page": "Knit cap"
+ },
+ "cricketers:12": {
+  "page": "Steve Smith (cricketer)"
+ },
+ "tablegames:15": {
+  "page": "Tic-tac-toe"
+ },
+ "gym:5": {
+  "page": "Treadmill"
+ },
+ "gym:7": {
+  "page": "Kettlebell"
+ },
+ "fastfood:4": {
+  "page": "Shawarma"
+ },
+ "pets:7": {
+  "page": "Turtle"
+ },
+ "pets:11": {
+  "page": "Lizard"
+ },
+ "icecream:7": {
+  "page": "Mint chocolate chip"
+ },
+ "cricketers:2": {
+  "page": "Shaheen Shah Afridi"
+ },
+ "cricketers:15": {
+  "page": "Third umpire"
+ },
+ "cars:15": {
+  "page": "Rickshaw"
+ },
+ "clothes:8": {
+  "page": "Levi Strauss & Co."
+ },
+ "weather:4": {
+  "page": "Rainbow"
+ },
+ "holiday:8": {
+  "page": "Ruins"
+ },
+ "footballers:6": {
+  "page": "Vinícius Júnior"
+ },
+ "creatures:0": {
+  "page": "Dragon"
+ },
+ "creatures:12": {
+  "page": "Werewolf"
+ },
+ "gadgets:14": null,
+ "pizza:5": {
+  "page": "Olive"
+ },
+ "pets:13": {
+  "page": "Snake"
+ },
+ "desserts:9": {
+  "page": "Cookie"
+ },
+ "rides:11": {
+  "page": "House of mirrors"
+ }
+}

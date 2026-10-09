@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PickParty: draft the best picks, dodge the dud</title>
+  <meta name="description" content="A real-time drafting party game. Snake-draft the best picks, read your friends, and dodge the dud.">
+  <meta name="theme-color" content="#17246B">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2317246B'/><rect x='22' y='16' width='56' height='72' rx='8' fill='%23FBF7EE' transform='rotate(-8 50 52)'/><circle cx='50' cy='48' r='13' fill='%23FFD23F'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@60..140,500..900&family=Figtree:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/shared/scoring.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- ======================= SITE CHROME ======================= -->
+  <header class="topbar" id="topbar">
+    <a class="wordmark" href="#/" aria-label="PickParty home"><span>Pick</span><span>Party</span></a>
+    <nav class="sitenav" aria-label="Sections">
+      <a href="#/">Home</a>
+      <a href="#/categories">Categories</a>
+      <a href="#/friends">Friends</a>
+      <a href="#/rankings">Rankings</a>
+      <a href="#/profile">Profile</a>
+    </nav>
+    <div class="topbar-right">
+      <a class="return-pill" id="return-pill" href="#/table" hidden>Back to your table</a>
+      <div class="streak" id="streak" title="Daily streak: visit every day to keep it going">
+        <span aria-hidden="true">🔥</span><b id="streak-days">0</b><span class="streak-unit">day streak</span>
+      </div>
+      <a class="me" id="me-btn" href="#/profile" aria-label="Your player card">
+        <span class="me-av" id="me-av">🦊</span>
+        <span class="me-text"><b id="me-name">Player</b><small id="me-points">0 points</small></span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+  <!-- ======================= HOME ======================= -->
+  <section id="home" class="screen page" aria-labelledby="home-title">
+    <div class="hero">
+      <div class="hero-copy">
+        <h1 id="home-title">Draft the best picks. Read the room. Dodge the dud.</h1>
+        <p>A drafting party game for 3 to 6 players. Every topic puts sixteen cards on the board, and you take turns claiming them before anyone else can. Pick a mode to start.</p>
+      </div>
+      <div class="hero-fan" id="hero-fan" aria-hidden="true"></div>
+    </div>
+
+    <section class="panel settings" aria-label="Match settings">
+      <div class="setting">
+        <div><h2 id="culture-title">Whose culture are we drafting?</h2><p class="muted" id="culture-hint">Desi plays our side of the world; Global plays the rest; Mix plays everything.</p></div>
+        <div class="seg culture-seg" id="culture" role="radiogroup" aria-labelledby="culture-title">
+          <button type="button" role="radio" aria-checked="false" data-culture="desi">🇵🇰 Desi</button>
+          <button type="button" role="radio" aria-checked="false" data-culture="global">🌍 Global</button>
+          <button type="button" role="radio" aria-checked="true" data-culture="mix">🎲 Mix</button>
+        </div>
+      </div>
+      <div class="setting">
+        <div><h2 id="rounds-title">How long a match?</h2><p class="muted">Topics per match. Every topic is a full board of sixteen cards.</p></div>
+        <div class="seg rounds-seg" id="rounds" role="radiogroup" aria-labelledby="rounds-title">
+          <button type="button" role="radio" aria-checked="false" data-rounds="1">1 topic</button>
+          <button type="button" role="radio" aria-checked="false" data-rounds="2">2 topics</button>
+          <button type="button" role="radio" aria-checked="true" data-rounds="3">3 topics</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="modes modes-home">
+      <article class="mode" data-mode="crowd">
+        <div class="mode-head"><h2>Crowd pleaser</h2><span class="mode-glyph" aria-hidden="true">📣</span></div>
+        <p>Snake-draft three top picks and one dud. After every round the table votes for the best pick, and every vote is points.</p>
+        <a class="btn btn-go" href="#/categories/crowd">Play</a>
+      </article>
+      <article class="mode" data-mode="mind">
+        <div class="mode-head"><h2>Mind reader</h2><span class="mode-glyph" aria-hidden="true">🔮</span></div>
+        <p>One player secretly hides three loves and a dud. Everyone else drafts to grab the loves first. Touch the dud and you score nothing.</p>
+        <a class="btn btn-go" href="#/categories/mind">Play</a>
+      </article>
+      <article class="mode" data-mode="auction">
+        <div class="mode-head"><h2>Auction</h2><span class="mode-glyph" aria-hidden="true">🔨</span></div>
+        <p>Outbid the table. Build the best lineup. Everyone gets 20 coins a topic. Bid for the cards you want and dodge the leftovers.</p>
+        <a class="btn btn-go" href="#/categories/auction">Play</a>
+      </article>
+    </div>
+
+    <article class="mode mode-solo" data-mode="solo">
+      <div class="mode-head"><h2>Crowd read <span class="tag">solo</span></h2><span class="mode-glyph" aria-hidden="true">👀</span></div>
+      <p>Guess what everyone else loves and hates. Pick the crowd's top three and its dud before the clock runs out. Three lives, and the clock gets shorter every topic.</p>
+      <div class="mode-foot">
+        <a class="btn btn-go" href="#/categories/solo">Play solo</a>
+        <span class="solo-best muted">Best run <b id="solo-best">0</b></span>
+      </div>
+    </article>
+  </section>
+
+  <!-- ======================= CATEGORIES ======================= -->
+  <section id="categories" class="screen page" hidden aria-labelledby="cats-title">
+    <header class="page-head">
+      <h1 id="cats-title">Pick a category</h1>
+      <p class="muted" id="cats-sub">Choose what the cards are about.</p>
+    </header>
+    <div class="cats-tools">
+      <div class="seg culture-seg" id="culture-cats" role="radiogroup" aria-label="Culture">
+        <button type="button" role="radio" aria-checked="false" data-culture="desi">🇵🇰 Desi</button>
+        <button type="button" role="radio" aria-checked="false" data-culture="global">🌍 Global</button>
+        <button type="button" role="radio" aria-checked="true" data-culture="mix">🎲 Mix</button>
+      </div>
+      <div class="seg rounds-seg" id="rounds-cats" role="radiogroup" aria-label="Topics per match">
+        <button type="button" role="radio" aria-checked="false" data-rounds="1">1</button>
+        <button type="button" role="radio" aria-checked="false" data-rounds="2">2</button>
+        <button type="button" role="radio" aria-checked="true" data-rounds="3">3</button>
+      </div>
+      <div class="seg" id="cat-mode" role="radiogroup" aria-label="Play as">
+        <button type="button" role="radio" aria-checked="false" data-mode="crowd">Crowd pleaser</button>
+        <button type="button" role="radio" aria-checked="false" data-mode="mind">Mind reader</button>
+        <button type="button" role="radio" aria-checked="false" data-mode="auction">Auction</button>
+        <button type="button" role="radio" aria-checked="false" data-mode="solo">Solo</button>
+      </div>
+      <input id="cat-search" type="search" aria-label="Search categories" placeholder="Search categories…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="cat-grid" id="cat-grid"></div>
+    <button class="btn btn-quiet" id="cats-more" type="button" aria-expanded="false">Show all categories</button>
+    <div class="picks-bar" id="picks-bar" hidden aria-live="polite"></div>
+  </section>
+
+  <!-- ======================= FRIENDS ======================= -->
+  <section id="friends" class="screen page" hidden aria-labelledby="friends-title">
+    <header class="page-head">
+      <h1 id="friends-title">Play with friends</h1>
+      <p class="muted">Start a private table and share the code or the invite link. Friendly tables don't change rankings.</p>
+    </header>
+    <div class="side-by-side">
+      <section class="panel" aria-labelledby="create-title">
+        <h2 id="create-title">Start a table</h2>
+        <div class="field"><span>Mode</span>
+          <div class="seg" role="radiogroup" aria-label="Mode for a new table">
+            <button type="button" role="radio" aria-checked="true" data-newmode="crowd">Crowd pleaser</button>
+            <button type="button" role="radio" aria-checked="false" data-newmode="mind">Mind reader</button>
+            <button type="button" role="radio" aria-checked="false" data-newmode="auction">Auction</button>
+          </div>
+        </div>
+        <div class="field"><span>Culture</span>
+          <div class="seg culture-seg" id="culture-friends" role="radiogroup" aria-label="Culture">
+            <button type="button" role="radio" aria-checked="false" data-culture="desi">🇵🇰 Desi</button>
+            <button type="button" role="radio" aria-checked="false" data-culture="global">🌍 Global</button>
+            <button type="button" role="radio" aria-checked="true" data-culture="mix">🎲 Mix</button>
+          </div>
+        </div>
+        <div class="field"><span>Topics per match</span>
+          <div class="seg rounds-seg" id="rounds-friends" role="radiogroup" aria-label="Topics per match">
+            <button type="button" role="radio" aria-checked="false" data-rounds="1">1</button>
+            <button type="button" role="radio" aria-checked="false" data-rounds="2">2</button>
+            <button type="button" role="radio" aria-checked="true" data-rounds="3">3</button>
+          </div>
+        </div>
+        <label class="field" for="friends-topic"><span>First topic</span><select id="friends-topic"><option value="">Surprise me</option></select></label>
+        <p class="muted">You can change topics in the lobby before you start.</p>
+        <button class="btn btn-go" id="create-btn" type="button">Start a table</button>
+      </section>
+      <section class="panel" aria-labelledby="join-title">
+        <h2 id="join-title">Join a table</h2>
+        <p class="muted">Got a five-letter code from a friend? Enter it here, or open their invite link.</p>
+        <form class="join" id="join-form" autocomplete="off">
+          <label for="join-code">Table code</label>
+          <input id="join-code" name="code" maxlength="5" placeholder="ABCDE" spellcheck="false" autocapitalize="characters">
+          <button class="btn btn-quiet" type="submit">Join</button>
+        </form>
+      </section>
+    </div>
+  </section>
+
+  <!-- ======================= RANKINGS ======================= -->
+  <section id="rankings" class="screen page" hidden aria-labelledby="ranks-title">
+    <header class="page-head">
+      <h1 id="ranks-title">Rankings</h1>
+      <p class="muted">Six boards, worldwide or your country, all-time or this week. Ranked points come from public quick matches and solo runs.</p>
+    </header>
+    <section class="panel ranks">
+      <div class="ranks-head">
+        <div class="ranks-filters">
+          <div class="seg seg-sm" id="rank-window" role="radiogroup" aria-label="Time window"></div>
+          <div class="seg seg-sm" id="rank-scope" role="radiogroup" aria-label="Region"></div>
+        </div>
+      </div>
+      <div class="rank-tabs" id="rank-tabs" role="tablist" aria-label="Ranking boards"></div>
+      <ol class="rank-list" id="rank-list"></ol>
+      <p class="rank-you" id="rank-you"></p>
+    </section>
+  </section>
+
+  <!-- ======================= PROFILE ======================= -->
+  <section id="profile" class="screen page" hidden aria-labelledby="profile-title">
+    <header class="page-head">
+      <h1 id="profile-title">Your player card</h1>
+      <p class="muted">This is how the table sees you. No account needed; your card lives in this browser.</p>
+    </header>
+    <div class="side-by-side">
+      <section class="panel" aria-label="Edit your card">
+        <form id="profile-form" class="form">
+          <label for="pf-name">Name</label>
+          <input id="pf-name" maxlength="16" minlength="2" required autocomplete="nickname">
+          <label for="pf-country">Country</label>
+          <select id="pf-country"></select>
+          <fieldset>
+            <legend>Avatar</legend>
+            <div class="av-grid" id="pf-avatars"></div>
+          </fieldset>
+          <button class="btn btn-go" id="pf-save" type="submit">Save</button>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="stats-title">
+        <h2 id="stats-title">Your numbers</h2>
+        <div class="stats">
+          <div class="stat"><b id="st-points">0</b><small>ranked points</small></div>
+          <div class="stat"><b id="st-streak">0</b><small>day streak</small></div>
+          <div class="stat"><b id="st-matches">0</b><small>matches</small></div>
+          <div class="stat"><b id="st-wins">0</b><small>wins</small></div>
+          <div class="stat"><b id="st-solo">0</b><small>best solo run</small></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel achievements" aria-labelledby="ach-title">
+      <h2 id="ach-title">Achievements <span class="muted" id="ach-count"></span></h2>
+      <ul class="ach-grid" id="ach-grid"></ul>
+    </section>
+  </section>
+
+  <!-- ======================= TABLE ======================= -->
+  <section id="table" class="screen" hidden aria-label="Game table">
+    <header class="t-head">
+      <button class="btn btn-quiet btn-sm" id="t-leave" type="button">Leave</button>
+      <div class="t-topic">
+        <span class="t-emoji" id="t-emoji" aria-hidden="true"></span>
+        <div><h2 id="t-title">Table</h2><p id="t-sub"></p></div>
+      </div>
+      <ol class="t-pips" id="t-pips" aria-label="Topics"></ol>
+      <button class="icon-btn mute-btn" type="button" aria-pressed="false" aria-label="Mute sounds">🔊</button>
+    </header>
+
+    <div class="ticker" id="ticker" aria-live="polite">
+      <span class="ticker-av" id="ticker-av" aria-hidden="true"></span>
+      <span class="ticker-msg" id="ticker-msg"></span>
+      <span class="ticker-sec" id="ticker-sec"></span>
+      <span class="ticker-bar" aria-hidden="true"><i id="ticker-fill"></i></span>
+    </div>
+
+    <div class="tray" id="tray" hidden></div>
+
+    <div class="t-body" id="t-body">
+      <div class="board-wrap">
+        <div class="board" id="board" aria-label="Draft board"></div>
+        <div class="sheet" id="sheet" hidden></div>
+      </div>
+      <aside class="lineups" id="lineups" aria-label="Players"></aside>
+    </div>
+
+    <div class="lobby" id="lobby" hidden></div>
+    <div class="finale" id="finale" hidden></div>
+
+    <div class="emotes" id="emote-bar" role="toolbar" aria-label="Reactions"></div>
+    <div class="emote-layer" id="emote-layer" aria-hidden="true"></div>
+  </section>
+
+  <!-- ======================= SOLO ======================= -->
+  <section id="solo" class="screen" hidden aria-label="Crowd read">
+    <header class="t-head">
+      <button class="btn btn-quiet btn-sm" id="s-quit" type="button">Quit</button>
+      <div class="t-topic">
+        <span class="t-emoji" id="s-emoji" aria-hidden="true"></span>
+        <div><h2 id="s-title">Crowd read</h2><p id="s-sub"></p></div>
+      </div>
+      <div class="s-stats">
+        <span class="s-lives" id="s-lives"></span>
+        <span class="s-score"><b id="s-score">0</b><small id="s-mult"></small></span>
+      </div>
+      <button class="icon-btn mute-btn" type="button" aria-pressed="false" aria-label="Mute sounds">🔊</button>
+    </header>
+    <div class="ticker solo-ticker">
+      <div class="s-slots" id="s-slots"></div>
+      <button class="btn btn-go btn-sm" id="s-lock" type="button" disabled>Lock in</button>
+      <span class="ticker-bar" aria-hidden="true"><i id="s-fill"></i></span>
+    </div>
+    <div class="s-body">
+      <div class="board" id="s-board" aria-label="Crowd read board"></div>
+      <div class="s-verdict" id="s-verdict" aria-live="polite"></div>
+    </div>
+    <div class="finale" id="s-over" hidden></div>
+  </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Sections">
+    <a href="#/"><span aria-hidden="true">🏠</span>Home</a>
+    <a href="#/categories"><span aria-hidden="true">🗂️</span>Categories</a>
+    <a href="#/friends"><span aria-hidden="true">🔗</span>Friends</a>
+    <a href="#/rankings"><span aria-hidden="true">🏆</span>Rankings</a>
+    <a href="#/profile"><span aria-hidden="true">🙂</span>Profile</a>
+  </nav>
+
+  <footer class="foot"><span id="conn" class="conn" data-state="connecting">Connecting…</span><span class="muted credit">Item photos from Wikimedia Commons</span></footer>
+
+  <!-- ======================= PLAY A CATEGORY (when no mode is chosen yet) ======================= -->
+  <dialog id="play" aria-labelledby="play-title">
+    <div class="play-cat"><i id="play-emoji" aria-hidden="true"></i><div><small class="muted">Category</small><h2 id="play-title">Topic</h2></div></div>
+    <p class="muted">How do you want to play it?</p>
+    <div class="play-options">
+      <button class="play-opt" type="button" data-play="quick-crowd"><span aria-hidden="true">📣</span><span><b>Quick match · Crowd pleaser</b><small>Online with 3 to 6 players. Bots fill empty seats.</small></span></button>
+      <button class="play-opt" type="button" data-play="quick-mind"><span aria-hidden="true">🔮</span><span><b>Quick match · Mind reader</b><small>Online. Read the Mind's secret loves and dodge the dud.</small></span></button>
+      <button class="play-opt" type="button" data-play="quick-auction"><span aria-hidden="true">🔨</span><span><b>Quick match · Auction</b><small>Online. 20 coins each, bid live for the cards you want.</small></span></button>
+      <button class="play-opt" type="button" data-play="create"><span aria-hidden="true">🔗</span><span><b>Start a table</b><small>Private code for friends. You pick the other topics too.</small></span></button>
+      <button class="play-opt" type="button" data-play="solo"><span aria-hidden="true">👀</span><span><b>Play solo</b><small>Crowd read, starting on this category.</small></span></button>
+    </div>
+    <div class="dialog-actions"><button class="btn btn-quiet" type="button" data-play="cancel">Cancel</button></div>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+</body>
+</html>

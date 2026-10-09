@@ -10,6 +10,21 @@ import ClaudeAnnouncementBar from './components/ClaudeAnnouncementBar';
 import './Pages.css';
 import './theme-cosmic.css';
 import './premium.css';
+// The stylesheets shared by several lazy-loaded pages, loaded once here so
+// no page chunk carries them: with each chunk importing them in its own
+// order, the production build refused the conflicting orders. No two of
+// these define the same selector, so this order is free to be any order.
+import './learn/motion.css';
+import './components/PageHero.css';
+import './learn/Learn.css';
+import './learn/ProgressBar.css';
+import './learn/Markdown.css';
+import './learn/Quiz.css';
+import './learn/TopicQuiz.css';
+import './learn/LessonView.css';
+import './learn/CourseOutline.css';
+import './learn/ToolCard.css';
+import './components/FaqSection.css';
 import ScrollToTop from './components/ScrollToTop';
 
 const Home = lazy(() => import('./pages/Home'));

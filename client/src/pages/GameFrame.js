@@ -17,6 +17,12 @@ const GAME_CONFIG = {
     tagline: 'Real-Time Multiplayer Typing Sprint & Ghost Races',
     line: 'Race the room',
   },
+  pickparty: {
+    title: 'PickParty',
+    port: 5001,
+    tagline: 'Real-Time Multiplayer Drafting Party Game: Pick, Read, Dodge',
+    line: 'Draft the room',
+  },
 };
 
 /* How long the frame may take before the loading state offers a way out. */
@@ -100,6 +106,15 @@ function GameMark({ gameId }) {
         <rect width="32" height="32" rx="9" fill="#16130F" />
         <path d="M10 10l6 6-6 6" fill="none" stroke="#FAF8F4" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
         <path className="gf-cursor" d="M17.5 22.5h5.5" stroke="#B8612E" strokeWidth="2.4" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (gameId === 'pickparty') {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="#17246B" />
+        <rect x="7" y="5" width="18" height="23" rx="3" fill="#FBF7EE" transform="rotate(-8 16 16.5)" />
+        <circle cx="16" cy="15.5" r="4.2" fill="#FFD23F" />
       </svg>
     );
   }

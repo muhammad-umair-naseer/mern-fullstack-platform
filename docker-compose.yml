@@ -83,6 +83,32 @@ services:
       timeout: 3s
       retries: 3
 
+  pickparty:
+    build:
+      context: ./games/pickparty
+      dockerfile: Dockerfile
+    container_name: cortexis-pickparty
+    restart: unless-stopped
+    ports:
+      - "${PICKPARTY_PORT:-5001}:3000"
+    environment:
+      - PORT=3000
+      - DATA_FILE=/data/pickparty.json
+      - NODE_ENV=production
+      - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
+      - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
+      - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
+    volumes:
+      - cortexis_pickparty_data:/data
+    networks:
+      - cortexis_internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
   postgres:
     image: postgres:16-alpine
     container_name: cortexis-postgres
@@ -131,5 +157,8 @@ volumes:
     driver: local
   cortexis_typedash_data:
     driver: local
+  cortexis_pickparty_data:
+    driver: local
+
 
 

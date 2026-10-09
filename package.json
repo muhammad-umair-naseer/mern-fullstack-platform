@@ -9,6 +9,7 @@
     "start:client": "npm start --prefix client",
     "start:gotcha": "cross-env PORT=3001 node games/gotcha-rush/server/index.js",
     "start:typedash": "cross-env PORT=4001 node games/typedash/server/index.js",
+    "start:pickparty": "cross-env PORT=5001 node games/pickparty/server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
