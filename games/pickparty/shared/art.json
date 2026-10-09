@@ -1,0 +1,3474 @@
+{
+ "pizza": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Pepperoni_Pizza_%2829204589095%29.jpg/330px-Pepperoni_Pizza_%2829204589095%29.jpg",
+   "page": "Pepperoni",
+   "by": "Jonathan Cutrer from San Angelo, United States",
+   "lic": "CC BY 2.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Chicken_tikka_masala_%28cropped%29.jpg/330px-Chicken_tikka_masala_%28cropped%29.jpg",
+   "page": "Chicken tikka masala",
+   "by": "Michael Hays",
+   "lic": "CC BY 2.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sparrige_Sch%C3%BCppling_%28Pholiota_squarrosa%29.jpg/330px-Sparrige_Sch%C3%BCppling_%28Pholiota_squarrosa%29.jpg",
+   "page": "Mushroom",
+   "by": "Holger Krisp",
+   "lic": "CC BY 3.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Immature_jalapeno_capsicum_annuum_var_annuum.jpeg/330px-Immature_jalapeno_capsicum_annuum_var_annuum.jpeg",
+   "page": "Jalapeño",
+   "by": "Wikimedia Commons contributor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Olivesfromjordan.jpg/330px-Olivesfromjordan.jpg",
+   "page": "Olive",
+   "by": "en:User:Nickfraser",
+   "lic": "CC BY-SA 3.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Mixed_onions.jpg/330px-Mixed_onions.jpg",
+   "page": "Onion",
+   "by": "Colin",
+   "lic": "CC BY-SA 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Green-Yellow-Red-Pepper-2009.jpg/330px-Green-Yellow-Red-Pepper-2009.jpg",
+   "page": "Bell pepper",
+   "by": "Kham Tran - www.khamtran.com",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": null,
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Allium_sativum_Woodwill_1793.jpg/330px-Allium_sativum_Woodwill_1793.jpg",
+   "page": "Garlic",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Ocimum_basilicum_8zz.jpg/330px-Ocimum_basilicum_8zz.jpg",
+   "page": "Basil",
+   "by": "Photo by David J. Stang",
+   "lic": "CC BY-SA 4.0"
+  },
+  "11": null,
+  "12": null,
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg/330px-%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg",
+   "page": "Pineapple",
+   "by": "Suniltg at Malayalam Wikipedia",
+   "lic": "CC BY 3.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Broccoli_and_cross_section_edit.jpg/330px-Broccoli_and_cross_section_edit.jpg",
+   "page": "Broccoli",
+   "by": "Fir0002",
+   "lic": "GFDL 1.2"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Anchovy_closeup.jpg/330px-Anchovy_closeup.jpg",
+   "page": "Anchovy",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  }
+ },
+ "desserts": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Chocolate_fudge_cake.jpg/330px-Chocolate_fudge_cake.jpg",
+   "page": "Chocolate cake",
+   "by": "Tracy Hunter from Kabul,, Afghanistan",
+   "lic": "CC BY 2.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Vanilla_Ice_Cream_Cone_at_Camp_Manitoulin.jpg/330px-Vanilla_Ice_Cream_Cone_at_Camp_Manitoulin.jpg",
+   "page": "Ice cream",
+   "by": "Steven Depolo",
+   "lic": "CC BY 2.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Gulab-jamun-wallpaper-1.jpg/330px-Gulab-jamun-wallpaper-1.jpg",
+   "page": "Gulab jamun",
+   "by": "Sapra5379",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": null,
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Baked_cheesecake_with_raspberries_and_blueberries.jpg/330px-Baked_cheesecake_with_raspberries_and_blueberries.jpg",
+   "page": "Cheesecake",
+   "by": "zingyyellow",
+   "lic": "CC BY 2.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Matka_kulfi.jpg/330px-Matka_kulfi.jpg",
+   "page": "Kulfi",
+   "by": "Commoner247",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Glazed-Donut.jpg/330px-Glazed-Donut.jpg",
+   "page": "Doughnut",
+   "by": "Evan-Amos",
+   "lic": "Public domain"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Tiramisu_-_Raffaele_Diomede.jpg/330px-Tiramisu_-_Raffaele_Diomede.jpg",
+   "page": "Tiramisu",
+   "by": "Raffaele Diomede from Pordenone, ITALIA",
+   "lic": "CC BY 2.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Baklava%281%29.png/330px-Baklava%281%29.png",
+   "page": "Baklava",
+   "by": "Sakaman",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/2ChocolateChipCookies.jpg/330px-2ChocolateChipCookies.jpg",
+   "page": "Cookie",
+   "by": "Jonathunder",
+   "lic": "GFDL 1.2"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Apple_pie_14.jpg/330px-Apple_pie_14.jpg",
+   "page": "Apple pie",
+   "by": "Shisma",
+   "lic": "CC BY 4.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg/330px-Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg",
+   "page": "Pancake",
+   "by": "Mae Mu",
+   "lic": "CC0"
+  },
+  "12": null,
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Fruktsallad_%28Fruit_salad%29.jpg/330px-Fruktsallad_%28Fruit_salad%29.jpg",
+   "page": "Fruit salad",
+   "by": "dnm",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Cinnamon_swirl_raisin_bread.jpg/330px-Cinnamon_swirl_raisin_bread.jpg",
+   "page": "Raisin bread",
+   "by": "Mendaliv",
+   "lic": "Public domain"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Pink_seolgitteok_cake.jpg/330px-Pink_seolgitteok_cake.jpg",
+   "page": "Rice cake",
+   "by": "Hyeon-Jeong Suk",
+   "lic": "CC BY 2.0"
+  }
+ },
+ "pets": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Huskiesatrest.jpg/330px-Huskiesatrest.jpg",
+   "page": "Dog",
+   "by": "M. Rehemtulla",
+   "lic": "CC BY 2.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Siam_lilacpoint.jpg/330px-Siam_lilacpoint.jpg",
+   "page": "Cat",
+   "by": "Karin Langner-Bahmann, upload von Martin Bahmann",
+   "lic": "CC BY-SA 3.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Oryctolagus_cuniculus_Rcdo.jpg/330px-Oryctolagus_cuniculus_Rcdo.jpg",
+   "page": "Rabbit",
+   "by": "JM Ligero Loarte",
+   "lic": "CC BY 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Perroquet_%C3%A0_Yampopo_Beach_-_Douala.jpg/330px-Perroquet_%C3%A0_Yampopo_Beach_-_Douala.jpg",
+   "page": "Grey parrot",
+   "by": "Florettesokeng",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": null,
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/European_hamster_%28Cricetus_cricetus%29_Meidling.jpg/330px-European_hamster_%28Cricetus_cricetus%29_Meidling.jpg",
+   "page": "Hamster",
+   "by": "Charles J. Sharp",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Gold_fish1.jpg/330px-Gold_fish1.jpg",
+   "page": "Goldfish",
+   "by": "לינה אבוגוש",
+   "lic": "CC BY-SA 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Turtle_diversity.jpg/330px-Turtle_diversity.jpg",
+   "page": "Turtle",
+   "by": "See his respective owners",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nokota_Horses_cropped.jpg/330px-Nokota_Horses_cropped.jpg",
+   "page": "Horse",
+   "by": "Nokota_Horses.jpg: François Marchal derivative work: Dana boomer (talk)",
+   "lic": "CC BY-SA 3.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Igel.JPG/330px-Igel.JPG",
+   "page": "Hedgehog",
+   "by": "Gibe",
+   "lic": "CC BY-SA 3.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Bubo_bubo_sibiricus_-_01.JPG/330px-Bubo_bubo_sibiricus_-_01.JPG",
+   "page": "Owl",
+   "by": "Carlos Delgado",
+   "lic": "CC BY-SA 4.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Hemidactylus_platyurus_%28Flat-tailed_House_Gecko%29_on_white_background%2C_focus_stacking.jpg/330px-Hemidactylus_platyurus_%28Flat-tailed_House_Gecko%29_on_white_background%2C_focus_stacking.jpg",
+   "page": "Lizard",
+   "by": "Basile Morin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hausziege_04.jpg/330px-Hausziege_04.jpg",
+   "page": "Goat",
+   "by": "Kuebi = Armin Kübelbeck",
+   "lic": "CC BY-SA 3.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Trimeresurus_sabahi_fucatus%2C_Banded_pit_viper_-_Takua_Pa_District%2C_Phang-nga_Province_%2846710893582%29.jpg/330px-Trimeresurus_sabahi_fucatus%2C_Banded_pit_viper_-_Takua_Pa_District%2C_Phang-nga_Province_%2846710893582%29.jpg",
+   "page": "Snake",
+   "by": "Rushenb",
+   "lic": "CC BY-SA 2.0"
+  },
+  "14": null,
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Snodgrass_common_household_roaches.png/330px-Snodgrass_common_household_roaches.png",
+   "page": "Cockroach",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  }
+ },
+ "drinks": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Latte_and_dark_coffee.jpg/330px-Latte_and_dark_coffee.jpg",
+   "page": "Coffee",
+   "by": "Bex Walton",
+   "lic": "CC BY 2.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/After_The_St._Patrick%27s_Parade_Late_Lunch_%40_Lemon%2C_Dawson_Street%2C_Dublin%2C_Rep._Of_Ireland_A_Fine_Tradition%21_%286992614913%29.jpg/330px-After_The_St._Patrick%27s_Parade_Late_Lunch_%40_Lemon%2C_Dawson_Street%2C_Dublin%2C_Rep._Of_Ireland_A_Fine_Tradition%21_%286992614913%29.jpg",
+   "page": "Hot chocolate",
+   "by": "|| UggBoy♥UggGirl || PHOTO || WORLD || TRAVEL ||",
+   "lic": "CC BY 2.0"
+  },
+  "3": null,
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Cappuccino_in_original.jpg/330px-Cappuccino_in_original.jpg",
+   "page": "Cappuccino",
+   "by": "Vee Satayamas",
+   "lic": "CC BY 2.0"
+  },
+  "5": null,
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Green_tea_3_appearances.jpg/330px-Green_tea_3_appearances.jpg",
+   "page": "Green tea",
+   "by": "Alessandro Martini",
+   "lic": "CC0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Ginger_tea.jpg/330px-Ginger_tea.jpg",
+   "page": "Ginger tea",
+   "by": "congerdesign",
+   "lic": "CC0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Matcha_tea_art.jpg/330px-Matcha_tea_art.jpg",
+   "page": "Matcha latte",
+   "by": "John Beans",
+   "lic": "CC BY 2.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Kashmir%27s_Kahwah_Tea.jpg/330px-Kashmir%27s_Kahwah_Tea.jpg",
+   "page": "Kahwah",
+   "by": "Antara Sarkar",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Turmeric_inflorescence.jpg/330px-Turmeric_inflorescence.jpg",
+   "page": "Turmeric",
+   "by": "SKsiddhartthan",
+   "lic": "CC BY-SA 4.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tazzina_di_caff%C3%A8_a_Ventimiglia.jpg/330px-Tazzina_di_caff%C3%A8_a_Ventimiglia.jpg",
+   "page": "Espresso",
+   "by": "Lemone",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Kamomillasaunio_%28Matricaria_recutita%29.JPG/330px-Kamomillasaunio_%28Matricaria_recutita%29.JPG",
+   "page": "Chamomile",
+   "by": "kallerna",
+   "lic": "CC BY-SA 3.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Cup_of_black_tea.JPG/330px-Cup_of_black_tea.JPG",
+   "page": "Black tea",
+   "by": "AntanO",
+   "lic": "CC BY-SA 4.0"
+  },
+  "14": null,
+  "15": null
+ },
+ "sports": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Pollock_to_Hussey.jpg/330px-Pollock_to_Hussey.jpg",
+   "page": "Cricket",
+   "by": "Prescott Pym on Flickr",
+   "lic": "CC BY 2.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Football_in_Bloomington%2C_Indiana%2C_1995.jpg/330px-Football_in_Bloomington%2C_Indiana%2C_1995.jpg",
+   "page": "Association football",
+   "by": "Rick Dikeman",
+   "lic": "CC BY-SA 3.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/2010_Malaysian_GP_opening_lap.jpg/330px-2010_Malaysian_GP_opening_lap.jpg",
+   "page": "Formula One",
+   "by": "Morio",
+   "lic": "CC BY-SA 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/USA_vs._China_Mens_Basketball_-_Beijing_2008_Olympic_Games_%282751923597%29.jpg/330px-USA_vs._China_Mens_Basketball_-_Beijing_2008_Olympic_Games_%282751923597%29.jpg",
+   "page": "Basketball",
+   "by": "kris krüg from Vancouver, Canada",
+   "lic": "CC BY-SA 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/2013_Australian_Open_-_Guillaume_Rufin.jpg/330px-2013_Australian_Open_-_Guillaume_Rufin.jpg",
+   "page": "Tennis",
+   "by": "Brendan Dennis",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Boxing_Tournament_in_Aid_of_King_George%27s_Fund_For_Sailors_at_the_Royal_Naval_Air_Station%2C_Henstridge%2C_Somerset%2C_July_1945_A29806.jpg/330px-Boxing_Tournament_in_Aid_of_King_George%27s_Fund_For_Sailors_at_the_Royal_Naval_Air_Station%2C_Henstridge%2C_Somerset%2C_July_1945_A29806.jpg",
+   "page": "Boxing",
+   "by": "Royal Navy official photographer",
+   "lic": "Public domain"
+  },
+  "6": null,
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Olympics_2012_Mixed_Doubles_Final.jpg/330px-Olympics_2012_Mixed_Doubles_Final.jpg",
+   "page": "Badminton",
+   "by": "Peter",
+   "lic": "CC BY-SA 2.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Wrestling_at_the_2016_Summer_Olympics%2C_Gazyumov_vs_Andriitsev_6.jpg/330px-Wrestling_at_the_2016_Summer_Olympics%2C_Gazyumov_vs_Andriitsev_6.jpg",
+   "page": "Wrestling",
+   "by": "Ilgar Jafarov",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Brasil_vence_a_Fran%C3%A7a_no_v%C3%B4lei_masculino_1037987-15.08.2016_ffz-6369.jpg/330px-Brasil_vence_a_Fran%C3%A7a_no_v%C3%B4lei_masculino_1037987-15.08.2016_ffz-6369.jpg",
+   "page": "Volleyball",
+   "by": "Fernando Frazão/Agência Brasil",
+   "lic": "CC BY 3.0 br"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Snooker_table_selby.JPG/330px-Snooker_table_selby.JPG",
+   "page": "Snooker",
+   "by": "DmitryYakunin",
+   "lic": "CC BY-SA 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Tommy_Milone_gives_up_a_home_run_to_Mike_Trout_on_May_21%2C_2017.jpg/330px-Tommy_Milone_gives_up_a_home_run_to_Mike_Trout_on_May_21%2C_2017.jpg",
+   "page": "Baseball",
+   "by": "D. Benjamin Miller",
+   "lic": "CC0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/ChessSet.jpg/330px-ChessSet.jpg",
+   "page": "Chess",
+   "by": "Alan Light",
+   "lic": "CC BY-SA 3.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Golfer_swing.jpg/330px-Golfer_swing.jpg",
+   "page": "Golf",
+   "by": "Lilrizz",
+   "lic": "CC0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Curling%2C_overall_view_of_the_Tim_Hortons_Brier_venue_-_Edmonton%2C_Canada.jpg/330px-Curling%2C_overall_view_of_the_Tim_Hortons_Brier_venue_-_Edmonton%2C_Canada.jpg",
+   "page": "Curling",
+   "by": "Glenlarson",
+   "lic": "Public domain"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/1987WorldCupTrials.jpg/330px-1987WorldCupTrials.jpg",
+   "page": "Race walking",
+   "by": "Rayzwocker at English Wikipedia",
+   "lic": "CC BY-SA 3.0"
+  }
+ },
+ "street": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg/330px-Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg",
+   "page": "Samosa",
+   "by": "Moheen Reeyad",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Shawarma_2.jpg/330px-Shawarma_2.jpg",
+   "page": "Shawarma",
+   "by": "Vis M",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/French_Fries.JPG/330px-French_Fries.JPG",
+   "page": "French fries",
+   "by": "StockSnap",
+   "lic": "CC0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Pakistani_Food_Beef_Kabobs.jpg/330px-Pakistani_Food_Beef_Kabobs.jpg",
+   "page": "Seekh kebab",
+   "by": "Jess Lander from Culver City, CA, USA",
+   "lic": "CC BY 2.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Dahi_puri%2C_Doi_phuchka.jpg/330px-Dahi_puri%2C_Doi_phuchka.jpg",
+   "page": "Chaat",
+   "by": "Rupamdas75",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": null,
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/001_Tacos_de_carnitas%2C_carne_asada_y_al_pastor.jpg/330px-001_Tacos_de_carnitas%2C_carne_asada_y_al_pastor.jpg",
+   "page": "Taco",
+   "by": "Larry Miller",
+   "lic": "CC BY-SA 2.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Onion_pakora_-_a.jpg/330px-Onion_pakora_-_a.jpg",
+   "page": "Pakora",
+   "by": "Babu iyer",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/HK_SYP_%E8%A5%BF%E7%87%9F%E7%9B%A4_Sai_Ying_Pun_Kwan_Yick_Building_%E5%90%8D%E6%98%9F%E6%B5%B7%E9%AE%AE%E9%85%92%E5%AE%B6_Star_Seafood_Restaurant_food_%E5%90%9E%E9%BA%B5_Wonton_dim_sum_October_2020_SS2_01.jpg/330px-HK_SYP_%E8%A5%BF%E7%87%9F%E7%9B%A4_Sai_Ying_Pun_Kwan_Yick_Building_%E5%90%8D%E6%98%9F%E6%B5%B7%E9%AE%AE%E9%85%92%E5%AE%B6_Star_Seafood_Restaurant_food_%E5%90%9E%E9%BA%B5_Wonton_dim_sum_October_2020_SS2_01.jpg",
+   "page": "Dumpling",
+   "by": "Honmustak Chooica",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Hot_dog_with_mustard.png/330px-Hot_dog_with_mustard.png",
+   "page": "Hot dog",
+   "by": "Czar, original photographed by Renee Comet",
+   "lic": "Public domain"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/CookedCornOnTheCob.JPG/330px-CookedCornOnTheCob.JPG",
+   "page": "Corn on the cob",
+   "by": "Jonathunder",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Waffles_with_Strawberries.jpg/330px-Waffles_with_Strawberries.jpg",
+   "page": "Waffle",
+   "by": "Parkerman &amp; Christie from San Diego, USA",
+   "lic": "CC BY 2.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Crepes_dsc07085.jpg/330px-Crepes_dsc07085.jpg",
+   "page": "Crêpe",
+   "by": "David Monniaux",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Soft-boiled-egg.jpg/330px-Soft-boiled-egg.jpg",
+   "page": "Boiled egg",
+   "by": "Amin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Aringa-marinato.jpg/330px-Aringa-marinato.jpg",
+   "page": "Pickled herring",
+   "by": "Kagor",
+   "lic": "CC BY-SA 3.0"
+  }
+ },
+ "holiday": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg/330px-Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg",
+   "page": "Mountain",
+   "by": "Luca Galuzzi (Lucag)",
+   "lic": "CC BY-SA 2.5"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Beach_at_Fort_Lauderdale.jpg/330px-Beach_at_Fort_Lauderdale.jpg",
+   "page": "Beach",
+   "by": "Daniel Dudek",
+   "lic": "CC BY 2.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Landaa_Giraavaru_vue_du_ciel.JPG/330px-Landaa_Giraavaru_vue_du_ciel.JPG",
+   "page": "Resort island",
+   "by": "Frédéric Ducarme",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Gymnasion_und_Therme_aus_S%C3%BCdwest.jpg/330px-Gymnasion_und_Therme_aus_S%C3%BCdwest.jpg",
+   "page": "Ruins",
+   "by": "Gerhard Haubold",
+   "lic": "CC BY-SA 3.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Ski_resorts_in_the_world.png/330px-Ski_resorts_in_the_world.png",
+   "page": "Ski resort",
+   "by": "FDV",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Aerial_view_of_Grand_Prismatic_%2823428929375%29.jpg/330px-Aerial_view_of_Grand_Prismatic_%2823428929375%29.jpg",
+   "page": "Hot spring",
+   "by": "Yellowstone National Park from Yellowstone NP, USA",
+   "lic": "Public domain"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Icon_of_the_Seas_Puerto_Rico_2025_%28cropped%29.jpg/330px-Icon_of_the_Seas_Puerto_Rico_2025_%28cropped%29.jpg",
+   "page": "Cruise ship",
+   "by": "Corey Seeman",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Tent_camping_along_the_Sulayr_trail_in_La_Taha%2C_Sierra_Nevada_National_Park_%28DSCF5147%29.jpg/330px-Tent_camping_along_the_Sulayr_trail_in_La_Taha%2C_Sierra_Nevada_National_Park_%28DSCF5147%29.jpg",
+   "page": "Camping",
+   "by": "Trougnouf (Benoit Brummer)",
+   "lic": "CC BY 4.0"
+  },
+  "13": null,
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Livorno_-_Hotel_Palazzo_-_2025-09-29_20-09-38_001.jpg/330px-Livorno_-_Hotel_Palazzo_-_2025-09-29_20-09-38_001.jpg",
+   "page": "Hotel",
+   "by": "Terragio67",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": null
+ },
+ "instruments": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/GuitareClassique5.png/330px-GuitareClassique5.png",
+   "page": "Guitar",
+   "by": "User:Martin Möller Talk",
+   "lic": "CC BY-SA 2.0 de"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Steinway_Vienna_002.JPG/330px-Steinway_Vienna_002.JPG",
+   "page": "Piano",
+   "by": "Gryffindor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/DrumMozartRegiment.jpg/330px-DrumMozartRegiment.jpg",
+   "page": "Drum",
+   "by": "NPS",
+   "lic": "Public domain"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Violin_VL100.png/330px-Violin_VL100.png",
+   "page": "Violin",
+   "by": "Just plain Bill",
+   "lic": "CC0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Prop._Tabla.jpg/330px-Prop._Tabla.jpg",
+   "page": "Tabla",
+   "by": "Wikimedia Commons contributor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Eight_saxophone_sizes_smaller.png/330px-Eight_saxophone_sizes_smaller.png",
+   "page": "Saxophone",
+   "by": "Jonathanischoice",
+   "lic": "CC BY 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Shinobue_and_other_flutes-3.jpg/330px-Shinobue_and_other_flutes-3.jpg",
+   "page": "Flute",
+   "by": "Photos by Yasuhiko Sano, Nov 2005, Buffet Crampon and Yamaha; Editing + Collage ",
+   "lic": "Public domain"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Sitar%2C_late_19th_Century.jpg/330px-Sitar%2C_late_19th_Century.jpg",
+   "page": "Sitar",
+   "by": "unknown, MET museum",
+   "lic": "CC0"
+  },
+  "8": null,
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Yamaha_Trumpet_YTR-8335LA_crop.jpg/330px-Yamaha_Trumpet_YTR-8335LA_crop.jpg",
+   "page": "Trumpet",
+   "by": "Yamaha Corporation",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Kumalae_ukulele_of_c._1910.webm/330px--Kumalae_ukulele_of_c._1910.webm.jpg",
+   "page": "Ukulele",
+   "by": "St Cecilia's Hall: all things musical instruments",
+   "lic": "CC BY 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Harp.png/330px-Harp.png",
+   "page": "Harp",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Scotland_Independence_March%2C_28_March_2026_%2832%29.jpg/330px-Scotland_Independence_March%2C_28_March_2026_%2832%29.jpg",
+   "page": "Bagpipes",
+   "by": "Lucas Kendall",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/VariousRecorderFlutes.jpg/330px-VariousRecorderFlutes.jpg",
+   "page": "Recorder (musical instrument)",
+   "by": "Mussklprozz",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Triangle_001.jpg/330px-Triangle_001.jpg",
+   "page": "Triangle (musical instrument)",
+   "by": "AnonymousUnknown author",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/2023_Kazoo_%281%29.jpg/330px-2023_Kazoo_%281%29.jpg",
+   "page": "Kazoo",
+   "by": "Jacek Halicki",
+   "lic": "CC BY-SA 4.0"
+  }
+ },
+ "fruit": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Mangos_-_single_and_halved.jpg/330px-Mangos_-_single_and_halved.jpg",
+   "page": "Mango",
+   "by": "Ivar Leidus",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": null,
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/330px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg",
+   "page": "Watermelon",
+   "by": "Fred Hsu (Wikipedia:User:Fred Hsu on en.wikipedia)",
+   "lic": "CC BY-SA 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cherry_season_%2848216568227%29.jpg/330px-Cherry_season_%2848216568227%29.jpg",
+   "page": "Cherry",
+   "by": "spurekar",
+   "lic": "CC BY 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grapes%2C_Rostov-on-Don%2C_Russia.jpg/330px-Grapes%2C_Rostov-on-Don%2C_Russia.jpg",
+   "page": "Grape",
+   "by": "Vyacheslav Argenberg",
+   "lic": "CC BY 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Illustration_Prunus_persica_clean_no_descr.jpg/330px-Illustration_Prunus_persica_clean_no_descr.jpg",
+   "page": "Peach",
+   "by": "File:Illustration Prunus persica0.jpg: PLEASE COMPLETE AUTHOR INFORMATION deriva",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg/330px-%E0%B4%95%E0%B5%88%E0%B4%A4%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B4%95%E0%B5%8D%E0%B4%95.jpg",
+   "page": "Pineapple",
+   "by": "Suniltg at Malayalam Wikipedia",
+   "lic": "CC BY 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Bananavarieties.jpg/330px-Bananavarieties.jpg",
+   "page": "Banana",
+   "by": "TimothyPilgrim",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Oranges_-_whole-halved-segment.jpg/330px-Oranges_-_whole-halved-segment.jpg",
+   "page": "Orange (fruit)",
+   "by": "Ivar Leidus",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Pink_lady_and_cross_section.jpg/330px-Pink_lady_and_cross_section.jpg",
+   "page": "Apple",
+   "by": "fir0002 flagstaffotos [at] gmail.com Canon 20D + Sigma 150mm f/2.8",
+   "lic": "GFDL 1.2"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Pomegranate_Juice_%282019%29.jpg/330px-Pomegranate_Juice_%282019%29.jpg",
+   "page": "Pomegranate",
+   "by": "Augustus Binu : flickr",
+   "lic": "CC BY-SA 3.0"
+  },
+  "11": null,
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Cocos_nucifera_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg/330px-Cocos_nucifera_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg",
+   "page": "Coconut",
+   "by": "Franz Eugen Köhler, Köhler's Medizinal-Pflanzen",
+   "lic": "Public domain"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Pears.jpg/330px-Pears.jpg",
+   "page": "Pear",
+   "by": "Keith Weller",
+   "lic": "Public domain"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/P1030323.JPG/330px-P1030323.JPG",
+   "page": "Lemon",
+   "by": "Elena Chochkova",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Durian_in_black.jpg/330px-Durian_in_black.jpg",
+   "page": "Durian",
+   "by": "مانفی",
+   "lic": "CC BY-SA 4.0"
+  }
+ },
+ "creatures": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/St_Catherine%2C_St_George_and_the_Dragon_%28M%C3%A4staren_fr%C3%A5n_Kappenberg%29_-_Nationalmuseum_-_18337_%28brightened%29%2C_draken.png/330px-St_Catherine%2C_St_George_and_the_Dragon_%28M%C3%A4staren_fr%C3%A5n_Kappenberg%29_-_Nationalmuseum_-_18337_%28brightened%29%2C_draken.png",
+   "page": "Dragon",
+   "by": "Jan Baegert",
+   "lic": "Public domain"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Phoenix_%281583%29.svg/330px-Phoenix_%281583%29.svg.png",
+   "page": "Phoenix (mythology)",
+   "by": "AnonymousUnknown author",
+   "lic": "Public domain"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Oftheunicorn.jpg/330px-Oftheunicorn.jpg",
+   "page": "Unicorn",
+   "by": "Conrad Gessner",
+   "lic": "Public domain"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Knossos_fresco_in_throne_palace.JPG/330px-Knossos_fresco_in_throne_palace.JPG",
+   "page": "Griffin",
+   "by": "Wikimedia Commons contributor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Lakonian_Black-Figure_Kylix%3B_detached_fragments.jpg/330px-Lakonian_Black-Figure_Kylix%3B_detached_fragments.jpg",
+   "page": "Pegasus",
+   "by": "The J. Paul Getty Museum, Villa Collection, Malibu, California Digital image cou",
+   "lic": "Public domain"
+  },
+  "5": null,
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/John_William_Waterhouse_A_Mermaid.jpg/330px-John_William_Waterhouse_A_Mermaid.jpg",
+   "page": "Mermaid",
+   "by": "John William Waterhouse",
+   "lic": "Public domain"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Le_Poulpe_Colossal.jpg/330px-Le_Poulpe_Colossal.jpg",
+   "page": "Kraken",
+   "by": "Pierre Denys de Montfort (1766–1820) / Étienne Claude Voysard (1746–1812.)",
+   "lic": "Public domain"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Falero_Luis_Ricardo_Lily_Fairy_1888.jpg/330px-Falero_Luis_Ricardo_Lily_Fairy_1888.jpg",
+   "page": "Fairy",
+   "by": "Luis Ricardo Falero",
+   "lic": "Public domain"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/%C3%84ngs%C3%A4lvor_-_Nils_Blomm%C3%A9r_1850.jpg/330px-%C3%84ngs%C3%A4lvor_-_Nils_Blomm%C3%A9r_1850.jpg",
+   "page": "Elf",
+   "by": "Nils Blommér",
+   "lic": "Public domain"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Terracotta_lekythos_%28oil_flask%29_with_centaur_battling_a_warrior_MET_DP161810.jpg/330px-Terracotta_lekythos_%28oil_flask%29_with_centaur_battling_a_warrior_MET_DP161810.jpg",
+   "page": "Centaur",
+   "by": "Creator:Painter of London B 31",
+   "lic": "CC0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Yeti_coloris%C3%A9.jpg/330px-Yeti_coloris%C3%A9.jpg",
+   "page": "Yeti",
+   "by": "Ipipipourax",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/WeirdTalesv36n2pg038_The_Werewolf_Howls.png/330px-WeirdTalesv36n2pg038_The_Werewolf_Howls.png",
+   "page": "Werewolf",
+   "by": "Mont Sudbury",
+   "lic": "Public domain"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Philip_Burne-Jones_-_The_Vampire.jpg/330px-Philip_Burne-Jones_-_The_Vampire.jpg",
+   "page": "Vampire",
+   "by": "Philip Burne-Jones",
+   "lic": "Public domain"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/John_Bauer_1915.jpg/330px-John_Bauer_1915.jpg",
+   "page": "Troll",
+   "by": "John Bauer",
+   "lic": "Public domain"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Goblin_illustration_from_19th_century.png/330px-Goblin_illustration_from_19th_century.png",
+   "page": "Goblin",
+   "by": "John Dickson Batten (Life time: 8 October 1860 – 5 August 1932)",
+   "lic": "Public domain"
+  }
+ },
+ "gadgets": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Frazier_Peak%2C_tower_and_Honda_Element.jpg/330px-Frazier_Peak%2C_tower_and_Honda_Element.jpg",
+   "page": "Microwave",
+   "by": "GeorgeLouis (talk) (Uploads)",
+   "lic": "CC BY 3.0"
+  },
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Bernadotte_Wasserkessel.jpg/330px-Bernadotte_Wasserkessel.jpg",
+   "page": "Kettle",
+   "by": "Holger Ellgaard",
+   "lic": "CC BY-SA 3.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Moka_Express_sideview.png/330px-Moka_Express_sideview.png",
+   "page": "Coffeemaker",
+   "by": "photograph by Hans Chr. R., derivative work by Saibo",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Consumer_Reports_-_Hamilton_Beach_Digital_toaster.tiff/lossless-page1-330px-Consumer_Reports_-_Hamilton_Beach_Digital_toaster.tiff.png",
+   "page": "Toaster",
+   "by": "Consumer Reports",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Rice_Cooker_1.png/330px-Rice_Cooker_1.png",
+   "page": "Rice cooker",
+   "by": "Quiet Hut",
+   "lic": "CC BY 2.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Pressure_cooker.jpg/330px-Pressure_cooker.jpg",
+   "page": "Pressure cooker",
+   "by": "Wikimedia Commons contributor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Dishwasher_with_dishes.JPG/330px-Dishwasher_with_dishes.JPG",
+   "page": "Dishwasher",
+   "by": "No machine-readable author provided. Piotrus assumed (based on copyright claims)",
+   "lic": "CC BY-SA 3.0"
+  },
+  "9": null,
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Handheld_Electric_Beater.jpg/330px-Handheld_Electric_Beater.jpg",
+   "page": "Mixer (appliance)",
+   "by": "Donovan Govan.",
+   "lic": "CC BY-SA 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Karottensaft.JPG/330px-Karottensaft.JPG",
+   "page": "Juicer",
+   "by": "Claus Ableiter",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Un_appareil_%C3%A9lectrique_%C3%A0_gaufres_en_France_en_d%C3%A9cembre_2021.jpg/330px-Un_appareil_%C3%A9lectrique_%C3%A0_gaufres_en_France_en_d%C3%A9cembre_2021.jpg",
+   "page": "Waffle iron",
+   "by": "Benoît Prieur",
+   "lic": "CC0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Eierschneider.jpg/330px-Eierschneider.jpg",
+   "page": "Egg slicer",
+   "by": "de:user:Rainer Zenz",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": null,
+  "15": null
+ },
+ "weather": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Double-alaskan-rainbow.jpg/330px-Double-alaskan-rainbow.jpg",
+   "page": "Rainbow",
+   "by": "Eric Rolph at English Wikipedia",
+   "lic": "CC BY-SA 2.5"
+  },
+  "5": null,
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Lightning_Pritzerbe_01_%28MK%29.jpg/330px-Lightning_Pritzerbe_01_%28MK%29.jpg",
+   "page": "Thunderstorm",
+   "by": "Mathias Krumbholz",
+   "lic": "CC BY-SA 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/A_foggy_winter_morning.jpg/330px-A_foggy_winter_morning.jpg",
+   "page": "Fog",
+   "by": "Abdul Momin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Overcast_Mehamn.jpg/330px-Overcast_Mehamn.jpg",
+   "page": "Overcast",
+   "by": "Sami Keinänen",
+   "lic": "CC BY-SA 2.0"
+  },
+  "9": null,
+  "10": null,
+  "11": null,
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Sandsturm_in_der_Namib_%282017%29.jpg/330px-Sandsturm_in_der_Namib_%282017%29.jpg",
+   "page": "Dust storm",
+   "by": "Olga Ernst &amp; Hp.Baumeler",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": null,
+  "14": null,
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Fanhe_Town_10_day_interval_contrast.png/330px-Fanhe_Town_10_day_interval_contrast.png",
+   "page": "Smog",
+   "by": "Tomskyhaha",
+   "lic": "CC BY-SA 4.0"
+  }
+ },
+ "tablegames": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Ludo-3.jpg/330px-Ludo-3.jpg",
+   "page": "Ludo",
+   "by": "Micha L. Rieser",
+   "lic": "Attribution"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/ChessSet.jpg/330px-ChessSet.jpg",
+   "page": "Chess",
+   "by": "Alan Light",
+   "lic": "CC BY-SA 3.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Carrom.jpg/330px-Carrom.jpg",
+   "page": "Carrom",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/UNO_Logo.svg/330px-UNO_Logo.svg.png",
+   "page": "Uno (card game)",
+   "by": "Mattel",
+   "lic": "Public domain"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Monopoly_board_on_white_bg.jpg/330px-Monopoly_board_on_white_bg.jpg",
+   "page": "Monopoly (game)",
+   "by": "fir0002 flagstaffotos [at] gmail.com Canon 20D + Canon 70-200mm f/2.8 L",
+   "lic": "GFDL 1.2"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Scrabble_game_in_progress.jpg/330px-Scrabble_game_in_progress.jpg",
+   "page": "Scrabble",
+   "by": "thebarrowboy",
+   "lic": "CC BY 2.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Jenga_brand_logo.png/330px-Jenga_brand_logo.png",
+   "page": "Jenga",
+   "by": "Pokonobe Associates",
+   "lic": "Public domain"
+  },
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Cluedo_Clue_pack_logo.png/330px-Cluedo_Clue_pack_logo.png",
+   "page": "Cluedo",
+   "by": "Unknown",
+   "lic": "Public domain"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Connect-four.jpg/330px-Connect-four.jpg",
+   "page": "Connect Four",
+   "by": "Jonathan Kellenberg from Seattle, WA",
+   "lic": "CC BY 2.0"
+  },
+  "10": null,
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Hra_n%C3%A1mo%C5%99n%C3%AD_bitva_%281%29.jpg/330px-Hra_n%C3%A1mo%C5%99n%C3%AD_bitva_%281%29.jpg",
+   "page": "Battleship (game)",
+   "by": "I would appreciate being notified if you use my work outside Wikimedia. Do not c",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/CheckersStandard.jpg/330px-CheckersStandard.jpg",
+   "page": "Checkers",
+   "by": "Jud McCranie",
+   "lic": "CC BY 3.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Dominospiel.JPG/330px-Dominospiel.JPG",
+   "page": "Dominoes",
+   "by": "No machine-readable author provided. Peng assumed (based on copyright claims).",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Carpet_patience_1.jpg/330px-Carpet_patience_1.jpg",
+   "page": "Solitaire",
+   "by": "Orion 8",
+   "lic": "CC BY-SA 3.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Tic_tac_toe.svg/330px-Tic_tac_toe.svg.png",
+   "page": "Tic-tac-toe",
+   "by": "Joeytje50",
+   "lic": "CC BY 4.0"
+  }
+ },
+ "sauces": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Cucumber-raita.jpg/330px-Cucumber-raita.jpg",
+   "page": "Raita",
+   "by": "Sonia Goyal",
+   "lic": "CC BY-SA 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Fermented_hot_sauce.jpg/330px-Fermented_hot_sauce.jpg",
+   "page": "Hot sauce",
+   "by": "Veganbaking.net from USA",
+   "lic": "CC BY-SA 2.0"
+  },
+  "5": null,
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Broccoli_with_cheese_sauce%2C_Holiday_Restaurant%2C_Semarang%2C_2014-06-19.jpg/330px-Broccoli_with_cheese_sauce%2C_Holiday_Restaurant%2C_Semarang%2C_2014-06-19.jpg",
+   "page": "Cheese sauce",
+   "by": "Crisco 1492",
+   "lic": "CC BY-SA 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Siracha_sauce.jpg/330px-Siracha_sauce.jpg",
+   "page": "Sriracha",
+   "by": "Takeaway",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": null,
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Soy_sauce_2.jpg/330px-Soy_sauce_2.jpg",
+   "page": "Soy sauce",
+   "by": "국립국어원",
+   "lic": "CC BY-SA 2.0 kr"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Mustard.JPG/330px-Mustard.JPG",
+   "page": "Mustard (condiment)",
+   "by": "fuji01",
+   "lic": "CC0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/BasilPesto.JPG/330px-BasilPesto.JPG",
+   "page": "Pesto",
+   "by": "Ɱ",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Grant-Kohrs_Ranch.jpg/330px-Grant-Kohrs_Ranch.jpg",
+   "page": "Ranch",
+   "by": "National Park Service",
+   "lic": "Public domain"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Tartar_Sauce.jpg/330px-Tartar_Sauce.jpg",
+   "page": "Tartar sauce",
+   "by": "jeffreyw",
+   "lic": "CC BY 2.0"
+  },
+  "14": null,
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Sauce_de_poisson.jpg/330px-Sauce_de_poisson.jpg",
+   "page": "Fish sauce",
+   "by": "Assassas77",
+   "lic": "CC BY-SA 4.0"
+  }
+ },
+ "sidekicks": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg/330px-020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg",
+   "page": "Lion",
+   "by": "Giles Laurent",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Eagles_together.jpg/330px-Eagles_together.jpg",
+   "page": "Eagle",
+   "by": "User:Punetor i Rregullt5",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Eurasian_wolf_2.jpg/330px-Eurasian_wolf_2.jpg",
+   "page": "Wolf",
+   "by": "User:Mas3cf",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Tursiops_truncatus_01.jpg/330px-Tursiops_truncatus_01.jpg",
+   "page": "Dolphin",
+   "by": "NASA",
+   "lic": "Public domain"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/330px-African_Bush_Elephant.jpg",
+   "page": "Elephant",
+   "by": "Muhammad Mahdi Karim Facebook The making of this document was supported by Wikim",
+   "lic": "GFDL 1.2"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Everglades_National_Park_Florida_Panther.jpg/330px-Everglades_National_Park_Florida_Panther.jpg",
+   "page": "Florida panther",
+   "by": "National Park Service Photo by Rodney Cammauf",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Susa_group%2C_mountain_gorilla.jpg/330px-Susa_group%2C_mountain_gorilla.jpg",
+   "page": "Mountain gorilla",
+   "by": "https://www.flickr.com/photos/deepphoto/ d_proffer",
+   "lic": "CC BY 2.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Bubo_bubo_sibiricus_-_01.JPG/330px-Bubo_bubo_sibiricus_-_01.JPG",
+   "page": "Owl",
+   "by": "Carlos Delgado",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Nokota_Horses_cropped.jpg/330px-Nokota_Horses_cropped.jpg",
+   "page": "Horse",
+   "by": "Nokota_Horses.jpg: François Marchal derivative work: Dana boomer (talk)",
+   "lic": "CC BY-SA 3.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/2010-kodiak-bear-1.jpg/330px-2010-kodiak-bear-1.jpg",
+   "page": "Brown bear",
+   "by": "Yathin S Krishnappa",
+   "lic": "CC BY-SA 3.0"
+  },
+  "10": null,
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Octopus2.jpg/330px-Octopus2.jpg",
+   "page": "Octopus",
+   "by": "albert kok",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Raccoon_in_Central_Park_%2835264%29.jpg/330px-Raccoon_in_Central_Park_%2835264%29.jpg",
+   "page": "Raccoon",
+   "by": "Rhododendrites",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bicho-pregui%C3%A7a_3.jpg/330px-Bicho-pregui%C3%A7a_3.jpg",
+   "page": "Sloth",
+   "by": "Daniella Maraschiello",
+   "lic": "CC BY-SA 4.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Sto%C5%BCki2.jpg/330px-Sto%C5%BCki2.jpg",
+   "page": "Cone snail",
+   "by": "Pet",
+   "lic": "CC BY-SA 3.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Jelly_cc11.jpg/330px-Jelly_cc11.jpg",
+   "page": "Jellyfish",
+   "by": "Dan90266",
+   "lic": "CC BY-SA 2.0"
+  }
+ },
+ "rides": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Luna_Park_Melbourne_scenic_railway.jpg/330px-Luna_Park_Melbourne_scenic_railway.jpg",
+   "page": "Roller coaster",
+   "by": "Stevage",
+   "lic": "CC BY-SA 2.5"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Wet%27n%27Wild_Water_World_Australia_Mach_5.jpg/330px-Wet%27n%27Wild_Water_World_Australia_Mach_5.jpg",
+   "page": "Water slide",
+   "by": "Koala:Bear",
+   "lic": "CC BY-SA 2.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Giant_Drop_-_Dreamworld.jpg/330px-Giant_Drop_-_Dreamworld.jpg",
+   "page": "Drop tower",
+   "by": "Dreamworld_Tower_from_Nick_Central.jpg: Mark &amp; Danielle マルチン from Adelaide (",
+   "lic": "CC BY-SA 2.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Kosmic_TS28.JPG/330px-Kosmic_TS28.JPG",
+   "page": "Go-kart",
+   "by": "Oscar3kings",
+   "lic": "CC BY-SA 3.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Bumper_Cars_9944_%2814762891777%29.jpg/330px-Bumper_Cars_9944_%2814762891777%29.jpg",
+   "page": "Bumper cars",
+   "by": "Robert Taylor from Stirling, ON, Canada",
+   "lic": "CC BY 2.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/The_Haunted_House_%281921%29.webm/330px--The_Haunted_House_%281921%29.webm.jpg",
+   "page": "Haunted house",
+   "by": "Edward F. Cline and Buster Keaton",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/DragonFalls_Splash.jpg/330px-DragonFalls_Splash.jpg",
+   "page": "Log flume (ride)",
+   "by": "Chris Sampson",
+   "lic": "CC BY 2.0"
+  },
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Ain_Dubai_View.jpg/330px-Ain_Dubai_View.jpg",
+   "page": "Ferris wheel",
+   "by": "GenerousExistence",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/BlackBuccaneer_Cropped.jpg/330px-BlackBuccaneer_Cropped.jpg",
+   "page": "Pirate ship (ride)",
+   "by": "Chris Sampson",
+   "lic": "CC BY 2.0"
+  },
+  "10": null,
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/V%C4%9Btru%C5%A1e%2C_zrcadlov%C3%A9_bludi%C5%A1t%C4%9B.jpg/330px-V%C4%9Btru%C5%A1e%2C_zrcadlov%C3%A9_bludi%C5%A1t%C4%9B.jpg",
+   "page": "House of mirrors",
+   "by": "ŠJů (cs:ŠJů)",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/A_double-decker_carousel_in_Milton_Keynes%2C_England_at_Christmas.jpg/330px-A_double-decker_carousel_in_Milton_Keynes%2C_England_at_Christmas.jpg",
+   "page": "Carousel",
+   "by": "ZakariaFadel07",
+   "lic": "CC0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Kahvikupit_Linnanm%C3%A4ki_Helsinki.JPG/330px-Kahvikupit_Linnanm%C3%A4ki_Helsinki.JPG",
+   "page": "Teacups",
+   "by": "No machine-readable author provided. Skorpion87 assumed (based on copyright clai",
+   "lic": "Public domain"
+  },
+  "14": null,
+  "15": null
+ },
+ "icecream": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Three_Bars_%281%29.jpg/330px-Three_Bars_%281%29.jpg",
+   "page": "Chocolate",
+   "by": "Lynnereal",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Mangos_-_single_and_halved.jpg/330px-Mangos_-_single_and_halved.jpg",
+   "page": "Mango",
+   "by": "Ivar Leidus",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cookies_and_cream.JPG/330px-Cookies_and_cream.JPG",
+   "page": "Cookies and cream",
+   "by": "BrokenSphere",
+   "lic": "CC BY-SA 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Pistachio_vera.jpg/330px-Pistachio_vera.jpg",
+   "page": "Pistachio",
+   "by": "THOR",
+   "lic": "CC BY 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Caramel-2.jpg/330px-Caramel-2.jpg",
+   "page": "Caramel",
+   "by": "No machine-readable author provided. Rainer Zenz assumed (based on copyright cla",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Vanilla_planifolia_%286998639597%29.jpg/330px-Vanilla_planifolia_%286998639597%29.jpg",
+   "page": "Vanilla",
+   "by": "Malcolm Manners from Lakeland FL, USA",
+   "lic": "CC BY 2.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg/330px-Garden_strawberry_%28Fragaria_%C3%97_ananassa%29_single2.jpg",
+   "page": "Strawberry",
+   "by": "Ivar Leidus",
+   "lic": "CC BY-SA 4.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/2020-04-27_18_23_07_A_spoonful_of_Friendly%27s_Mint_Chocolate_Chip_Ice_Cream_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg/330px-2020-04-27_18_23_07_A_spoonful_of_Friendly%27s_Mint_Chocolate_Chip_Ice_Cream_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg",
+   "page": "Mint chocolate chip",
+   "by": "Famartin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Latte_and_dark_coffee.jpg/330px-Latte_and_dark_coffee.jpg",
+   "page": "Coffee",
+   "by": "Bex Walton",
+   "lic": "CC BY 2.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Butterscotch-Candies.jpg/330px-Butterscotch-Candies.jpg",
+   "page": "Butterscotch",
+   "by": "Evan-Amos",
+   "lic": "CC BY-SA 3.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Cocos_nucifera_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg/330px-Cocos_nucifera_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg",
+   "page": "Coconut",
+   "by": "Franz Eugen Köhler, Köhler's Medizinal-Pflanzen",
+   "lic": "Public domain"
+  },
+  "11": null,
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Strawberry_sorbet_zoomed.jpg/330px-Strawberry_sorbet_zoomed.jpg",
+   "page": "Sorbet",
+   "by": "star5112",
+   "lic": "CC BY-SA 2.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Green_tea_3_appearances.jpg/330px-Green_tea_3_appearances.jpg",
+   "page": "Green tea",
+   "by": "Alessandro Martini",
+   "lic": "CC0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Cheese_platter.jpg/330px-Cheese_platter.jpg",
+   "page": "Cheese",
+   "by": "Wikimedia Commons contributor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Allium_sativum_Woodwill_1793.jpg/330px-Allium_sativum_Woodwill_1793.jpg",
+   "page": "Garlic",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  }
+ },
+ "fastfood": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/At_University_of_Birmingham_2026_014.jpg/330px-At_University_of_Birmingham_2026_014.jpg",
+   "page": "Loaded fries",
+   "by": "Photograph by Mike Peel (www.mikepeel.net).",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Chicken_Nuggets.jpg/330px-Chicken_Nuggets.jpg",
+   "page": "Chicken nugget",
+   "by": "James Palinsad",
+   "lic": "CC BY-SA 2.0"
+  },
+  "3": null,
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Shawarma_2.jpg/330px-Shawarma_2.jpg",
+   "page": "Shawarma",
+   "by": "Vis M",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cheeseburger.jpg/330px-Cheeseburger.jpg",
+   "page": "Cheeseburger",
+   "by": "Renee Comet (photographer)",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Buffalo_wings-01.jpg/330px-Buffalo_wings-01.jpg",
+   "page": "Buffalo wing",
+   "by": "Clotee Pridgen Allochuku",
+   "lic": "CC BY 2.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/001_Tacos_de_carnitas%2C_carne_asada_y_al_pastor.jpg/330px-001_Tacos_de_carnitas%2C_carne_asada_y_al_pastor.jpg",
+   "page": "Taco",
+   "by": "Larry Miller",
+   "lic": "CC BY-SA 2.0"
+  },
+  "8": null,
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Strawberry_milk_shake_%28cropped%29.jpg/330px-Strawberry_milk_shake_%28cropped%29.jpg",
+   "page": "Milkshake",
+   "by": "Renee Comet (Photographer)",
+   "lic": "Public domain"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/OnionRings.JPG/330px-OnionRings.JPG",
+   "page": "Onion ring",
+   "by": "Jonathunder",
+   "lic": "CC BY-SA 3.0"
+  },
+  "11": null,
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/KFC_Popcorn_Chicken_%2812956064765%29.jpg/330px-KFC_Popcorn_Chicken_%2812956064765%29.jpg",
+   "page": "Popcorn chicken",
+   "by": "Mike Mozart from Funny YouTube, USA",
+   "lic": "CC BY 2.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/%D7%94%D7%9E%D7%91%D7%95%D7%A8%D7%92%D7%A8_%D7%98%D7%91%D7%A2%D7%95%D7%A0%D7%99.jpg/330px-%D7%94%D7%9E%D7%91%D7%95%D7%A8%D7%92%D7%A8_%D7%98%D7%91%D7%A2%D7%95%D7%A0%D7%99.jpg",
+   "page": "Veggie burger",
+   "by": "Roee Shpernik",
+   "lic": "CC BY-SA 4.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Salad_platter.jpg/330px-Salad_platter.jpg",
+   "page": "Salad",
+   "by": "fir0002 flagstaffotos [at] gmail.com Canon 20D + Canon 17-40mm f/4 L",
+   "lic": "GFDL 1.2"
+  },
+  "15": null
+ },
+ "comfort": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/%22Hyderabadi_Dum_Biryani%22.jpg/330px-%22Hyderabadi_Dum_Biryani%22.jpg",
+   "page": "Biryani",
+   "by": "Mahi Tatavarty",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Nalli_Nihari_India.jpg/330px-Nalli_Nihari_India.jpg",
+   "page": "Nihari",
+   "by": "Nilanjan Sasmal",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pizza-3007395.jpg/330px-Pizza-3007395.jpg",
+   "page": "Pizza",
+   "by": "igorovsyannykov",
+   "lic": "CC0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Punjabi_Chicken_Karahi.JPG/330px-Punjabi_Chicken_Karahi.JPG",
+   "page": "Chicken karahi",
+   "by": "Miansari66",
+   "lic": "Public domain"
+  },
+  "4": null,
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Butter_Chicken_%26_Butter_Naan_-_Home_-_Chandigarh_-_India_-_0006.jpg/330px-Butter_Chicken_%26_Butter_Naan_-_Home_-_Chandigarh_-_India_-_0006.jpg",
+   "page": "Butter chicken",
+   "by": "Yuvraj Singh 97",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg/330px-%28Pasta%29_by_David_Adam_Kess_%28pic.2%29.jpg",
+   "page": "Pasta",
+   "by": "David Adam Kess",
+   "lic": "CC BY-SA 4.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Pakistani_Haleem_served_with_garnish.jpg/330px-Pakistani_Haleem_served_with_garnish.jpg",
+   "page": "Haleem",
+   "by": "Halt123halt",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": null,
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Shoyu_Ramen%EF%BC%88Tokyo_Ramen%EF%BC%89_-_01.jpg/330px-Shoyu_Ramen%EF%BC%88Tokyo_Ramen%EF%BC%89_-_01.jpg",
+   "page": "Ramen",
+   "by": "Quercus acuta",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Steak_with_shitaki_mushrooms.jpg/330px-Steak_with_shitaki_mushrooms.jpg",
+   "page": "Steak",
+   "by": "Jon Sullivan",
+   "lic": "Public domain"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Pakistani_Food_Karahi_Beef.jpg/330px-Pakistani_Food_Karahi_Beef.jpg",
+   "page": "Paratha roll",
+   "by": "Jess Lander from Culver City, CA, USA",
+   "lic": "CC BY 2.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg/330px-Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg",
+   "page": "Fried rice",
+   "by": "Vyacheslav Argenberg",
+   "lic": "CC BY 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sushi_platter.jpg/330px-Sushi_platter.jpg",
+   "page": "Sushi",
+   "by": "chidorian from Japan",
+   "lic": "CC BY-SA 2.0"
+  },
+  "14": null,
+  "15": null
+ },
+ "wild": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg/330px-020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg",
+   "page": "Lion",
+   "by": "Giles Laurent",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg/330px-Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg",
+   "page": "Tiger",
+   "by": "Charles J. Sharp",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/330px-African_Bush_Elephant.jpg",
+   "page": "Elephant",
+   "by": "Muhammad Mahdi Karim Facebook The making of this document was supported by Wikim",
+   "lic": "GFDL 1.2"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Tursiops_truncatus_01.jpg/330px-Tursiops_truncatus_01.jpg",
+   "page": "Dolphin",
+   "by": "NASA",
+   "lic": "Public domain"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/330px-Grosser_Panda.JPG",
+   "page": "Giant panda",
+   "by": "J. Patrick Fischer",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Eurasian_wolf_2.jpg/330px-Eurasian_wolf_2.jpg",
+   "page": "Wolf",
+   "by": "User:Mas3cf",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Delbar_%28Iranian_Cheetah%29_01_%28cropped%29.jpg/330px-Delbar_%28Iranian_Cheetah%29_01_%28cropped%29.jpg",
+   "page": "Asiatic cheetah",
+   "by": "Erfan Kouchari",
+   "lic": "CC BY 4.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Giraffe_Mikumi_National_Park.jpg/330px-Giraffe_Mikumi_National_Park.jpg",
+   "page": "Giraffe",
+   "by": "Muhammad Mahdi Karim Facebook The making of this document was supported by Wikim",
+   "lic": "GFDL 1.2"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Susa_group%2C_mountain_gorilla.jpg/330px-Susa_group%2C_mountain_gorilla.jpg",
+   "page": "Mountain gorilla",
+   "by": "https://www.flickr.com/photos/deepphoto/ d_proffer",
+   "lic": "CC BY 2.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Forester_kangaroo_%28Macropus_giganteus_tasmaniensis%29_juvenile_hopping_Esk_Valley.jpg/330px-Forester_kangaroo_%28Macropus_giganteus_tasmaniensis%29_juvenile_hopping_Esk_Valley.jpg",
+   "page": "Kangaroo",
+   "by": "Charles J. Sharp",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Gentoo_Penguin.png/330px-Gentoo_Penguin.png",
+   "page": "Gentoo penguin",
+   "by": "Nrg800",
+   "lic": "CC BY-SA 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bicho-pregui%C3%A7a_3.jpg/330px-Bicho-pregui%C3%A7a_3.jpg",
+   "page": "Sloth",
+   "by": "Daniella Maraschiello",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": null,
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/SaltwaterCrocodile%28%27Maximo%27%29.jpg/330px-SaltwaterCrocodile%28%27Maximo%27%29.jpg",
+   "page": "Saltwater crocodile",
+   "by": "Obtained from Molly Ebersold of the St. Augustine Alligator Farm",
+   "lic": "Public domain"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Spotted_hyena_%28Crocuta_crocuta%29.jpg/330px-Spotted_hyena_%28Crocuta_crocuta%29.jpg",
+   "page": "Spotted hyena",
+   "by": "Charles J. Sharp",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Aedes_aegypti.jpg/330px-Aedes_aegypti.jpg",
+   "page": "Mosquito",
+   "by": "Muhammad Mahdi Karim",
+   "lic": "GFDL 1.2"
+  }
+ },
+ "countries": {
+  "0": null,
+  "1": null,
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/330px-Flag_of_Turkey.svg.png",
+   "page": "Turkey",
+   "by": "David Benbennick (original author)",
+   "lic": "Public domain"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Flag_of_Switzerland_%28Pantone%29.svg/330px-Flag_of_Switzerland_%28Pantone%29.svg.png",
+   "page": "Switzerland",
+   "by": "Unknown Vector graphics: Flag_of_Switzerland.svg: User:Marc Mongenet Credits: Us",
+   "lic": "Public domain"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Maldives.svg/330px-Flag_of_Maldives.svg.png",
+   "page": "Maldives",
+   "by": "See File history, below, for details.",
+   "lic": "Public domain"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Flag_of_Thailand.svg/330px-Flag_of_Thailand.svg.png",
+   "page": "Thailand",
+   "by": "Zscout370",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Flag_of_the_Kingdom_of_Spain.svg/330px-Flag_of_the_Kingdom_of_Spain.svg.png",
+   "page": "Spain",
+   "by": "Antonio Valdés y Fernández Bazán",
+   "lic": "Public domain"
+  },
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Egypt.svg/330px-Flag_of_Egypt.svg.png",
+   "page": "Egypt",
+   "by": "See File history below for details.",
+   "lic": "Public domain"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Flag_of_Australia_%28converted%29.svg/330px-Flag_of_Australia_%28converted%29.svg.png",
+   "page": "Australia",
+   "by": "Unknown (Vector graphics image by Ian Fieggen) (only minor code changes by uploa",
+   "lic": "Public domain"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Greece.svg/330px-Flag_of_Greece.svg.png",
+   "page": "Greece",
+   "by": "Unknown authorUnknown author",
+   "lic": "Public domain"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/330px-Flag_of_Canada_%28Pantone%29.svg.png",
+   "page": "Canada",
+   "by": "Original: George F. G. Stanley Modified by: The original uploader was Illegitima",
+   "lic": "Public domain"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/330px-Flag_of_Malaysia.svg.png",
+   "page": "Malaysia",
+   "by": "MapGrid (old version SKopp, Zscout370 and Ranking Update)",
+   "lic": "Public domain"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Iceland.svg/330px-Flag_of_Iceland.svg.png",
+   "page": "Iceland",
+   "by": "Original: Matthías Þórðarson Vector: Árni Dagur and Magasjukur2",
+   "lic": "Public domain"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Flag_of_Mongolia.svg/330px-Flag_of_Mongolia.svg.png",
+   "page": "Mongolia",
+   "by": "See File history below for details.",
+   "lic": "Public domain"
+  },
+  "15": null
+ },
+ "cities": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Historical_peninsula_and_modern_skyline_of_Istanbul.jpg/330px-Historical_peninsula_and_modern_skyline_of_Istanbul.jpg",
+   "page": "Istanbul",
+   "by": "Hunanuk",
+   "lic": "CC0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/330px-Skyscrapers_of_Shinjuku_2009_January.jpg",
+   "page": "Tokyo",
+   "by": "Morio",
+   "lic": "CC BY-SA 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg/330px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg",
+   "page": "Paris",
+   "by": "Yann Caradec from Paris, France",
+   "lic": "CC BY-SA 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bali_in_Indonesia_%28special_marker%29.svg/330px-Bali_in_Indonesia_%28special_marker%29.svg.png",
+   "page": "Bali",
+   "by": "TUBS",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/London_Skyline_%28125508655%29.jpeg/330px-London_Skyline_%28125508655%29.jpeg",
+   "page": "London",
+   "by": "Ilya Grigorik",
+   "lic": "CC BY-SA 3.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Lights_of_Rockefeller_Center_during_sunset.jpg/330px-Lights_of_Rockefeller_Center_during_sunset.jpg",
+   "page": "New York City",
+   "by": "Pedro Lastra",
+   "lic": "CC0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Hunza_Valley_HDR.jpg/330px-Hunza_Valley_HDR.jpg",
+   "page": "Hunza Valley",
+   "by": "FaizanAhmad",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/2011_Dimos_Thiras.png/330px-2011_Dimos_Thiras.png",
+   "page": "Santorini",
+   "by": "Pitichinaccio",
+   "lic": "CC BY 3.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg/330px-Trevi_Fountain%2C_Rome%2C_Italy_2_-_May_2007.jpg",
+   "page": "Rome",
+   "by": "Diliff",
+   "lic": "CC BY 3.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Cappadocia_balloon_trip%2C_Ortahisar_Castle_%2811893715185%29.jpg/330px-Cappadocia_balloon_trip%2C_Ortahisar_Castle_%2811893715185%29.jpg",
+   "page": "Cappadocia",
+   "by": "Arian Zwegers from Brussels, Belgium",
+   "lic": "CC BY 2.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/4Y1A1159_Bangkok_%2833536795515%29.jpg/330px-4Y1A1159_Bangkok_%2833536795515%29.jpg",
+   "page": "Bangkok",
+   "by": "Ninara from Helsinki, Finland",
+   "lic": "CC BY 2.0"
+  },
+  "12": null,
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Las_Vegas_from_above_%2840064746644%29.jpg/330px-Las_Vegas_from_above_%2840064746644%29.jpg",
+   "page": "Las Vegas",
+   "by": "Mike McBey",
+   "lic": "CC BY 2.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bukit_Bintang_junction_in_2024_2.jpg/330px-Bukit_Bintang_junction_in_2024_2.jpg",
+   "page": "Kuala Lumpur",
+   "by": "Renek78",
+   "lic": "CC0"
+  },
+  "15": null
+ },
+ "footballers": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Leo_Messi_Argentina_v_Egypt_7_July_2026-1.jpg/330px-Leo_Messi_Argentina_v_Egypt_7_July_2026-1.jpg",
+   "page": "Lionel Messi",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Cristiano_Ronaldo_Croatia_v_Portugal_2_July_2026-075_%28cropped%29.jpg/330px-Cristiano_Ronaldo_Croatia_v_Portugal_2_July_2026-075_%28cropped%29.jpg",
+   "page": "Cristiano Ronaldo",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Kylian_Mbappe_France_v_Senegal_16_June_2026-391_%28cropped%29.jpg/330px-Kylian_Mbappe_France_v_Senegal_16_June_2026-391_%28cropped%29.jpg",
+   "page": "Kylian Mbappé",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg/330px-Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg",
+   "page": "Erling Haaland",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Neymar_Junior_Brazil_V_Morocco_13_June_2026-40.jpg/330px-Neymar_Junior_Brazil_V_Morocco_13_June_2026-40.jpg",
+   "page": "Neymar",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Jude_Bellingham_England_v_Ghana_23_June_2026-061_%28cropped%29.jpg/330px-Jude_Bellingham_England_v_Ghana_23_June_2026-061_%28cropped%29.jpg",
+   "page": "Jude Bellingham",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Vin%C3%ADcius_J%C3%BAnior_Brazil_V_Morocco_13_June_2026-207_%28cropped%29.jpg/330px-Vin%C3%ADcius_J%C3%BAnior_Brazil_V_Morocco_13_June_2026-207_%28cropped%29.jpg",
+   "page": "Vinícius Júnior",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Mohamed_Salah_Argentina_v_Egypt_7_July_2026-163_%28cropped%29.jpg/330px-Mohamed_Salah_Argentina_v_Egypt_7_July_2026-163_%28cropped%29.jpg",
+   "page": "Mohamed Salah",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Kevin_De_Bruyne_USMNT_v_Belgium_Mar_28_2026-64_%28cropped%29.jpg/330px-Kevin_De_Bruyne_USMNT_v_Belgium_Mar_28_2026-64_%28cropped%29.jpg",
+   "page": "Kevin De Bruyne",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Lamine_Yamal_France_v_Spain_7.24.26-142.jpg/330px-Lamine_Yamal_France_v_Spain_7.24.26-142.jpg",
+   "page": "Lamine Yamal",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Luka_Modric_Croatia_v_Portugal_2_July_2026-055.jpg/330px-Luka_Modric_Croatia_v_Portugal_2_July_2026-055.jpg",
+   "page": "Luka Modrić",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Harry_Kane_England_v_Ghana_23_June_2026-219_%28cropped%29.jpg/330px-Harry_Kane_England_v_Ghana_23_June_2026-219_%28cropped%29.jpg",
+   "page": "Harry Kane",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/2019147183134_2019-05-27_Fussball_1.FC_Kaiserslautern_vs_FC_Bayern_M%C3%BCnchen_-_Sven_-_1D_X_MK_II_-_0228_-_B70I8527_%28cropped%29.jpg/330px-2019147183134_2019-05-27_Fussball_1.FC_Kaiserslautern_vs_FC_Bayern_M%C3%BCnchen_-_Sven_-_1D_X_MK_II_-_0228_-_B70I8527_%28cropped%29.jpg",
+   "page": "Robert Lewandowski",
+   "by": "Sven Mandel",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/BFA_2023_-2_Heung-Min_Son_%28cropped%29.jpg/330px-BFA_2023_-2_Heung-Min_Son_%28cropped%29.jpg",
+   "page": "Son Heung-min",
+   "by": "Ujishadow",
+   "lic": "CC BY-SA 4.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/FRA-ARG_%2810%29_%28cropped%29.jpg/330px-FRA-ARG_%2810%29_%28cropped%29.jpg",
+   "page": "Antoine Griezmann",
+   "by": "Антон Зайцев",
+   "lic": "CC BY-SA 3.0"
+  },
+  "15": null
+ },
+ "clubs": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Evening_light_over_Barcelona.jpg/330px-Evening_light_over_Barcelona.jpg",
+   "page": "Barcelona",
+   "by": "M McBey",
+   "lic": "CC BY 2.0"
+  },
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Pier_Head%2C_Liverpool_-_geograph.org.uk_-_3059094.jpg/330px-Pier_Head%2C_Liverpool_-_geograph.org.uk_-_3059094.jpg",
+   "page": "Liverpool",
+   "by": "Peter Tarleton",
+   "lic": "CC BY-SA 2.0"
+  },
+  "4": null,
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/View_of_the_entrance_to_the_Arsenal_by_Canaletto%2C_1732.jpg/330px-View_of_the_entrance_to_the_Arsenal_by_Canaletto%2C_1732.jpg",
+   "page": "Arsenal",
+   "by": "Canaletto",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/FC_Bayern_M%C3%BCnchen_logo_%282024%29.svg/330px-FC_Bayern_M%C3%BCnchen_logo_%282024%29.svg.png",
+   "page": "FC Bayern Munich",
+   "by": "FC Bayern Munich",
+   "lic": "Public domain"
+  },
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Juventus_FC_-_logo_black_%28Italy%2C_2020%29.svg/330px-Juventus_FC_-_logo_black_%28Italy%2C_2020%29.svg.png",
+   "page": "Juventus FC",
+   "by": "Interbrand – Global Brand Consultancy / Juventus Football Club SpA",
+   "lic": "Public domain"
+  },
+  "9": null,
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/FC_Internazionale_Milano_2021.svg/330px-FC_Internazionale_Milano_2021.svg.png",
+   "page": "Inter Milan",
+   "by": "FC Internazionale Milano S.p.A. / Bureau Borsche",
+   "lic": "Public domain"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Borussia_Dortmund_logo.svg/330px-Borussia_Dortmund_logo.svg.png",
+   "page": "Borussia Dortmund",
+   "by": "Lispir (Lispir)",
+   "lic": "Public domain"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/330px-Logo_of_AC_Milan.svg.png",
+   "page": "AC Milan",
+   "by": "A.C. Milan Uploaded by Vargklo at en.wikipedia",
+   "lic": "Public domain"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Tottenham_Hotspur_new_stadium_2019.jpg/330px-Tottenham_Hotspur_new_stadium_2019.jpg",
+   "page": "Tottenham",
+   "by": "Acabashi",
+   "lic": "CC BY-SA 4.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Nassr_FC_Logo.svg/330px-Nassr_FC_Logo.svg.png",
+   "page": "Al-Nassr FC",
+   "by": "Al Nassr FC",
+   "lic": "Public domain"
+  },
+  "15": null
+ },
+ "cricketers": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Babar_azam_2023.jpg/330px-Babar_azam_2023.jpg",
+   "page": "Babar Azam",
+   "by": "ICNA",
+   "lic": "CC BY 3.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg/330px-Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg",
+   "page": "Virat Kohli",
+   "by": "Prime Minister's Office",
+   "lic": "GODL-India"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Shaheen_Afridi_jogging_Sri_Lanka_vs_Pakistan_-_2nd_TEST_Match_-_SSC%2C_Colombo_%28cropped%29.jpg/330px-Shaheen_Afridi_jogging_Sri_Lanka_vs_Pakistan_-_2nd_TEST_Match_-_SSC%2C_Colombo_%28cropped%29.jpg",
+   "page": "Shaheen Shah Afridi",
+   "by": "Nazly Ahmed",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Shahid_Afridi_in_2017_%283x4_cropped%29.jpg/330px-Shahid_Afridi_in_2017_%283x4_cropped%29.jpg",
+   "page": "Shahid Afridi",
+   "by": "Shehbaz Sharif",
+   "lic": "CC BY 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Wasim-akram-gesf-2018-7878.jpg/330px-Wasim-akram-gesf-2018-7878.jpg",
+   "page": "Wasim Akram",
+   "by": "Fuzheado",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/MS_Dhoni_%28Prabhav_%2723_-_RiGI_2023%29.jpg/330px-MS_Dhoni_%28Prabhav_%2723_-_RiGI_2023%29.jpg",
+   "page": "MS Dhoni",
+   "by": "RIGI",
+   "lic": "CC BY 3.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/AB_de_Villiers_2.jpg/330px-AB_de_Villiers_2.jpg",
+   "page": "AB de Villiers",
+   "by": "paddynapper",
+   "lic": "CC BY-SA 2.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/3_14_Captain_Ben_%28cropped%29_%28cropped%29.jpg/330px-3_14_Captain_Ben_%28cropped%29_%28cropped%29.jpg",
+   "page": "Ben Stokes",
+   "by": "Dave Morton",
+   "lic": "Public domain"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Jasprit_Bumrah_in_PMO_New_Delhi.jpg/330px-Jasprit_Bumrah_in_PMO_New_Delhi.jpg",
+   "page": "Jasprit Bumrah",
+   "by": "Prime Minister's Office",
+   "lic": "GODL-India"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Rashid_Khan.jpg/330px-Rashid_Khan.jpg",
+   "page": "Rashid Khan",
+   "by": "Afghanistan Cricket Board",
+   "lic": "CC BY 3.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg/330px-The_cricket_legend_Sachin_Tendulkar_at_the_Oval_Maidan_in_Mumbai_During_the_Duke_and_Duchess_of_Cambridge_Visit%2826271019082%29.jpg",
+   "page": "Sachin Tendulkar",
+   "by": "British High Commission, New Delhi",
+   "lic": "CC BY-SA 2.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Prime_Minister_Imran_Khan_Adresses_the_Forum_01.jpg/330px-Prime_Minister_Imran_Khan_Adresses_the_Forum_01.jpg",
+   "page": "Imran Khan",
+   "by": "Imran Khan",
+   "lic": "CC BY 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/STEVE_SMITH_%2811705303043%29.jpg/330px-STEVE_SMITH_%2811705303043%29.jpg",
+   "page": "Steve Smith (cricketer)",
+   "by": "NAPARAZZI",
+   "lic": "CC BY-SA 2.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kane_Williamson_in_2019.jpg/330px-Kane_Williamson_in_2019.jpg",
+   "page": "Kane Williamson",
+   "by": "Mark Lockett",
+   "lic": "CC BY-SA 2.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Two_views_of_Chris_Gayle_%2848020785077%29.jpg/330px-Two_views_of_Chris_Gayle_%2848020785077%29.jpg",
+   "page": "Chris Gayle",
+   "by": "Dun.can from Leicestershire, UK",
+   "lic": "CC BY 2.0"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Third_umpire_lights_at_Melbourne_Cricket_Ground.JPG/330px-Third_umpire_lights_at_Melbourne_Cricket_Ground.JPG",
+   "page": "Third umpire",
+   "by": "Tarcus at English Wikipedia",
+   "lic": "Public domain"
+  }
+ },
+ "nba": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/LeBron_James_%2851959977144%29_%28cropped2%29.jpg/330px-LeBron_James_%2851959977144%29_%28cropped2%29.jpg",
+   "page": "LeBron James",
+   "by": "Erik Drost",
+   "lic": "CC BY 2.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Stephen_Curry%2C_Olympic_Games_2024_%28cropped%29.jpg/330px-Stephen_Curry%2C_Olympic_Games_2024_%28cropped%29.jpg",
+   "page": "Stephen Curry",
+   "by": "Clément Bardot",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Nikola_Jokic_free_throw_%28cropped%29.jpg/330px-Nikola_Jokic_free_throw_%28cropped%29.jpg",
+   "page": "Nikola Jokić",
+   "by": "All-Pro Reels",
+   "lic": "CC BY-SA 2.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Giannis_Antetokounmpo_%2851915153421%29_%28cropped%29.jpg/330px-Giannis_Antetokounmpo_%2851915153421%29_%28cropped%29.jpg",
+   "page": "Giannis Antetokounmpo",
+   "by": "Erik Drost",
+   "lic": "CC BY 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Luka_Don%C4%8Di%C4%87_and_Marines%2C_2026_%28cropped%29.jpg/330px-Luka_Don%C4%8Di%C4%87_and_Marines%2C_2026_%28cropped%29.jpg",
+   "page": "Luka Dončić",
+   "by": "U.S. Embassy Ljubljana",
+   "lic": "Public domain"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Kevin_Durant%2C_Paris_2024_%28cropped%29.jpg/330px-Kevin_Durant%2C_Paris_2024_%28cropped%29.jpg",
+   "page": "Kevin Durant",
+   "by": "Clément Bardot",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/2023-08-09_Deutschland_gegen_Kanada_%28Basketball-L%C3%A4nderspiel%29_by_Sandro_Halank%E2%80%93109.jpg/330px-2023-08-09_Deutschland_gegen_Kanada_%28Basketball-L%C3%A4nderspiel%29_by_Sandro_Halank%E2%80%93109.jpg",
+   "page": "Shai Gilgeous-Alexander",
+   "by": "Sandro Halank, Wikimedia Commons",
+   "lic": "CC BY-SA 4.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Celtics_at_Wizards_2024-12-044_%28cropped_2%29.jpg/330px-Celtics_at_Wizards_2024-12-044_%28cropped_2%29.jpg",
+   "page": "Jayson Tatum",
+   "by": "Hameltion",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Anthony_Edwards_Argentina_v_Egypt_7_July_2026-069_%28cropped%29.jpg/330px-Anthony_Edwards_Argentina_v_Egypt_7_July_2026-069_%28cropped%29.jpg",
+   "page": "Anthony Edwards (basketball)",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Victor_Wembanyama_San_Antonio_Spurs_2024.jpg/330px-Victor_Wembanyama_San_Antonio_Spurs_2024.jpg",
+   "page": "Victor Wembanyama",
+   "by": "Frenchieinportland",
+   "lic": "CC BY 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Joel_Embiid_2019.jpg/330px-Joel_Embiid_2019.jpg",
+   "page": "Joel Embiid",
+   "by": "All-Pro Reels",
+   "lic": "CC BY-SA 2.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Ja_Morant_2021.jpg/330px-Ja_Morant_2021.jpg",
+   "page": "Ja Morant",
+   "by": "All-Pro Reels",
+   "lic": "CC BY-SA 2.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Kyrie_Irving_%2851830909437%29_%28cropped%29.jpg/330px-Kyrie_Irving_%2851830909437%29_%28cropped%29.jpg",
+   "page": "Kyrie Irving",
+   "by": "Erik Drost",
+   "lic": "CC BY 2.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Devin_Booker%2C_Olympic_Games_2024_%28cropped%29.jpg/330px-Devin_Booker%2C_Olympic_Games_2024_%28cropped%29.jpg",
+   "page": "Devin Booker",
+   "by": "Clément Bardot",
+   "lic": "CC BY-SA 4.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/CES_2026_-_Jimmy_Butler_01_%28cropped%29.jpg/330px-CES_2026_-_Jimmy_Butler_01_%28cropped%29.jpg",
+   "page": "Jimmy Butler",
+   "by": "Xuthoria",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": null
+ },
+ "nbateams": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Los_Angeles_Lakers_logo.svg/330px-Los_Angeles_Lakers_logo.svg.png",
+   "page": "Los Angeles Lakers",
+   "by": "The original uploader was Tkgd2007 at English Wikipedia.",
+   "lic": "Public domain"
+  },
+  "1": null,
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Logo_of_Chicago_Bulls.svg/330px-Logo_of_Chicago_Bulls.svg.png",
+   "page": "Chicago Bulls",
+   "by": "Dean Perry Wessel (1920-2004) or Ted Drake (1927-2000)",
+   "lic": "Public domain"
+  },
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null,
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Cleveland_Cavaliers_logo.svg/330px-Cleveland_Cavaliers_logo.svg.png",
+   "page": "Cleveland Cavaliers",
+   "by": "Cleveland Cavaliers. The original uploader was Gus Polly at English Wikipedia.. ",
+   "lic": "Public domain"
+  },
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Logo_of_the_Detroit_Pistons.svg/330px-Logo_of_the_Detroit_Pistons.svg.png",
+   "page": "Detroit Pistons",
+   "by": "Unknown authorUnknown author",
+   "lic": "Public domain"
+  },
+  "15": null
+ },
+ "goats": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Leo_Messi_Argentina_v_Egypt_7_July_2026-1.jpg/330px-Leo_Messi_Argentina_v_Egypt_7_July_2026-1.jpg",
+   "page": "Lionel Messi",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Michael_jordan_admad_rashad_%2851276390562%29_%28cropped%29.jpg/330px-Michael_jordan_admad_rashad_%2851276390562%29_%28cropped%29.jpg",
+   "page": "Michael Jordan",
+   "by": "Zach Catanzareti Photo",
+   "lic": "CC BY 2.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Muhammad_Ali_NYWTS.jpg/330px-Muhammad_Ali_NYWTS.jpg",
+   "page": "Muhammad Ali",
+   "by": "Ira Rosenberg",
+   "lic": "Public domain"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Serena-Smiling-2020.png/330px-Serena-Smiling-2020.png",
+   "page": "Serena Williams",
+   "by": "AndrewHenkelman",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Usain_Bolt_smiling_Berlin_2009.JPG/330px-Usain_Bolt_smiling_Berlin_2009.JPG",
+   "page": "Usain Bolt",
+   "by": "Erik van Leeuwen",
+   "lic": "GFDL"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Cristiano_Ronaldo_Croatia_v_Portugal_2_July_2026-075_%28cropped%29.jpg/330px-Cristiano_Ronaldo_Croatia_v_Portugal_2_July_2026-075_%28cropped%29.jpg",
+   "page": "Cristiano Ronaldo",
+   "by": "Bryan Berlin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Roger_Federer_2015_%28cropped%29.jpg/330px-Roger_Federer_2015_%28cropped%29.jpg",
+   "page": "Roger Federer",
+   "by": "Tatiana from Moscow, Russia",
+   "lic": "CC BY-SA 2.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/25th_Laureus_World_Sports_Awards_-_Red_Carpet_-_Tom_Brady_-_240422_191334_%28cropped%29_%28cropped%29.jpg/330px-25th_Laureus_World_Sports_Awards_-_Red_Carpet_-_Tom_Brady_-_240422_191334_%28cropped%29_%28cropped%29.jpg",
+   "page": "Tom Brady",
+   "by": "Barcex",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg/330px-Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg",
+   "page": "Virat Kohli",
+   "by": "Prime Minister's Office",
+   "lic": "GODL-India"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Wasim-akram-gesf-2018-7878.jpg/330px-Wasim-akram-gesf-2018-7878.jpg",
+   "page": "Wasim Akram",
+   "by": "Fuzheado",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Jahangir_Khan_2018.jpg/330px-Jahangir_Khan_2018.jpg",
+   "page": "Jahangir Khan",
+   "by": "TheAsianAwards",
+   "lic": "CC BY 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Prime_Minister_Keir_Starmer_meets_Sir_Lewis_Hamilton_%2854566928382%29_%28cropped%29.jpg/330px-Prime_Minister_Keir_Starmer_meets_Sir_Lewis_Hamilton_%2854566928382%29_%28cropped%29.jpg",
+   "page": "Lewis Hamilton",
+   "by": "Picture by Lauren Hurley / No 10 Downing Street",
+   "lic": "OGL 3"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Simone_Biles_National_Team_2024.jpg/330px-Simone_Biles_National_Team_2024.jpg",
+   "page": "Simone Biles",
+   "by": "Ocoudis",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/President_Donald_Trump_hosts_a_reception_honoring_Black_History_Month_%2854341713089%29_%28cropped%29.jpg/330px-President_Donald_Trump_hosts_a_reception_honoring_Black_History_Month_%2854341713089%29_%28cropped%29.jpg",
+   "page": "Tiger Woods",
+   "by": "The White House",
+   "lic": "Public domain"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Michael_Phelps_Rio_Olympics_2016.jpg/330px-Michael_Phelps_Rio_Olympics_2016.jpg",
+   "page": "Michael Phelps",
+   "by": "Agência Brasil Fotografias",
+   "lic": "CC BY 2.0"
+  },
+  "15": null
+ },
+ "rappers": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/KendrickSZASPurs230725-144_%28cropped%29_desaturated.jpg/330px-KendrickSZASPurs230725-144_%28cropped%29_desaturated.jpg",
+   "page": "Kendrick Lamar",
+   "by": "Raph_PH",
+   "lic": "CC BY 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Eminem_2021_Color_Corrected.jpg/330px-Eminem_2021_Color_Corrected.jpg",
+   "page": "Eminem",
+   "by": "Brendan_linden",
+   "lic": "CC0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Travis_Scott_sig.svg/330px-Travis_Scott_sig.svg.png",
+   "page": "Travis Scott",
+   "by": "Respective commons pages (reuploaded as SVG)",
+   "lic": "Public domain"
+  },
+  "4": null,
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/HOTSPOTATL_-_21_Savage_%26_J.Cole_Light_Birthday_Bash_ATL_2023_On_FIRE_%28xu6HKf40MX0_-_2m38s%29_%28cropped%29.jpg/330px-HOTSPOTATL_-_21_Savage_%26_J.Cole_Light_Birthday_Bash_ATL_2023_On_FIRE_%28xu6HKf40MX0_-_2m38s%29_%28cropped%29.jpg",
+   "page": "J. Cole",
+   "by": "HOTSPOTATL",
+   "lic": "CC BY 3.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kanye_West_at_the_2009_Tribeca_Film_Festival_%28crop_2%29.jpg/330px-Kanye_West_at_the_2009_Tribeca_Film_Festival_%28crop_2%29.jpg",
+   "page": "Kanye West",
+   "by": "David Shankbone",
+   "lic": "Public domain"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Nicki_Minaj_2025_%283x4_cropped%29.jpg/330px-Nicki_Minaj_2025_%283x4_cropped%29.jpg",
+   "page": "Nicki Minaj",
+   "by": "Gage Skidmore from Surprise, AZ, United States of America",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Divine_%28cropped%29.jpg/330px-Divine_%28cropped%29.jpg",
+   "page": "Divine (rapper)",
+   "by": "Bollywood Hungama",
+   "lic": "CC BY 3.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Lil_Wayne_%2823513397583%29.jpg/330px-Lil_Wayne_%2823513397583%29.jpg",
+   "page": "Lil Wayne",
+   "by": "Megan Elice Meadows",
+   "lic": "CC BY-SA 2.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/21_Savage_2018.jpg/330px-21_Savage_2018.jpg",
+   "page": "21 Savage",
+   "by": "Ralph Arvesen from Round Mountain, Texas",
+   "lic": "CC BY 2.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Tyler_The_Creator_Toronto_2025_%28cropped%29.jpg/330px-Tyler_The_Creator_Toronto_2025_%28cropped%29.jpg",
+   "page": "Tyler, the Creator",
+   "by": "Lygonstreet",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Cardi_B_at_2026_Essence_Festival_of_Culture_02_%28cropped%29_%28cropped%29.jpg/330px-Cardi_B_at_2026_Essence_Festival_of_Culture_02_%28cropped%29_%28cropped%29.jpg",
+   "page": "Cardi B",
+   "by": "Runawaymo",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ice_Spice_at_Vetements_SS26_%28cropped%29.jpg/330px-Ice_Spice_at_Vetements_SS26_%28cropped%29.jpg",
+   "page": "Ice Spice",
+   "by": "Tristanstlws",
+   "lic": "CC BY 4.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Lil_Pump_Fillmore_Auditorium_%28cropped%29.jpg/330px-Lil_Pump_Fillmore_Auditorium_%28cropped%29.jpg",
+   "page": "Lil Pump",
+   "by": "Julio Enriquez from Denver,CO, USA",
+   "lic": "CC BY 2.0"
+  },
+  "15": null
+ },
+ "singers": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Taylor_Swift_at_the_2023_MTV_Video_Music_Awards_%283%29.png/330px-Taylor_Swift_at_the_2023_MTV_Video_Music_Awards_%283%29.png",
+   "page": "Taylor Swift",
+   "by": "iHeartRadioCA",
+   "lic": "CC BY 3.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/The_Weeknd_Portrait_by_Brian_Ziff.jpg/330px-The_Weeknd_Portrait_by_Brian_Ziff.jpg",
+   "page": "The Weeknd",
+   "by": "Brian Ziff",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Atif_Aslam_at_Badlapur_%28cropped%29.jpg/330px-Atif_Aslam_at_Badlapur_%28cropped%29.jpg",
+   "page": "Atif Aslam",
+   "by": "Bollywood Hungama",
+   "lic": "CC BY 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Adele_2016.jpg/330px-Adele_2016.jpg",
+   "page": "Adele",
+   "by": "Marc E.",
+   "lic": "CC BY 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/330px-Ed_Sheeran-6886_%28cropped%29.jpg",
+   "page": "Ed Sheeran",
+   "by": "Harald Krichel",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/BillieEilishO2140725-39_-_54665577407_%28cropped%29.jpg/330px-BillieEilishO2140725-39_-_54665577407_%28cropped%29.jpg",
+   "page": "Billie Eilish",
+   "by": "Raph_PH",
+   "lic": "CC BY 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Arijit_Singh_performance_at_Chandigarh_2025.jpg/330px-Arijit_Singh_performance_at_Chandigarh_2025.jpg",
+   "page": "Arijit Singh",
+   "by": "Monit2004",
+   "lic": "CC BY 4.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/BrunoMars24KMagicWorldTourLive_%28cropped%29.jpg/330px-BrunoMars24KMagicWorldTourLive_%28cropped%29.jpg",
+   "page": "Bruno Mars",
+   "by": "slgckgc",
+   "lic": "CC BY 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Ariana_Grande_promoting_Wicked_%282024%29.jpg/330px-Ariana_Grande_promoting_Wicked_%282024%29.jpg",
+   "page": "Ariana Grande",
+   "by": "Barbie Simons",
+   "lic": "CC BY 3.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/HarryStylesWembley170623_%2865_of_93%29_%2852982678051%29_%28cropped_2%29.jpg/330px-HarryStylesWembley170623_%2865_of_93%29_%2852982678051%29_%28cropped_2%29.jpg",
+   "page": "Harry Styles",
+   "by": "Raph_PH",
+   "lic": "CC BY 2.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Ali_Zafar%2C_VOA_%281%29.jpg/330px-Ali_Zafar%2C_VOA_%281%29.jpg",
+   "page": "Ali Zafar",
+   "by": "Waseem Siddiqui, VOA Urdu",
+   "lic": "Public domain"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Rihanna_Fenty_2018.png/330px-Rihanna_Fenty_2018.png",
+   "page": "Rihanna",
+   "by": "SIGMA",
+   "lic": "CC BY 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Dua_Lipa-69798_%28cropped%29.jpg/330px-Dua_Lipa-69798_%28cropped%29.jpg",
+   "page": "Dua Lipa",
+   "by": "Harald Krichel",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/P20260719DT-1213_President_Donald_J._Trump_and_First_Lady_Melania_Trump_attend_the_FIFA_World_Cup_Final_%28cropped_2%29.jpg/330px-P20260719DT-1213_President_Donald_J._Trump_and_First_Lady_Melania_Trump_attend_the_FIFA_World_Cup_Final_%28cropped_2%29.jpg",
+   "page": "Justin Bieber",
+   "by": "Daniel Torok",
+   "lic": "Public domain"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Sabrina_Carpenter_-_O2_Arena_2025_-_086_%28cropped_2%29.jpg/330px-Sabrina_Carpenter_-_O2_Arena_2025_-_086_%28cropped_2%29.jpg",
+   "page": "Sabrina Carpenter",
+   "by": "Raph_PH",
+   "lic": "CC BY 2.0"
+  },
+  "15": null
+ },
+ "celebs": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Deadpool_2_Japan_Premiere_Red_Carpet_Ryan_Reynolds_%28cropped%29.jpg/330px-Deadpool_2_Japan_Premiere_Red_Carpet_Ryan_Reynolds_%28cropped%29.jpg",
+   "page": "Ryan Reynolds",
+   "by": "Dick Thomas Johnson from Tokyo, Japan",
+   "lic": "CC BY 2.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Zendaya-byPhilipRomano.jpg/330px-Zendaya-byPhilipRomano.jpg",
+   "page": "Zendaya",
+   "by": "PhilipRomano",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Keanu_Reeves_at_TIFF_2025_02_%28Cropped%29.jpg/330px-Keanu_Reeves_at_TIFF_2025_02_%28Cropped%29.jpg",
+   "page": "Keanu Reeves",
+   "by": "Gabriel Hutchinson",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Shah_Rukh_Khan_graces_the_launch_of_the_new_Santro.jpg/330px-Shah_Rukh_Khan_graces_the_launch_of_the_new_Santro.jpg",
+   "page": "Shah Rukh Khan",
+   "by": "Bollywood Hungama",
+   "lic": "CC BY 3.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Dwayne_Johnson-1764_%284x5_cropped_with_moderate_headroom%29.jpg/330px-Dwayne_Johnson-1764_%284x5_cropped_with_moderate_headroom%29.jpg",
+   "page": "Dwayne Johnson",
+   "by": "Harald Krichel",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Taylor_Swift_at_the_2023_MTV_Video_Music_Awards_%283%29.png/330px-Taylor_Swift_at_the_2023_MTV_Video_Music_Awards_%283%29.png",
+   "page": "Taylor Swift",
+   "by": "iHeartRadioCA",
+   "lic": "CC BY 3.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/TomHolland-byPhilipRomano.jpg/330px-TomHolland-byPhilipRomano.jpg",
+   "page": "Tom Holland",
+   "by": "PhilipRomano",
+   "lic": "CC BY-SA 4.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Fawad_khan_at_grazia_young_faishon_awards.jpg/330px-Fawad_khan_at_grazia_young_faishon_awards.jpg",
+   "page": "Fawad Khan",
+   "by": "Bollywood Hungama",
+   "lic": "CC BY 3.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Beyonc%C3%A9_-_Tottenham_Hotspur_Stadium_-_1st_June_2023_%2810_of_118%29_%2852946364598%29_%28best_crop%29.jpg/330px-Beyonc%C3%A9_-_Tottenham_Hotspur_Stadium_-_1st_June_2023_%2810_of_118%29_%2852946364598%29_%28best_crop%29.jpg",
+   "page": "Beyoncé",
+   "by": "Raph_PH",
+   "lic": "CC BY 2.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Rihanna_Fenty_2018.png/330px-Rihanna_Fenty_2018.png",
+   "page": "Rihanna",
+   "by": "SIGMA",
+   "lic": "CC BY 3.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Tom_Cruise_at_53rd_Saturn_Awards_2026-01.jpg/330px-Tom_Cruise_at_53rd_Saturn_Awards_2026-01.jpg",
+   "page": "Tom Cruise",
+   "by": "Kevin Paul",
+   "lic": "CC BY 4.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Selena_Gomez_at_the_2024_Toronto_International_Film_Festival_10_%28cropped%29.jpg/330px-Selena_Gomez_at_the_2024_Toronto_International_Film_Festival_10_%28cropped%29.jpg",
+   "page": "Selena Gomez",
+   "by": "Frank Sun",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Elon_Musk_%2854816836217%29_%28cropped_5%29.jpg/330px-Elon_Musk_%2854816836217%29_%28cropped_5%29.jpg",
+   "page": "Elon Musk",
+   "by": "Gage Skidmore",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Kim_Kardashian_West_2014.jpg/330px-Kim_Kardashian_West_2014.jpg",
+   "page": "Kim Kardashian",
+   "by": "Eva Rinaldi",
+   "lic": "CC BY-SA 2.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Jake_Paul_March_2026_%283x4_cropped%29.jpg/330px-Jake_Paul_March_2026_%283x4_cropped%29.jpg",
+   "page": "Jake Paul",
+   "by": "The White House",
+   "lic": "Public domain"
+  },
+  "15": null
+ },
+ "cars": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Headquarter_of_Toyota_Motor_Corporation_3.JPG/330px-Headquarter_of_Toyota_Motor_Corporation_3.JPG",
+   "page": "Toyota",
+   "by": "Tokumeigakarinoaoshima",
+   "lic": "CC0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Mercedes-Benz_Star_%281969-1986%2C_2025-%29.svg/330px-Mercedes-Benz_Star_%281969-1986%2C_2025-%29.svg.png",
+   "page": "Mercedes-Benz",
+   "by": "Mercedes-Benz",
+   "lic": "Public domain"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Logo_BMW_Group_2021.svg/330px-Logo_BMW_Group_2021.svg.png",
+   "page": "BMW",
+   "by": "BMW Group",
+   "lic": "Public domain"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tesla_Motors.svg/330px-Tesla_Motors.svg.png",
+   "page": "Tesla, Inc.",
+   "by": "Tesla",
+   "lic": "Public domain"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Porsche_headquarter_Stuttgart-Zuffenhausen_Werk_II.jpg/330px-Porsche_headquarter_Stuttgart-Zuffenhausen_Werk_II.jpg",
+   "page": "Porsche",
+   "by": "Str1ke",
+   "lic": "CC BY 2.0"
+  },
+  "5": null,
+  "6": null,
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Toranomon_Alcea_Tower_26Dec2025.jpg/330px-Toranomon_Alcea_Tower_26Dec2025.jpg",
+   "page": "Honda",
+   "by": "Horocassi234",
+   "lic": "CC0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Das_Audi_Forum_Ingolstadt.JPG/330px-Das_Audi_Forum_Ingolstadt.JPG",
+   "page": "Audi",
+   "by": "SamaKM",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/2022_Land_Rover_Range_Rover_SE_P440e_AWD_Automatic_3.0_Front.jpg/330px-2022_Land_Rover_Range_Rover_SE_P440e_AWD_Automatic_3.0_Front.jpg",
+   "page": "Range Rover",
+   "by": "Vauxford",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": null,
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Kia_buildings_New_Logo.png/330px-Kia_buildings_New_Logo.png",
+   "page": "Kia",
+   "by": "Ip juga",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/HyundaiMotorsCompany_KiaMotorsCompany.jpg/330px-HyundaiMotorsCompany_KiaMotorsCompany.jpg",
+   "page": "Hyundai Motor Company",
+   "by": "HappyMidnight",
+   "lic": "CC BY-SA 3.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Suzuki_logo_2025_%28vertical%29.svg/330px-Suzuki_logo_2025_%28vertical%29.svg.png",
+   "page": "Suzuki",
+   "by": "Suzuki Motor Corporation",
+   "lic": "Public domain"
+  },
+  "14": null,
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/JapaneseRickshaw.jpg/330px-JapaneseRickshaw.jpg",
+   "page": "Rickshaw",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  }
+ },
+ "clothes": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Nike_Campus%2C_Beaverton_-_DPLA_-_ffa63f1bbaf5cd21aeada3d3978db2b0.jpg/330px-Nike_Campus%2C_Beaverton_-_DPLA_-_ffa63f1bbaf5cd21aeada3d3978db2b0.jpg",
+   "page": "Nike, Inc.",
+   "by": "Gary Halvorson, Oregon State Archives",
+   "lic": "CC BY 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Adidas_2022_logo.svg/330px-Adidas_2022_logo.svg.png",
+   "page": "Adidas",
+   "by": "Adidas",
+   "lic": "Public domain"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Zara_Storefront_%2848155639387%29.jpg/330px-Zara_Storefront_%2848155639387%29.jpg",
+   "page": "Zara (retailer)",
+   "by": "Ajay Suresh from New York, NY, USA",
+   "lic": "CC BY 2.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Gucci_NYC_Flagship_%2848064046878%29.jpg/330px-Gucci_NYC_Flagship_%2848064046878%29.jpg",
+   "page": "Gucci",
+   "by": "Ajay Suresh from New York, NY, USA",
+   "lic": "CC BY 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Gecina_-101_champs_elysees.jpg/330px-Gecina_-101_champs_elysees.jpg",
+   "page": "Louis Vuitton",
+   "by": "Gecina",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Khaadi_logo_%282022%29.png/330px-Khaadi_logo_%282022%29.png",
+   "page": "Khaadi",
+   "by": "Khaadi",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Supreme_Logo.svg/330px-Supreme_Logo.svg.png",
+   "page": "Supreme (brand)",
+   "by": "Bizart",
+   "lic": "Public domain"
+  },
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Levi%27s_Times_Square_NYC_-_May_2026.jpg/330px-Levi%27s_Times_Square_NYC_-_May_2026.jpg",
+   "page": "Levi Strauss & Co.",
+   "by": "Nielsoncaetanosalmeron",
+   "lic": "CC BY 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/H%26M-Logo.svg/330px-H%26M-Logo.svg.png",
+   "page": "H&M",
+   "by": "Original: Unknown Vector: Afrank99",
+   "lic": "Public domain"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Uniqlo_Ginza_2018.jpg/330px-Uniqlo_Ginza_2018.jpg",
+   "page": "Uniqlo",
+   "by": "Wpcpey",
+   "lic": "CC BY-SA 4.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Ideas%2C_Dolmen_Mall%2C_Tariq_Road%2C_Karachi.jpg/330px-Ideas%2C_Dolmen_Mall%2C_Tariq_Road%2C_Karachi.jpg",
+   "page": "Gul Ahmed",
+   "by": "Sareena Moin",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/New_Balance_logo.svg/330px-New_Balance_logo.svg.png",
+   "page": "New Balance",
+   "by": "New Balance",
+   "lic": "Public domain"
+  },
+  "13": null,
+  "14": null,
+  "15": null
+ },
+ "accessories": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Rolex_Oyster_Perpetual_with_a_%22Jubliee%22_dial.jpg/330px-Rolex_Oyster_Perpetual_with_a_%22Jubliee%22_dial.jpg",
+   "page": "Watch",
+   "by": "Camwolf12",
+   "lic": "CC0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Allef_Vinicius_2016-10-20_%28Unsplash%29_%28cropped%29.jpg/330px-Allef_Vinicius_2016-10-20_%28Unsplash%29_%28cropped%29.jpg",
+   "page": "Sunglasses",
+   "by": "Allef Vinicius seteales",
+   "lic": "CC0"
+  },
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/AirPods_4_ANC_and_case.jpg/330px-AirPods_4_ANC_and_case.jpg",
+   "page": "AirPods",
+   "by": "SimplyPops",
+   "lic": "CC0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Broad_chain_closeup.jpg/330px-Broad_chain_closeup.jpg",
+   "page": "Chain",
+   "by": "Toni Lozano",
+   "lic": "CC BY 2.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Chain_maille_bracelet_in_Double_Spiral_weave_arp.jpg/330px-Chain_maille_bracelet_in_Double_Spiral_weave_arp.jpg",
+   "page": "Jump rings",
+   "by": "Myself (Adrian Pingstone).",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Rucksack1.jpg/330px-Rucksack1.jpg",
+   "page": "Backpack",
+   "by": "de:Benutzer:sjr",
+   "lic": "CC BY-SA 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Gold_charm_bracelet.JPG/330px-Gold_charm_bracelet.JPG",
+   "page": "Bracelet",
+   "by": "Mabsal",
+   "lic": "Public domain"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/330px-WalletMpegMan.jpg",
+   "page": "Wallet",
+   "by": "The original uploader was TheArmadillo at English Wikipedia.. Uploaded to Common",
+   "lic": "CC BY-SA 3.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/100%25_Kaschmir_Wolle_vonk_kaschmirprodukte.de.jpg/330px-100%25_Kaschmir_Wolle_vonk_kaschmirprodukte.de.jpg",
+   "page": "Scarf",
+   "by": "https://www.kaschmirprodukte.de",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Entrelac-hat.jpg/330px-Entrelac-hat.jpg",
+   "page": "Knit cap",
+   "by": "No machine-readable author provided. CommonsHelper2 Bot assumed (based on copyri",
+   "lic": "Public domain"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Germany_Belt-and-Buckle-02.jpg/330px-Germany_Belt-and-Buckle-02.jpg",
+   "page": "Belt (clothing)",
+   "by": "CEphoto, Uwe Aranas",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Positions_of_earrings.jpg/330px-Positions_of_earrings.jpg",
+   "page": "Earring",
+   "by": "Modified by User:Nicor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Fannypack1a.jpg/330px-Fannypack1a.jpg",
+   "page": "Fanny pack",
+   "by": "No machine-readable author provided. RJFJR assumed (based on copyright claims).",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/A_fedora_hat%2C_made_by_Borsalino.jpg/330px-A_fedora_hat%2C_made_by_Borsalino.jpg",
+   "page": "Fedora",
+   "by": "Kjetil Ree",
+   "lic": "CC BY 2.5"
+  },
+  "15": null
+ },
+ "gym": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Bench_press_1.jpg/330px-Bench_press_1.jpg",
+   "page": "Bench press",
+   "by": "Lance Cpl. Ronald W. Stauffer",
+   "lic": "Public domain"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Deadlift-phase_1.JPG/330px-Deadlift-phase_1.JPG",
+   "page": "Deadlift",
+   "by": "stu_spivack",
+   "lic": "CC BY-SA 2.0"
+  },
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Huggies_Pull-Ups_Wetness_Indicator.png/330px-Huggies_Pull-Ups_Wetness_Indicator.png",
+   "page": "Huggies Pull-Ups",
+   "by": "LakesideMiners",
+   "lic": "CC0"
+  },
+  "4": null,
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Exercise_Treadmill_Convey_Motion.jpg/330px-Exercise_Treadmill_Convey_Motion.jpg",
+   "page": "Treadmill",
+   "by": "Larry D. Moore",
+   "lic": "CC BY 4.0"
+  },
+  "6": null,
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Competition_kettlebell_16_kilo.jpg/330px-Competition_kettlebell_16_kilo.jpg",
+   "page": "Kettlebell",
+   "by": "Knuckles",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": null,
+  "9": null,
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ghanaian_kid_%28skipping_rope%29_06_%28cropped%29.jpg/330px-Ghanaian_kid_%28skipping_rope%29_06_%28cropped%29.jpg",
+   "page": "Skipping rope",
+   "by": "Pambelle12",
+   "lic": "CC BY-SA 4.0"
+  },
+  "11": null,
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Muscle_Strengthening_at_the_Gym_-_Seated_Leg_Press.webm/250px--Muscle_Strengthening_at_the_Gym_-_Seated_Leg_Press.webm.jpg",
+   "page": "Leg press",
+   "by": "Centers for Disease Control and Prevention",
+   "lic": "Public domain"
+  },
+  "13": null,
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Airborne_Burpee.jpg/330px-Airborne_Burpee.jpg",
+   "page": "Burpee (exercise)",
+   "by": "Marine Corps photo by Sgt. Ryan Young",
+   "lic": "Public domain"
+  },
+  "15": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Vivienne_Segal_-_Nov_1927_Vogue.jpg/330px-Vivienne_Segal_-_Nov_1927_Vogue.jpg",
+   "page": "Vibrating belt machine",
+   "by": "Sanutarium Equipment Company",
+   "lic": "Public domain"
+  }
+ },
+ "candy": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Oursons_g%C3%A9latine_march%C3%A9_Rouffignac.jpg/330px-Oursons_g%C3%A9latine_march%C3%A9_Rouffignac.jpg",
+   "page": "Gummy bear",
+   "by": "Jebulon",
+   "lic": "CC0"
+  },
+  "1": null,
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Green_and_Black%27s_dark_chocolate_bar_2.jpg/330px-Green_and_Black%27s_dark_chocolate_bar_2.jpg",
+   "page": "Chocolate bar",
+   "by": "Mx. Granger",
+   "lic": "CC0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Farbenfrohe_Lollipops%2C_Austria.jpg/330px-Farbenfrohe_Lollipops%2C_Austria.jpg",
+   "page": "Lollipop",
+   "by": "Naturpuur",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Skittles-Louisiana-2003.jpg/330px-Skittles-Louisiana-2003.jpg",
+   "page": "Skittles (confectionery)",
+   "by": "User PiccoloNamek on en.wikipedia",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/JellyBellyPile.JPG/330px-JellyBellyPile.JPG",
+   "page": "Jelly bean",
+   "by": "The original uploader was Brandon Dilbeck at English Wikipedia.",
+   "lic": "CC BY-SA 3.0"
+  },
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/White_Marshmallows.jpg/330px-White_Marshmallows.jpg",
+   "page": "Marshmallow",
+   "by": "John Morgan",
+   "lic": "CC BY 2.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Thorntonstoffee.jpg/330px-Thorntonstoffee.jpg",
+   "page": "Toffee",
+   "by": "Stratford490",
+   "lic": "CC BY-SA 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Scotch_mints.JPG/330px-Scotch_mints.JPG",
+   "page": "Mint (candy)",
+   "by": "Themightyquill",
+   "lic": "CC BY-SA 3.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Rock-Candy-Sticks.jpg/330px-Rock-Candy-Sticks.jpg",
+   "page": "Rock candy",
+   "by": "Evan-Amos",
+   "lic": "CC BY-SA 3.0"
+  },
+  "13": null,
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Illustration_Glycyrrhiza_glabra0.jpg/330px-Illustration_Glycyrrhiza_glabra0.jpg",
+   "page": "Liquorice",
+   "by": "Wikimedia Commons contributor",
+   "lic": "Public domain"
+  },
+  "15": null
+ },
+ "desibreakfast": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Fluffy_Poori_%28cropped%29.JPG/330px-Fluffy_Poori_%28cropped%29.JPG",
+   "page": "Puri (food)",
+   "by": "Vidyascooking",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Nalli_Nihari_India.jpg/330px-Nalli_Nihari_India.jpg",
+   "page": "Nihari",
+   "by": "Nilanjan Sasmal",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Triangle_paratha_%28cropped%29.JPG/330px-Triangle_paratha_%28cropped%29.JPG",
+   "page": "Paratha",
+   "by": "Nithyasrm",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Triangle_paratha_%28cropped%29.JPG/330px-Triangle_paratha_%28cropped%29.JPG",
+   "page": "Paratha",
+   "by": "Nithyasrm",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Channay06.JPG/330px-Channay06.JPG",
+   "page": "Channay",
+   "by": "Claude PIARD",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": null,
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Salt_lassi.jpg/330px-Salt_lassi.jpg",
+   "page": "Lassi",
+   "by": "Raksanand",
+   "lic": "CC BY-SA 4.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/%E0%A6%B8%E0%A7%81%E0%A6%9C%E0%A6%BF%E0%A6%B0_%E0%A6%B9%E0%A6%BE%E0%A6%B2%E0%A7%81%E0%A6%AF%E0%A6%BC%E0%A6%BE.jpg/330px-%E0%A6%B8%E0%A7%81%E0%A6%9C%E0%A6%BF%E0%A6%B0_%E0%A6%B9%E0%A6%BE%E0%A6%B2%E0%A7%81%E0%A6%AF%E0%A6%BC%E0%A6%BE.jpg",
+   "page": "Suji ka halwa",
+   "by": "Munni Akter Mim",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Chole_Kulcha_Meal_-_Order_Food_Online_in_Mumbai_%2831013272937%29.jpg/330px-Chole_Kulcha_Meal_-_Order_Food_Online_in_Mumbai_%2831013272937%29.jpg",
+   "page": "Kulcha",
+   "by": "Gaurav Nemade",
+   "lic": "CC BY-SA 2.0"
+  },
+  "10": null,
+  "11": null,
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/FrenchToast.JPG/330px-FrenchToast.JPG",
+   "page": "French toast",
+   "by": "Jonathunder",
+   "lic": "CC BY-SA 3.0"
+  },
+  "13": null,
+  "14": null,
+  "15": null
+ },
+ "mithai": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Gulab-jamun-wallpaper-1.jpg/330px-Gulab-jamun-wallpaper-1.jpg",
+   "page": "Gulab jamun",
+   "by": "Sapra5379",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Basavanagudi_Kadalekai_Parishe_%282025%29_Bangalore_%2886%29.jpg/330px-Basavanagudi_Kadalekai_Parishe_%282025%29_Bangalore_%2886%29.jpg",
+   "page": "Jalebi",
+   "by": "Gpkp",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Ras_Malai_2.JPG/330px-Ras_Malai_2.JPG",
+   "page": "Ras malai",
+   "by": "Shaharbano",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Cuisine_%28268%29_44.jpg/330px-Cuisine_%28268%29_44.jpg",
+   "page": "Gajar ka halwa",
+   "by": "AmanAgrahari01",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": null,
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Kheer.jpg/330px-Kheer.jpg",
+   "page": "Kheer",
+   "by": "stu spivack",
+   "lic": "CC BY-SA 2.0"
+  },
+  "6": null,
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Faluda.JPG/330px-Faluda.JPG",
+   "page": "Falooda",
+   "by": "Randhirreddy at English Wikipedia",
+   "lic": "CC BY-SA 3.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Rasgulla.jpg/330px-Rasgulla.jpg",
+   "page": "Rasgulla",
+   "by": "HrichikHv",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Sohan_Halwa.JPG/330px-Sohan_Halwa.JPG",
+   "page": "Sohan halwa",
+   "by": "Miansari66",
+   "lic": "Public domain"
+  },
+  "10": null,
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Indian_Sweet_Dessert_Peda_in_a_white_bone_china_plate.jpg/330px-Indian_Sweet_Dessert_Peda_in_a_white_bone_china_plate.jpg",
+   "page": "Peda",
+   "by": "Prashant Sahu",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": null,
+  "13": null,
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Petha_kesari.JPG/330px-Petha_kesari.JPG",
+   "page": "Petha",
+   "by": "PJ.wikilovesfood",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": null
+ },
+ "chaat": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg/330px-Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg",
+   "page": "Samosa",
+   "by": "Moheen Reeyad",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": null,
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Dahi_puri%2C_Doi_phuchka.jpg/330px-Dahi_puri%2C_Doi_phuchka.jpg",
+   "page": "Chaat",
+   "by": "Rupamdas75",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Onion_pakora_-_a.jpg/330px-Onion_pakora_-_a.jpg",
+   "page": "Pakora",
+   "by": "Babu iyer",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Bun_Kabab.JPG/330px-Bun_Kabab.JPG",
+   "page": "Bun kebab",
+   "by": "LunaticFringe97",
+   "lic": "CC BY-SA 4.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Aloo_Tikki_served_with_chutneys.jpg/330px-Aloo_Tikki_served_with_chutneys.jpg",
+   "page": "Aloo tikki",
+   "by": "Raveesh Vyas from [Ahmedabad, Noida], India",
+   "lic": "CC BY-SA 2.0"
+  },
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Dahi_puri%2C_Doi_phuchka.jpg/330px-Dahi_puri%2C_Doi_phuchka.jpg",
+   "page": "Chaat",
+   "by": "Rupamdas75",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": null,
+  "10": null,
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Spring_Rolls_%283357696061%29.jpg/330px-Spring_Rolls_%283357696061%29.jpg",
+   "page": "Spring roll",
+   "by": "Donna Benjamin",
+   "lic": "CC BY-SA 2.0"
+  },
+  "12": null,
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/4th_October_2012_Shami_Kebab.jpg/330px-4th_October_2012_Shami_Kebab.jpg",
+   "page": "Shami kebab",
+   "by": "Murcotipton",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": null,
+  "15": null
+ },
+ "desimains": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/%22Hyderabadi_Dum_Biryani%22.jpg/330px-%22Hyderabadi_Dum_Biryani%22.jpg",
+   "page": "Biryani",
+   "by": "Mahi Tatavarty",
+   "lic": "CC BY-SA 4.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Wok-and-karahi-2.jpg/330px-Wok-and-karahi-2.jpg",
+   "page": "Karahi",
+   "by": "FiveRings at en.wikipedia",
+   "lic": "CC BY-SA 3.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Nalli_Nihari_India.jpg/330px-Nalli_Nihari_India.jpg",
+   "page": "Nihari",
+   "by": "Nilanjan Sasmal",
+   "lic": "CC BY-SA 4.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Pakistani_Haleem_served_with_garnish.jpg/330px-Pakistani_Haleem_served_with_garnish.jpg",
+   "page": "Haleem",
+   "by": "Halt123halt",
+   "lic": "CC BY-SA 3.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Chapli_Kebab.jpg/330px-Chapli_Kebab.jpg",
+   "page": "Chapli kebab",
+   "by": "Murcotipton",
+   "lic": "CC BY-SA 3.0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Pakistani_Food_Beef_Kabobs.jpg/330px-Pakistani_Food_Beef_Kabobs.jpg",
+   "page": "Seekh kebab",
+   "by": "Jess Lander from Culver City, CA, USA",
+   "lic": "CC BY 2.0"
+  },
+  "6": null,
+  "7": null,
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Aaloo_Gosht_%28cropped%29.JPG/330px-Aaloo_Gosht_%28cropped%29.JPG",
+   "page": "Aloo gosht",
+   "by": "Miansari66",
+   "lic": "CC0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tandoorimumbai.jpg/330px-Tandoorimumbai.jpg",
+   "page": "Chicken tikka",
+   "by": "kspoddar",
+   "lic": "CC BY-SA 2.0"
+  },
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": null,
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Bie%C5%82yja_%C5%81awki_2920.jpg/330px-Bie%C5%82yja_%C5%81awki_2920.jpg",
+   "page": "Bielyja Lauki",
+   "by": "Renessaince",
+   "lic": "CC BY 3.0"
+  },
+  "15": null
+ },
+ "desisingers": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Atif_Aslam_at_Badlapur_%28cropped%29.jpg/330px-Atif_Aslam_at_Badlapur_%28cropped%29.jpg",
+   "page": "Atif Aslam",
+   "by": "Bollywood Hungama",
+   "lic": "CC BY 3.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Arijit_Singh_performance_at_Chandigarh_2025.jpg/330px-Arijit_Singh_performance_at_Chandigarh_2025.jpg",
+   "page": "Arijit Singh",
+   "by": "Monit2004",
+   "lic": "CC BY 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Rahat_Fateh_Ali_Khan_in_2024.jpg/330px-Rahat_Fateh_Ali_Khan_in_2024.jpg",
+   "page": "Rahat Fateh Ali Khan",
+   "by": "Press Information Department",
+   "lic": "Public domain"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Nusrat_Fateh_Ali_Khan_%281948-1997%29.jpg/330px-Nusrat_Fateh_Ali_Khan_%281948-1997%29.jpg",
+   "page": "Nusrat Fateh Ali Khan",
+   "by": "Thomas Rome",
+   "lic": "CC BY 2.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Ali_Zafar%2C_VOA_%281%29.jpg/330px-Ali_Zafar%2C_VOA_%281%29.jpg",
+   "page": "Ali Zafar",
+   "by": "Waseem Siddiqui, VOA Urdu",
+   "lic": "Public domain"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Abida_Parveen.jpg/330px-Abida_Parveen.jpg",
+   "page": "Abida Parveen",
+   "by": "Hammad Khan",
+   "lic": "CC BY 2.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kishore_Kumar_2016_postcard_of_India_%28cropped%29.jpg/330px-Kishore_Kumar_2016_postcard_of_India_%28cropped%29.jpg",
+   "page": "Kishore Kumar",
+   "by": "India Post, Government of India",
+   "lic": "GODL-India"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/LataMangeshkar10.jpg/330px-LataMangeshkar10.jpg",
+   "page": "Lata Mangeshkar",
+   "by": "Bollywood Hungama",
+   "lic": "CC BY 3.0"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Ali_Sethi.jpg/330px-Ali_Sethi.jpg",
+   "page": "Ali Sethi",
+   "by": "Priyanka2330",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Shreya_Ghoshal_Behindwoods_Gold_Icons_Awards_2023_%28cropped%29.jpg/330px-Shreya_Ghoshal_Behindwoods_Gold_Icons_Awards_2023_%28cropped%29.jpg",
+   "page": "Shreya Ghoshal",
+   "by": "Behindwoods",
+   "lic": "CC BY-SA 3.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Asim_Azhar_2018.png/330px-Asim_Azhar_2018.png",
+   "page": "Asim Azhar",
+   "by": "Rafeel Shamim",
+   "lic": "CC BY 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Momina_Mustehsan_at_New_Islamabad_Airport_-_2020_%28cropped%29.jpg/330px-Momina_Mustehsan_at_New_Islamabad_Airport_-_2020_%28cropped%29.jpg",
+   "page": "Momina Mustehsan",
+   "by": "Kskhh",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Diljit_Dosanjh.jpg/330px-Diljit_Dosanjh.jpg",
+   "page": "Diljit Dosanjh",
+   "by": "Prime Minister's Office",
+   "lic": "GODL-India"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Hadiqa_Kiani_Pakistani_Singer.jpg/330px-Hadiqa_Kiani_Pakistani_Singer.jpg",
+   "page": "Hadiqa Kiani",
+   "by": "Noah I Aslam",
+   "lic": "CC BY-SA 4.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Shafqat_Amanat_Ali_%282023%29.jpg/330px-Shafqat_Amanat_Ali_%282023%29.jpg",
+   "page": "Shafqat Amanat Ali",
+   "by": "Priyanka2330",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": null
+ },
+ "chaitime": {
+  "0": null,
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Zwieback-1.jpg/330px-Zwieback-1.jpg",
+   "page": "Rusk",
+   "by": "No machine-readable author provided. Rainer Zenz assumed (based on copyright cla",
+   "lic": "CC BY-SA 3.0"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Zwieback-1.jpg/330px-Zwieback-1.jpg",
+   "page": "Rusk",
+   "by": "No machine-readable author provided. Rainer Zenz assumed (based on copyright cla",
+   "lic": "CC BY-SA 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Parle_G_logo.jpg/330px-Parle_G_logo.jpg",
+   "page": "Parle-G",
+   "by": "Parle G",
+   "lic": "Public domain"
+  },
+  "8": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Nankhatai.jpg/330px-Nankhatai.jpg",
+   "page": "Nankhatai",
+   "by": "S.M. Samee",
+   "lic": "CC BY-SA 4.0"
+  },
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/%E0%A6%AC%E0%A6%BE%E0%A6%95%E0%A6%B0%E0%A6%96%E0%A6%BE%E0%A6%A8%E0%A7%80.jpg/330px-%E0%A6%AC%E0%A6%BE%E0%A6%95%E0%A6%B0%E0%A6%96%E0%A6%BE%E0%A6%A8%E0%A7%80.jpg",
+   "page": "Bakarkhani",
+   "by": "Sm faysal",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": null,
+  "11": null,
+  "12": null,
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Green_tea_3_appearances.jpg/330px-Green_tea_3_appearances.jpg",
+   "page": "Green tea",
+   "by": "Alessandro Martini",
+   "lic": "CC0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Tea_bags.jpg/330px-Tea_bags.jpg",
+   "page": "Tea bag",
+   "by": "André Karwath aka Aka",
+   "lic": "CC BY-SA 2.5"
+  },
+  "15": null
+ },
+ "pakcities": {
+  "0": null,
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Shangrila_resort_skardu.jpg/330px-Shangrila_resort_skardu.jpg",
+   "page": "Skardu",
+   "by": "S SHER XAMAN photography",
+   "lic": "CC BY-SA 4.0"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Lahore_Fort_view_from_Baradari.jpg/330px-Lahore_Fort_view_from_Baradari.jpg",
+   "page": "Lahore",
+   "by": "Rohaan Bhatti",
+   "lic": "CC BY-SA 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Faisal_Mosque%2C_Islamabad_III.jpg/330px-Faisal_Mosque%2C_Islamabad_III.jpg",
+   "page": "Islamabad",
+   "by": "Fassifarooq",
+   "lic": "CC BY-SA 4.0"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Clifton_Karachi_View.jpg/330px-Clifton_Karachi_View.jpg",
+   "page": "Karachi",
+   "by": "Ktownboy103",
+   "lic": "CC0"
+  },
+  "5": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/CBP_Office_of_Field_Operations_Training_with_Air_and_Marine_Operations_-_43847567720.jpg/330px-CBP_Office_of_Field_Operations_Training_with_Air_and_Marine_Operations_-_43847567720.jpg",
+   "page": "SWAT",
+   "by": "CBP Photography",
+   "lic": "Public domain"
+  },
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Sunset_in_hills_-_Holy_Trinity_Church%2C_Murree.jpg/330px-Sunset_in_hills_-_Holy_Trinity_Church%2C_Murree.jpg",
+   "page": "Murree",
+   "by": "Usamashahid433",
+   "lic": "CC BY-SA 4.0"
+  },
+  "7": null,
+  "8": null,
+  "9": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Gilgit_City_a_View_from_Gilgit_serena_hotel.jpg/330px-Gilgit_City_a_View_from_Gilgit_serena_hotel.jpg",
+   "page": "Gilgit",
+   "by": "Fehd.raza @fehd.raza",
+   "lic": "CC BY-SA 4.0"
+  },
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Shrine_Shah_Rukn-e-Alam.jpg/330px-Shrine_Shah_Rukn-e-Alam.jpg",
+   "page": "Multan",
+   "by": "Yaarahmadd",
+   "lic": "CC BY-SA 4.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Islamia_College_Peshawar_%28Public_Sector_University%29%2C_Khyber_Pakhtunkhwa%2C_Pakistan_cropped.jpg/330px-Islamia_College_Peshawar_%28Public_Sector_University%29%2C_Khyber_Pakhtunkhwa%2C_Pakistan_cropped.jpg",
+   "page": "Peshawar",
+   "by": "Zafarmaini",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Quetta_cantt.jpg/330px-Quetta_cantt.jpg",
+   "page": "Quetta",
+   "by": "Arslan Arshad",
+   "lic": "CC BY-SA 4.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Nanga_Parbat_The_Killer_Mountain.jpg/330px-Nanga_Parbat_The_Killer_Mountain.jpg",
+   "page": "Fairy Meadows",
+   "by": "Tahsin Anwar Ali",
+   "lic": "CC BY-SA 3.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Aerial_view_of_Durgam_cheruvu_and_Hitech_CIty.jpg/330px-Aerial_view_of_Durgam_cheruvu_and_Hitech_CIty.jpg",
+   "page": "Hyderabad",
+   "by": "iMahesh",
+   "lic": "CC BY-SA 4.0"
+  },
+  "15": null
+ },
+ "desifashion": {
+  "0": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Schoolgirls_in_Shalwar_Kameez%2C_Abbotabad_Pakistan_-_UK_International_Development.jpg/330px-Schoolgirls_in_Shalwar_Kameez%2C_Abbotabad_Pakistan_-_UK_International_Development.jpg",
+   "page": "Shalwar kameez",
+   "by": "Vicki Francis/Department for International Development, United Kingdom",
+   "lic": "CC BY 2.0"
+  },
+  "1": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Kurta_traditional_front_sandalwood_buttons.jpg/330px-Kurta_traditional_front_sandalwood_buttons.jpg",
+   "page": "Kurta",
+   "by": "Fowler&amp;fowler at English Wikipedia",
+   "lic": "Public domain"
+  },
+  "2": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Anjana_Sukhani.jpg/330px-Anjana_Sukhani.jpg",
+   "page": "Lehenga",
+   "by": "Bollywood Hungama",
+   "lic": "CC BY 3.0"
+  },
+  "3": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/CHOWMAHALLA_PALACE_Royal_painting.jpg/330px-CHOWMAHALLA_PALACE_Royal_painting.jpg",
+   "page": "Sherwani",
+   "by": "SabaFatima123456789",
+   "lic": "Public domain"
+  },
+  "4": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Sari_on_mannequin_for_demo.jpg/330px-Sari_on_mannequin_for_demo.jpg",
+   "page": "Sari",
+   "by": "Suyash.dwivedi",
+   "lic": "CC BY-SA 4.0"
+  },
+  "5": null,
+  "6": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Pair_of_Pakistani_Rural_shoe.JPG/330px-Pair_of_Pakistani_Rural_shoe.JPG",
+   "page": "Khussa (footwear)",
+   "by": "Khalid Mahmood",
+   "lic": "CC BY-SA 3.0"
+  },
+  "7": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/At_The_Fair_%285823095519%29.jpg/330px-At_The_Fair_%285823095519%29.jpg",
+   "page": "Dupatta",
+   "by": "Koshy Koshy from Faridabad, Haryana, India",
+   "lic": "CC BY 2.0"
+  },
+  "8": null,
+  "9": null,
+  "10": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Waistcoat.jpg/330px-Waistcoat.jpg",
+   "page": "Waistcoat",
+   "by": "Wikimedia Commons contributor",
+   "lic": "CC BY-SA 3.0"
+  },
+  "11": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Saraiki_Bool%2C%D8%B3%D8%B1%D8%A7%D8%A6%DB%8C%DA%A9%DB%8C_%D9%BB%D9%88%D9%84.jpg/330px-Saraiki_Bool%2C%D8%B3%D8%B1%D8%A7%D8%A6%DB%8C%DA%A9%DB%8C_%D9%BB%D9%88%D9%84.jpg",
+   "page": "Ajrak",
+   "by": "Saraik Ningar",
+   "lic": "CC BY-SA 4.0"
+  },
+  "12": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Young_girl_in_shawl.jpg/330px-Young_girl_in_shawl.jpg",
+   "page": "Shawl",
+   "by": "Rick&amp;Brenda Beerhorst",
+   "lic": "CC BY 2.0"
+  },
+  "13": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Yohji_Yamamoto_wool_suit_c_1990.jpg/330px-Yohji_Yamamoto_wool_suit_c_1990.jpg",
+   "page": "Nehru jacket",
+   "by": "ellenm1",
+   "lic": "CC BY 2.0"
+  },
+  "14": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Indian_chappal%2C_Kolhapur%2C_late_20th_century_-_Bata_Shoe_Museum_-_DSC00445.JPG/330px-Indian_chappal%2C_Kolhapur%2C_late_20th_century_-_Bata_Shoe_Museum_-_DSC00445.JPG",
+   "page": "Kolhapuri chappal",
+   "by": "Daderot",
+   "lic": "CC0"
+  },
+  "15": null
+ }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "pickparty",
+  "version": "1.0.0",
+  "description": "Real-time multiplayer drafting party game: draft the best picks, read the room, dodge the dud.",
+  "main": "server/index.js",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "DEV=1 node --watch server/index.js",
+    "test": "node test/cx-auth-test.js && node test/run-tests.js",
+    "check:browser": "node test/browser/nav.js && node test/browser/culture.js && node test/browser/levels.js && node test/browser/picks.js && node test/browser/home.js && node test/browser/auction.js && node test/browser/pictures.js",
+    "art": "node scripts/fetch-art.js"
+  },
+  "keywords": [
+    "party-game",
+    "multiplayer",
+    "websocket",
+    "realtime",
+    "drafting",
+    "leaderboard"
+  ],
+  "dependencies": {
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

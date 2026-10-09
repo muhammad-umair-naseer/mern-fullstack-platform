@@ -32,6 +32,14 @@ const GAMES = [
     tags: ['Live races', 'Ghost replays', 'Daily challenge'],
     port: 4001,
   },
+  {
+    id: 'pickparty',
+    kind: 'Party draft',
+    title: 'PickParty',
+    line: 'Draft the best picks, read the room, dodge the dud.',
+    tags: ['Snake drafts', 'Live auction', 'Mind reader'],
+    port: 5001,
+  },
 ];
 
 // The whole stack starts from the compose file at the repository root. It
@@ -43,7 +51,7 @@ const QUICK_START = [
   { cmd: 'docker compose up --build' },
 ];
 
-const SERVICES = ['website', 'gotcha-rush', 'typedash', 'postgres', 'redis'];
+const SERVICES = ['website', 'gotcha-rush', 'typedash', 'pickparty', 'postgres', 'redis'];
 
 // The guide that lives on this page (its markdown names /games as home), and
 // the other game guides, each on its own URL so each can rank for its query.
@@ -75,8 +83,8 @@ export default function Games() {
   return (
     <main className="gp">
       <Seo
-        title="Free Coding Games: Code Quiz and Typing Race"
-        description="Free coding games in your browser: guess what JavaScript and Python print in Gotcha Rush, or race live on real code in TypeDash. No sign-up."
+        title="Free Browser Games: Code Quiz, Typing Race, and Party Draft"
+        description="Free multiplayer browser games: guess code outputs in Gotcha Rush, race live in TypeDash, or draft and outwit friends in PickParty. No sign-up required."
         path={PATH}
         image={ARTICLE?.image}
         schema={SCHEMA}
@@ -85,7 +93,7 @@ export default function Games() {
       <PageHero
         label="Playground"
         lines={['Play fast,', <em>think faster.</em>]}
-        lede="Two multiplayer games: a code quiz and a typing race."
+        lede="Three multiplayer games: a code quiz, a typing race, and a drafting party game."
         actions={[
           { href: '#game-cards', label: 'Choose a game', primary: true },
           { href: '#run-locally', label: 'Run it locally' },
@@ -101,7 +109,7 @@ export default function Games() {
       >
         <header className="gp-head">
           <span className="lx-label" data-reveal>
-            <span className="lx-label-num">01</span>Two games
+            <span className="lx-label-num">01</span>Three games
           </span>
           <h2 id="gp-games-title" className="lx-h2 gp-title" data-reveal>
             Pick your <em>arena.</em>
@@ -207,7 +215,7 @@ export default function Games() {
               One <em>compose</em> file.
             </h2>
             <p className="gp-local-lede" data-reveal>
-              Docker runs both games beside the site.
+              Docker runs all three games beside the site.
             </p>
             <ul className="gp-ports" data-reveal>
               {GAMES.map((g) => (

@@ -574,8 +574,14 @@
 
 .gp-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+@media (min-width: 1040px) {
+  .gp-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .gp-cell {
