@@ -8,7 +8,7 @@ const Scoring = require('../shared/scoring');
 const Bots = require('./bots');
 const Auction = require('./auction');
 
-const COLORS = ['#FF8A65', '#4FC3F7', '#AED581', '#CE93D8', '#FFB74D', '#F48FB1'];
+const COLORS = ['#B8612E', '#4F6D8A', '#62805A', '#7D5A86', '#C08A2E', '#B5566A'];
 const MODES = ['crowd', 'mind', 'auction'];
 const normMode = (m) => (MODES.includes(m) ? m : 'crowd');
 const CULTURES = ['desi', 'global', 'mix'];

@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>PickParty: draft the best picks, dodge the dud</title>
   <meta name="description" content="A real-time drafting party game. Snake-draft the best picks, read your friends, and dodge the dud.">
-  <meta name="theme-color" content="#17246B">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2317246B'/><rect x='22' y='16' width='56' height='72' rx='8' fill='%23FBF7EE' transform='rotate(-8 50 52)'/><circle cx='50' cy='48' r='13' fill='%23FFD23F'/></svg>">
+  <meta name="theme-color" content="#FAF8F4">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2316130F'/><rect x='22' y='16' width='56' height='72' rx='8' fill='%23FAF8F4' transform='rotate(-8 50 52)'/><circle cx='50' cy='48' r='13' fill='%23B8612E'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@60..140,500..900&family=Figtree:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="/css/app.css">
   <script src="/shared/scoring.js"></script>
   <script type="module" src="/js/main.js"></script>
@@ -44,11 +44,45 @@
   <section id="home" class="screen page" aria-labelledby="home-title">
     <div class="hero">
       <div class="hero-copy">
-        <h1 id="home-title">Draft the best picks. Read the room. Dodge the dud.</h1>
-        <p>A drafting party game for 3 to 6 players. Every topic puts sixteen cards on the board, and you take turns claiming them before anyone else can. Pick a mode to start.</p>
+        <p class="eyebrow">Party game · 3 to 6 players</p>
+        <h1 id="home-title">Grab the best cards. <em>Dodge the dud.</em></h1>
+        <p>Sixteen cards on one topic, like pizza toppings. Take turns grabbing the ones everyone will love. Bots fill empty seats, so you can play right now.</p>
       </div>
       <div class="hero-fan" id="hero-fan" aria-hidden="true"></div>
     </div>
+
+    <ol class="steps" aria-label="How it works">
+      <li><b>Take turns</b><span>Grab one card at a time. Once a card is taken, it's gone.</span></li>
+      <li><b>Get votes</b><span>After each round, everyone votes for the best grab. Every vote is points.</span></li>
+      <li><b>Dodge the dud</b><span>The last round flips: grab the worst card on the board.</span></li>
+    </ol>
+
+    <div class="modes modes-home">
+      <article class="mode" data-mode="crowd">
+        <div class="mode-head"><h2>Crowd pleaser <span class="tag">start here</span></h2><span class="mode-glyph" aria-hidden="true">📣</span></div>
+        <p>The classic. Grab three great cards and one terrible one. The table votes on every round.</p>
+        <a class="btn btn-go" href="#/categories/crowd">Play</a>
+      </article>
+      <article class="mode" data-mode="mind">
+        <div class="mode-head"><h2>Mind reader</h2><span class="mode-glyph" aria-hidden="true">🔮</span></div>
+        <p>One player secretly picks three favourites and one dud. Everyone else guesses them by grabbing cards. Grab the dud and you score nothing.</p>
+        <a class="btn btn-go" href="#/categories/mind">Play</a>
+      </article>
+      <article class="mode" data-mode="auction">
+        <div class="mode-head"><h2>Auction</h2><span class="mode-glyph" aria-hidden="true">🔨</span></div>
+        <p>Everyone gets 20 coins. Cards come up one by one and the highest bid wins. Spend wisely.</p>
+        <a class="btn btn-go" href="#/categories/auction">Play</a>
+      </article>
+    </div>
+
+    <article class="mode mode-solo" data-mode="solo">
+      <div class="mode-head"><h2>Crowd read <span class="tag">solo</span></h2><span class="mode-glyph" aria-hidden="true">👀</span></div>
+      <p>Guess what everyone else loves and hates. Pick the crowd's top three and its dud before the clock runs out. Three lives, and the clock gets shorter every topic.</p>
+      <div class="mode-foot">
+        <a class="btn btn-go" href="#/categories/solo">Play solo</a>
+        <span class="solo-best muted">Best run <b id="solo-best">0</b></span>
+      </div>
+    </article>
 
     <section class="panel settings" aria-label="Match settings">
       <div class="setting">
@@ -68,33 +102,6 @@
         </div>
       </div>
     </section>
-
-    <div class="modes modes-home">
-      <article class="mode" data-mode="crowd">
-        <div class="mode-head"><h2>Crowd pleaser</h2><span class="mode-glyph" aria-hidden="true">📣</span></div>
-        <p>Snake-draft three top picks and one dud. After every round the table votes for the best pick, and every vote is points.</p>
-        <a class="btn btn-go" href="#/categories/crowd">Play</a>
-      </article>
-      <article class="mode" data-mode="mind">
-        <div class="mode-head"><h2>Mind reader</h2><span class="mode-glyph" aria-hidden="true">🔮</span></div>
-        <p>One player secretly hides three loves and a dud. Everyone else drafts to grab the loves first. Touch the dud and you score nothing.</p>
-        <a class="btn btn-go" href="#/categories/mind">Play</a>
-      </article>
-      <article class="mode" data-mode="auction">
-        <div class="mode-head"><h2>Auction</h2><span class="mode-glyph" aria-hidden="true">🔨</span></div>
-        <p>Outbid the table. Build the best lineup. Everyone gets 20 coins a topic. Bid for the cards you want and dodge the leftovers.</p>
-        <a class="btn btn-go" href="#/categories/auction">Play</a>
-      </article>
-    </div>
-
-    <article class="mode mode-solo" data-mode="solo">
-      <div class="mode-head"><h2>Crowd read <span class="tag">solo</span></h2><span class="mode-glyph" aria-hidden="true">👀</span></div>
-      <p>Guess what everyone else loves and hates. Pick the crowd's top three and its dud before the clock runs out. Three lives, and the clock gets shorter every topic.</p>
-      <div class="mode-foot">
-        <a class="btn btn-go" href="#/categories/solo">Play solo</a>
-        <span class="solo-best muted">Best run <b id="solo-best">0</b></span>
-      </div>
-    </article>
   </section>
 
   <!-- ======================= CATEGORIES ======================= -->

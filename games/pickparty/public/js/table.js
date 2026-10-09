@@ -146,7 +146,7 @@ export function createTable(net, hooks) {
       small = r.isPrivate ? `${r.seats.length} at the table` : 'Bots fill any empty seats when the timer runs out';
     } else {
       const ph = r.phase;
-      if (ph === 'intro') { msg = 'New topic'; small = r.mode === 'mind' ? `${nameOf(T.mind)} ${T.mind === r.you ? 'are' : 'is'} the Mind` : r.mode === 'auction' ? 'Everyone gets 20 coins. Bid for the cards you want.' : 'Three top picks, then a dud'; }
+      if (ph === 'intro') { msg = 'New topic'; small = r.mode === 'mind' ? `${nameOf(T.mind)} ${T.mind === r.you ? 'are' : 'is'} the Mind` : r.mode === 'auction' ? 'Everyone gets 20 coins. Bid for the cards you want.' : 'Rounds 1 to 3: grab the best cards. Round 4: grab the worst.'; }
       else if (ph === 'bid' && T.lot) {
         const top = T.lot.top, purse = T.purses[r.you], full = (T.lineups[r.you] || []).length >= T.lineupSize;
         const canBid = !full && purse > (top ? top.amount : 0);
@@ -163,8 +163,9 @@ export function createTable(net, hooks) {
         if (T.turnSid) {
           who = T.turnSid;
           you = T.turnSid === r.you;
-          msg = you ? "You're on the clock" : `${nameOf(T.turnSid)} is picking`;
-          small = you ? (T.dud ? 'Draft the worst card on the board' : r.mode === 'mind' ? `Grab a card you think ${nameOf(T.mind)} loves` : 'Tap a card to draft it') : '';
+          msg = you ? 'Your turn' : `${nameOf(T.turnSid)} is picking`;
+          small = you ? (T.dud ? 'Tap the worst card on the board. The table votes for the worst.' : r.mode === 'mind' ? `Tap a card you think ${nameOf(T.mind)} loves` : 'Tap the card you think everyone will like most')
+            : T.dud ? 'Last round: everyone grabs their worst card' : 'Wait for your turn. Striped cards are taken.';
         } else {
           const last = lastPick();
           msg = last ? `${nameOf(last.sid)} drafted ${optOf(last.opt).name}` : 'Next pick';
@@ -422,7 +423,7 @@ export function createTable(net, hooks) {
         <p>${r.mode === 'auction'
           ? 'Everyone gets 20 coins. The sixteen cards go on the block one at a time and the top bid takes each one. Empty slots get leftovers for free. Cards score by crowd rank, plus 5 for every coin you keep.'
           : r.mode === 'crowd'
-          ? 'Four rounds. Draft three top picks, then the worst card on the board. The table votes after every round.'
+          ? 'Four rounds. Grab the best card you can in rounds 1 to 3, then the worst card on the board in round 4. After each round everyone votes, and every vote is points.'
           : `<b>${esc(nameOf(T.mind))}</b> ${T.mind === r.you ? 'are' : 'is'} the Mind. ${T.mind === r.you ? 'You hide' : 'They hide'} three loves and a dud; everyone else drafts three cards. Loves score 200, 150 and 100. Draft the dud and you score nothing for the topic.`}</p>`;
     } else if (ph === 'vote') {
       S.pendingVote = null;
