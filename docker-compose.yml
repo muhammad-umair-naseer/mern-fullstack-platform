@@ -21,7 +21,13 @@ services:
       - SMTP_PASS=${SMTP_PASS:-}
       - CONTACT_TO=${CONTACT_TO:-}
       - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
       - GAME_SSO_SECRET=${GAME_SSO_SECRET:-}
+      # the admin portal's Games section reads players from each game over the internal network
+      - GOTCHA_URL=http://gotcha-rush:3000
+      - TYPEDASH_URL=http://typedash:4000
+      - PICKPARTY_URL=http://pickparty:3000
     networks:
       - cortexis_internal
     depends_on:
@@ -101,6 +107,27 @@ services:
       - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
     volumes:
       - cortexis_pickparty_data:/data
+    networks:
+      - cortexis_internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: cortexis-admin
+    restart: unless-stopped
+    ports:
+      # staff only: keep this port behind a firewall or VPN in production
+      - "${ADMIN_PORT:-6001}:3000"
+    environment:
+      - PORT=3000
+      - ADMIN_API_URL=${ADMIN_API_URL:-}
+      - ADMIN_SITE_URL=${ADMIN_SITE_URL:-}
     networks:
       - cortexis_internal
     healthcheck:

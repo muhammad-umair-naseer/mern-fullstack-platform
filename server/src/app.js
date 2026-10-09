@@ -12,6 +12,7 @@ import morgan from 'morgan';
 import { connectDB, dbEngine } from './setup/db.js';
 import { initRedis, redisPing, redisStats, isRedisReady } from './services/redis.service.js';
 import { seedCourses } from './content/seed.js';
+import { ensureAdmin } from './setup/admin.js';
 import { createLimiter } from './middleware/rateLimiter.js';
 import { getQueueMetrics } from './services/queue.service.js';
 import { initWorker } from './workers/email.worker.js';
@@ -19,6 +20,7 @@ import internshipsRouter from './routes/internships.routes.js';
 import contactRouter from './routes/contact.routes.js';
 import authRouter from './routes/auth.routes.js';
 import learnRouter from './routes/learn.routes.js';
+import adminRouter from './routes/admin.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -50,6 +52,7 @@ app.use('/api/internships', formLimiter, internshipsRouter);
 app.use('/api/contact', formLimiter, contactRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/learn', learnLimiter, learnRouter);
+app.use('/api/admin', adminRouter);
 
 app.get('/health', async (_req, res) => {
   const redis = await redisPing();
@@ -98,6 +101,7 @@ export const boot = async ({ worker = process.env.EMBEDDED_WORKER !== 'false' } 
   await Promise.all([connectDB(), initRedis()]);
   if (worker && isRedisReady()) initWorker();
   const { courses, lessons } = await seedCourses();
+  await ensureAdmin();
   return { courses, lessons };
 };
 

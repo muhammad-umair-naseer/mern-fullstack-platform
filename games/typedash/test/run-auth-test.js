@@ -13,7 +13,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const cx = require('../server/cx');
 const passages = require('../server/passages');
-const { server, accounts, boards, daily, ghosts, teams } = require('../server/index.js');
+const { server, accounts, boards, daily, ghosts, teams, seasons, shares } = require('../server/index.js');
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 let base;
@@ -165,6 +165,38 @@ async function main() {
   assert.strictEqual((await post('/api/auth/signout', { accountId: 'cx_4242', token: again.body.token })).body.revoked, true);
   g.close();
   console.log('✓ sign-out: session revoked, fresh guest');
+
+  // ---------------- admin portal: edit and delete a player ----------------
+  const adminTok = cx.signGameToken({ sub: 'admin', aud: cx.ADMIN_AUDIENCE, ttlSec: 60 });
+  const admin = async (method, id, body, tok = adminTok) => {
+    const res = await fetch(`${base}/api/admin/players/${encodeURIComponent(id)}`, { method, headers: { 'content-type': 'application/json', authorization: `Bearer ${tok}` }, body: body && JSON.stringify(body) });
+    return { status: res.status, body: await res.json() };
+  };
+  const sara = (await post('/api/auth/cortexis', { gameToken: cx.signGameToken({ sub: '77', name: 'Sara' }) })).body;
+  teams.join(accounts.accounts.cx_77, team.invite);
+  accounts.recordHeadToHead(accounts.accounts.cx_77, accounts.accounts.cx_4242);
+  seasons.data['2026-01'] = { key: '2026-01', number: 1, players: 2, top: [{ id: 'cx_4242', name: 'Muhammad Umair', country: 'NZ', points: 9, rank: 1 }, { id: 'cx_77', name: 'Sara', country: 'PK', points: 5, rank: 2 }] };
+  shares.data.testshare = { accountId: 'cx_4242', name: 'Muhammad Umair', wpm: 80 };
+  assert.strictEqual((await admin('PATCH', 'cx_4242', { points: 5 }, good)).status, 401, "a player's token is refused");
+  assert.strictEqual((await admin('PATCH', 'cx_4242', { points: -5 })).status, 400);
+  assert.strictEqual((await admin('PATCH', 'nobody', { points: 5 })).status, 404);
+  const ed = await admin('PATCH', 'cx_4242', { name: 'Umi', country: 'gb', points: 1000 });
+  assert.deepStrictEqual([ed.status, ed.body.player.name, ed.body.player.country, ed.body.player.points], [200, 'Umi', 'GB', 1000]);
+  assert.strictEqual(rows('points')[0].name, 'Umi', 'the board is recomputed');
+  assert.strictEqual(daily.rows(require('../server/accounts').dayKey())[0].name, 'Umi', 'the daily entry shows the new name');
+  assert.strictEqual(ghosts.wr(other).name, 'Umi', '...and the world record');
+  assert.strictEqual(accounts.accounts.cx_77.rivals.cx_4242.name, 'Umi', "...and the rival's row");
+  assert.deepStrictEqual((await admin('DELETE', 'cx_4242')).body, { ok: true });
+  assert.ok(!accounts.accounts.cx_4242 && !accounts.accounts[gAcc.id], 'the account and the guest merged into it are gone');
+  assert.ok(!accounts.accounts.cx_77.rivals.cx_4242, 'no rival row points at it');
+  assert.ok(!daily.rows(require('../server/accounts').dayKey()).some((r) => r.id === 'cx_4242') && !ghosts.data.pb.cx_4242 && !ghosts.wr(other), 'daily entry and ghosts removed');
+  assert.deepStrictEqual([team.members, team.ownerId], [['cx_77'], 'cx_77'], 'the team carries on without it');
+  assert.deepStrictEqual(seasons.data['2026-01'].top.map((r) => r.id), ['cx_77'], 'off the past season table');
+  assert.ok(!shares.data.testshare, 'its shared results are gone');
+  assert.ok(!rows('points').some((r) => r.id === 'cx_4242'));
+  assert.strictEqual((await admin('DELETE', 'cx_4242')).status, 404);
+  assert.ok(sara.id === 'cx_77');
+  console.log('✓ admin: edit (name, country, points) and delete; boards, daily, ghosts, team, seasons, rivals kept consistent');
 
   console.log('\nAll auth checks passed.');
   server.close();

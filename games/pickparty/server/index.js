@@ -8,7 +8,7 @@ const { WebSocketServer } = require('ws');
 
 const cfg = require('./config');
 const Store = require('./store');
-const { Accounts, CATALOGUE, AVATARS, AVATAR_UNLOCKS } = require('./accounts');
+const { Accounts, cleanName, cleanCountry, CATALOGUE, AVATARS, AVATAR_UNLOCKS } = require('./accounts');
 const { Boards, META } = require('./boards');
 const Ratings = require('./ratings');
 const Bank = require('./bank');
@@ -60,6 +60,95 @@ function sendBuf(req, res, { body, gz, type, etag }, extra = {}) {
 }
 
 const cx = require('./cx');
+
+/* ---------------------------------------------- admin portal: players
+   For the Cortexis admin portal: list, edit and delete players. The website API mints the
+   token (signed with GAME_SSO_SECRET, admin audience) for an admin only;
+   a player's sign-in token is refused here. */
+function adminAllowed(req) {
+  const m = /^Bearer (.+)$/.exec(req.headers.authorization || '');
+  if (!m) return false;
+  try { cx.verifyGameToken(m[1], { audience: cx.ADMIN_AUDIENCE }); return true; } catch (_) { return false; }
+}
+const cortexisUser = (id) => (String(id).startsWith('cx_') ? Number(String(id).slice(3)) || null : null);
+function adminPlayers() {
+  return accounts.all().filter((a) => !a.mergedInto).map((a) => ({
+    id: a.id, name: a.name, country: a.country, cortexisUserId: cortexisUser(a.id),
+    points: a.points || 0, played: a.matches || 0, wins: a.wins || 0,
+    streak: (a.streak && a.streak.cur) || 0, bestStreak: (a.streak && a.streak.best) || 0,
+    extra: { soloBest: a.soloBest || 0, soloRuns: a.soloRuns || 0, topicsWon: a.topics || 0 },
+    createdAt: a.created || null, lastSeen: null,
+  }));
+}
+
+const liveAccount = (id) => { const a = accounts.get(id); return a && !a.mergedInto ? a : null; };
+const sockets = (id) => [...wss.clients].filter((ws) => ws.player && ws.player.account && ws.player.account.id === id);
+
+// Admin edit: {name, country, points}, each optional, checked like the game checks its own.
+function adminEdit(acc, body) {
+  const out = {};
+  if (body.name !== undefined) {
+    out.name = cleanName(body.name);
+    if (out.name.length < 2) return 'Name needs at least 2 characters.';
+  }
+  if (body.country !== undefined) {
+    out.country = cleanCountry(body.country);
+    if (body.country && !out.country) return 'Country must be a 2-letter code, or empty for none.';
+  }
+  if (body.points !== undefined) {
+    out.points = typeof body.points === 'string' && body.points.trim() ? Number(body.points) : body.points;
+    if (!Number.isSafeInteger(out.points) || out.points < 0) return 'Points must be a whole number, 0 or more.';
+  }
+  if (!Object.keys(out).length) return 'Nothing to change.';
+  if (out.name !== undefined) acc.name = out.name;
+  if (out.country !== undefined) acc.country = out.country;
+  if (out.points !== undefined) acc.points = out.points;
+  boards.cache.clear();
+  store.save();
+  for (const ws of sockets(acc.id)) {
+    const p = ws.player;
+    if (p.room && p.room.state === 'lobby') p.room.updateIdentity(p);
+  }
+  return null;
+}
+
+// Admin delete: the account, the guests folded into it and every token that
+// opens them. A connected player is dropped; their browser reconnects with a
+// token that no longer works and is handed a fresh guest.
+function adminDelete(acc) {
+  const gone = new Set([acc.id, ...accounts.all().filter((a) => a.mergedInto && a.mergedInto === acc.id).map((a) => a.id)]);
+  for (const id of gone) delete accounts.accounts[id];
+  for (const [h, id] of Object.entries(accounts.tokens)) if (gone.has(id)) delete accounts.tokens[h];
+  for (const id of gone) for (const ws of sockets(id)) {
+    manager.leave(ws.player);
+    ws.player.account = null;
+    ws.close(4001, 'account removed');
+  }
+  boards.cache.clear();
+  store.save();
+}
+
+async function handleAdmin(req, res, pathname) {
+  if (!adminAllowed(req)) return json(res, 401, { error: 'Admin token required.' });
+  if (pathname === '/api/admin/players') {
+    if (req.method !== 'GET') return json(res, 405, { error: 'GET only.' });
+    return json(res, 200, { players: adminPlayers() });
+  }
+  let id = null;
+  try { id = decodeURIComponent((/^\/api\/admin\/players\/([^/]+)$/.exec(pathname) || [])[1] || ''); } catch { /* bad escape */ }
+  if (!id) return json(res, 404, { error: 'Not found.' });
+  if (req.method !== 'PATCH' && req.method !== 'DELETE') return json(res, 405, { error: 'PATCH or DELETE only.' });
+  const acc = liveAccount(id);
+  if (!acc) return json(res, 404, { error: 'No such player.' });
+  if (req.method === 'DELETE') { adminDelete(acc); return json(res, 200, { ok: true }); }
+  if (Number(req.headers['content-length']) > 10 * 1024) return json(res, 400, { error: 'Request body too large.' });
+  let body;
+  try { body = await readBody(req, 10 * 1024); } catch { return json(res, 400, { error: 'Bad request body.' }); }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return json(res, 400, { error: 'Bad request body.' });
+  const err = adminEdit(acc, body);
+  if (err) return json(res, 400, { error: err });
+  return json(res, 200, { player: adminPlayers().find((p) => p.id === acc.id) });
+}
 
 function json(res, code, obj) {
   res.writeHead(code, {
@@ -129,6 +218,7 @@ const server = http.createServer(async (req, res) => {
     });
     return res.end();
   }
+  if (url.pathname === '/api/admin/players' || url.pathname.startsWith('/api/admin/players/')) return handleAdmin(req, res, url.pathname);
   if (url.pathname === '/api/bank' && (req.method === 'GET' || req.method === 'HEAD')) {
     return sendBuf(req, res, { body: bank.json, gz: bank.gz, type: 'application/json', etag: bank.etag });
   }
@@ -160,6 +250,7 @@ wss.on('connection', (ws) => {
     ws, account: null, room: null, sid: null, tz: 0, tokens: 40, last: Date.now(), lastEmote: 0,
     send(obj) { if (ws.readyState === 1) ws.send(JSON.stringify(obj)); },
   };
+  ws.player = player;   // the admin portal finds a player's sockets by account
   ws.isAlive = true;
   ws.on('pong', () => { ws.isAlive = true; });
 

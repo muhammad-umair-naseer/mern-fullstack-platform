@@ -1120,6 +1120,11 @@ net.on('account', (m) => {
 });
 
 net.on('race_result', onRaceResult);
+net.on('renamed', (m) => { // an admin changed this player's name or country
+  el.name.value = m.name;
+  localStorage.setItem('td_name', m.name);
+  if (m.country) { setCountry(m.country); localStorage.setItem('td_country', el.country.value); }
+});
 
 net.on('online', (m) => { el.online.textContent = m.n; });
 net.on('error', (m) => (m.locked ? onLockRefused(m) : toast(m.message || 'Something went wrong', 'error')));

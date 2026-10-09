@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { getDB } from '../setup/db.js';
+import { isAdminEmail } from '../setup/admin.js';
 
 // A weak fallback would silently "work" in production, which is worse than a
 // loud failure — so refuse to sign anything without a configured secret.
@@ -66,21 +67,12 @@ export const optionalAuth = async (req, _res, next) => {
   next();
 };
 
-/** Checks if a user is an administrator via email or assigned database role */
-export const isUserAdmin = (user) => {
-  if (!user || !user.email) return false;
-  const adminEmails = [
-    process.env.ADMIN_ALERT_TO,
-    process.env.CONTACT_TO,
-    ...(process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : []),
-  ]
-    .filter(Boolean)
-    .map((e) => e.trim().toLowerCase());
-
-  if (adminEmails.includes(user.email.toLowerCase())) return true;
-  if (user.role && String(user.role).toLowerCase() === 'admin') return true;
-  return false;
-};
+/**
+ * The only admin is the account named by ADMIN_EMAIL, which setup/admin.js
+ * creates from the environment at boot. No role in the database and no form
+ * on the website can make anyone else an admin.
+ */
+export const isUserAdmin = (user) => Boolean(user) && isAdminEmail(user.email);
 
 /** Strictly gates endpoints to authorized administrators only */
 export const requireAdmin = async (req, res, next) => {

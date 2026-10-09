@@ -207,6 +207,9 @@ export const seedCourses = async () => {
         await question(courseId, null, null, shuffled, qi);
       }
     }
+    // Inside the same transaction, so the website never sees a course's
+    // code values in place of an admin edit, even for a moment.
+    await applyCourseOverrides();
     await rememberFingerprint.run(FINGERPRINT_KEY, fingerprint);
   });
 
@@ -215,4 +218,30 @@ export const seedCourses = async () => {
     console.warn('Cache invalidation notice after seed:', err.message)
   );
   return { courses: courses.length, lessons: lessonTotal };
+};
+
+// ------------------------------------------------------------ admin edits
+
+const EDITABLE = ['title', 'summary', 'description', 'category', 'level', 'duration'];
+
+/**
+ * Lays the admin's edits (course_overrides) over the seeded rows: every
+ * course, or the one named. Runs after every seed and after every edit.
+ */
+export const applyCourseOverrides = (slug) =>
+  getDB()
+    .prepare(
+      `UPDATE courses SET ${EDITABLE.map((f) => `${f} = COALESCE(o.${f}, courses.${f})`).join(', ')}
+         FROM course_overrides o WHERE o.slug = courses.slug${slug ? ' AND courses.slug = ?' : ''}`
+    )
+    .run(...(slug ? [slug] : []));
+
+/** Puts a course's card back to what its content file says. False if no file has that slug. */
+export const restoreCourseFromContent = async (slug) => {
+  const c = (await loadCourses()).find((course) => course.slug === slug);
+  if (!c) return false;
+  await getDB()
+    .prepare(`UPDATE courses SET ${EDITABLE.map((f) => `${f} = @${f}`).join(', ')}, updatedAt = @now WHERE slug = @slug`)
+    .run({ ...c, description: c.description ?? null, now: new Date().toISOString() });
+  return true;
 };

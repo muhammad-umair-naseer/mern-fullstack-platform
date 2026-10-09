@@ -188,6 +188,22 @@ export const TABLES = {
     CREATE INDEX IF NOT EXISTS idx_courses_category ON courses (category);
     CREATE INDEX IF NOT EXISTS idx_courses_sort ON courses (sortOrder);
   `,
+  // Admin edits to a course's card (routes/admin.routes.js). The seeder
+  // rewrites courses from the content files whenever they change, so edits
+  // live here and are laid back over the seeded row after every seed. A NULL
+  // field means "keep what the content file says".
+  course_overrides: `
+    CREATE TABLE IF NOT EXISTS course_overrides (
+      slug        TEXT PRIMARY KEY,
+      title       TEXT,
+      summary     TEXT,
+      description TEXT,
+      category    TEXT,
+      level       TEXT,
+      duration    TEXT,
+      updatedAt   TIMESTAMPTZ NOT NULL
+    );
+  `,
   chapters: `
     CREATE TABLE IF NOT EXISTS chapters (
       id       BIGSERIAL PRIMARY KEY,
@@ -374,6 +390,8 @@ const migrate = async (database) => {
     ['users', 'verifyExpires', 'TEXT'],
     ['users', 'verifySentAt', 'TEXT'],
     ['users', 'verifyAttempts', 'INTEGER NOT NULL DEFAULT 0'],
+    // 1 = taken off the website by the admin; the seeder never touches it.
+    ['courses', 'hidden', 'INTEGER NOT NULL DEFAULT 0'],
   ];
 
   for (const [table, name, type] of additions) {

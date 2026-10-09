@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAdmin } from '../middleware/auth.js';
 import ContactMessage from '../models/ContactMessage.model.js';
 import { contactMessageSchema } from '../validation/schemas.js';
 import { queueContactEmail } from '../services/queue.service.js';
@@ -28,8 +29,8 @@ router.post('/', async (req, res) => {
 });
 
 
-// GET /api/contact/messages (admin/listing)
-router.get('/messages', async (_req, res) => {
+// GET /api/contact/messages (admin only: names, emails and phones)
+router.get('/messages', requireAdmin, async (_req, res) => {
 const items = await ContactMessage.findAll();
 res.json({ data: items });
 });

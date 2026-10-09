@@ -565,6 +565,32 @@ function checkArtMatcher() {
     console.log(`✓ auction: six seats, ${T6.sold.length} sold, bots bidding`);
     J.send({ type: 'leave' }); await sleep(50); J.close();
 
+    /* ---------- admin portal: edit and delete a player ---------- */
+    const cx = require('../server/cx');
+    const adminTok = cx.signGameToken({ sub: 'admin', aud: cx.ADMIN_AUDIENCE, ttlSec: 60 });
+    const admin = (method, id, body, tok = adminTok) => http(port, `/api/admin/players/${encodeURIComponent(id)}`, { method, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` }, body: body && JSON.stringify(body) });
+    const Z = new Client(port, 'Zara'); const zw = await Z.connect(); Z.auto = false;
+    const zid = zw.profile.id;
+    assert.strictEqual((await admin('PATCH', zid, { points: 5 }, cx.signGameToken({ sub: '1' }))).status, 401, "a player's token is refused");
+    assert.strictEqual((await admin('PATCH', zid, { name: 'x' })).status, 400, 'names keep the 2-character rule');
+    assert.strictEqual((await admin('PATCH', zid, { country: 'PAK' })).status, 400);
+    assert.strictEqual((await admin('PATCH', zid, { points: 1.5 })).status, 400);
+    assert.strictEqual((await admin('PATCH', 'nobody', { points: 5 })).status, 404);
+    const ed = await admin('PATCH', zid, { name: ' Zara  K ', country: 'ae', points: 99999 });
+    assert.deepStrictEqual([ed.status, ed.body.player.name, ed.body.player.country, ed.body.player.points], [200, 'Zara K', 'AE', 99999]);
+    Z.send({ type: 'board', category: 'points' });
+    const zb = await Z.until((m) => m.type === 'board', 2000, 'board after edit');
+    assert.strictEqual(zb.entries[0].id, zid, 'the board is recomputed at once');
+    const zClosed = new Promise((r) => Z.ws.on('close', (code) => r(code)));
+    assert.deepStrictEqual((await admin('DELETE', zid)).body, { ok: true });
+    assert.strictEqual(await zClosed, 4001, 'a connected player is dropped');
+    assert.strictEqual((await admin('DELETE', zid)).status, 404);
+    const Z2 = new Client(port, 'Zara'); const zw2 = await Z2.connect(Z.token);
+    assert.ok(zw2.fresh && zw2.profile.id !== zid, "the deleted player's token no longer opens anything");
+    assert.ok(!(await http(port, '/api/admin/players', { headers: { Authorization: `Bearer ${adminTok}` } })).body.players.some((x) => x.id === zid));
+    Z2.close();
+    console.log('✓ admin: edit (name, country, points) and delete, tokens and boards kept consistent');
+
     B.close(); A2.close();
   } catch (e) {
     failed = true;

@@ -270,8 +270,130 @@ function sitemapUrls() {
 
 /* ------------------------------------------------------------- HTTP */
 
+/* ---------------------------------------------- admin portal: players
+   For the Cortexis admin portal: list, edit and delete players. The website API mints the
+   token (signed with GAME_SSO_SECRET, admin audience) for an admin only;
+   a player's sign-in token is refused here. */
+function adminAllowed(req) {
+  const m = /^Bearer (.+)$/.exec(req.headers.authorization || '');
+  if (!m) return false;
+  try { cx.verifyGameToken(m[1], { audience: cx.ADMIN_AUDIENCE }); return true; } catch (_) { return false; }
+}
+const cortexisUser = (id) => (String(id).startsWith('cx_') ? Number(String(id).slice(3)) || null : null);
+function adminPlayers() {
+  return accounts.all.filter((a) => !a.mergedInto).map((a) => ({
+    id: a.id, name: a.name, country: a.country, cortexisUserId: cortexisUser(a.id),
+    points: a.points || 0, played: a.races || 0, wins: a.wins || 0,
+    streak: a.streak || 0, bestStreak: a.bestStreak || 0,
+    extra: { bestWpm: a.bestWpm || 0, practiceRuns: (a.solo && a.solo.runs) || 0, dailyBest: (a.daily && a.daily.best) || 0 },
+    createdAt: a.createdAt || null, lastSeen: a.lastSeen || null,
+  }));
+}
+
+const liveAccount = (id) => (Object.prototype.hasOwnProperty.call(accounts.accounts, id) && !accounts.accounts[id].mergedInto ? accounts.accounts[id] : null);
+
+/**
+ * Every copy of a player's name and flag kept outside the account: rival
+ * rows, daily entries (and the leader's replay), ghosts, past season tables.
+ * `fn(row)` edits a copy in place, or returns 'drop' to remove it.
+ */
+function eachCopy(id, fn) {
+  for (const a of accounts.all) if (a.rivals && a.rivals[id] && fn(a.rivals[id]) === 'drop') delete a.rivals[id];
+  for (const [day, rec] of Object.entries(daily.data)) {
+    if (!rec.entries[id]) continue;
+    const leader = daily.rankOf(day, id) === 1;
+    if (fn(rec.entries[id]) === 'drop') { delete rec.entries[id]; if (leader) delete rec.leaderGhost; } else if (leader && rec.leaderGhost) fn(rec.leaderGhost);
+  }
+  const pb = ghosts.data.pb[id];
+  if (pb) for (const [pid, g] of Object.entries(pb)) if (fn(g) === 'drop') delete pb[pid];
+  if (pb && !Object.keys(pb).length) delete ghosts.data.pb[id];
+  for (const [pid, g] of Object.entries(ghosts.data.wr)) if (g.accountId === id && fn(g) === 'drop') delete ghosts.data.wr[pid];
+  for (const s of Object.values(seasons.data)) s.top = s.top.filter((r) => r.id !== id || fn(r) !== 'drop');
+}
+
+/** Admin edit: { name, country, points }, each optional, checked like the game checks its own. */
+function adminEdit(acc, body) {
+  const out = {};
+  if (body.name !== undefined) {
+    out.name = sanitizeText(body.name, cfg.MAX_NAME_LEN);
+    if (!out.name) return 'Name cannot be empty.';
+  }
+  if (body.country !== undefined) {
+    out.country = String(body.country || '').toUpperCase();
+    if (!/^[A-Z]{2}$/.test(out.country)) return 'Country must be a 2-letter code (UN for none).';
+  }
+  if (body.points !== undefined) {
+    out.points = typeof body.points === 'string' && body.points.trim() ? Number(body.points) : body.points;
+    if (!Number.isSafeInteger(out.points) || out.points < 0) return 'Points must be a whole number, 0 or more.';
+  }
+  if (!Object.keys(out).length) return 'Nothing to change.';
+  accounts.setIdentity(acc, { name: out.name, country: out.country });
+  // the browser still holds the old name and country; this makes the next hello take the account's instead
+  if (out.name || out.country) acc.adminIdentity = true;
+  if (out.points !== undefined) acc.points = out.points;
+  eachCopy(acc.id, (row) => { if (out.name) row.name = out.name; if (out.country) row.country = out.country; });
+  for (const p of clients.values()) {
+    if (!p.account || p.account.id !== acc.id) continue;
+    if (out.name) p.name = out.name;
+    if (out.country) p.country = out.country;
+    if (out.name || out.country) p.send({ type: 'renamed', name: acc.name, country: acc.country });
+    if (p.room) p.room.broadcastState();
+  }
+  daily.touch();
+  resetCaches();
+  manager.onRaceSettled();
+  return null;
+}
+
+/** Admin delete: the account, guests folded into it, its team place, shares and every copy above; a connected player starts over as a guest. */
+function adminDelete(acc) {
+  const gone = [acc, ...accounts.all.filter((a) => a.mergedInto === acc.id)];
+  for (const a of gone) {
+    teams.leave(a);
+    eachCopy(a.id, () => 'drop');
+    for (const [sid, sh] of Object.entries(shares.data)) if (sh.accountId === a.id) delete shares.data[sid];
+    for (const [rid, r] of shares.results) if (r.accountId === a.id) shares.results.delete(rid);
+    delete accounts.accounts[a.id];
+  }
+  for (const p of clients.values()) {
+    if (!p.account || !gone.includes(p.account)) continue;
+    p.account = null;            // nothing more is recorded against it
+    p.tag = null;
+    manager.leave(p);
+    p.ws.close(4001, 'account removed');   // the browser reconnects and is handed a fresh guest
+  }
+  daily.touch();
+  resetCaches();
+  manager.onRaceSettled();
+}
+
+async function handleAdmin(req, res, urlPath) {
+  if (!adminAllowed(req)) return sendJson(res, 401, { error: 'Admin token required.' });
+  if (urlPath === '/api/admin/players') {
+    if (req.method !== 'GET') return sendJson(res, 405, { error: 'GET only.' });
+    return sendJson(res, 200, { players: adminPlayers() });
+  }
+  const m = /^\/api\/admin\/players\/([^/]+)$/.exec(urlPath);
+  if (!m) return sendJson(res, 404, { error: 'not found' });
+  if (req.method !== 'PATCH' && req.method !== 'DELETE') return sendJson(res, 405, { error: 'PATCH or DELETE only.' });
+  const acc = liveAccount(m[1]);
+  if (!acc) return sendJson(res, 404, { error: 'No such player.' });
+  if (req.method === 'DELETE') { adminDelete(acc); return sendJson(res, 200, { ok: true }); }
+  if (Number(req.headers['content-length']) > 10 * 1024) return sendJson(res, 400, { error: 'Request body too large.' });
+  let body;
+  try { body = JSON.parse(await readBody(req, 10 * 1024)); } catch (_) { return sendJson(res, 400, { error: 'Bad request body.' }); }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return sendJson(res, 400, { error: 'Bad request body.' });
+  const err = adminEdit(acc, body);
+  if (err) return sendJson(res, 400, { error: err });
+  return sendJson(res, 200, { player: adminPlayers().find((p) => p.id === acc.id) });
+}
+
 function serveStatic(req, res) {
   let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+
+  if (urlPath === '/api/admin/players' || urlPath.startsWith('/api/admin/players/')) {
+    return handleAdmin(req, res, urlPath).catch((err) => sendJson(res, 500, { error: err.message }));
+  }
 
   if (urlPath.startsWith('/api/auth/')) {
     return handleAuth(req, res, urlPath).catch((err) => sendJson(res, 500, { error: err.message }));
@@ -552,6 +674,13 @@ function handle(player, msg) {
       // a Cortexis player keeps their nickname when the browser has none to offer
       const keepName = accounts.isCortexis(player.account) && (!typed || /^Guest(-\w+)?$/i.test(typed));
       player.name = keepName ? player.account.name : typed || 'Guest-' + player.id.slice(0, 3);
+      // an admin renamed this account: its name and country win once, and the browser stores them
+      if (player.account.adminIdentity) {
+        delete player.account.adminIdentity;
+        player.name = player.account.name;
+        player.country = player.account.country;
+        player.send({ type: 'renamed', name: player.name, country: player.country });
+      }
       accounts.setIdentity(player.account, { name: player.name, country: player.country, skin: player.skin });
       const team = teams.of(player.account);
       player.tag = team ? team.tag : null;

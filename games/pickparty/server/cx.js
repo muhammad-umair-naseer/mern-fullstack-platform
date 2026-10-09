@@ -17,6 +17,9 @@ const crypto = require('crypto');
 
 const ISSUER = 'cortexis';
 const AUDIENCE = 'cortexis-games';
+// The admin portal's reads (/api/admin/*): minted by the website API for an
+// admin only, never accepted as a player sign-in, and the other way round.
+const ADMIN_AUDIENCE = 'cortexis-games-admin';
 const CLOCK_SKEW_SEC = 30;
 const DEV_SECRET = 'cortexis-dev-only-game-sso-secret--do-not-use-in-production';
 const PROD = process.env.NODE_ENV === 'production';
@@ -47,7 +50,7 @@ function b64json(part) {
  * Verify a game token. Returns { sub, name, exp } or throws a TokenError
  * whose code is 'config' (no secret), 'expired' or 'invalid'.
  */
-function verifyGameToken(token, { now = Date.now(), key = secret() } = {}) {
+function verifyGameToken(token, { now = Date.now(), key = secret(), audience = AUDIENCE } = {}) {
   if (!key) throw new TokenError('Cortexis sign-in is not configured on this game server.', 'config');
   if (typeof token !== 'string' || token.length > 4096) throw new TokenError('Missing sign-in token.');
   const parts = token.split('.');
@@ -63,7 +66,7 @@ function verifyGameToken(token, { now = Date.now(), key = secret() } = {}) {
   if (!claims || typeof claims !== 'object') throw new TokenError('Malformed sign-in token.');
   if (claims.iss !== ISSUER) throw new TokenError('Sign-in token has the wrong issuer.');
   const aud = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
-  if (!aud.includes(AUDIENCE)) throw new TokenError('Sign-in token is not meant for the games.');
+  if (!aud.includes(audience)) throw new TokenError('Sign-in token is not meant for this use.');
   const t = Math.floor(now / 1000);
   if (typeof claims.exp !== 'number' || claims.exp + CLOCK_SKEW_SEC < t) throw new TokenError('Sign-in token has expired.', 'expired');
   if (typeof claims.nbf === 'number' && claims.nbf - CLOCK_SKEW_SEC > t) throw new TokenError('Sign-in token is not valid yet.');
@@ -155,4 +158,4 @@ function nicknameFrom(fullName, maxLen = 16) {
   return out || (words[0] || '').slice(0, maxLen);
 }
 
-module.exports = { verifyGameToken, signGameToken, siteConfig, headerCountry, guessCountry, nicknameFrom, ssoReady, TokenError, DEV_SECRET, ISSUER, AUDIENCE };
+module.exports = { verifyGameToken, signGameToken, siteConfig, headerCountry, guessCountry, nicknameFrom, ssoReady, TokenError, DEV_SECRET, ISSUER, AUDIENCE, ADMIN_AUDIENCE };

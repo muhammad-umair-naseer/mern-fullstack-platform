@@ -21,6 +21,8 @@ process.env.JWT_SECRET ??= 'test-secret-that-is-long-enough-for-jwt';
 process.env.EMBEDDED_WORKER = 'false';
 process.env.REDIS_DB ??= '15';
 process.env.DATABASE_URL ??= 'postgresql://postgres:postgres@localhost:5432/cortexis_db';
+process.env.ADMIN_EMAIL ??= 'admin@example.com';
+process.env.ADMIN_PASSWORD ??= 'an-admin-password-for-tests';
 
 const { default: app, boot } = await import('../src/app.js');
 
@@ -445,4 +447,90 @@ test('game token: signed, short-lived, for verified learners only', async () => 
   assert.equal(unverified.status, 403);
   assert.equal(unverified.needsVerification, true);
   await q('DELETE FROM users WHERE id = ?').run(row.id);
+});
+
+test('admin: edit, hide, reset and delete', async () => {
+  const { signToken } = await import('../src/middleware/auth.js');
+  const { seedCourses } = await import('../src/content/seed.js');
+  // The walkthrough above spends most of the learn rate limit.
+  await getRedisClient()?.flushdb().catch(() => {});
+  const admin = await q('SELECT id, email FROM users WHERE LOWER(email) = ?').get(process.env.ADMIN_EMAIL.toLowerCase());
+  const A = signToken(admin);
+  const stamp = Date.now();
+  const student = async (i) => {
+    const now = new Date().toISOString();
+    const { lastInsertRowid: id } = await q(
+      `INSERT INTO users (name, email, passwordHash, emailVerified, createdAt, updatedAt) VALUES (?, ?, 'x', 1, ?, ?)`
+    ).run(`Admin Test ${i}`, `admin-test+${stamp}-${i}@example.com`, now, now);
+    return { id, token: signToken({ id, email: `admin-test+${stamp}-${i}@example.com` }) };
+  };
+  const [s1, s2] = [await student(1), await student(2)];
+  const slug = course.slug;
+  const before = (await api('GET', `/api/admin/courses/${slug}`, { token: A })).data.course;
+  try {
+
+    assert.equal((await api('PATCH', `/api/admin/courses/${slug}`, { token: s1.token, body: { title: 'x' } })).status, 403);
+    assert.equal((await api('PATCH', `/api/admin/courses/${slug}`, { token: A, body: { title: ' ' } })).status, 400);
+
+    // An edit outlives a re-seed of the course content, and reset undoes it.
+    const edited = await api('PATCH', `/api/admin/courses/${slug}`, { token: A, body: { title: ' Edited ', level: 'Expert' } });
+    assert.equal(edited.data.title, 'Edited');
+    assert.equal(edited.data.edited, true);
+    await q("DELETE FROM meta WHERE key = 'courses:fingerprint'").run();
+    await seedCourses();
+    assert.equal((await api('GET', `/api/admin/courses/${slug}`, { token: A })).data.course.title, 'Edited');
+    const reset = await api('POST', `/api/admin/courses/${slug}/reset`, { token: A });
+    assert.equal(reset.data.title, before.title);
+    assert.equal(reset.data.level, before.level);
+    assert.equal(reset.data.edited, false);
+
+    // Hidden: gone for everyone not enrolled, intact for those who are.
+    assert.equal((await api('POST', `/api/learn/courses/${slug}/enroll`, { token: s1.token })).status, 201);
+    assert.deepEqual((await api('DELETE', `/api/admin/courses/${slug}`, { token: A })).data, { hidden: true });
+    assert.ok(!(await api('GET', '/api/learn/courses')).data.some((c) => c.slug === slug));
+    assert.equal((await api('GET', `/api/learn/courses/${slug}`)).status, 404);
+    assert.equal((await api('POST', `/api/learn/courses/${slug}/enroll`, { token: s2.token })).status, 404);
+    const outline = await api('GET', `/api/learn/courses/${slug}`, { token: s1.token });
+    assert.equal(outline.status, 200);
+    assert.equal((await api('GET', `/api/learn/lessons/${outline.data.chapters[0].lessons[0].id}`, { token: s1.token })).status, 200);
+    assert.equal((await api('PATCH', `/api/admin/courses/${slug}`, { token: A, body: { hidden: false } })).data.hidden, false);
+    assert.ok((await api('GET', '/api/learn/courses')).data.some((c) => c.slug === slug));
+
+    // Students
+    assert.equal((await api('DELETE', `/api/admin/users/${admin.id}`, { token: A })).status, 400);
+    assert.equal((await api('PATCH', `/api/admin/users/${s1.id}`, { token: A, body: { email: `ADMIN-TEST+${stamp}-2@example.com` } })).status, 409);
+    const renamed = await api('PATCH', `/api/admin/users/${s1.id}`, { token: A, body: { name: 'Renamed', emailVerified: true } });
+    assert.equal(renamed.data.name, 'Renamed');
+
+    // Certificates
+    const { lastInsertRowid: certId } = await q('INSERT INTO certificates (userId, courseId, code, score, issuedAt) VALUES (?, ?, ?, 80, ?)')
+      .run(s1.id, course.id, `CTX-T-${stamp}`, new Date().toISOString());
+    assert.equal((await api('PATCH', `/api/admin/certificates/${certId}`, { token: A, body: { score: 101 } })).status, 400);
+    assert.equal((await api('PATCH', `/api/admin/certificates/${certId}`, { token: A, body: { score: 90 } })).data.score, 90);
+    assert.equal((await api('DELETE', `/api/admin/certificates/${certId}`, { token: A })).data.deleted, true);
+    assert.equal((await api('GET', `/api/learn/certificate/CTX-T-${stamp}`)).status, 404);
+
+    // Removing from a course wipes the record there; deleting takes everything.
+    assert.deepEqual((await api('DELETE', `/api/admin/users/${s1.id}/courses/${slug}`, { token: A })).data, { removed: true });
+    assert.equal((await q('SELECT COUNT(*) AS n FROM enrollments WHERE userId = ?').get(s1.id)).n, 0);
+    await api('POST', `/api/learn/courses/${slug}/enroll`, { token: s2.token });
+    for (const s of [s1, s2]) assert.equal((await api('DELETE', `/api/admin/users/${s.id}`, { token: A })).data.deleted, true);
+    assert.equal((await api('GET', '/api/learn/my', { token: s2.token })).status, 401);
+
+    // Forms
+    const { lastInsertRowid: mid } = await q('INSERT INTO contact_messages (name, email, message, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)')
+      .run('Msg Test', 'm@example.com', 'A message long enough', new Date().toISOString(), new Date().toISOString());
+    assert.equal((await api('PATCH', `/api/admin/messages/${mid}`, { token: A, body: { handled: true, subject: 'S' } })).data.subject, 'S');
+    assert.equal((await api('DELETE', `/api/admin/messages/${mid}`, { token: A })).data.deleted, true);
+    const { lastInsertRowid: iid } = await q('INSERT INTO internship_applications (name, email, internshipTitle, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)')
+      .run('Intern Test', 'i@example.com', 'Frontend Intern', new Date().toISOString(), new Date().toISOString());
+    assert.equal((await api('PATCH', `/api/admin/internships/${iid}`, { token: A, body: { resumeLink: 'ftp://x' } })).status, 400);
+    assert.equal((await api('DELETE', `/api/admin/internships/${iid}`, { token: A })).data.deleted, true);
+  } finally {
+    // A failure part-way must not leave the shared course edited or hidden.
+    await q('DELETE FROM course_overrides WHERE slug = ?').run(slug);
+    await q('UPDATE courses SET hidden = 0 WHERE slug = ?').run(slug);
+    await api('POST', `/api/admin/courses/${slug}/reset`, { token: A });
+    await q("DELETE FROM users WHERE email LIKE 'admin-test+%@example.com'").run();
+  }
 });

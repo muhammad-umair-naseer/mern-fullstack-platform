@@ -1,0 +1,67 @@
+/* House background: silk in window light, fixed behind every view.
+   Mounted by silk.js into <div class="lx-silk" id="silk">. */
+
+.lx-silk {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  /* Painted at once, before (or without) WebGL; the shader fades in over it. */
+  background:
+    radial-gradient(120% 80% at 88% -12%, #FFFEFB 0%, rgba(255, 254, 251, 0) 62%),
+    radial-gradient(80% 70% at 6% 104%, #EFE4D4 0%, rgba(239, 228, 212, 0) 70%),
+    linear-gradient(112deg, #F5EFE6 0%, #FAF8F4 46%, #F3ECE2 100%);
+}
+
+.lx-silk-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lx-silk-canvas.is-on { opacity: 1; }
+
+/* Phones and coarse pointers: two painted moments, drifted and cross-faded
+   on the compositor. */
+.lx-silk.is-lite .lx-silk-canvas { transform: scale(1.16); }
+
+.lx-silk.is-lite:not(.is-still) .lx-silk-a {
+  animation: lx-silk-drift-a 34s cubic-bezier(0.76, 0, 0.24, 1) infinite alternate;
+}
+
+.lx-silk.is-lite:not(.is-still) .lx-silk-b.is-on {
+  animation:
+    lx-silk-drift-b 26s cubic-bezier(0.76, 0, 0.24, 1) infinite alternate,
+    lx-silk-fade 13s cubic-bezier(0.76, 0, 0.24, 1) 2s infinite alternate;
+}
+
+@keyframes lx-silk-drift-a {
+  from { transform: scale(1.16) translate3d(-3%, -2%, 0); }
+  to { transform: scale(1.22) translate3d(3%, 2%, 0); }
+}
+
+@keyframes lx-silk-drift-b {
+  from { transform: scale(1.2) translate3d(3%, -1.5%, 0); }
+  to { transform: scale(1.16) translate3d(-3%, 2%, 0); }
+}
+
+@keyframes lx-silk-fade {
+  from { opacity: 1; }
+  to { opacity: 0.08; }
+}
+
+/* Reduced motion: one still frame, no fade-in, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .lx-silk-canvas { transition: none; }
+  .lx-silk .lx-silk-canvas { animation: none !important; }
+  .lx-silk-b { display: none; }
+}
+
+@media print {
+  .lx-silk { display: none !important; }
+}

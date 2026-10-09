@@ -1,0 +1,12 @@
+{
+  "name": "cortexis-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cortexis admin portal: a separate app on its own port, for staff only",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

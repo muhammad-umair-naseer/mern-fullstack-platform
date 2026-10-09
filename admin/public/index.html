@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Cortexis Admin</title>
+  <link rel="icon" href="/cortexis-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/silk.css">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/config.js"></script>
+  <script src="/silk.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="lx-silk" id="silk" aria-hidden="true"></div>
+  <!-- sign in: the one admin account -->
+  <main id="signin" class="signin" hidden>
+    <figure class="photo" aria-hidden="true">
+      <div class="photo-frame"><img src="/img/desk.webp" alt="" decoding="async"><span class="sheen"></span></div>
+    </figure>
+    <form id="signin-form" class="signin-card glass" autocomplete="on">
+      <img src="/cortexis-mark.png" width="44" height="44" alt="">
+      <p class="eyebrow">Staff only</p>
+      <h1>Cortexis <em>Admin</em></h1>
+      <label>Email<input name="email" type="email" required autocomplete="username"></label>
+      <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+      <p class="form-error" id="signin-error" role="alert" hidden></p>
+      <button class="btn btn-go" type="submit">Sign in<span class="disc" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+    </form>
+  </main>
+
+  <!-- the portal: a sidebar of sections, one view at a time -->
+  <div id="portal" class="shell" hidden>
+    <aside class="side glass">
+      <a class="brand" href="#/overview"><img src="/cortexis-mark.png" width="30" height="30" alt=""><span>Cortexis <em>Admin</em></span></a>
+      <nav class="side-nav" id="side-nav" aria-label="Admin sections">
+        <span class="side-pill" id="side-pill" aria-hidden="true"></span>
+        <p class="side-label">Learning</p>
+        <a href="#/overview" data-section="overview"><span>Overview</span></a>
+        <a href="#/courses" data-section="courses"><span>Courses</span></a>
+        <a href="#/students" data-section="students"><span>Students</span></a>
+        <a href="#/certificates" data-section="certificates"><span>Certificates</span></a>
+        <a href="#/claude-pro" data-section="claude-pro"><span>Claude Pro</span><b class="badge" id="badge-claude" hidden></b></a>
+        <p class="side-label">People</p>
+        <a href="#/internships" data-section="internships"><span>Internships</span></a>
+        <a href="#/messages" data-section="messages"><span>Messages</span><b class="badge" id="badge-messages" hidden></b></a>
+        <p class="side-label">Games</p>
+        <a href="#/games" data-section="games"><span>All games</span></a>
+        <a href="#/games/gotcha-rush" data-section="games/gotcha-rush"><span>Gotcha Rush</span></a>
+        <a href="#/games/typedash" data-section="games/typedash"><span>TypeDash</span></a>
+        <a href="#/games/pickparty" data-section="games/pickparty"><span>PickParty</span></a>
+      </nav>
+      <div class="side-foot">
+        <span id="me-email"></span>
+        <button class="btn btn-sm" id="signout" type="button">Sign out</button>
+      </div>
+    </aside>
+    <main class="main" id="view" tabindex="-1" aria-live="polite"></main>
+  </div>
+
+  <!-- one sheet for every edit, one for every delete; filled by app.js -->
+  <dialog class="sheet" id="edit-dialog" aria-labelledby="edit-title">
+    <form id="edit-form">
+      <p class="eyebrow">Admin</p>
+      <h2 id="edit-title"></h2>
+      <div class="fields" id="edit-fields"></div>
+      <p class="form-error" id="edit-error" role="alert" hidden></p>
+      <div class="actions">
+        <button class="btn" type="button" data-close>Cancel</button>
+        <button class="btn btn-go" type="submit">Save<span class="disc" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="sheet" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-body">
+    <form id="confirm-form">
+      <p class="eyebrow">Please check</p>
+      <h2 id="confirm-title"></h2>
+      <p class="sheet-body" id="confirm-body"></p>
+      <label id="confirm-gate" hidden><span>Type <b class="mono" id="confirm-email"></b> to confirm</span><input id="confirm-input" type="email" autocomplete="off" spellcheck="false"></label>
+      <p class="form-error" id="confirm-error" role="alert" hidden></p>
+      <div class="actions">
+        <button class="btn" type="button" data-close>Cancel</button>
+        <button class="btn btn-danger" id="confirm-go" type="submit">Delete</button>
+      </div>
+    </form>
+  </dialog>
+  <p class="toast" id="toast" role="status" aria-live="polite"></p>
+</body>
+</html>

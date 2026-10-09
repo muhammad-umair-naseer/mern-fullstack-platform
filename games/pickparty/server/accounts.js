@@ -68,7 +68,8 @@ class Accounts {
     return (id && this.accounts[id]) || null;
   }
 
-  get(id) { return this.accounts[id] || null; }
+  // Own keys only: ids come from URLs, and '__proto__' must not find Object.prototype.
+  get(id) { return Object.hasOwn(this.accounts, id) ? this.accounts[id] : null; }
   all() { return Object.values(this.accounts); }
 
   setIdentity(acc, { name, country, avatar }) {

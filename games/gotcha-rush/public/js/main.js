@@ -617,6 +617,11 @@ net.on('account', (m) => {
   if (!m.created && account.streak > 0 && !account.playedToday) toast(`🔥 ${account.streak}-day streak — one match today keeps it alive`, 'info', 4200);
 });
 net.on('board', (m) => boards.setData(m));
+net.on('renamed', (m) => { // an admin changed this player's name or country
+  el.name.value = el.friendsName.value = m.name;
+  localStorage.setItem('gr_name', m.name);
+  if (m.country) { setCountry(m.country); boards.setCountry(el.country.value); localStorage.setItem('gr_country', el.country.value); }
+});
 net.on('online', (m) => { el.online.textContent = m.n; el.hoodOnline.textContent = m.n; });
 net.on('error', (m) => { toast(m.message || 'Something went wrong', 'error'); sound.error(); });
 net.on('left', () => { if (S.room && !S.room.local) goHome(); });

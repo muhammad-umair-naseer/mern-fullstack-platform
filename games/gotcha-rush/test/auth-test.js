@@ -183,6 +183,29 @@ async function main() {
   assert.strictEqual(solo2.body.profile.country, 'SA');
   console.log('✓ new Cortexis player: country from header, else the guess');
 
+  // ---------------- admin portal: edit and delete a player ----------------
+  const adminTok = cx.signGameToken({ sub: 'admin', aud: cx.ADMIN_AUDIENCE, ttlSec: 60 });
+  const admin = async (method, id, body, tok = adminTok) => {
+    const res = await fetch(`${base}/api/admin/players/${encodeURIComponent(id)}`, { method, headers: { 'content-type': 'application/json', authorization: `Bearer ${tok}` }, body: body && JSON.stringify(body) });
+    return { status: res.status, body: await res.json() };
+  };
+  assert.strictEqual((await admin('PATCH', 'cx_77', { points: 5 }, good)).status, 401, "a player's token is refused");
+  assert.strictEqual((await admin('PATCH', 'cx_77', { country: 'Saudi' })).status, 400);
+  assert.strictEqual((await admin('PATCH', 'cx_77', { name: ' <> ' })).status, 400);
+  assert.strictEqual((await admin('PATCH', 'nobody', { points: 5 })).status, 404);
+  accounts.recordHeadToHead(accounts.accounts.cx_77, accounts.accounts.cx_4242);
+  const ed = await admin('PATCH', 'cx_77', { name: 'Sara  K', country: 'ae', points: 900 });
+  assert.strictEqual(ed.status, 200);
+  assert.deepStrictEqual([ed.body.player.name, ed.body.player.country, ed.body.player.points], ['Sara K', 'AE', 900]);
+  assert.strictEqual(accounts.accounts.cx_4242.rivals.cx_77.name, 'Sara K', "a rival's row shows the new name");
+  assert.strictEqual(board().entries[0].id, 'cx_77', 'the board is recomputed');
+  assert.deepStrictEqual((await admin('DELETE', 'cx_4242')).body, { ok: true });
+  assert.ok(!accounts.accounts.cx_4242 && !accounts.accounts[gAcc.id], 'the account and the guest merged into it are gone');
+  assert.ok(!accounts.accounts.cx_77.rivals.cx_4242, 'no rival row points at it');
+  assert.ok(!board().entries.some((e) => e.id === 'cx_4242'));
+  assert.strictEqual((await admin('DELETE', 'cx_4242')).status, 404);
+  console.log('✓ admin: edit (name, country, points) and delete, rivals and boards kept consistent');
+
   // ---------------- same sign-in code as TypeDash ----------------
   // TypeDash's browser test (test/run-cx-client-test.js) drives cx-auth.js in
   // Chrome; the two copies may differ only in their storage prefix and wording.

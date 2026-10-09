@@ -24,7 +24,7 @@ export const listCourses = async (_req, res) => {
                     (SELECT COUNT(*) FROM chapters ch WHERE ch.courseId = c.id) AS chapterCount,
                     (SELECT COUNT(*) FROM lessons l JOIN chapters ch ON ch.id = l.chapterId
                       WHERE ch.courseId = c.id) AS lessonCount
-             FROM courses c ORDER BY c.sortOrder, c.title`
+             FROM courses c WHERE c.hidden = 0 ORDER BY c.sortOrder, c.title`
           )
           .all();
       },
@@ -94,7 +94,7 @@ export const getCourseOutline = async (req, res) => {
         const pool = await db
           .prepare(
             `SELECT slug, title, summary, level, category, duration
-             FROM courses WHERE id != ? ORDER BY title`
+             FROM courses WHERE id != ? AND hidden = 0 ORDER BY title`
           )
           .all(course.id);
 
@@ -107,7 +107,12 @@ export const getCourseOutline = async (req, res) => {
       CACHE_TTL.COURSE_OUTLINE
     );
 
-    if (!publicOutline) {
+    // A course the admin took off the website is still open to the learners
+    // already enrolled in it, and to nobody else.
+    if (
+      !publicOutline ||
+      (publicOutline.hidden && !(req.user && (await enrollmentFor(req.user.id, publicOutline.id))))
+    ) {
       return res.status(404).json({ message: 'Course not found' });
     }
 
@@ -136,6 +141,7 @@ export const getCourseOutline = async (req, res) => {
             .get(req.user.id, publicOutline.id)) ?? null,
         // The final exam's rules, attempts and retake date (services/finalExam.service.js).
         final: await finalStatus(req.user.id, publicOutline, gates),
+        claudePro: await claudeProStatus(req.user.id, publicOutline.id),
       };
     }
 
@@ -147,6 +153,16 @@ export const getCourseOutline = async (req, res) => {
   }
 };
 
+// The learner's Claude Pro application for a course, as the admin last set
+// it: applied, selected (shortlisted), awarded or rejected. Null until they
+// have applied (in_progress is only the study-time tracker).
+const claudeProStatus = async (userId, courseId) => {
+  const row = await getDB()
+    .prepare('SELECT status FROM claude_pro_applications WHERE userId = ? AND courseId = ?')
+    .get(userId, courseId);
+  return row && row.status !== 'in_progress' ? row.status : null;
+};
+
 // POST /api/learn/courses/:slug/enroll
 export const enroll = async (req, res) => {
   const course = await courseBySlug(req.params.slug);
@@ -154,6 +170,7 @@ export const enroll = async (req, res) => {
 
   const existing = await enrollmentFor(req.user.id, course.id);
   if (existing) return res.json({ message: 'Already enrolled', data: existing });
+  if (course.hidden) return res.status(404).json({ message: 'Course not found' });
 
   const now = new Date().toISOString();
   await getDB()
@@ -187,6 +204,7 @@ export const myCourses = async (req, res) => {
         (await db
           .prepare('SELECT code, score, issuedAt FROM certificates WHERE userId = ? AND courseId = ?')
           .get(req.user.id, course.id)) ?? null,
+      claudePro: await claudeProStatus(req.user.id, course.id),
     });
   }
 

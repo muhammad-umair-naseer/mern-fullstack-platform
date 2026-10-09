@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAdmin } from '../middleware/auth.js';
 import InternshipApplication from '../models/InternshipApplication.model.js';
 import { internshipApplicationSchema } from '../validation/schemas.js';
 import { queueInternshipAlert } from '../services/queue.service.js';
@@ -28,8 +29,8 @@ router.post('/apply', async (req, res) => {
 });
 
 
-// GET /api/internships/applications (admin/listing)
-router.get('/applications', async (_req, res) => {
+// GET /api/internships/applications (admin only: names, emails and phones)
+router.get('/applications', requireAdmin, async (_req, res) => {
 const items = await InternshipApplication.findAll();
 res.json({ data: items });
 });
