@@ -5,6 +5,7 @@ import { api } from '../lib/api';
 import LearnHero from '../learn/LearnHero';
 import { learnPhotos } from '../learn/photos';
 import useCountUp from '../learn/useCountUp';
+import { CLAUDE_PRO } from '../learn/ClaudePro';
 import '../learn/Learn.css';
 import '../learn/Quiz.css';
 import '../learn/FinalExam.css';
@@ -129,21 +130,40 @@ const Rules = ({ rules, onStart, starting, retake }) => {
   );
 };
 
-const ClaudeAppliedCard = ({ score }) => (
-  <div className="fx-claude-applied-box" role="status">
-    <div className="fx-claude-applied-header">
-      <div className="flex items-center gap-2">
-        <span className="text-xl" aria-hidden="true">✨</span>
-        <h3 className="fx-claude-applied-title">Applied for 1 Month Free Claude Pro!</h3>
+// The Claude Pro application this pass created, with whatever the admin has
+// decided since: applied, shortlisted, awarded or not selected.
+const CLAUDE_CARD = {
+  applied: ['Applied for 1 month of free Claude Pro', 'Your score and learning progress were sent in automatically. Follow it with Claude Pro status on My learning.'],
+  selected: ['Your Claude Pro request is being reviewed', 'The Cortexis team is working on your request.'],
+  awarded: ['Award granted. Congratulations!', 'One month of Claude Pro is yours. Watch your inbox for how to claim it.'],
+  rejected: ['Claude Pro not granted', 'Thank you for applying. Your certificate is yours to keep and share.'],
+};
+
+const ClaudeAppliedCard = ({ score, slug }) => {
+  const [status, setStatus] = useState('applied');
+  useEffect(() => {
+    let live = true;
+    api(`/learn/claude-pro/status/${slug}`)
+      .then((res) => { if (live && CLAUDE_CARD[res?.data?.status]) setStatus(res.data.status); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, [slug]);
+  const [title, note] = CLAUDE_CARD[status];
+  return (
+    <div className={`fx-claude-applied-box is-${status}`} role="status">
+      <div className="fx-claude-applied-header">
+        <div className="flex items-center gap-2">
+          <span className="text-xl" aria-hidden="true">{status === 'awarded' ? '🎉' : '✨'}</span>
+          <h3 className="fx-claude-applied-title">{title}</h3>
+        </div>
+        <span className="fx-claude-applied-badge">{CLAUDE_PRO[status].label}</span>
       </div>
-      <span className="fx-claude-applied-badge">Status: Applied (Under Review)</span>
+      <p className="fx-claude-applied-note">
+        Final score <strong>{score}/100</strong>. {note}
+      </p>
     </div>
-    <p className="fx-claude-applied-note">
-      Congratulations on completing the course! Your score of{' '}
-      <strong>{score}/100</strong> and learning progress have been automatically submitted for the Claude Pro Sponsored Grant. Cortexis administration reviews all applicants and selects candidates for free Claude Pro access.
-    </p>
-  </div>
-);
+  );
+};
 
 // Where the learner stands when there is nothing to start.
 const Standing = ({ status, slug }) => {
@@ -156,7 +176,7 @@ const Standing = ({ status, slug }) => {
             You passed with <strong>{status.certificate.score}/100</strong>.
           </p>
           <CertificatePanel certificate={status.certificate} fresh={false} />
-          <ClaudeAppliedCard score={status.certificate.score} />
+          <ClaudeAppliedCard score={status.certificate.score} slug={slug} />
         </>
       )}
       {status.state === 'waiting' && (
@@ -410,7 +430,7 @@ const Result = ({ result, slug }) => {
       {result.passed && status.certificate && (
         <>
           <CertificatePanel certificate={status.certificate} fresh />
-          <ClaudeAppliedCard score={result.marks} />
+          <ClaudeAppliedCard score={result.marks} slug={slug} />
         </>
       )}
       {status.state === 'waiting' && (

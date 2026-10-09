@@ -7,6 +7,7 @@ import ProgressBar from '../learn/ProgressBar';
 import TopicQuiz from '../learn/TopicQuiz';
 import { useClaudeProTracker } from '../hooks/useClaudeProTracker';
 import '../learn/LessonView.css';
+import { CLAUDE_PRO } from '../learn/ClaudePro';
 
 const LessonView = () => {
   const { slug, lessonId } = useParams();
@@ -292,8 +293,8 @@ const LessonView = () => {
               <span className="cx-lv-claude-dot" aria-hidden="true" />
               <span>
                 Claude Pro:{' '}
-                {claudeTracker.applied
-                  ? 'Applied'
+                {CLAUDE_PRO[claudeTracker.status]
+                  ? CLAUDE_PRO[claudeTracker.status].short
                   : claudeTracker.timeSpentMinutes > 0
                   ? `${claudeTracker.timeSpentMinutes}m tracked`
                   : 'Time tracking active'}

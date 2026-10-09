@@ -198,7 +198,7 @@ export const getLearnerClaudeProStatus = async (userId, courseSlug) => {
   }
 
   return {
-    applied: row.status === 'applied' || row.status === 'awarded',
+    applied: ['applied', 'selected', 'awarded', 'rejected'].includes(row.status),
     status: row.status,
     score: row.score,
     timeSpentSeconds: row.timeSpentSeconds,

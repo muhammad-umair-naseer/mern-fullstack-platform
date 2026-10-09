@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import ProgressBar from '../learn/ProgressBar';
@@ -8,7 +8,7 @@ import PhotoVisual from '../components/PhotoVisual';
 import useCountUp from '../learn/useCountUp';
 import { learnPhotos } from '../learn/photos';
 import { courseCover } from '../data/courseCovers';
-import ClaudeProAdminModal from '../components/ClaudeProAdminModal';
+import { CLAUDE_PRO, ClaudeProPill, ClaudeProStatus } from '../learn/ClaudePro';
 // PhotoVisual's frame, drift and chips are styled alongside PageHero.
 import '../components/PageHero.css';
 import '../learn/Learn.css';
@@ -59,7 +59,6 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [courses, setCourses] = useState([]);
   const [status, setStatus] = useState('loading');
-  const [adminOpen, setAdminOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -139,17 +138,13 @@ const Dashboard = () => {
               </div>
             )}
 
-            {user?.isAdmin && (
-              <div className="mt-4 pt-2 flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setAdminOpen(true)}
-                  className="btn lx-btn-ghost inline-flex items-center gap-2 text-xs"
-                  title="View stored learner data & select candidates for 1-Month Free Claude Pro"
-                >
-                  <Sparkles size={14} className="text-copper" />
-                  <span>Claude Pro Applicants Portal (Admin)</span>
-                </button>
+            {hasCourses && (
+              <div className="cp-open-row">
+                <ClaudeProStatus
+                  courses={courses.filter((c) => CLAUDE_PRO[c.claudePro])}
+                  email={user?.email}
+                  onFresh={setCourses}
+                />
               </div>
             )}
           </div>
@@ -228,11 +223,7 @@ const Dashboard = () => {
                           <span className="lp-status-dot" aria-hidden="true" />
                           {state.label}
                         </span>
-                        {c.certificate && (
-                          <span className="lx-claude-applied-pill" title="1 Month Free Claude Pro application submitted">
-                            ✨ Claude Pro: Applied
-                          </span>
-                        )}
+                        <ClaudeProPill status={c.claudePro} />
                         <span>
                           {c.category} · {c.duration}
                         </span>
@@ -278,8 +269,6 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Claude Pro Admin Selection Portal Modal */}
-      <ClaudeProAdminModal isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
     </main>
   );
 };

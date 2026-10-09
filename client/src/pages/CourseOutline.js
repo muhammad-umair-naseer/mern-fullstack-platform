@@ -11,6 +11,7 @@ import { courseCover } from '../data/courseCovers';
 import { photos } from '../assets/lux';
 import Seo from '../seo/Seo';
 import { course as courseSchema, breadcrumbs } from '../seo/schema';
+import { ClaudeProPill } from '../learn/ClaudePro';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -395,9 +396,7 @@ const CourseOutline = () => {
                     <Link to={`/certificate/${progress.certificate.code}`} className="lx-link">
                       View your certificate <ArrowRight size={16} aria-hidden="true" />
                     </Link>
-                    <span className="lx-claude-applied-pill" title="You have automatically applied for 1 Month Free Claude Pro">
-                      ✨ Claude Pro: Applied (Under Review)
-                    </span>
+                    <ClaudeProPill status={progress.claudePro} />
                   </>
                 )}
               </div>
