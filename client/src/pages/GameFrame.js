@@ -3,6 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import Seo from '../seo/Seo';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
+import ServiceArticle from '../components/ServiceArticle';
+import { POSTS } from '../data/blog.generated';
+import { parseBlogContent } from '../lib/blogParser';
+import { breadcrumbs, hostedArticle } from '../seo/schema';
 
 const GAME_CONFIG = {
   'gotcha-rush': {
@@ -75,6 +79,9 @@ const CSS = `
 .gf-state-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 22px; margin-top: 8px; }
 .gf-off svg.gf-plug { width: 88px; height: 88px; }
 .gf-off .gf-plug .gf-spark { animation: gf-blink 1.6s steps(1) infinite; }
+/* the game's own guide, read under the game */
+.gf .svd-article { padding-top: clamp(3rem, 2rem + 4vw, 5.5rem); }
+.gf .svd-article-cover { display: none; } /* a picture of the game, right under the game itself: kept for sharing only */
 .gf-missing { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 48px var(--gutter); text-align: center; }
 .gf-missing h1 { margin: 0; font-size: var(--text-h2); }
 .gf-missing p { margin: 0 0 8px; color: var(--ink-3); }
@@ -112,9 +119,9 @@ function GameMark({ gameId }) {
   if (gameId === 'pickparty') {
     return (
       <svg viewBox="0 0 32 32" aria-hidden="true">
-        <rect width="32" height="32" rx="9" fill="#17246B" />
-        <rect x="7" y="5" width="18" height="23" rx="3" fill="#FBF7EE" transform="rotate(-8 16 16.5)" />
-        <circle cx="16" cy="15.5" r="4.2" fill="#FFD23F" />
+        <rect width="32" height="32" rx="9" fill="#16130F" />
+        <rect x="7" y="5" width="18" height="23" rx="3" fill="#FAF8F4" transform="rotate(-8 16 16.5)" />
+        <circle cx="16" cy="15.5" r="4.2" fill="#B8612E" />
       </svg>
     );
   }
@@ -353,6 +360,16 @@ export default function GameFrame() {
     );
   }
 
+  const path = `/games/${gameId}`;
+  const article = POSTS.find((p) => p.home === path);
+  const schema = [
+    breadcrumbs([
+      { name: 'Home', path: '/' },
+      { name: 'Games', path: '/games' },
+      { name: config.title, path },
+    ]),
+    ...(article ? hostedArticle(article, path, parseBlogContent(article.body).faqs) : []),
+  ];
   const ready = isLoaded && !hasError;
   const dot = hasError ? 'is-off' : ready ? '' : 'is-wait';
 
@@ -361,8 +378,10 @@ export default function GameFrame() {
       <style>{CSS}</style>
       <Seo
         title={`${config.title} | Cortexis Playground`}
-        description={config.tagline}
-        path={`/games/${gameId}`}
+        description={article ? article.description : config.tagline}
+        path={path}
+        image={article?.image}
+        schema={schema}
       />
 
       <div className="gf-bar">
@@ -442,6 +461,8 @@ export default function GameFrame() {
           onError={() => setHasError(true)}
         />
       </div>
+
+      {article && <ServiceArticle post={article} label={`About ${config.title}`} />}
     </main>
   );
 }

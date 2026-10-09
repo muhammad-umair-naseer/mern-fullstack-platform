@@ -33,7 +33,7 @@ if (/—|–/.test(raw)) errs.push('no em or en dashes anywhere, write the sente
 
 // Links must point at pages that exist. 60 of the 62 tools do not.
 const REAL = ['/services','/courses','/internships','/tools','/your-bot','/contact','/about','/blog',
-  '/tools/pdf-compressor','/tools/pdf-merger','/games','/games/typedash','/games/gotcha-rush'];
+  '/tools/pdf-compressor','/tools/pdf-merger','/games','/games/typedash','/games/gotcha-rush','/games/pickparty'];
 for (const link of body.match(/\]\((\/[^)]*)\)/g) || []) {
   const path = link.slice(2, -1).split('#')[0];
   const okLink = REAL.includes(path) || /^\/learn\/[a-z0-9-]+$/.test(path) || /^\/blog\/[a-z0-9-]+$/.test(path);
