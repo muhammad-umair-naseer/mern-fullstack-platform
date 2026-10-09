@@ -1563,7 +1563,8 @@ function showResults(m) {
 
   el.resultsTitle.textContent = iWon ? '🏆 You won the race!' : mine ? `You placed ${medal(mine.rank)}` : 'Race results';
 
-  const top = [results[1], results[0], results[2]]; // podium order: 2nd, 1st, 3rd
+  const placed = results.filter((r) => !(r.dropped && !r.finished)); // a racer who left gets no step
+  const top = [placed[1], placed[0], placed[2]]; // podium order: 2nd, 1st, 3rd
   el.podium.innerHTML = top.map((r, i) => {
     if (!r) return '<div class="podium-slot empty"></div>';
     const place = i === 1 ? 1 : i === 0 ? 2 : 3;
@@ -1810,11 +1811,20 @@ function updateRacing(m, now) {
 function renderEndClock(now) {
   if (!S.closesAt) return;
   const secs = Math.max(0, Math.ceil((S.closesAt - now) / 1000));
-  const who = S.firstHome ? `${escapeHtml(S.firstHome)} ${S.firstHome === 'You' ? 'are' : 'is'} home · ` : '';
-  const html = `<span class="end-clock${secs <= 10 ? ' last' : ''}" role="timer"><i aria-hidden="true"></i>${who}Race ends in <b>${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</b></span>`;
-  if (html === S.endClock) return;
-  S.endClock = html;
-  el.status.innerHTML = html;
+  const who = S.firstHome ? `${S.firstHome} ${S.firstHome === 'You' ? 'are' : 'is'} home · ` : '';
+  const time = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
+  const key = `${who}|${time}`;
+  if (key === S.endClock) return;
+  S.endClock = key;
+  // the pill is built once and then only its text changes, so its fade-in plays once
+  let pill = el.status.querySelector('.end-clock');
+  if (!pill) {
+    el.status.innerHTML = '<span class="end-clock" role="timer"><i aria-hidden="true"></i><span></span>Race ends in <b></b></span>';
+    pill = el.status.firstChild;
+  }
+  pill.classList.toggle('last', secs <= 10);
+  pill.children[1].textContent = who;
+  pill.querySelector('b').textContent = time;
 }
 
 function updateFinished(m, now) {

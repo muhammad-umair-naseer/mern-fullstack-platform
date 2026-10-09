@@ -146,6 +146,11 @@ class Client {
   const carolAcc = accounts.accounts[c.accountId];
   assert.strictEqual(carolAcc.races, 1, 'dropped racer settled');
   assert.strictEqual(carolAcc.wins + carolAcc.podiums, 0, 'no win or podium for a dropped racer');
+  assert.strictEqual(carolAcc.points, 0, 'no ranked points for leaving mid race');
+  // in a two-racer room the one who left is 2nd by number, and still gets no podium
+  const pair = accounts.login(null, null).account;
+  accounts.recordRace(pair, { rank: 2, wpm: 90, accuracy: 99, finished: false, dropped: true, chars: 300, golden: 0, bestCombo: 80, nitros: 0, racers: 2, humans: 2, ranked: true });
+  assert.strictEqual(pair.wins + pair.podiums + pair.points, 0, 'a racer who left gets no podium or points in a small room');
   console.log(`✓ dropped racer placed last (#${carol.rank}, ${Math.round(carol.progress * 100)}% typed), settled with ${carolAcc.points} points and no podium`);
 
   const settled = [...a.msgs].reverse().find((m) => m.type === 'race_result');

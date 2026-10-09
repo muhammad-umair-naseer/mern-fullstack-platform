@@ -298,8 +298,12 @@ class Accounts {
     this.rollWindows(acc, now);
     const streakEvent = this.touchStreak(acc, dayKey(now));
 
+    // A racer who left mid race is settled in last place: no win, podium or
+    // placing, and no ranked points (staying to the end always pays more).
+    const dropped = !!race.dropped && !race.finished;
     const r = {
-      rank: race.rank,
+      rank: dropped ? Infinity : race.rank,
+      dropped,
       wpm: race.wpm,
       accuracy: race.accuracy,
       errors: race.errors,
@@ -321,7 +325,7 @@ class Accounts {
     };
     if (r.finished) this.countLang(acc, r.lang);
 
-    const points = r.ranked ? this.pointsFor(r, acc.streak) : 0;
+    const points = r.ranked && !r.dropped ? this.pointsFor(r, acc.streak) : 0;
 
     acc.races += 1;
     acc.chars += r.chars;

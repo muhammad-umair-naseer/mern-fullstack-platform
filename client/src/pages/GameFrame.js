@@ -34,8 +34,11 @@ const GAME_CONFIG = {
  * box to compose in, so the accent is put on the next letter here and the
  * game gets the finished letter, as if it had been typed in the game
  * (games' js/typing.js; a letter's plain form is accepted there too).
- * By key position: [combining mark, the accent on its own].
+ * By key position on a Mac, so only there: [combining mark, the accent on its own].
+ * Shift+` and the dead keys of other systems and layouts are not guessed;
+ * the browser hands over the letter they make already composed.
  */
+const IS_MAC = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
 const DEAD_KEYS = {
   KeyE: ['\u0301', '\u00B4'],      // acute
   Backquote: ['\u0300', '`'],       // grave
@@ -209,6 +212,7 @@ export default function GameFrame() {
   // and how many forwarded keys it has not yet confirmed (cortexis:key-done).
   const gameTyping = useRef(false);
   const keysInFlight = useRef(0);
+  const deadKey = useRef(null); // the accent of a dead key pressed last, waiting for its letter
   // The game asks for a part of itself (a band of its own document, in px
   // from its top) to be in view: at a countdown, the passage. Scroll this
   // page the least that puts the band between the navbar and the bottom.
@@ -236,6 +240,7 @@ export default function GameFrame() {
       if (e.data && e.data.type === 'cortexis:reveal') reveal(e.data);
       if (e.data && e.data.type === 'cortexis:typing') {
         gameTyping.current = Boolean(e.data.active);
+        deadKey.current = null;   // an accent left over from the last race is not put on this one
         keysInFlight.current = 0; // a fresh start: a lost confirmation cannot keep the keyboard here
       }
       if (e.data && e.data.type === 'cortexis:key-done') {
@@ -263,7 +268,6 @@ export default function GameFrame() {
    */
   useEffect(() => {
     if (!gameOrigin) return undefined;
-    let dead = null;   // the accent of a dead key pressed last, waiting for its letter
     const forward = (frame, key) => {
       keysInFlight.current += 1;
       frame.contentWindow.postMessage({ type: 'cortexis:key', key }, gameOrigin);
@@ -272,23 +276,24 @@ export default function GameFrame() {
       const frame = iframeRef.current;
       if (!gameTyping.current || !frame || !frame.contentWindow) return;
       // Option types letters on a Mac (Option+2 is ™) and AltGr arrives as
-      // Ctrl+Alt on Windows: only Cmd, or Ctrl without Alt, is a shortcut.
-      if (e.metaKey || (e.ctrlKey && !e.altKey) || e.isComposing) return;
+      // Ctrl+Alt on Windows: only Cmd, Ctrl without Alt, or Alt alone off a
+      // Mac (Alt+D, Alt+F, access keys) is a shortcut.
+      if (e.metaKey || (e.ctrlKey && !e.altKey) || (e.altKey && !e.ctrlKey && !IS_MAC) || e.isComposing) return;
       const t = e.target;
       if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]')) return;
       if (e.key === 'Dead') {
-        dead = DEAD_KEYS[e.code] || null;
+        deadKey.current = (IS_MAC && !e.shiftKey && DEAD_KEYS[e.code]) || [];
         return;
       }
       if (e.key !== 'Backspace' && e.key !== 'Enter' && e.key.length !== 1) return;
       e.preventDefault();
-      const accent = dead;
-      dead = null;
+      const accent = deadKey.current;
+      deadKey.current = null;
       if (!accent || e.key === 'Enter') return forward(frame, e.key);
       if (e.key === 'Backspace') return;                          // it takes back the accent, as in a text box
-      if (e.key === ' ') return forward(frame, accent[1]);         // the accent on its own
-      const one = (e.key + accent[0]).normalize('NFC');
-      if (e.key.normalize('NFD').length > 1) forward(frame, e.key); // the browser composed it already
+      if (e.key === ' ') return accent[1] && forward(frame, accent[1]); // the accent on its own, when it is known
+      const one = (e.key + (accent[0] || '')).normalize('NFC');
+      if (!accent[0] || e.key.normalize('NFD').length > 1) forward(frame, e.key); // the browser composed it already
       else if (one.length === 1) forward(frame, one);
       else { forward(frame, accent[1]); forward(frame, e.key); }   // no such letter: both, as macOS types them
     };

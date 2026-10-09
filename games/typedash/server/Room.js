@@ -241,6 +241,7 @@ class Room {
         accuracy: p.accuracy,
         errors: p.errors,
         finished: p.finished,
+        dropped: !!p.dropped,
         chars: p.correct,
         golden: p.golden,
         goldenTotal: this.bonusWords.length,
