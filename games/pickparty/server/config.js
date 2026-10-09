@@ -37,4 +37,14 @@ module.exports = {
   RATINGS_PUBLISH_MS: n('RATINGS_PUBLISH_MS', 10 * 60 * 1000),
   RANKED_PRIVATE: process.env.RANKED_PRIVATE === '1',
   DEV: process.env.DEV === '1',
+  SOLO_POINTS_PER_DAY: n('SOLO_POINTS_PER_DAY', 1200),  // ranked points from solo runs, per account per UTC day
+
+  // abuse limits, per IP address
+  TRUST_PROXY: process.env.TRUST_PROXY === '1',          // behind a reverse proxy: take the address it appends to X-Forwarded-For
+  SOCKETS_PER_IP: n('SOCKETS_PER_IP', 20),               // sockets open at once
+  ROOMS_PER_IP_PER_MIN: n('ROOMS_PER_IP_PER_MIN', 20),   // create / quick-match requests
+  GUESTS_PER_IP_PER_HOUR: n('GUESTS_PER_IP_PER_HOUR', 30), // new guest accounts
+  WS_MAX_PAYLOAD: n('WS_MAX_PAYLOAD', 8 * 1024),         // bytes per message
+  MSG_BURST: n('MSG_BURST', 40),                         // messages per socket: a burst of 40,
+  MSG_PER_SEC: n('MSG_PER_SEC', 8),                      // then 8 a second
 };

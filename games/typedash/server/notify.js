@@ -1,7 +1,6 @@
 'use strict';
 const crypto = require('crypto');
 const https = require('https');
-const http = require('http');
 const cfg = require('./config');
 const { dayKey, daysBetween } = require('./accounts');
 
@@ -19,6 +18,27 @@ const { dayKey, daysBetween } = require('./accounts');
  */
 const b64u = (buf) => Buffer.from(buf).toString('base64url');
 const fromB64u = (s) => Buffer.from(String(s || ''), 'base64url');
+
+/*
+ * Browsers hand out endpoints on their vendor's push service only, so nothing
+ * else is ever posted to: no IP literals, no private or loopback hosts, no
+ * other ports. `.example.com` matches any subdomain; the rest match exactly.
+ */
+const PUSH_HOSTS = [
+  'fcm.googleapis.com', 'android.googleapis.com',   // Chrome, Edge on Android, Samsung, Opera, Brave
+  'updates.push.services.mozilla.com',              // Firefox
+  '.notify.windows.com',                            // Edge on Windows
+  'web.push.apple.com', '.push.apple.com',          // Safari
+];
+
+/** True for an https endpoint on a known Web Push service. */
+function pushEndpointOk(endpoint) {
+  let u;
+  try { u = new URL(endpoint); } catch (_) { return false; }
+  if (u.protocol !== 'https:' || u.port || u.username || u.password) return false;
+  const host = u.hostname.toLowerCase();
+  return PUSH_HOSTS.some((h) => (h.startsWith('.') ? host.endsWith(h) && host.length > h.length : host === h));
+}
 
 /* --------------------------------------------------------------- VAPID */
 
@@ -116,7 +136,7 @@ class Notify {
   get publicKey() { return this.keys.publicKey; }
 
   subscribe(acc, subscription, prefs = null, tzOffset = null) {
-    if (!subscription || typeof subscription.endpoint !== 'string' || !/^https?:\/\//.test(subscription.endpoint)) throw new Error('Invalid subscription.');
+    if (!subscription || typeof subscription.endpoint !== 'string' || subscription.endpoint.length > 1024 || !pushEndpointOk(subscription.endpoint)) throw new Error('Invalid subscription.');
     if (!subscription.keys || fromB64u(subscription.keys.p256dh).length !== 65 || fromB64u(subscription.keys.auth).length !== 16) throw new Error('Invalid subscription keys.');
     acc.push = (acc.push || []).filter((s) => s.endpoint !== subscription.endpoint);
     acc.push.push({ endpoint: subscription.endpoint, keys: { p256dh: subscription.keys.p256dh, auth: subscription.keys.auth }, at: Date.now() });
@@ -141,6 +161,8 @@ class Notify {
     const json = JSON.stringify(payload);
     let delivered = 0;
     for (const sub of [...acc.push]) {
+      // kept from before the host check: drop it rather than post to it
+      if (!pushEndpointOk(sub.endpoint)) { this.unsubscribe(acc, sub.endpoint); continue; }
       let status;
       try {
         const body = encrypt(json, sub);
@@ -165,9 +187,7 @@ class Notify {
   post(url, headers, body) {
     if (this.transport) return this.transport(url, headers, body);
     return new Promise((resolve) => {
-      const u = new URL(url);
-      const lib = u.protocol === 'http:' ? http : https;
-      const req = lib.request(u, { method: 'POST', headers, timeout: 10000 }, (res) => { res.resume(); resolve(res.statusCode); });
+      const req = https.request(new URL(url), { method: 'POST', headers, timeout: 10000 }, (res) => { res.resume(); resolve(res.statusCode); });
       req.on('error', () => resolve(0));
       req.on('timeout', () => { req.destroy(); resolve(0); });
       req.end(body);
@@ -225,4 +245,4 @@ class Notify {
   }
 }
 
-module.exports = { Notify, encrypt, decrypt, vapidHeaders, generateVapid, daysBetween };
+module.exports = { Notify, encrypt, decrypt, vapidHeaders, generateVapid, daysBetween, pushEndpointOk };

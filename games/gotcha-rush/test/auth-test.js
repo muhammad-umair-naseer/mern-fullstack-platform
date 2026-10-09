@@ -68,6 +68,18 @@ async function main() {
   assert.strictEqual(cx.nicknameFrom('Bartholomew-Alexander', 16), 'Bartholomew-Alex');
   console.log('✓ game tokens: signature, issuer, audience, expiry, alg all checked');
 
+  // the development secret is public: never for admin tokens, never in production
+  const devAdmin = cx.signGameToken({ sub: 'admin', aud: cx.ADMIN_AUDIENCE, key: cx.DEV_SECRET });
+  assert.throws(() => cx.verifyGameToken(devAdmin, { audience: cx.ADMIN_AUDIENCE }), (e) => e.code === 'config', 'admin audience refuses the dev secret');
+  const devAdminRes = await fetch(`${base}/api/admin/players`, { headers: { authorization: `Bearer ${devAdmin}` } });
+  assert.strictEqual(devAdminRes.status, 401, 'admin API refuses a token signed with the dev secret');
+  const { execFileSync } = require('child_process');
+  const prodReady = (env) => execFileSync(process.execPath, ['-e', "process.stdout.write(String(require('./server/cx').ssoReady()))"], { cwd: require('path').join(__dirname, '..'), env: { PATH: process.env.PATH, ...env }, stdio: ['ignore', 'pipe', 'ignore'] }).toString();
+  assert.strictEqual(prodReady({ NODE_ENV: 'production' }), 'false', 'production without a secret: sign-in off');
+  assert.strictEqual(prodReady({ NODE_ENV: 'production', GAME_SSO_SECRET: cx.DEV_SECRET }), 'false', 'production refuses the dev secret even when set');
+  assert.strictEqual(prodReady({}), 'true', 'development: player sign-in works with nothing set');
+  console.log('✓ dev secret: player sign-in in development only, never for the admin portal');
+
   // ---------------- site config (dev defaults follow the request's host) ----------------
   const conf = await new Promise((resolve, reject) => {
     require('http').get(`${base}/api/auth/config`, { headers: { host: '192.168.1.20:3001' } }, (res) => {
@@ -184,12 +196,13 @@ async function main() {
   console.log('✓ new Cortexis player: country from header, else the guess');
 
   // ---------------- admin portal: edit and delete a player ----------------
+  process.env.GAME_SSO_SECRET = 'auth-test-only-secret-0123456789abcdef';   // admin needs a real secret
   const adminTok = cx.signGameToken({ sub: 'admin', aud: cx.ADMIN_AUDIENCE, ttlSec: 60 });
   const admin = async (method, id, body, tok = adminTok) => {
     const res = await fetch(`${base}/api/admin/players/${encodeURIComponent(id)}`, { method, headers: { 'content-type': 'application/json', authorization: `Bearer ${tok}` }, body: body && JSON.stringify(body) });
     return { status: res.status, body: await res.json() };
   };
-  assert.strictEqual((await admin('PATCH', 'cx_77', { points: 5 }, good)).status, 401, "a player's token is refused");
+  assert.strictEqual((await admin('PATCH', 'cx_77', { points: 5 }, cx.signGameToken({ sub: '77' }))).status, 401, "a player's token is refused");
   assert.strictEqual((await admin('PATCH', 'cx_77', { country: 'Saudi' })).status, 400);
   assert.strictEqual((await admin('PATCH', 'cx_77', { name: ' <> ' })).status, 400);
   assert.strictEqual((await admin('PATCH', 'nobody', { points: 5 })).status, 404);
@@ -206,9 +219,10 @@ async function main() {
   assert.strictEqual((await admin('DELETE', 'cx_4242')).status, 404);
   console.log('✓ admin: edit (name, country, points) and delete, rivals and boards kept consistent');
 
-  // ---------------- same sign-in code as TypeDash ----------------
+  // ---------------- same sign-in code as TypeDash and PickParty ----------------
   // TypeDash's browser test (test/run-cx-client-test.js) drives cx-auth.js in
   // Chrome; the two copies may differ only in their storage prefix and wording.
+  // server/cx.js is the same file in all three games.
   const fs = require('fs');
   const path = require('path');
   const td = (p) => path.join(__dirname, '..', '..', 'typedash', p);
@@ -223,6 +237,11 @@ async function main() {
     assert.strictEqual(norm(mine), norm(fs.readFileSync(td('public/js/cx-auth.js'), 'utf8')), 'public/js/cx-auth.js drifted from TypeDash');
     assert.strictEqual(fs.readFileSync(path.join(__dirname, '..', 'server/cx.js'), 'utf8'), fs.readFileSync(td('server/cx.js'), 'utf8'), 'server/cx.js drifted from TypeDash');
     console.log('✓ cx-auth.js and server/cx.js match TypeDash (its browser test covers both games)');
+  }
+  const pp = path.join(__dirname, '..', '..', 'pickparty', 'server', 'cx.js');
+  if (fs.existsSync(pp)) {
+    assert.strictEqual(fs.readFileSync(path.join(__dirname, '..', 'server/cx.js'), 'utf8'), fs.readFileSync(pp, 'utf8'), 'server/cx.js drifted from PickParty');
+    console.log('✓ server/cx.js matches PickParty');
   }
 
   console.log('\nAll auth checks passed.');

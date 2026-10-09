@@ -48,7 +48,8 @@ class C {
 function runFor(passage, time, extra = {}) {
   const len = passage.text.length;
   const timeline = [];
-  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor((len * t) / time))]);
+  // a person's pace drifts around the average; an even one is a script's (solo.machineLike)
+  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor(len * (t / time + 0.03 * Math.sin((4 * Math.PI * t) / time))))]);
   timeline.push([time, len]);
   return { type: 'solo_done', mode: 'practice', passageId: passage.id, chars: len, finished: true, time, keystrokes: len, errors: 0, golden: 0, goldenTotal: 3, bestCombo: len, nitros: 0, score: 2000, timeline, ...extra };
 }
@@ -60,7 +61,7 @@ async function play(c, passage, time, extra = {}) {
   await c.until((x) => x.result, 5000, 'result');
   return c.result;
 }
-const minTimeOf = (p) => Math.ceil((p.text.length / cfg.MAX_CPS) * 1000);
+const minTimeOf = (p) => Math.ceil((p.text.length * 12000) / cfg.RANKED_MAX_WPM);   // the fastest run that is still verified
 
 (async () => {
   await new Promise((r) => (server.listening ? r() : server.once('listening', r)));
@@ -80,7 +81,8 @@ const minTimeOf = (p) => Math.ceil((p.text.length / cfg.MAX_CPS) * 1000);
   await a.until((c) => c.room.state === 'racing', 6000, 'racing');
   const racePassage = a.room.passageId;
   const len = a.room.passage.length;
-  for (let i = 14; i <= len + 13; i += 14) { a.send({ type: 'progress', c: Math.min(i, len), t: Math.min(i, len), k: Math.min(i, len), e: 0 }); await wait(500); }
+  // 4 chars per 250 ms (~190 WPM) on average, unevenly, drifting as a person's pace does (an even pace is unranked: solo.machineLike)
+  for (let i = 0, k = 0; i < len; k++) { i = Math.min(len, i + Math.round(4 - 3 * Math.sin(k / 5))); a.send({ type: 'progress', c: i, t: i, k: i, e: 0 }); await wait(250); }
   await a.until((c) => c.result, 20000, 'race result');
   assert.ok(a.result.ghost && a.result.ghost.wr === true && a.result.ghost.pb === true, 'first finished race sets the world record and a personal best');
   assert.ok(a.result.unlocked.includes('wr_set'), 'record holder achievement');

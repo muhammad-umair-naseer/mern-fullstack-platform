@@ -1,15 +1,16 @@
 'use strict';
+const crypto = require('crypto');
 const Scoring = require('../shared/scoring');
 const { RULES } = Scoring;
 
 /**
- * Solo Rush runs entirely in the browser: the client picks puzzles from its
- * cached bank, runs the clock, grades locally and animates the reveal. The
- * server never holds a room, a timer or a socket for it. When the run ends the
- * client submits its answer log and this module re-grades every round against
- * the real bank with the shared scoring rules, applies sanity checks, and only
- * then writes the result to the account. Anything that doesn't add up is
- * scored as far as it is valid, then cut off.
+ * Solo Rush plays in the browser (clock, grading for the reveal, animation),
+ * but the server deals the puzzles and keeps the answer log: RushRuns below
+ * hands out one puzzle at a time, times it on its own clock, and shows the
+ * answer only once that round is closed. When the run ends verifyRun re-grades
+ * the server's log with the shared scoring rules and sanity checks before
+ * anything is written to the account. Anything that doesn't add up is scored
+ * as far as it is valid, then cut off.
  */
 function verifyRun(bank, body) {
   const lang = ['mix', 'js', 'py'].includes(body.lang) ? body.lang : 'mix';
@@ -62,4 +63,74 @@ function verifyRun(bank, body) {
   return { lang, score, rounds, correct, bestCombo, lifelines, fastestMs, langs, lives, flags, graded };
 }
 
-module.exports = { verifyRun };
+const RUN_IDLE_MS = 30 * 60 * 1000;
+// Network time between the server's clock and the browser's: an answer sent as
+// the browser's clock ran out still counts (without a speed bonus).
+const LATE_GRACE_MS = 2500;
+
+/** One live run per account, in memory. A run is a capability: its random id. */
+class RushRuns {
+  constructor(bank) { this.bank = bank; this.runs = new Map(); }
+
+  start(accountId, lang) {
+    const now = Date.now();
+    for (const [k, r] of this.runs) if (now - r.touched > RUN_IDLE_MS) this.runs.delete(k);
+    const run = {
+      id: crypto.randomBytes(18).toString('base64url'), accountId, lang: ['mix', 'js', 'py'].includes(lang) ? lang : 'mix',
+      log: [], seen: new Set(), lives: RULES.RUSH_LIVES, cur: null, touched: now,
+    };
+    this.runs.set(accountId, run);   // starting again drops the account's previous run
+    return run;
+  }
+
+  get(accountId, id) {
+    const run = typeof accountId === 'string' ? this.runs.get(accountId) : null;
+    return run && typeof id === 'string' && run.id === id ? run : null;
+  }
+
+  /** Deal the next puzzle, or null when the run is over. An open round closes unanswered. */
+  next(run) {
+    if (run.cur) this.answer(run, null);
+    if (run.lives <= 0 || run.log.length >= RULES.RUSH_MAX_ROUNDS) return null;
+    const roundNo = run.log.length + 1;
+    let pz = this.bank.pick({ lang: run.lang, seen: run.seen, ...Scoring.rushDifficulty(roundNo) });
+    if (run.seen.has(pz.id)) pz = this.bank.pick({ lang: run.lang, seen: run.seen });
+    if (run.seen.has(pz.id)) return null;   // every puzzle in the language played
+    run.seen.add(pz.id);
+    run.cur = { pz, roundNo, at: Date.now(), lifeline: false };
+    run.touched = run.cur.at;
+    return { id: pz.id, roundNo, roundMs: Scoring.rushRoundMs(roundNo) };
+  }
+
+  /** The lifeline: four options for the open round, at half points. */
+  choices(run) {
+    if (!run.cur) return null;
+    run.cur.lifeline = true;
+    return this.bank.choices(run.cur.pz);
+  }
+
+  /** Close the open round with these lines (null: no answer) and reveal it. */
+  answer(run, lines) {
+    const c = run.cur;
+    if (!c) return null;
+    run.cur = null;
+    const roundMs = Scoring.rushRoundMs(c.roundNo);
+    const took = Date.now() - c.at;
+    const answered = Array.isArray(lines) && lines.length > 0 && took <= roundMs + LATE_GRACE_MS;
+    const ms = answered ? Math.min(took, roundMs) : null;
+    run.log.push({ id: c.pz.id, lines: answered ? lines.slice(0, 12) : null, ms, lifeline: c.lifeline });
+    const v = verifyRun(this.bank, { lang: run.lang, log: run.log });
+    run.lives = v.flags.length ? 0 : v.lives;
+    const g = v.graded[v.graded.length - 1];
+    return { ...this.bank.reveal(c.pz), ms, correct: !!(g && g.id === c.pz.id && g.correct), lives: run.lives };
+  }
+
+  /** End the run (once) and score the server's own log. */
+  settle(run) {
+    if (run.cur) this.answer(run, null);
+    this.runs.delete(run.accountId);
+    return verifyRun(this.bank, { lang: run.lang, log: run.log });
+  }
+}
+
+module.exports = { verifyRun, RushRuns };

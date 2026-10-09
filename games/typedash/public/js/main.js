@@ -1090,8 +1090,9 @@ net.on('open', () => {
   }
 });
 
-net.on('close', ({ wasConnected }) => {
-  if (wasConnected) el.connBanner.hidden = false;
+net.on('close', ({ wasConnected, refused }) => {
+  el.connBanner.textContent = refused ? 'Too many players from your network right now. Trying again in a minute…' : 'Reconnecting to the race server…';
+  if (wasConnected || refused) el.connBanner.hidden = false;
   clock.stop();
   if (S.room && !S.room.solo) S.hadSession = true; // a practice run does not need the socket
 });
@@ -1648,7 +1649,8 @@ function onRaceResult(msg) {
   const lvl = account.level;
   el.mrXp.textContent = out.ranked
     ? `+${out.points.toLocaleString()} points`
-    : msg.solo ? 'No points for typing on your own — race other people to collect them' : 'No points in a private game';
+    : msg.solo ? 'No points for typing on your own — race other people to collect them'
+      : msg.flagged ? 'No points: that pace was too fast or too even to be a person typing' : 'No points in a private game';
   el.mrXp.classList.toggle('unranked', !out.ranked);
   if (msg.solo) {
     solo.onResult(msg);

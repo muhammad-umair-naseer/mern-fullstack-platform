@@ -60,6 +60,7 @@ function sendBuf(req, res, { body, gz, type, etag }, extra = {}) {
 }
 
 const cx = require('./cx');
+const { ipOf, PerIp, Sockets } = require('./limits');
 
 /* ---------------------------------------------- admin portal: players
    For the Cortexis admin portal: list, edit and delete players. The website API mints the
@@ -159,11 +160,18 @@ function json(res, code, obj) {
   res.end(JSON.stringify(obj));
 }
 
+// A JSON object body; bad JSON, null or an array rejects.
 function readBody(req, limit = 24000) {
   return new Promise((resolve, reject) => {
     let size = 0; const chunks = [];
     req.on('data', (c) => { size += c.length; if (size > limit) { reject(new Error('too large')); req.destroy(); } else chunks.push(c); });
-    req.on('end', () => { try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); } catch (e) { reject(e); } });
+    req.on('end', () => {
+      try {
+        const body = JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
+        if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('not an object');
+        resolve(body);
+      } catch (e) { reject(e); }
+    });
     req.on('error', reject);
   });
 }
@@ -187,29 +195,94 @@ function signInWithCortexis(body, req) {
   };
 }
 
-// Solo runs happen entirely in the browser; this re-grades the full answer
-// log against the exact bank version the browser played with.
-async function settleSolo(req, res) {
-  let body;
-  try { body = await readBody(req); } catch { return json(res, 400, { error: 'Bad request body.' }); }
-  const acc = accounts.byToken(body.token);
-  if (!acc) return json(res, 401, { error: 'Unknown player. Reload the page.' });
-  const rankOf = bank.rankOf(body.v);
-  if (!rankOf) return json(res, 409, { error: 'The topic list was updated during your run. Your next run will count.' });
-  const log = Array.isArray(body.log) ? body.log : [];
-  if (log.some((e) => !e || !(e.ms >= 400))) return json(res, 400, { error: 'Run log failed validation.' });
-  const result = Scoring.soloRun(log, rankOf);
-  if (result.error) return json(res, 400, { error: 'Run log failed validation.' });
-  const now = Date.now();
-  const played = log.reduce((a, e) => a + e.ms, 0);
-  if (acc.lastSoloAt && now - acc.lastSoloAt < played - 3000) return json(res, 429, { error: 'Runs are arriving faster than they can be played.' });
-  acc.lastSoloAt = now;
-  const r = accounts.settleSolo(acc, result);
-  return json(res, 200, { ...result, points: r.points, best: r.best, unlocked: r.unlocked, profile: accounts.public(acc) });
+/* ---------------- Crowd read (solo), dealt by the server ----------------
+   The bank the browser has carries no crowd ranking. The server keeps one run
+   per account: it opens each topic on its own clock, grades the picks against
+   the ranking the run started with, and only then shows that topic's ranking.
+   The run is scored from the server's own log, once.
+     start {token}             -> {run}
+     topic {token, run, t}     -> {timer}
+     pick  {token, run, f, d}  -> soloTopic result + {r, lives}
+     /api/solo {token, run}    -> settlement */
+const soloRuns = new Map();   // account id -> run
+const SOLO_IDLE_MS = 30 * 60 * 1000;
+const SOLO_LATE_MS = 2500;    // network time: a pick sent as the browser's clock ran out still counts
+
+function closeTopic(run, f, d) {
+  const c = run.cur;
+  run.cur = null;
+  const rank = bank.rankOf(run.v)(c.t);
+  const took = Date.now() - c.at;
+  const late = took > c.timer + SOLO_LATE_MS;
+  const e = { t: c.t, f: late ? [-1, -1, -1] : f, d: late ? -1 : d, ms: Math.max(400, Math.min(took, c.timer)) };
+  const res = Scoring.soloTopic(rank, e.f, e.d, e.ms, c.timer, run.combo);
+  run.combo = res.combo;
+  if (!res.survive) run.lives--;
+  run.log.push(e);
+  return { ...res, r: rank, lives: run.lives };
 }
 
-const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, 'http://x');
+async function soloStep(req, res, step) {
+  let body;
+  try { body = await readBody(req, 4000); } catch { return json(res, 400, { error: 'Bad request body.' }); }
+  const acc = accounts.byToken(body.token);
+  if (!acc) return json(res, 401, { error: 'Unknown player. Reload the page.' });
+  const now = Date.now();
+  if (step === 'start') {
+    for (const [id, r] of soloRuns) if (now - r.touched > SOLO_IDLE_MS) soloRuns.delete(id);
+    const run = { id: crypto.randomBytes(18).toString('base64url'), v: bank.version, log: [], lives: Scoring.RULES.SOLO_LIVES, combo: 0, cur: null, touched: now };
+    soloRuns.set(acc.id, run);   // starting again drops this account's previous run
+    return json(res, 200, { run: run.id });
+  }
+  const run = soloRuns.get(acc.id);
+  if (!run || run.id !== body.run) return json(res, 409, { error: 'This run is not open on the server any more.' });
+  const rankOf = bank.rankOf(run.v);
+  if (!rankOf) { soloRuns.delete(acc.id); return json(res, 409, { error: 'The topic list was updated during your run. Your next run will count.' }); }
+  run.touched = now;
+  if (step === 'topic') {
+    if (run.cur) closeTopic(run, [-1, -1, -1], -1);   // an open topic left unanswered is a miss
+    if (run.lives <= 0 || run.log.length >= Scoring.RULES.SOLO_MAX_TOPICS) return json(res, 409, { error: 'This run is over.' });
+    if (typeof body.t !== 'string' || !rankOf(body.t) || run.log.some((e) => e.t === body.t)) return json(res, 400, { error: 'Unknown or repeated topic.' });
+    run.cur = { t: body.t, at: now, timer: Scoring.soloTimer(run.log.length) };
+    return json(res, 200, { timer: run.cur.timer });
+  }
+  if (step === 'pick') {
+    if (!run.cur) return json(res, 409, { error: 'No topic is open.' });
+    const n = rankOf(run.cur.t).length;
+    const f = Array.isArray(body.f) ? body.f.slice(0, 3) : [];
+    const all = [...f, body.d];
+    const real = all.filter((x) => x >= 0);
+    if (f.length !== 3 || !all.every((x) => Number.isInteger(x) && x >= -1 && x < n) || new Set(real).size !== real.length) return json(res, 400, { error: 'Bad picks.' });
+    return json(res, 200, closeTopic(run, f, body.d));
+  }
+  return json(res, 404, { error: 'Not found.' });
+}
+
+// The run is over: score the server's log for it, once.
+async function settleSolo(req, res) {
+  let body;
+  try { body = await readBody(req, 4000); } catch { return json(res, 400, { error: 'Bad request body.' }); }
+  const acc = accounts.byToken(body.token);
+  if (!acc) return json(res, 401, { error: 'Unknown player. Reload the page.' });
+  const run = soloRuns.get(acc.id);
+  if (!run || run.id !== body.run) return json(res, 409, { error: 'This run is not open on the server any more.' });
+  soloRuns.delete(acc.id);
+  const rankOf = bank.rankOf(run.v);
+  if (!rankOf) return json(res, 409, { error: 'The topic list was updated during your run. Your next run will count.' });
+  if (run.cur) closeTopic(run, [-1, -1, -1], -1);
+  const result = Scoring.soloRun(run.log, rankOf);
+  if (result.error) return json(res, 400, { error: 'Nothing to score.' });
+  const now = Date.now();
+  const played = run.log.reduce((a, e) => a + e.ms, 0);
+  if (acc.lastSoloAt && now - acc.lastSoloAt < played - 3000) return json(res, 429, { error: 'Runs are arriving faster than they can be played.' });
+  acc.lastSoloAt = now;
+  const r = accounts.settleSolo(acc, result, cfg.SOLO_POINTS_PER_DAY);
+  return json(res, 200, { ...result, points: r.points, best: r.best, capped: r.capped, unlocked: r.unlocked, profile: accounts.public(acc) });
+}
+
+async function route(req, res) {
+  let url;
+  try { url = new URL(req.url, 'http://x'); } catch { return json(res, 400, { error: 'Bad request.' }); }
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
@@ -226,28 +299,46 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === '/api/auth/cortexis' && req.method === 'POST') {
     let body;
     try { body = await readBody(req); } catch { return json(res, 400, { error: 'Bad request body.' }); }
-    const out = signInWithCortexis(body || {}, req);
+    const out = signInWithCortexis(body, req);
     return json(res, out.status, out.body);
   }
   if (url.pathname === '/api/solo' && req.method === 'POST') return settleSolo(req, res);
+  const solo = /^\/api\/solo\/(start|topic|pick)$/.exec(url.pathname);
+  if (solo && req.method === 'POST') return soloStep(req, res, solo[1]);
   if (url.pathname === '/healthz') return json(res, 200, { ok: true, ...manager.stats(), bank: bank.version });
   if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { error: 'Method not allowed.' });
   if (cfg.DEV) loadStatic();
   const f = files.get(url.pathname);
   if (!f) return json(res, 404, { error: 'Not found.' });
   sendBuf(req, res, f);
+}
+
+// One bad request must never take the server down: anything a handler throws ends that request only.
+const server = http.createServer((req, res) => {
+  route(req, res).catch((e) => {
+    console.error('[http]', e);
+    if (res.headersSent) res.destroy(); else json(res, 500, { error: 'Server error.' });
+  });
 });
 
 // A match request may name up to TOPICS_PER_MATCH topics in play order (`topics`); the older single `topic` still works.
 const topicsOf = (msg) => (Array.isArray(msg.topics) ? msg.topics : msg.topic ? [msg.topic] : []);
 
 /* ---------------- WebSocket protocol ---------------- */
-const wss = new WebSocketServer({ server, maxPayload: 8 * 1024 });
+const wss = new WebSocketServer({ server, maxPayload: cfg.WS_MAX_PAYLOAD });
+
+// per-IP limits (server/config.js): sockets open, rooms asked for, guests minted
+const perIpSockets = new Sockets(cfg.SOCKETS_PER_IP);
+const roomAsks = new PerIp(cfg.ROOMS_PER_IP_PER_MIN, 60 * 1000);
+const guestMints = new PerIp(cfg.GUESTS_PER_IP_PER_HOUR, 60 * 60 * 1000);
 const EMOTES = ['👏', '😂', '🔥', '😱', '🤔', '💀'];
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
+  const ip = ipOf(req, cfg.TRUST_PROXY);
+  if (!perIpSockets.add(ip)) return ws.close(1013, 'Too many connections from this address');
+  ws.on('close', () => perIpSockets.remove(ip));
   const player = {
-    ws, account: null, room: null, sid: null, tz: 0, tokens: 40, last: Date.now(), lastEmote: 0,
+    ws, ip, account: null, room: null, sid: null, tz: 0, tokens: cfg.MSG_BURST, last: Date.now(), lastEmote: 0,
     send(obj) { if (ws.readyState === 1) ws.send(JSON.stringify(obj)); },
   };
   ws.player = player;   // the admin portal finds a player's sockets by account
@@ -255,9 +346,9 @@ wss.on('connection', (ws) => {
   ws.on('pong', () => { ws.isAlive = true; });
 
   ws.on('message', (raw) => {
-    // token bucket: 40 burst, 8/s refill
+    // token bucket: MSG_BURST at once, refilled at MSG_PER_SEC; the rest is dropped
     const now = Date.now();
-    player.tokens = Math.min(40, player.tokens + ((now - player.last) / 1000) * 8);
+    player.tokens = Math.min(cfg.MSG_BURST, player.tokens + ((now - player.last) / 1000) * cfg.MSG_PER_SEC);
     player.last = now;
     if (player.tokens < 1) return;
     player.tokens -= 1;
@@ -273,6 +364,10 @@ wss.on('connection', (ws) => {
 function handle(p, msg) {
   if (msg.type === 'ping') return p.send({ type: 'pong', t: msg.t, s: Date.now() });
   if (msg.type === 'hello') {
+    if (!accounts.byToken(msg.token) && !guestMints.take(p.ip)) {
+      p.send({ type: 'error', msg: 'Too many new players from your network. Try again later.' });
+      return p.ws.close(1013, 'Too many new players from this address');
+    }
     const { account, token, fresh } = accounts.login(msg.token);
     p.account = account;
     p.tz = msg.tz;
@@ -296,8 +391,11 @@ function handle(p, msg) {
       p.send({ type: 'profile', profile: accounts.public(p.account) });
       if (room && room.state === 'lobby') room.updateIdentity(p);
       break;
-    case 'quick': manager.quick(p, msg.mode, topicsOf(msg), msg.culture, msg.rounds); break;
-    case 'create': manager.create(p, msg.mode, topicsOf(msg), msg.culture, msg.rounds); break;
+    case 'quick':
+    case 'create':
+      if (!roomAsks.take(p.ip)) { p.send({ type: 'error', msg: 'Too many tables started. Wait a minute.' }); break; }
+      manager[msg.type](p, msg.mode, topicsOf(msg), msg.culture, msg.rounds);
+      break;
     case 'join': {
       const r = manager.join(p, msg.code);
       if (r.error) p.send({ type: 'error', msg: r.error });
@@ -334,6 +432,8 @@ const heartbeat = setInterval(() => {
   }
 }, 30000);
 
+const sweeper = setInterval(() => { roomAsks.sweep(); guestMints.sweep(); }, 5 * 60 * 1000);
+
 const publisher = setInterval(() => {
   if (bank.maybePublish()) {
     const msg = JSON.stringify({ type: 'bank', v: bank.version });
@@ -344,6 +444,7 @@ const publisher = setInterval(() => {
 function shutdown() {
   clearInterval(heartbeat);
   clearInterval(publisher);
+  clearInterval(sweeper);
   try { store.flush(); } catch (e) { console.error(e); }
   process.exit(0);
 }

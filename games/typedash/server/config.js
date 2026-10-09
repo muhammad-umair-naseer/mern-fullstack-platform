@@ -79,9 +79,27 @@ module.exports = {
 
   // --- anti-cheat / limits ---
   MAX_CPS: num('MAX_CPS', 30),             // chars per second ceiling (~360 WPM) for accepted progress
-  MAX_PAYLOAD: num('MAX_PAYLOAD', 16384),  // largest accepted WebSocket message (solo results carry a timeline)
+  // Faster than this, or typed along a ruler (solo.machineLike), and a run still
+  // counts as practice but is unranked: no points, record, daily place or best WPM.
+  RANKED_MAX_WPM: num('RANKED_MAX_WPM', 220),
+  // A script's straight line strays only by rounding (≈0.3 chars); a person's
+  // strays more the longer they type, so short runs are not judged at all
+  // (people whose key-to-key gaps vary by only 20%: under 1 in 100 flagged at
+  // 135 chars and 200 WPM, none from 184 chars)
+  MACHINE_RMS_CHARS: num('MACHINE_RMS_CHARS', 0.35),   // a timeline this close to one straight line is a script
+  MACHINE_MIN_CHARS: 120,                  // ...judged only once this many characters are typed
+  MACHINE_CHARS_PER_SAMPLE: 8,             // browsers sample every ~250 ms (≈5 chars at 220 WPM); bigger steps on average are a script's
   MAX_NAME_LEN: 16,
   MAX_CHAT_LEN: 140,
   CHAT_MIN_INTERVAL_MS: 500,
   LEADERBOARD_SIZE: 10,           // legacy session board (fastest WPM today)
+
+  // --- abuse limits, per IP address ---
+  TRUST_PROXY: process.env.TRUST_PROXY === '1',  // behind a reverse proxy: take the address it appends to X-Forwarded-For
+  SOCKETS_PER_IP: num('SOCKETS_PER_IP', 20),            // sockets open at once
+  ROOMS_PER_IP_PER_MIN: num('ROOMS_PER_IP_PER_MIN', 20), // create / quick-match requests
+  GUESTS_PER_IP_PER_HOUR: num('GUESTS_PER_IP_PER_HOUR', 30), // new guest accounts
+  WS_MAX_PAYLOAD: num('WS_MAX_PAYLOAD', num('MAX_PAYLOAD', 16384)), // bytes per message (solo results carry a timeline)
+  MSG_BURST: num('MSG_BURST', 60),                      // messages per socket: a burst of 60,
+  MSG_PER_SEC: num('MSG_PER_SEC', 30),                  // then 30 a second (progress goes up at 25 Hz while racing)
 };

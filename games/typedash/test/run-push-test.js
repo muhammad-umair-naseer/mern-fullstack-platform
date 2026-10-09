@@ -14,7 +14,7 @@ const http = require('http');
 const crypto = require('crypto');
 const WebSocket = require('ws');
 const { server, accounts, notify } = require('../server/index.js');
-const { encrypt, decrypt, vapidHeaders, generateVapid } = require('../server/notify.js');
+const { encrypt, decrypt, vapidHeaders, generateVapid, pushEndpointOk } = require('../server/notify.js');
 const { dayKey } = require('../server/accounts.js');
 const cfg = require('../server/config.js');
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -70,7 +70,15 @@ const b64u = (b) => Buffer.from(b).toString('base64url');
     req.on('end', () => { received.push({ url: req.url, headers: req.headers, body: Buffer.concat(chunks) }); res.writeHead(respondWith); res.end(); });
   });
   await new Promise((r) => fake.listen(0, r));
-  const pushBase = `http://localhost:${fake.address().port}`;
+  // subscriptions name a real push service; delivery is rerouted to the fake one
+  const pushBase = 'https://fcm.googleapis.com/fcm';
+  const posted = [];
+  notify.transport = (endpoint, headers, body) => new Promise((resolve) => {
+    posted.push(endpoint);
+    const req = http.request({ port: fake.address().port, path: new URL(endpoint).pathname.replace(/^\/fcm/, ''), method: 'POST', headers }, (res) => { res.resume(); resolve(res.statusCode); });
+    req.on('error', () => resolve(0));
+    req.end(body);
+  });
 
   // a "browser": its own P-256 key pair + auth secret
   const ua = crypto.createECDH('prime256v1');
@@ -97,6 +105,15 @@ const b64u = (b) => Buffer.from(b).toString('base64url');
   ws.send(JSON.stringify({ type: 'push_subscribe', subscription: { endpoint: 'javascript:alert(1)', keys: subscription.keys } }));
   await wait(120);
   assert.ok(msgs.some((x) => x.type === 'error' && /Invalid subscription/.test(x.message)), 'bad endpoint refused');
+  // only https on a known push service: never an internal address, an IP, another port or plain http
+  for (const endpoint of ['http://169.254.169.254/latest/meta-data', 'http://cortexis-website:5000/api/admin', 'https://127.0.0.1/x', 'https://[::1]/x', 'https://10.0.0.5/x',
+    'http://fcm.googleapis.com/fcm/send/x', 'https://fcm.googleapis.com:8443/fcm/send/x', 'https://fcm.googleapis.com.evil.test/x', 'https://evilfcm.googleapis.com/x', 'https://notify.windows.com/x', 'https://user@fcm.googleapis.com/x']) {
+    assert.throws(() => notify.subscribe(acc, { endpoint, keys: subscription.keys }), /Invalid subscription/, endpoint);
+  }
+  for (const endpoint of ['https://fcm.googleapis.com/fcm/send/a', 'https://updates.push.services.mozilla.com/wpush/v2/a', 'https://wns2-par02p.notify.windows.com/w/?token=a', 'https://web.push.apple.com/a']) {
+    assert.ok(pushEndpointOk(endpoint), endpoint);
+  }
+  assert.strictEqual(acc.push.length, 1, 'refused endpoints were never stored');
   for (let i = 0; i < cfg.PUSH_MAX_SUBS + 2; i++) notify.subscribe(acc, { ...subscription, endpoint: `${pushBase}/send/extra-${i}` });
   assert.strictEqual(acc.push.length, cfg.PUSH_MAX_SUBS, 'devices per account bounded');
   acc.push = [{ endpoint: subscription.endpoint, keys: subscription.keys, at: Date.now() }];
@@ -146,6 +163,13 @@ const b64u = (b) => Buffer.from(b).toString('base64url');
   await wait(120);
   assert.ok(msgs.filter((x) => x.type === 'push').pop().subscribed === false);
   console.log('✓ 410 from the push service drops the device; push_unsubscribe acknowledged');
+
+  /* ---------------- an endpoint stored before the host check is dropped, never posted to ---------------- */
+  posted.length = 0;
+  acc.push = [{ endpoint: 'http://169.254.169.254/latest/meta-data', keys: subscription.keys, at: Date.now() }];
+  assert.strictEqual(await notify.send(acc, { title: 'x' }), 0);
+  assert.deepStrictEqual([posted.length, acc.push.length], [0, 0], 'no request made, subscription removed');
+  console.log('✓ push endpoints: known push services over https only; old internal ones dropped unsent');
 
   ws.close();
   fake.close();

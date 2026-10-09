@@ -10,9 +10,11 @@ const crypto = require('crypto');
  *                           origins may embed the game and post it a token
  *   headerCountry(req)      the visitor's country from a CDN header, if any
  *
- * The secret is GAME_SSO_SECRET, shared with the website API. In development
- * an unset secret falls back to the same named constant the API uses; in
- * production sign-in is refused until it is set. No dependency: node:crypto.
+ * The secret is GAME_SSO_SECRET, shared with the website API. Outside
+ * production (NODE_ENV is not 'production') an unset secret falls back to the
+ * same named constant the API uses, for player sign-in only, with a loud
+ * warning. That constant is public, so admin tokens are never checked with it,
+ * and production refuses it outright. No dependency: node:crypto.
  */
 
 const ISSUER = 'cortexis';
@@ -24,16 +26,24 @@ const CLOCK_SKEW_SEC = 30;
 const DEV_SECRET = 'cortexis-dev-only-game-sso-secret--do-not-use-in-production';
 const PROD = process.env.NODE_ENV === 'production';
 
-let warned = false;
-function secret() {
-  const configured = process.env.GAME_SSO_SECRET;
-  if (configured) return configured;
-  if (PROD) return null;
-  if (!warned) {
-    warned = true;
-    console.warn('[cx] GAME_SSO_SECRET is not set; using the development secret. Set the same value here and in server/.env before going live.');
-  }
-  return DEV_SECRET;
+/** The key for this audience, or null when that sign-in must stay off. */
+function secret(audience = AUDIENCE) {
+  const key = process.env.GAME_SSO_SECRET || (PROD ? null : DEV_SECRET);
+  if (key === DEV_SECRET && (PROD || audience === ADMIN_AUDIENCE)) return null;
+  return key;
+}
+
+if (secret() === DEV_SECRET) {
+  console.warn([
+    '',
+    '[cx] ************************************************************************',
+    '[cx] GAME_SSO_SECRET is not set: player sign-in uses the PUBLIC development',
+    '[cx] secret, so anyone can sign in as any Cortexis player on this server.',
+    '[cx] The admin portal\'s player tools stay off until a real secret is set.',
+    '[cx] Set the same long random GAME_SSO_SECRET here and in server/.env.',
+    '[cx] ************************************************************************',
+    '',
+  ].join('\n'));
 }
 
 const ssoReady = () => !!secret();
@@ -50,7 +60,7 @@ function b64json(part) {
  * Verify a game token. Returns { sub, name, exp } or throws a TokenError
  * whose code is 'config' (no secret), 'expired' or 'invalid'.
  */
-function verifyGameToken(token, { now = Date.now(), key = secret(), audience = AUDIENCE } = {}) {
+function verifyGameToken(token, { now = Date.now(), audience = AUDIENCE, key = secret(audience) } = {}) {
   if (!key) throw new TokenError('Cortexis sign-in is not configured on this game server.', 'config');
   if (typeof token !== 'string' || token.length > 4096) throw new TokenError('Missing sign-in token.');
   const parts = token.split('.');
@@ -77,7 +87,7 @@ function verifyGameToken(token, { now = Date.now(), key = secret(), audience = A
 }
 
 /** Mint a token the way the website does. Tests and local tooling only. */
-function signGameToken({ sub, name = '', ttlSec = 600, key = secret(), now = Date.now(), iss = ISSUER, aud = AUDIENCE } = {}) {
+function signGameToken({ sub, name = '', ttlSec = 600, now = Date.now(), iss = ISSUER, aud = AUDIENCE, key = secret(aud) } = {}) {
   const enc = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
   const iat = Math.floor(now / 1000);
   const h = enc({ alg: 'HS256', typ: 'JWT' });
@@ -147,7 +157,7 @@ function guessCountry(raw) {
  * A Cortexis name as a game nickname: whole words while they fit, so
  * "Muhammad Umair Naseer" becomes "Muhammad Umair", not "Muhammad Umair N".
  */
-function nicknameFrom(fullName, maxLen) {
+function nicknameFrom(fullName, maxLen = 16) {
   const words = String(fullName || '').replace(/[\u0000-\u001f\u007f<>]/g, '').trim().split(/\s+/).filter(Boolean);
   let out = '';
   for (const w of words) {

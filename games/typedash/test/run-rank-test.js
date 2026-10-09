@@ -52,8 +52,9 @@ class C {
   assert.strictEqual(a.room.ranked, true, 'public rooms are ranked');
   const len = a.room.passage.length;
   const type = (c, chars, extra = {}) => c.send({ type: 'progress', c: chars, t: chars, k: chars, e: 0, s: chars * 12, x: chars, g: 2, z: 3, ...extra });
-  // stay under the server's typing-rate ceiling (MAX_CPS): 12 chars per 500 ms
-  for (let i = 12; i <= len; i += 12) { type(a, Math.min(i, len)); type(b, Math.min(i, Math.round(len * 0.6))); await wait(500); }
+  // a person's pace: 4 chars per 250 ms (~190 WPM, under RANKED_MAX_WPM) on average,
+  // drifting faster and slower (an even pace is unranked: solo.machineLike)
+  for (let i = 0, k = 0; i < len; k++) { i = Math.min(len, i + Math.round(4 - 3 * Math.sin(k / 5))); type(a, i); type(b, Math.min(i, Math.round(len * 0.6))); await wait(250); }
   type(a, len);
   await a.until((c) => c.result, 60000, 'race_result for Umair');
   await b.until((c) => c.result, 60000, 'race_result for Sara');
@@ -97,7 +98,7 @@ class C {
   a.send({ type: 'start', bots: false });
   await a.until((c) => c.room.state === 'racing', 20000, 'friendly racing');
   const len2 = a.room.passage.length;
-  for (let i = 12; i <= len2; i += 12) { type(a, Math.min(i, len2)); await wait(500); }
+  for (let i = 0, k = 0; i < len2; k++) { i = Math.min(len2, i + Math.round(4 - 3 * Math.sin(k / 5))); type(a, i); await wait(250); }
   type(a, len2);
   await a.until((c) => c.result, 60000, 'friendly result');
   console.log('✓ friendly result:', { points: a.result.points, ranked: a.result.ranked, series: a.result.series.map((s) => s.name + ':' + s.wins).join(' ') });

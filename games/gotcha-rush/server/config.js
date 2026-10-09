@@ -55,4 +55,13 @@ module.exports = {
   MAX_ANSWER_LINES: 12,
   MAX_ANSWER_LINE_LEN: 120,
   TICK_MS: 250,
+
+  // --- abuse limits, per IP address ---
+  TRUST_PROXY: process.env.TRUST_PROXY === '1',  // behind a reverse proxy: take the address it appends to X-Forwarded-For
+  SOCKETS_PER_IP: num('SOCKETS_PER_IP', 20),            // sockets open at once
+  ROOMS_PER_IP_PER_MIN: num('ROOMS_PER_IP_PER_MIN', 20), // create / quick-match requests
+  GUESTS_PER_IP_PER_HOUR: num('GUESTS_PER_IP_PER_HOUR', 30), // new guest accounts
+  WS_MAX_PAYLOAD: num('WS_MAX_PAYLOAD', 16 * 1024),     // bytes per message
+  MSG_BURST: num('MSG_BURST', 40),                      // messages per socket: a burst of 40,
+  MSG_PER_SEC: num('MSG_PER_SEC', 8),                   // then 8 a second
 };

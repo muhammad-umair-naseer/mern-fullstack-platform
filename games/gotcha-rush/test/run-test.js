@@ -139,30 +139,54 @@ function correctAnswer(bank, room) { return bank.byId.get(room.puzzleId).output;
   assert.ok(scoringJs.status === 200 && scoringJs.body.includes('GotchaScoring'), 'shared scoring served to the browser');
   console.log(`✓ client bank: ${pub.puzzles.length} puzzles, ${(bankRes.body.length / 1024).toFixed(0)} KB, ETag 304s, gzip on`);
 
+  // answers are never public: the server deals Solo Rush rounds and reveals one only once it is closed
+  const anyId = pub.puzzles[0].id;
+  assert.strictEqual((await get(`/api/reveal/${anyId}`)).status, 404, 'no public reveal endpoint');
+  assert.strictEqual((await get(`/api/choices/${anyId}`)).status, 404, 'no public choices endpoint');
+  const accountsBefore = accounts.size;
+  const anon = await post('/api/rush/start', { accountId: 'x', token: 'y', lang: 'py' });
+  assert.strictEqual(anon.status, 401, 'unknown account rejected');
+  assert.strictEqual(accounts.size, accountsBefore, 'a rejected call mints no guest');
+
   // an honest run: 2 right, 3 wrong -> 3 lives gone after 5 rounds
   const Scoring = require('../shared/scoring');
-  const ids = pub.puzzles.filter((p) => p.lang === 'py').slice(0, 5).map((p) => p.id);
-  const log = ids.map((id, i) => ({ id, lines: i < 2 ? bank.byId.get(id).output : ['wrong'], ms: 2500 + i * 300, lifeline: false }));
-  const rushRes = await post('/api/rush', { ...creds, lang: 'py', log, clientScore: 0 });
+  const { run } = (await post('/api/rush/start', { ...creds, lang: 'py' })).json;
+  const step = (name, extra = {}) => post(`/api/rush/${name}`, { accountId: creds.accountId, run, ...extra });
+  const dealt = [];
+  for (let i = 0; i < 5; i++) {
+    const deal = (await step('next')).json;
+    assert.ok(deal.id && deal.roundNo === i + 1 && bank.byId.get(deal.id).lang === 'py', 'a py puzzle is dealt');
+    dealt.push(deal.id);
+    if (i === 0) {
+      const ch = (await step('choices')).json;
+      assert.ok(ch.choices.includes(bank.byId.get(deal.id).output.join('\n')), 'lifeline choices hold the answer');
+    }
+    await wait(800);   // faster than 700 ms is not a human
+    const rv = (await step('answer', { lines: i < 2 ? bank.byId.get(deal.id).output : ['wrong'] })).json;
+    assert.deepStrictEqual(rv.output, bank.byId.get(deal.id).output, 'the answer comes once the round is closed');
+    assert.strictEqual(rv.correct, i < 2);
+    assert.ok(rv.ms >= 700 && rv.ms < 3000, 'timed on the server clock');
+  }
+  assert.deepStrictEqual((await step('next')).json, { over: true }, 'no round after the last life');
+  const rushRes = await post('/api/rush', { ...creds, run, clientScore: 0 });
   assert.strictEqual(rushRes.status, 200, 'rush accepted');
   const rr = rushRes.json;
   assert.strictEqual(rr.mode, 'rush');
   assert.strictEqual(rr.rounds, 5, 'five rounds scored');
   assert.strictEqual(rr.correct, 2);
   assert.ok(rr.score > 0 && rr.points > 0 && rr.profile.bestRush === rr.score && rr.profile.rushRuns === 1, 'rush stored on the account');
-  const expected1 = Scoring.roundPoints({ difficulty: bank.byId.get(ids[0]).difficulty, full: true, correctLines: 1, totalLines: 1, answered: true, msLeft: Scoring.rushRoundMs(1) - 2500, roundMs: Scoring.rushRoundMs(1), comboBefore: 0, first: true, lifeline: false }).points;
-  assert.ok(rr.score >= expected1, 'shared scoring rules applied');
-  console.log(`✓ rush verified over HTTP: score ${rr.score}, +${rr.points} pts, best rush ${rr.profile.bestRush}`);
+  const half = Scoring.roundPoints({ difficulty: bank.byId.get(dealt[0]).difficulty, full: true, correctLines: 1, totalLines: 1, answered: true, msLeft: 0, roundMs: Scoring.rushRoundMs(1), comboBefore: 0, first: true, lifeline: true }).points;
+  assert.ok(rr.score >= half, 'shared scoring rules applied');
+  console.log(`✓ rush dealt and timed by the server: score ${rr.score}, +${rr.points} pts, best rush ${rr.profile.bestRush}`);
 
-  // a cheating run: a 300 ms answer is cut off, later rounds ignored
-  const cheat = await post('/api/rush', { ...creds, lang: 'py', log: [{ id: ids[0], lines: bank.byId.get(ids[0]).output, ms: 300 }, { id: ids[1], lines: bank.byId.get(ids[1]).output, ms: 3000 }] });
-  assert.strictEqual(cheat.status, 400, 'impossible timing yields nothing to score');
-  const cheat2 = await post('/api/rush', { ...creds, lang: 'py', log: [{ id: ids[3], lines: bank.byId.get(ids[3]).output, ms: 3000 }, { id: ids[3], lines: bank.byId.get(ids[3]).output, ms: 3000 }] });
-  assert.strictEqual(cheat2.json.rounds, 1, 'repeated puzzle cut off after the first');
-  assert.ok(cheat2.json.flags.includes('repeated puzzle'));
-  const anon = await post('/api/rush', { lang: 'py', log });
-  assert.strictEqual(anon.status, 401, 'unknown account rejected');
-  console.log('✓ rush verification rejects impossible timing, repeats and unknown accounts');
+  // a run settles once, and an instant answer is cut off
+  assert.strictEqual((await post('/api/rush', { ...creds, run })).status, 409, 'a settled run cannot be replayed');
+  const fast = (await post('/api/rush/start', { ...creds, lang: 'py' })).json.run;
+  const fastId = (await post('/api/rush/next', { accountId: creds.accountId, run: fast })).json.id;
+  const quick = (await post('/api/rush/answer', { accountId: creds.accountId, run: fast, lines: bank.byId.get(fastId).output })).json;
+  assert.strictEqual(quick.lives, 0, 'an answer faster than humanly possible ends the run');
+  assert.strictEqual((await post('/api/rush', { ...creds, run: fast })).status, 400, 'impossible timing yields nothing to score');
+  console.log('✓ rush: no public answers, one settlement per run, impossible timing and unknown accounts rejected');
 
   // the socket state is slim: puzzle ids only
   assert.ok(a.room && !('puzzle' in a.room) && a.msgs.some((m) => m.type === 'room' && typeof m.puzzleId === 'string'), 'room state carries puzzle ids, not source');

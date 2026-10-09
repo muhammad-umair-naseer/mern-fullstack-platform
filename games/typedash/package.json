@@ -7,7 +7,7 @@
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
     "simulate": "node test/simulate.js",
-    "test": "npm run test:typing && npm run test:race && npm run test:auth && npm run test:cx && npm run test:rank && npm run test:solo && npm run test:daily && npm run test:lock && npm run test:ghost && npm run test:share && npm run test:pages && npm run test:seasons && npm run test:teams && npm run test:lang && npm run test:push && npm run test:browser && npm run test:mobile && npm run test:embed",
+    "test": "npm run test:typing && npm run test:race && npm run test:auth && npm run test:cx && npm run test:rank && npm run test:solo && npm run test:daily && npm run test:lock && npm run test:ghost && npm run test:share && npm run test:pages && npm run test:seasons && npm run test:teams && npm run test:lang && npm run test:push && npm run test:limits && npm run test:browser && npm run test:mobile && npm run test:embed",
     "test:typing": "NODE_NO_WARNINGS=1 node test/run-typing-test.js",
     "test:race": "RANK_GUESTS=1 DATA_FILE=/tmp/typedash-test/race.json LOBBY_WAIT_MS=1500 COUNTDOWN_MS=1200 RESULTS_MS=1500 AFTER_FIRST_FINISH_MS=4000 node test/run-test.js",
     "test:rank": "RANK_GUESTS=1 DATA_FILE=/tmp/typedash-test/rank.json node test/run-rank-test.js",
@@ -25,6 +25,7 @@
     "test:teams": "RANK_GUESTS=1 DATA_FILE=/tmp/typedash-test/teams.json node test/run-teams-test.js",
     "test:lang": "RANK_GUESTS=1 DATA_FILE=/tmp/typedash-test/lang.json node test/run-lang-test.js",
     "test:push": "RANK_GUESTS=1 DATA_FILE=/tmp/typedash-test/push.json node test/run-push-test.js",
+    "test:limits": "DATA_FILE=/tmp/typedash-test/limits.json node test/run-limits-test.js",
     "test:auth": "DATA_FILE=/tmp/typedash-test/auth.json node test/run-auth-test.js",
     "test:cx": "DATA_FILE=/tmp/typedash-test/cx-client.json node test/run-cx-client-test.js"
   },

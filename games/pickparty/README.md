@@ -37,7 +37,7 @@ server/
   auction.js      Auction mode: lots, live bids with a stretching clock, bot ceilings, leftovers, the reveal
   bots.js         bot seats; they play from the learned crowd ratings with some noise
   ratings.js      Elo-style crowd taste per option, learned from human votes and human Minds only
-  bank.js         content bank + current crowd ranking, versioned, gzipped, snapshot history for solo grading
+  bank.js         content bank (no crowd ranking), versioned, gzipped; ranking snapshots kept server-side for solo grading
   accounts.js     anonymous token accounts, streaks, stats, achievements
   boards.js       six ranking boards, global or per country, all-time or weekly
   store.js        JSON file store with debounced atomic writes
@@ -59,8 +59,8 @@ public/
 
 ### Keeping load on the client
 
-- The bank (topics, options, crowd ranking) is fetched once, revalidated with `If-None-Match`, and cached in `localStorage`. Match traffic carries only topic ids and option indices.
-- Crowd read never opens a room. The browser grades each topic with `shared/scoring.js` and posts the whole answer log once to `POST /api/solo`, which re-grades it against the exact bank version that was played and checks timing plausibility.
+- The bank (topics and options) is fetched once, revalidated with `If-None-Match`, and cached in `localStorage`. Match traffic carries only topic ids and option indices. The crowd ranking never ships with it.
+- Crowd read never opens a room, but the server deals it: `POST /api/solo/start`, then per topic `/api/solo/topic` (starts the server's clock) and `/api/solo/pick` (grades against the ranking snapshot the run started on, and only then returns that topic's ranking). `POST /api/solo` scores the server's own log once. Solo ranked points stop at `SOLO_POINTS_PER_DAY` per account.
 - The server keeps no game loop. Each phase sets one deadline and one timer; clients render countdowns from server-clock-corrected deadlines in a single `requestAnimationFrame` loop.
 - Static files and the bank are served from memory, gzipped, with ETags.
 
@@ -88,6 +88,14 @@ Note: Crowd read needs the ranking in the browser, so a determined player could 
 | `BID_EXTEND_MS` | 6000 | clock after a bid, if less remains |
 | `BID_MAX_MS` | 30000 | hard cap per lot from the moment it opens |
 | `SOLD_MS` | 1300 | pause after a sale or a pass |
+| `SOLO_POINTS_PER_DAY` | 1200 | ranked points solo runs can add per account per UTC day |
+| `GAME_SSO_SECRET` | unset | shared with the website API (`server/.env`). Unset outside production: player sign-in uses the public development secret (with a loud warning) and the admin portal's player tools stay off. Production refuses the development secret. |
+| `TRUST_PROXY` | unset | `1` behind a reverse proxy: per-IP limits use the address it appends to `X-Forwarded-For` |
+| `SOCKETS_PER_IP` | 20 | WebSockets open at once from one address |
+| `ROOMS_PER_IP_PER_MIN` | 20 | create / quick-match requests per address per minute |
+| `GUESTS_PER_IP_PER_HOUR` | 30 | new guest accounts per address per hour |
+| `MSG_BURST` / `MSG_PER_SEC` | 40 / 8 | WebSocket messages per socket: burst, then per second |
+| `WS_MAX_PAYLOAD` | 8192 | largest WebSocket message, bytes |
 | `RANKED_PRIVATE` | off | set to `1` to rank private tables too |
 
 See `server/config.js` for the remaining timers.

@@ -24,6 +24,18 @@ const CHROME = process.env.CHROME || [
 const SHOTS = process.env.SHOTS || '';   // directory for screenshots (optional)
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * Type as a person does: `avgMs` a key on average, the pace drifting faster and
+ * slower. A fixed delay types at a script's even pace, which the server keeps
+ * as practice but never verifies (server/solo.js machineLike).
+ */
+async function typeLikeAPerson(pg, text, avgMs) {
+  for (let i = 0; i < text.length; i++) {
+    await pg.keyboard.type(text[i]);
+    await wait(avgMs * (1 + 0.4 * Math.sin(i / 7)) * (0.7 + 0.6 * (((i * 37) % 11) / 10)));
+  }
+}
+
 (async () => {
   if (!CHROME) { console.log('SKIPPED: no Chrome found (set CHROME=/path/to/chrome)'); process.exit(0); }
   await new Promise((r) => (server.listening ? r() : server.once('listening', r)));
@@ -107,11 +119,11 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   assert.ok(passage.length > 100, 'passage loaded locally');
   assert.strictEqual(await page.evaluate(() => document.activeElement && document.activeElement.id), 'hidden-input', 'typing input focused at GO');
   const t0 = Date.now();
-  await page.keyboard.type(passage, { delay: 34 });            // ~29 cps: fast but under the server ceiling
+  await typeLikeAPerson(page, passage, 60);                   // fast, but a person's pace under the ranked ceiling
   await page.waitForFunction(() => window.TypeDash.state.myFinish, { timeout: 5000 });
   const myFinish = await state('S.myFinish');
   assert.strictEqual(myFinish.rank, 1, 'beat the 55 WPM pacer');
-  assert.ok(myFinish.wpm > 200, `local wpm computed (${myFinish.wpm})`);
+  assert.ok(myFinish.wpm > 100, `local wpm computed (${myFinish.wpm})`);
   console.log(`✓ typed ${passage.length} chars in ${((Date.now() - t0) / 1000).toFixed(1)}s -> ${myFinish.wpm} WPM, rank ${myFinish.rank}`);
   await shot('02-finish-banner');
 
@@ -184,7 +196,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   assert.strictEqual(await page.$eval('.lane.ghost .tag.bot', (el) => el.textContent), 'REPLAY', 'the replay lane is labelled in plain words');
   assert.strictEqual(await page.$eval('.lane.ghost .name', (el) => el.textContent), 'Tester', "the ghost is the record holder's replay");
   const ghostPassage = await state('S.passage');
-  await page.keyboard.type(ghostPassage, { delay: 60 });          // slower than the ~300 WPM record: the ghost wins
+  await page.keyboard.type(ghostPassage, { delay: 110 });         // well under the record's pace: the ghost wins
   await page.waitForFunction(() => !document.getElementById('results').hidden, { timeout: 8000 });
   assert.ok(/they were faster/i.test(await page.$eval('#results-title', (el) => el.textContent)));
   assert.ok(/Tester's run \(\d+ words a min\) was [\d.]+ s faster/.test(await page.$eval('#sr-lines', (el) => el.textContent)), 'replay verdict line');
@@ -248,7 +260,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const apiDaily = await (await fetch(`${base}/api/daily`)).json();
   assert.strictEqual(dailyPassage, apiDaily.passage.text, "the run uses today's passage");
   assert.deepStrictEqual(await state('S.room.bonusWords'), apiDaily.bonusWords, "and today's golden words");
-  await page.keyboard.type(dailyPassage, { delay: 34 });
+  await typeLikeAPerson(page, dailyPassage, 60);   // a verified run, so it counts
   await page.waitForFunction(() => !document.getElementById('results').hidden, { timeout: 6000 });
   await page.waitForFunction(() => /this one counted/i.test(document.getElementById('sr-lines').textContent), { timeout: 5000 });
   assert.ok(/#1 of 1 today/.test(await page.$eval('#sr-lines', (el) => el.textContent)), 'ranked #1 of 1');

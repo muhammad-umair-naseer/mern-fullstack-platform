@@ -3,6 +3,7 @@ const cfg = require('./config');
 const passages = require('./passages');
 const { clamp, sanitizeText } = require('./util');
 const { makeBots } = require('./Bot');
+const { machineLike } = require('./solo');
 
 const LANE_COLORS = ['#4cc9f0', '#ff4d6d', '#ffd166', '#3ddc97', '#fbbf24', '#ff9e00', '#f72585', '#80ed99'];
 const EMOTES = ['🔥', '😂', '👏', '🐢', '😱', '🏁', '💀', '❤️'];
@@ -231,8 +232,10 @@ class Room {
     for (const p of humans) {
       if (!p.account) continue;
       const lane = order.findIndex((x) => x.id === p.id) + 1;
+      // faster than the ranked ceiling, or typed along a ruler: the race counts, unranked and with no record
+      const flagged = p.wpm > cfg.RANKED_MAX_WPM || machineLike(p.timeline);
       // a finished race is the most trustworthy ghost there is: server-timed, server-validated
-      const ghost = this.manager.ghosts && p.finished
+      const ghost = this.manager.ghosts && p.finished && !flagged
         ? this.manager.ghosts.consider(p.account, { passageId: this.passageId, finished: true, verified: true, wpm: p.wpm, accuracy: p.accuracy, time: p.finishTime, timeline: p.timeline })
         : { wr: false, pb: false };
       const out = accounts.recordRace(p.account, {
@@ -242,6 +245,7 @@ class Room {
         errors: p.errors,
         finished: p.finished,
         dropped: !!p.dropped,
+        flagged,
         chars: p.correct,
         golden: p.golden,
         goldenTotal: this.bonusWords.length,
@@ -268,6 +272,7 @@ class Room {
         ghost: { wr: ghost.wr, pb: ghost.pb, prevWr: ghost.prevWr || null },
         points: out.points,
         ranked: out.ranked,
+        flagged,
         streak: out.streak,
         bestStreak: out.bestStreak,
         streakEvent: out.streakEvent,

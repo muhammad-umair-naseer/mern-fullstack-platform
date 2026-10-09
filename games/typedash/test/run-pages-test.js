@@ -35,7 +35,8 @@ class C {
 }
 function runFor(passage, time, extra = {}) {
   const len = passage.text.length; const timeline = [];
-  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor((len * t) / time))]);
+  // a person's pace drifts around the average; an even one is a script's (solo.machineLike)
+  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor(len * (t / time + 0.03 * Math.sin((4 * Math.PI * t) / time))))]);
   timeline.push([time, len]);
   return { type: 'solo_done', mode: 'practice', passageId: passage.id, chars: len, finished: true, time, keystrokes: len, errors: 0, golden: 0, goldenTotal: 3, bestCombo: len, nitros: 0, score: 1000, timeline, ...extra };
 }
@@ -129,7 +130,7 @@ function runFor(passage, time, extra = {}) {
   console.log(`✓ practice: a card per language, then ${STAGES.map((s) => s.name).join(' → ')} as stage cards`);
   a.send({ type: 'solo_start', passageId: p.id, mode: 'practice' });
   await wait(30);
-  a.send(runFor(p, Math.ceil((p.text.length / cfg.MAX_CPS) * 1000) + 1500));
+  a.send(runFor(p, Math.ceil((p.text.length * 12000) / cfg.RANKED_MAX_WPM) + 1500));
   await a.until((c) => c.result, 5000, 'practice result');
   _pageCache.clear();
   idx = await get(`${base}/practice/lang/${p.lang}`);
@@ -153,7 +154,7 @@ function runFor(passage, time, extra = {}) {
   b.result = null;
   b.send({ type: 'solo_start', passageId: today.passage.id, mode: 'daily' });
   await wait(30);
-  b.send(runFor(today.passage, Math.ceil((today.passage.text.length / cfg.MAX_CPS) * 1000) + 3000, { mode: 'daily' }));
+  b.send(runFor(today.passage, Math.ceil((today.passage.text.length * 12000) / cfg.RANKED_MAX_WPM) + 3000, { mode: 'daily' }));
   await b.until((c) => c.result, 5000, 'daily result');
   _pageCache.clear();
   const dp2 = await get(`${base}/daily`);

@@ -140,18 +140,23 @@ class Accounts {
     return { points, unlocked };
   }
 
-  settleSolo(acc, { total, perfect }) {
+  // perDay: ranked points solo runs may add per UTC day, so a run cannot be farmed
+  settleSolo(acc, { total, perfect }, perDay = Infinity, now = Date.now()) {
     const unlocked = [];
-    const points = require('../shared/scoring').soloRankedPoints(total);
+    const day = dayKey(now, 0);
+    if (!acc.soloDay || acc.soloDay.k !== day) acc.soloDay = { k: day, p: 0 };
+    const earned = require('../shared/scoring').soloRankedPoints(total);
+    const points = Math.min(earned, Math.max(0, perDay - acc.soloDay.p));
+    acc.soloDay.p += points;
     const best = total > acc.soloBest;
-    this.addPoints(acc, points);
+    this.addPoints(acc, points, now);
     acc.soloRuns += 1;
     if (best) acc.soloBest = total;
     if (perfect > 0) this.unlock(acc, 'perfect_read', unlocked);
     if (total >= 1000) this.unlock(acc, 'solo_1k', unlocked);
     if (total >= 5000) this.unlock(acc, 'solo_5k', unlocked);
     this.store.save();
-    return { points, best, unlocked };
+    return { points, best, unlocked, capped: points < earned };
   }
 
   bindCortexis({ sub, name }, { guest = null, country = null, nickname = null } = {}) {

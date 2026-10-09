@@ -78,8 +78,8 @@ class Accounts {
    * signed-in device. `country` seeds a freshly minted guest.
    */
   login(id, token, { country = null } = {}) {
-    const acc = id && Object.prototype.hasOwnProperty.call(this.accounts, id) ? this.accounts[id] : null;
-    if (acc && token && this.tokenMatches(acc, token)) {
+    const acc = this.find(id, token);
+    if (acc) {
       this.migrate(acc);
       acc.lastSeen = Date.now();
       this.rollWindows(acc);
@@ -93,6 +93,12 @@ class Accounts {
     this.accounts[newId] = fresh;
     this.store.touch();
     return { account: fresh, token: newToken, created: true };
+  }
+
+  /** The account these credentials open, or null. Never mints anything. */
+  find(id, token) {
+    const acc = typeof id === 'string' && Object.prototype.hasOwnProperty.call(this.accounts, id) ? this.accounts[id] : null;
+    return acc && token && this.tokenMatches(acc, token) ? acc : null;
   }
 
   tokenMatches(acc, token) {

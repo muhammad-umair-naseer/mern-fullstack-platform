@@ -1,6 +1,6 @@
 'use strict';
-// The content bank shipped to browsers: topics, options and the current
-// crowd ranking. Served gzipped with an ETag; browsers cache it in
+// The content bank shipped to browsers: topics and options. The crowd ranking
+// stays on the server, in versioned snapshots. Served gzipped with an ETag; browsers cache it in
 // localStorage so a match only ever sends topic ids and option indices.
 const crypto = require('crypto');
 const zlib = require('zlib');
@@ -28,7 +28,8 @@ class Bank {
     const payload = {
       v,
       topics: this.topics.map((t, i) => ({
-        id: t.id, t: t.t, e: t.e, c: t.c, o: t.o, r: ranks[i],
+        // no crowd ranking (r): solo grades on the server and shows a topic's ranking only after the pick
+        id: t.id, t: t.t, e: t.e, c: t.c, o: t.o,
         // one picture slot per option: {s: thumbnail url, p: page title, by, lic} or null
         a: t.o.map((_, k) => { const e = this.art[t.id] && this.art[t.id][k]; return e ? { s: e.src, p: e.page, by: e.by, lic: e.lic } : null; }),
       })),

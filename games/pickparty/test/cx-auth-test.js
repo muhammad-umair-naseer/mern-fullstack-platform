@@ -54,4 +54,8 @@ const pub = accounts.public(bindResult.account);
 assert.strictEqual(pub.isCortexis, true);
 assert.strictEqual(pub.cortexisName, 'Muhammad Umair Naseer');
 
+// 5. Solo ranked points stop at the daily cap
+const cap = [1, 2].map(() => accounts.settleSolo(bindResult.account, { total: 7500, perfect: 0 }, 400));
+assert.deepStrictEqual(cap.map((r) => [r.points, r.capped]), [[300, false], [100, true]]);
+
 console.log('✓ All PickParty Cortexis SSO tests passed successfully!');

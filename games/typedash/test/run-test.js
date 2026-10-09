@@ -82,8 +82,9 @@ class Client {
   const cps = (80 * 5) / 60;
   let ac = 0;
   let frac = 0;
+  let tick = 0;
   const aliceTimer = setInterval(() => {
-    frac += cps / 10;
+    frac += (cps / 10) * (1 + 0.6 * Math.sin(tick++ / 8));   // her pace drifts, as a person's does
     const n = Math.floor(frac);
     frac -= n;
     ac = Math.min(passage.length, ac + n);
@@ -152,6 +153,10 @@ class Client {
   accounts.recordRace(pair, { rank: 2, wpm: 90, accuracy: 99, finished: false, dropped: true, chars: 300, golden: 0, bestCombo: 80, nitros: 0, racers: 2, humans: 2, ranked: true });
   assert.strictEqual(pair.wins + pair.podiums + pair.points, 0, 'a racer who left gets no podium or points in a small room');
   console.log(`✓ dropped racer placed last (#${carol.rank}, ${Math.round(carol.progress * 100)}% typed), settled with ${carolAcc.points} points and no podium`);
+  // a win flagged as a script (over RANKED_MAX_WPM, or machine-even) is settled unranked
+  const bot = accounts.login(null, null).account;
+  const flaggedOut = accounts.recordRace(bot, { rank: 1, wpm: 300, accuracy: 100, finished: true, flagged: true, chars: 300, golden: 3, bestCombo: 300, nitros: 0, racers: 4, humans: 2, ranked: true });
+  assert.deepStrictEqual([flaggedOut.points, flaggedOut.ranked, bot.wins + bot.podiums, bot.bestWpm, bot.races], [0, false, 0, 0, 1], 'flagged win: counted, unranked, no win, no best WPM');
 
   const settled = [...a.msgs].reverse().find((m) => m.type === 'race_result');
   assert.ok(settled && settled.ranked && settled.points > 0, 'ranked points awarded for a public race');
@@ -194,6 +199,17 @@ class Client {
   x.send({ type: 'join', code: 'ZZZZZ' });
   await x.until((c) => c.errors.length > 0, 3000, 'bad code error');
   console.log('✓ unknown room code rejected:', JSON.stringify(x.errors[0].message));
+
+  /* ---------------- a scripted racer: an even 4 chars per 250 ms (~190 WPM) ---------------- */
+  await h.until((c) => c.room.state === 'racing', 5000, 'private race on');
+  const hl = h.room.passage.length;
+  for (let i = 0; i < hl;) { i = Math.min(hl, i + 4); h.send({ type: 'progress', c: i, t: i, k: i, e: 0 }); await wait(250); }
+  await h.until((c) => c.msgs.some((m) => m.type === 'race_result'), 60000, 'scripted result');
+  const scripted = h.msgs.find((m) => m.type === 'race_result');
+  const hAcc = accounts.accounts[h.accountId];
+  assert.ok(!scripted.ghost.wr && !scripted.ghost.pb, 'a machine-even race sets no record');
+  assert.deepStrictEqual([scripted.points, hAcc.bestWpm, hAcc.wins, hAcc.races], [0, 0, 0, 1], 'and no points, best WPM or win, though the race counts');
+  console.log('✓ machine-even typing finishes the race but is settled unranked');
 
   for (const c of [a, b, h, g, x]) c.close();
   await wait(200);

@@ -13,7 +13,8 @@ const { clamp } = require('./util');
  *      passage, the typing-rate ceiling and that stamp, then write it to the
  *      account (accounts.recordSolo).
  *
- * A run is `verified` when it carried a plausible progress timeline and was
+ * A run is `verified` when it carried a plausible progress timeline (no
+ * faster than RANKED_MAX_WPM, and not machine-regular: see machineLike) and was
  * submitted within the time the stamp allows. Only verified runs are trusted
  * for anything competitive (ghost records, daily boards); unverified ones
  * still count as practice.
@@ -47,6 +48,31 @@ function sweep(now = Date.now()) {
 }
 const sweeper = setInterval(sweep, 5 * 60000);
 sweeper.unref?.();
+
+/**
+ * A progress timeline [[ms, chars], ...] a script made. Browsers sample about
+ * every 250 ms, so few samples carrying many characters each are not a
+ * browser's. And people speed up and slow down (hard words, punctuation, a
+ * breath), so a run that never strays more than about a character from one
+ * straight line kept an even pace no person keeps.
+ * ponytail: a straight-line fit catches constant-rate scripts; one that adds
+ * its own drift gets through, and needs a keystroke-level model to catch.
+ */
+function machineLike(timeline) {
+  if (!Array.isArray(timeline) || !timeline.length) return false;   // nothing typed
+  const n = timeline.length;
+  if (n < timeline[n - 1][1] / cfg.MACHINE_CHARS_PER_SAMPLE) return true;
+  if (timeline[n - 1][1] < cfg.MACHINE_MIN_CHARS) return false;      // too short to tell
+  let st = 0, sc = 0, stt = 0, stc = 0;
+  for (const [t, c] of timeline) { st += t; sc += c; stt += t * t; stc += t * c; }
+  const den = n * stt - st * st;
+  if (!den) return true;   // every sample at the same moment
+  const slope = (n * stc - st * sc) / den;
+  const icept = (sc - slope * st) / n;
+  let ss = 0;
+  for (const [t, c] of timeline) ss += (c - (icept + slope * t)) ** 2;
+  return Math.sqrt(ss / n) < cfg.MACHINE_RMS_CHARS;
+}
 
 /**
  * Normalise and sanity-check a submitted run. Returns { ok: true, r } or
@@ -94,7 +120,7 @@ function validate(msg, stampInfo, now = Date.now()) {
   if (stampInfo && stampInfo.passageId === p.id) {
     const elapsed = now - stampInfo.at;
     if (time > elapsed + cfg.SOLO_START_SLACK_MS) return { ok: false, reason: 'Reported time is longer than the time since the run started.' };
-    verified = !!timeline && elapsed <= time + SUBMIT_GRACE_MS;
+    verified = !!timeline && elapsed <= time + SUBMIT_GRACE_MS && wpm <= cfg.RANKED_MAX_WPM && !machineLike(timeline);
   }
 
   const pacerWpm = msg.pacerWpm != null ? clamp(Number(msg.pacerWpm) | 0, 0, 400) : null;
@@ -125,4 +151,4 @@ function validate(msg, stampInfo, now = Date.now()) {
   return { ok: true, r };
 }
 
-module.exports = { stamp, takeStamp, validate, sweep, _stamps: stamps };
+module.exports = { stamp, takeStamp, validate, sweep, machineLike, _stamps: stamps };

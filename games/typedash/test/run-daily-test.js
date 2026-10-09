@@ -43,7 +43,8 @@ class C {
 function runFor(passage, time, extra = {}) {
   const len = passage.text.length;
   const timeline = [];
-  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor((len * t) / time))]);
+  // a person's pace drifts around the average; an even one is a script's (solo.machineLike)
+  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor(len * (t / time + 0.03 * Math.sin((4 * Math.PI * t) / time))))]);
   timeline.push([time, len]);
   return { type: 'solo_done', mode: 'daily', passageId: passage.id, chars: len, finished: true, time, keystrokes: len + 2, errors: 2, golden: 1, goldenTotal: 3, bestCombo: 50, nitros: 0, score: 3000, timeline, ...extra };
 }
@@ -89,7 +90,7 @@ async function play(c, passage, time, stamped = true) {
   console.log(`✓ Daily #${ch.number} = "${ch.passage.title}" (${ch.passage.id}), golden ${JSON.stringify(ch.bonusWords)}, deterministic, served by /api/daily`);
   const passage = ch.passage;
   const len = passage.text.length;
-  const minTime = Math.ceil((len / cfg.MAX_CPS) * 1000);
+  const minTime = Math.ceil((len * 12000) / cfg.RANKED_MAX_WPM);   // the fastest run that is still verified
 
   /* ---------------- two players, one attempt each ---------------- */
   const a = new C(url, 'Umair', 'PK');

@@ -12,8 +12,11 @@ const Scoring = require('../shared/scoring');
 const DATA = '/tmp/pickparty-test/db.json';
 fs.rmSync(path.dirname(DATA), { recursive: true, force: true });
 
+// the admin portal needs a real secret: the public development one is refused for it
+process.env.GAME_SSO_SECRET = 'run-tests-only-secret-0123456789abcdef';
 const env = {
   ...process.env, PORT: '0', DATA_FILE: DATA,
+  SOCKETS_PER_IP: '200', ROOMS_PER_IP_PER_MIN: '500', GUESTS_PER_IP_PER_HOUR: '500',   // every test client is on 127.0.0.1
   LOBBY_WAIT_MS: '700', INTRO_MS: '150', TURN_MS: '1200', AWAY_TURN_MS: '150', PICK_GAP_MS: '40',
   VOTE_MS: '1200', ROUND_RESULT_MS: '150', SECRET_MS: '1500', REVEAL_STEP_MS: '60', TOPIC_END_MS: '150',
   MATCH_END_MS: '500', BOT_MIN_MS: '40', BOT_MAX_MS: '120', RATINGS_PUBLISH_MS: '1200',
@@ -166,8 +169,24 @@ function checkArtMatcher() {
   console.log('✓ art matcher: exact, plural, one extra word or a hinted parenthetical; nothing looser');
 }
 
+// Per-IP limits (server/limits.js): a window of events, and sockets open at once.
+function checkLimits() {
+  const { PerIp, Sockets, ipOf } = require('../server/limits');
+  const w = new PerIp(2, 1000);
+  assert.deepStrictEqual([w.take('a', 0), w.take('a', 10), w.take('a', 20), w.take('b', 20), w.take('a', 1005)], [true, true, false, true, true], 'two per second per address');
+  w.sweep(5000);
+  assert.strictEqual(w.hits.size, 0, 'idle addresses forgotten');
+  const s = new Sockets(2);
+  assert.deepStrictEqual([s.add('a'), s.add('a'), s.add('a')], [true, true, false]);
+  s.remove('a');
+  assert.ok(s.add('a'), 'a closed socket frees its slot');
+  const req = { headers: { 'x-forwarded-for': '6.6.6.6, 10.0.0.9' }, socket: { remoteAddress: '127.0.0.1' } };
+  assert.deepStrictEqual([ipOf(req, false), ipOf(req, true)], ['127.0.0.1', '10.0.0.9'], 'X-Forwarded-For only behind a trusted proxy, and only its own hop');
+  console.log('✓ per-IP limits: windows, open sockets, proxy hop');
+}
+
 (async () => {
-  try { checkBank(); checkScoring(); checkArtMatcher(); } catch (e) { console.error('✗', e.message); console.log('\nFAILED'); process.exit(1); }
+  try { checkBank(); checkScoring(); checkArtMatcher(); checkLimits(); } catch (e) { console.error('✗', e.message); console.log('\nFAILED'); process.exit(1); }
   const srv = fork(path.join(__dirname, '..', 'server', 'index.js'), { env, stdio: ['ignore', 'ignore', 'inherit', 'ipc'] });
   const port = await new Promise((r) => srv.on('message', (m) => m.port && r(m.port)));
   // a crash in the runner must not leave the forked server behind holding the pipe open
@@ -182,6 +201,7 @@ function checkArtMatcher() {
     assert.strictEqual(bank.status, 200);
     assert.strictEqual(bank.body.topics.length, TOPIC_COUNT);
     assert.ok(bank.body.topics.every((t) => Array.isArray(t.a) && t.a.length === OPTIONS_PER_TOPIC), 'bank carries art slots');
+    assert.ok(bank.body.topics.every((t) => t.r === undefined), 'bank carries no crowd ranking');
     const etag = bank.headers.get('etag');
     const again = await http(port, '/api/bank', { headers: { 'If-None-Match': etag } });
     assert.strictEqual(again.status, 304, 'bank revalidates with 304');
@@ -312,32 +332,34 @@ function checkArtMatcher() {
     assert.ok(brd2.entries.every((e) => e.country === 'PK'));
     console.log(`✓ boards: global ${brd.entries.map((e) => e.name + ' ' + e.v).join(', ')}`);
 
-    /* ---------- solo settlement (run graded server-side) ---------- */
+    /* ---------- solo: dealt, timed and graded by the server ---------- */
     const bk = (await http(port, '/api/bank')).body;
-    const rankOf = (id) => (bk.topics.find((t) => t.id === id) || {}).r || null;
-    const log = [];
-    bk.topics.slice(0, 5).forEach((t, i) => {
-      const good = i < 3; // three perfect reads, then two misses → 1 life left
-      const f = good ? t.r.slice(0, 3) : t.r.slice(13, 16);
-      const d = good ? t.r[15] : t.r[0];
-      log.push({ t: t.id, f, d, ms: 2500 });
-    });
-    const local = Scoring.soloRun(log, rankOf);
-    const solo = await http(port, '/api/solo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: B.token, v: bk.v, log }) });
+    const post = (p, body) => http(port, p, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    assert.strictEqual((await post('/api/solo/start', { token: 'x'.repeat(30) })).status, 401, 'unknown player');
+    const run = (await post('/api/solo/start', { token: B.token })).body.run;
+    const picks = [];
+    for (const [i, t] of bk.topics.slice(0, 3).entries()) {   // three topics: no run can lose three lives sooner
+      const open = await post('/api/solo/topic', { token: B.token, run, t: t.id });
+      assert.strictEqual(open.body.timer, Scoring.soloTimer(i), 'the server sets the clock');
+      if (i === 0) {
+        assert.strictEqual((await post('/api/solo/pick', { token: B.token, run, f: [1, 1, 2], d: 3 })).status, 400, 'duplicate picks rejected');
+        assert.strictEqual((await post('/api/solo/topic', { token: A.token, run, t: t.id })).status, 409, "another player cannot use this run");
+      }
+      const res = (await post('/api/solo/pick', { token: B.token, run, f: [0, 1, 2], d: 3 })).body;
+      assert.ok(Array.isArray(res.r) && res.r.length === t.o.length, 'ranking sent after the pick');
+      picks.push(res);
+    }
+    const graded = picks.reduce((a, x) => a + x.points, 0);
+    const solo = await post('/api/solo', { token: B.token, run });
     assert.strictEqual(solo.status, 200, JSON.stringify(solo.body));
-    assert.strictEqual(solo.body.total, local.total, 'server grade = browser grade');
-    assert.strictEqual(solo.body.lives, 1);
-    assert.strictEqual(solo.body.perfect, 3);
-    assert.ok(solo.body.unlocked.includes('perfect_read'));
-    const fast = await http(port, '/api/solo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: B.token, v: bk.v, log }) });
-    assert.strictEqual(fast.status, 429, 'cannot replay a run instantly');
-    const bad = await http(port, '/api/solo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: A.token, v: bk.v, log: [{ ...log[0], f: [1, 1, 2] }] }) });
-    assert.strictEqual(bad.status, 400, 'duplicate picks rejected');
-    const stale = await http(port, '/api/solo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: A.token, v: 'nope', log }) });
-    assert.strictEqual(stale.status, 409);
-    const noacc = await http(port, '/api/solo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: 'x'.repeat(30), v: bk.v, log }) });
-    assert.strictEqual(noacc.status, 401);
-    console.log(`✓ solo: ${local.total} pts graded identically on server, +${solo.body.points} ranked`);
+    assert.strictEqual(solo.body.total, graded, 'settlement = the grades already shown');
+    assert.strictEqual(solo.body.played, 3);
+    assert.strictEqual(solo.body.lives, picks[2].lives);
+    assert.strictEqual((await post('/api/solo', { token: B.token, run })).status, 409, 'a run settles once');
+    assert.strictEqual((await post('/api/solo', { token: B.token, v: bk.v, log: [{ t: bk.topics[0].id, f: [0, 1, 2], d: 3, ms: 2500 }] })).status, 409, 'a browser-made log is not accepted');
+    for (const bad of ['null', '[]', '"x"', '{']) assert.strictEqual((await http(port, '/api/solo', { method: 'POST', body: bad })).status, 400, `body ${bad} is a 400`);
+    assert.strictEqual((await http(port, '/healthz')).status, 200, 'still up after bad bodies');
+    console.log(`✓ solo: ${graded} pts dealt and graded on the server, +${solo.body.points} ranked, settled once`);
 
     /* ---------- pick a category first: quick matches are keyed by it, tables are seeded with it ---------- */
     const C = new Client(port, 'Cyrus'), D = new Client(port, 'Dua'), E = new Client(port, 'Esa'), F = new Client(port, 'Fahad');
@@ -567,6 +589,8 @@ function checkArtMatcher() {
 
     /* ---------- admin portal: edit and delete a player ---------- */
     const cx = require('../server/cx');
+    const devTok = cx.signGameToken({ sub: 'admin', aud: cx.ADMIN_AUDIENCE, key: cx.DEV_SECRET });
+    assert.strictEqual((await http(port, '/api/admin/players', { headers: { Authorization: `Bearer ${devTok}` } })).status, 401, 'the public dev secret never opens the admin API');
     const adminTok = cx.signGameToken({ sub: 'admin', aud: cx.ADMIN_AUDIENCE, ttlSec: 60 });
     const admin = (method, id, body, tok = adminTok) => http(port, `/api/admin/players/${encodeURIComponent(id)}`, { method, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` }, body: body && JSON.stringify(body) });
     const Z = new Client(port, 'Zara'); const zw = await Z.connect(); Z.auto = false;

@@ -469,8 +469,8 @@ el.btnResultsStay.addEventListener('click', () => {
 
 /**
  * Solo Rush runs in this tab. The engine emits server-shaped messages into the
- * same handlers a live match uses, and the server only hears about it when the
- * finished run is submitted for verification.
+ * same handlers a live match uses; the server deals each puzzle over HTTP and
+ * scores the run from its own log when it ends.
  */
 async function startRush(lang) {
   sound.ensure();

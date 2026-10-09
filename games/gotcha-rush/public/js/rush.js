@@ -1,12 +1,12 @@
 /**
- * Solo Rush, entirely in the browser.
+ * Solo Rush, played in the browser and dealt by the server.
  *
  * The engine emits the same message shapes the multiplayer server does
  * (`room`, `reveal`, `game_result`), so the arena UI renders a Rush run with
- * the exact code paths it uses for a live match. The server is touched twice:
- * once per round for the reveal text (a cached static JSON), and once at the
- * end, when the answer log is submitted and re-scored authoritatively
- * (server/rush.js). No room, no timer, no socket is held for a Rush player.
+ * the exact code paths it uses for a live match. The server deals each puzzle
+ * (`/api/rush/next`), times it, and sends its answer only once the round is
+ * closed (`/api/rush/answer`); at the end it scores the log it kept itself
+ * (server/rush.js). No room and no socket is held for a Rush player.
  */
 const Scoring = window.GotchaScoring;
 const { RULES } = Scoring;
@@ -35,7 +35,6 @@ export class RushEngine {
     this.correct = 0;
     this.lifelines = 0;
     this.fastestMs = null;
-    this.seen = new Set();
     this.log = [];
     this.puzzle = null;
     this.answer = null;
@@ -43,9 +42,29 @@ export class RushEngine {
     this.lifeline = false;
     this.timer = null;
     this.gameNo = 1;
+    this.run = null;
+    this.started = this.call('/api/rush/start', { ...this.credentials, lang: this.lang }).then((j) => { this.run = j.run; });
+    this.started.catch(() => {});   // reported when the first round asks for it
     this.startEndsAt = this.now() + START_MS;
     this.broadcast();
     this.schedule(() => this.beginRound(), START_MS);
+  }
+
+  async call(url, body) {
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+    return j;
+  }
+
+  /** One step of the server's run: next, choices or answer. */
+  round(step, extra = {}) {
+    return this.call(`/api/rush/${step}`, { accountId: this.credentials.accountId, run: this.run, ...extra });
+  }
+
+  fail(err) {
+    this.stop();
+    this.emit({ type: 'error', message: `Rush stopped: ${err.message}` });
   }
 
   schedule(fn, ms) { clearTimeout(this.timer); this.timer = setTimeout(fn, ms); }
@@ -72,20 +91,28 @@ export class RushEngine {
     });
   }
 
-  beginRound() {
-    this.roundNo += 1;
+  async beginRound() {
+    let deal;
+    try {
+      await this.started;
+      deal = await this.round('next');
+    } catch (err) { return this.fail(err); }
+    if (this.state === 'stopped') return undefined;
+    if (deal.over) return this.finish();
+    const puzzle = this.bank.get(deal.id);
+    if (!puzzle) return this.fail(new Error('the puzzle list changed. Reload the page.'));
+    this.roundNo = deal.roundNo;
     this.state = 'round';
     this.answer = null;
     this.answerAt = null;
     this.lifeline = false;
     this.lastReveal = null;
-    this.puzzle = this.bank.pick({ lang: this.lang, seen: this.seen, ...Scoring.rushDifficulty(this.roundNo) });
-    this.seen.add(this.puzzle.id);
-    if (this.seen.size >= this.bank.size - 2) this.seen.clear();
+    this.puzzle = puzzle;
     this.roundStartAt = this.now();
     this.roundEndsAt = this.roundStartAt + this.roundMs;
     this.broadcast();
     this.schedule(() => this.reveal(), this.roundMs);
+    return undefined;
   }
 
   /** Same message names the socket uses, so the UI needs no special casing. */
@@ -113,8 +140,7 @@ export class RushEngine {
     this.lifelines += 1;
     this.emit({ type: 'lifeline_used', id: this.me.id });
     try {
-      const r = await fetch(`/api/choices/${encodeURIComponent(this.puzzle.id)}`);
-      const j = await r.json();
+      const j = await this.round('choices');
       if (this.state === 'round' && this.answer === null) this.emit({ type: 'lifeline', choices: j.choices });
     } catch (_) { /* offline: the player can still type */ }
   }
@@ -127,13 +153,14 @@ export class RushEngine {
     const roundMs = this.roundMs;
     let key;
     try {
-      const r = await fetch(`/api/reveal/${encodeURIComponent(this.puzzle.id)}`);
-      key = await r.json();
+      key = await this.round('answer', { lines: this.answer });
     } catch (_) {
-      key = { output: [], explain: 'Could not reach the server for this reveal — the round is not counted.', tags: [] };
+      key = { output: [], explain: 'Could not reach the server for this reveal — the round is not counted.', tags: [], ms: null };
     }
-    const answered = this.answer !== null;
-    const ms = answered ? this.answerAt - this.roundStartAt : null;
+    if (this.state === 'stopped') return;
+    // the server timed the round on its own clock; a null ms means it did not count an answer
+    const answered = this.answer !== null && key.ms != null;
+    const ms = answered ? key.ms : null;
     const g = Scoring.grade(this.answer, key.output);
     const { points, bonus } = Scoring.roundPoints({
       difficulty: this.puzzle.difficulty, full: g.full, correctLines: g.correctLines, totalLines: Math.max(1, key.output.length),
@@ -143,6 +170,7 @@ export class RushEngine {
       this.combo += 1; this.bestCombo = Math.max(this.bestCombo, this.combo); this.correct += 1;
       this.fastestMs = this.fastestMs == null ? ms : Math.min(this.fastestMs, ms);
     } else { this.combo = 0; this.lives -= 1; }
+    if (typeof key.lives === 'number') this.lives = key.lives;   // the server's count wins
     this.score += points;
     if (key.output.length) this.log.push({ id: this.puzzle.id, lines: answered ? this.answer : null, ms, lifeline: this.lifeline });
 
@@ -176,7 +204,7 @@ export class RushEngine {
     try {
       const r = await fetch('/api/rush', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...this.credentials, ...this.identity, lang: this.lang, log: this.log, clientScore: this.score }),
+        body: JSON.stringify({ ...this.credentials, ...this.identity, run: this.run, clientScore: this.score }),
       });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);

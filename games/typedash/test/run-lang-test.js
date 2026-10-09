@@ -29,7 +29,8 @@ class C {
 }
 function runFor(passage, time) {
   const len = passage.text.length; const timeline = [];
-  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor((len * t) / time))]);
+  // a person's pace drifts around the average; an even one is a script's (solo.machineLike)
+  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor(len * (t / time + 0.03 * Math.sin((4 * Math.PI * t) / time))))]);
   timeline.push([time, len]);
   return { type: 'solo_done', mode: 'practice', passageId: passage.id, chars: len, finished: true, time, keystrokes: len, errors: 0, golden: 0, goldenTotal: 3, bestCombo: len, nitros: 0, score: 1000, timeline };
 }
@@ -84,7 +85,8 @@ async function play(c, passage) {
   assert.strictEqual(c.room.passageLang, 'de');
   assert.ok(passages.byId(c.room.passageId).lang === 'de', 'race passage is German');
   const len = c.room.passage.length;
-  for (let i = 14; i <= len + 13; i += 14) { c.send({ type: 'progress', c: Math.min(i, len), t: Math.min(i, len), k: Math.min(i, len), e: 0 }); await wait(500); }
+  // 4 chars per 250 ms (~190 WPM) on average, unevenly, drifting as a person's pace does (an even pace is unranked: solo.machineLike)
+  for (let i = 0, k = 0; i < len; k++) { i = Math.min(len, i + Math.round(4 - 3 * Math.sin(k / 5))); c.send({ type: 'progress', c: i, t: i, k: i, e: 0 }); await wait(250); }
   await c.until((x) => x.result, 20000, 'race result');
   assert.strictEqual(c.result.profile.langs.de, 1, 'a finished race counts for its language');
   c.send({ type: 'leave' });

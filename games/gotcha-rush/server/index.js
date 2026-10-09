@@ -17,8 +17,9 @@ const { Leaderboards } = require('./leaderboards');
 const { CATALOGUE } = require('./achievements');
 const { Bank, LANG_META } = require('./puzzles');
 const runner = require('./runner');
-const { verifyRun } = require('./rush');
+const { RushRuns } = require('./rush');
 const cx = require('./cx');
+const { ipOf, PerIp, Sockets } = require('./limits');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const SHARED_DIR = path.join(__dirname, '..', 'shared');
@@ -42,7 +43,14 @@ const store = new Store(path.resolve(__dirname, '..', cfg.DATA_FILE));
 const accounts = new Accounts(store);
 const boards = new Leaderboards(accounts);
 const manager = new RoomManager({ bank, accounts, boards });
+const rushRuns = new RushRuns(bank);
 const clients = new Map();
+
+// per-IP limits (server/config.js): sockets open, rooms asked for, guests minted
+const sockets = new Sockets(cfg.SOCKETS_PER_IP);
+const roomAsks = new PerIp(cfg.ROOMS_PER_IP_PER_MIN, 60 * 1000);
+const guestMints = new PerIp(cfg.GUESTS_PER_IP_PER_HOUR, 60 * 60 * 1000);
+setInterval(() => { roomAsks.sweep(); guestMints.sweep(); }, 5 * 60 * 1000).unref();
 
 /* ------------------------------------------------------------------ HTTP */
 
@@ -85,6 +93,13 @@ function readBody(req, limit = 32 * 1024) {
     req.on('end', () => resolve(raw));
     req.on('error', reject);
   });
+}
+
+/** A JSON object body; anything else (bad JSON, null, an array) throws. */
+async function readJson(req, limit) {
+  const body = JSON.parse(await readBody(req, limit));
+  if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('not an object');
+  return body;
 }
 
 const runBucket = new Map(); // ip -> timestamps of recent Lab runs
@@ -218,11 +233,40 @@ async function handleAdmin(req, res, urlPath) {
   if (req.method === 'DELETE') { adminDelete(acc); return json(res, 200, { ok: true }); }
   if (Number(req.headers['content-length']) > 10 * 1024) return json(res, 400, { error: 'Request body too large.' });
   let body;
-  try { body = JSON.parse(await readBody(req, 10 * 1024)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
-  if (!body || typeof body !== 'object' || Array.isArray(body)) return json(res, 400, { error: 'Bad request body.' });
+  try { body = await readJson(req, 10 * 1024); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
   const err = adminEdit(acc, body);
   if (err) return json(res, 400, { error: err });
   return json(res, 200, { player: adminPlayer(acc.id) });
+}
+
+/**
+ * Solo Rush, one round at a time. The server deals each puzzle, times it, and
+ * sends its answer only once the round is closed, so no answer is public.
+ *   start   {accountId, token, lang}   -> {run}
+ *   next    {accountId, run}           -> {id, roundNo, roundMs} | {over: true}
+ *   choices {accountId, run}           -> {choices}  (the lifeline, half points)
+ *   answer  {accountId, run, lines}    -> {output, explain, tags, ms, correct, lives}
+ */
+async function handleRushRound(req, res, urlPath) {
+  let body;
+  try { body = await readJson(req, 4 * 1024); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
+  if (urlPath === '/api/rush/start') {
+    const account = accounts.find(body.accountId, body.token);
+    if (!account) return json(res, 401, { error: 'Unknown account. Reload the page and try again.' });
+    return json(res, 200, { run: rushRuns.start(account.id, body.lang).id });
+  }
+  const run = rushRuns.get(body.accountId, body.run);
+  if (!run) return json(res, 409, { error: 'This run is not open on the server any more.' });
+  if (urlPath === '/api/rush/next') return json(res, 200, rushRuns.next(run) || { over: true });
+  if (urlPath === '/api/rush/choices') {
+    const choices = rushRuns.choices(run);
+    return choices ? json(res, 200, { choices }) : json(res, 409, { error: 'No round is open.' });
+  }
+  if (urlPath === '/api/rush/answer') {
+    const out = rushRuns.answer(run, body.lines);
+    return out ? json(res, 200, out) : json(res, 409, { error: 'No round is open.' });
+  }
+  return json(res, 404, { error: 'not found' });
 }
 
 async function handleApi(req, res, urlPath) {
@@ -232,14 +276,14 @@ async function handleApi(req, res, urlPath) {
   }
   if (urlPath === '/api/auth/cortexis' && req.method === 'POST') {
     let body;
-    try { body = JSON.parse(await readBody(req)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
-    const out = signInWithCortexis(body || {}, req);
+    try { body = await readJson(req); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
+    const out = signInWithCortexis(body, req);
     return json(res, out.status, out.body);
   }
   if (urlPath === '/api/auth/signout' && req.method === 'POST') {
     let body;
-    try { body = JSON.parse(await readBody(req)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
-    const acc = body && body.accountId && Object.prototype.hasOwnProperty.call(accounts.accounts, body.accountId) ? accounts.accounts[body.accountId] : null;
+    try { body = await readJson(req); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
+    const acc = body.accountId && Object.prototype.hasOwnProperty.call(accounts.accounts, body.accountId) ? accounts.accounts[body.accountId] : null;
     return json(res, 200, { ok: true, revoked: acc ? accounts.revoke(acc, body.token) : false });
   }
   if (urlPath === '/api/stats') {
@@ -254,27 +298,20 @@ async function handleApi(req, res, urlPath) {
     // match round only ever needs to carry a puzzle id
     return sendAsset(req, res, cachedAsset('bank', () => JSON.stringify(bank.publicBank()), MIME['.json']), { maxAge: cfg.BANK_MAX_AGE });
   }
-  if (urlPath.startsWith('/api/reveal/')) {
-    const p = bank.byId.get(urlPath.slice('/api/reveal/'.length));
-    if (!p) return json(res, 404, { error: 'unknown puzzle' });
-    return sendAsset(req, res, cachedAsset(`reveal:${p.id}`, () => JSON.stringify(bank.reveal(p)), MIME['.json']), { maxAge: cfg.BANK_MAX_AGE });
-  }
-  if (urlPath.startsWith('/api/choices/')) {
-    const p = bank.byId.get(urlPath.slice('/api/choices/'.length));
-    if (!p) return json(res, 404, { error: 'unknown puzzle' });
-    return json(res, 200, { id: p.id, choices: bank.choices(p) });
-  }
+  if (urlPath.startsWith('/api/rush/') && req.method === 'POST') return handleRushRound(req, res, urlPath);
   if (urlPath === '/api/rush' && req.method === 'POST') {
-    // Solo Rush ran in the browser; verify the answer log and settle the account
+    // the run is over: score the log the server kept (server/rush.js) and settle the account, once
     let body;
-    try { body = JSON.parse(await readBody(req, 64 * 1024)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
-    const { account, created } = accounts.login(body.accountId, body.token);
-    if (created) return json(res, 401, { error: 'Unknown account. Reload the page and try again.' });
+    try { body = await readJson(req, 4 * 1024); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
+    const account = accounts.find(body.accountId, body.token);
+    if (!account) return json(res, 401, { error: 'Unknown account. Reload the page and try again.' });
+    const live = rushRuns.get(account.id, body.run);
+    if (!live) return json(res, 409, { error: 'This run is not open on the server any more.' });
     const rushName = sanitizeText(body.name, cfg.MAX_NAME_LEN);
     const keepName = accounts.isCortexis(account) && /^Guest(-\w+)?$/i.test(rushName);
     const adminSet = account.adminIdentity;   // an admin's rename is kept until the next hello hands it to the browser
     if (body.name || body.country || body.avatar) accounts.setIdentity(account, { name: keepName || adminSet ? null : rushName, country: adminSet ? null : sanitizeCountry(body.country), avatar: Player.AVATARS.includes(body.avatar) ? body.avatar : null });
-    const run = verifyRun(bank, body);
+    const run = rushRuns.settle(live);
     if (!run.rounds) return json(res, 400, { error: 'Nothing to score.', flags: run.flags });
     const out = accounts.recordGame(account, {
       mode: 'rush', rank: 1, rounds: run.rounds, correct: run.correct, bestCombo: run.bestCombo, score: run.score,
@@ -297,7 +334,7 @@ async function handleApi(req, res, urlPath) {
     const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || '?';
     if (rateLimited(ip)) return json(res, 429, { error: 'Too many runs. Try again in a minute.' });
     let body;
-    try { body = JSON.parse(await readBody(req)); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
+    try { body = await readJson(req); } catch (_) { return json(res, 400, { error: 'Bad request body.' }); }
     const lang = LANG_META[body.lang] ? body.lang : null;
     const code = typeof body.code === 'string' ? body.code.slice(0, 8000) : '';
     if (!lang || !code.trim()) return json(res, 400, { error: 'Need a lang and some code.' });
@@ -317,7 +354,11 @@ async function handleApi(req, res, urlPath) {
 const CODE_EXT = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest']);
 
 function serveStatic(req, res) {
-  let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+  let urlPath;
+  try { urlPath = decodeURIComponent((req.url || '/').split('?')[0]); } catch (_) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });   // a bad percent-escape: answer it, never throw
+    return res.end('Bad request');
+  }
   if (urlPath.startsWith('/api/') || urlPath === '/healthz') return handleApi(req, res, urlPath).catch((err) => json(res, 500, { error: err.message }));
 
   if (urlPath === '/') urlPath = '/index.html';
@@ -340,7 +381,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const server = http.createServer(serveStatic);
-const wss = new WebSocket.Server({ server, maxPayload: 16 * 1024 });
+const wss = new WebSocket.Server({ server, maxPayload: cfg.WS_MAX_PAYLOAD });
 
 /* ------------------------------------------------------------- WebSocket */
 
@@ -366,7 +407,13 @@ manager.onGameSettled = () => {
 };
 
 wss.on('connection', (ws, req) => {
+  const ip = ipOf(req, cfg.TRUST_PROXY);
+  if (!sockets.add(ip)) return ws.close(1013, 'Too many connections from this address');
+  ws.on('close', () => sockets.remove(ip));
   const player = new Player(randomId(10), ws);
+  player.ip = ip;   // for the per-IP limits only; never stored
+  player.tokens = cfg.MSG_BURST;
+  player.tokensAt = Date.now();
   player.ipCountry = cx.headerCountry(req);   // the country header only; the IP is never kept
   clients.set(player.id, player);
   ws.isAlive = true;
@@ -386,6 +433,12 @@ wss.on('connection', (ws, req) => {
   broadcastAll({ type: 'online', n: clients.size });
 
   ws.on('message', (raw) => {
+    // token bucket: MSG_BURST at once, refilled at MSG_PER_SEC; the rest is dropped
+    const now = Date.now();
+    player.tokens = Math.min(cfg.MSG_BURST, player.tokens + ((now - player.tokensAt) / 1000) * cfg.MSG_PER_SEC);
+    player.tokensAt = now;
+    if (player.tokens < 1) return;
+    player.tokens -= 1;
     let msg;
     try { msg = JSON.parse(raw); } catch (_) { return; }
     if (!msg || typeof msg.type !== 'string') return;
@@ -413,6 +466,10 @@ function route(player, msg) {
       // different credentials (it just signed in with Cortexis)
       let created = false;
       if (!player.account || (msg.accountId && msg.accountId !== player.account.id)) {
+        if (!accounts.find(msg.accountId, msg.token) && !guestMints.take(player.ip)) {
+          player.send({ type: 'error', message: 'Too many new players from your network. Try again later.' });
+          return player.ws.close(1013, 'Too many new players from this address');
+        }
         const out = accounts.login(msg.accountId, msg.token, { country: player.ipCountry || cx.guessCountry(msg.countryGuess) || cx.guessCountry(msg.country) });
         player.account = out.account;
         created = out.created;
@@ -444,11 +501,13 @@ function route(player, msg) {
     }
 
     case 'quick': {
+      if (!roomAsks.take(player.ip)) return player.send({ type: 'error', message: 'Too many matches started. Wait a minute.' });
       const r = manager.quickMatch(player, Room.LANGS.includes(msg.lang) ? msg.lang : 'mix');
       if (!r.ok) player.send({ type: 'error', message: r.error });
       return;
     }
     case 'create': {
+      if (!roomAsks.take(player.ip)) return player.send({ type: 'error', message: 'Too many rooms made. Wait a minute.' });
       const r = manager.createPrivate(player, { lang: Room.LANGS.includes(msg.lang) ? msg.lang : 'mix', rounds: msg.rounds });
       if (!r.ok) player.send({ type: 'error', message: r.error });
       return;

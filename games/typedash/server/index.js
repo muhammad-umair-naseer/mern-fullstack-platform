@@ -26,6 +26,7 @@ const progression = require('./progression');
 const countries = require('./countries');
 const { dayKey } = require('./accounts');
 const cx = require('./cx');
+const { ipOf, PerIp, Sockets } = require('./limits');
 
 // Must match public/js/skins.js. Skins are cosmetic; the server only validates the id.
 const SKINS = ['dash', 'bolt', 'hatch', 'muscle', 'flame', 'pickup', 'rocket', 'checker', 'nova'];
@@ -65,6 +66,12 @@ const seasonTimer = setInterval(() => seasons.check(), 60000);
 seasonTimer.unref?.();
 const clients = new Map();
 
+// per-IP limits (server/config.js): sockets open, rooms asked for, guests minted
+const sockets = new Sockets(cfg.SOCKETS_PER_IP);
+const roomAsks = new PerIp(cfg.ROOMS_PER_IP_PER_MIN, 60 * 1000);
+const guestMints = new PerIp(cfg.GUESTS_PER_IP_PER_HOUR, 60 * 60 * 1000);
+setInterval(() => { roomAsks.sweep(); guestMints.sweep(); }, 5 * 60 * 1000).unref();
+
 // Signed-in (Cortexis) players are the ranked ones; a guest who signs in brings
 // their daily entries, ghosts and team place along (accounts.merge).
 ghosts.rankedId = (id) => accounts.isRankedId(id);
@@ -84,6 +91,20 @@ function readBody(req, limit = 32 * 1024) {
     req.on('end', () => resolve(raw));
     req.on('error', reject);
   });
+}
+
+/** A JSON object body; anything else (bad JSON, null, an array) throws. */
+async function readJson(req, limit) {
+  const body = JSON.parse(await readBody(req, limit));
+  if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('not an object');
+  return body;
+}
+
+/** A handler failed: log it here, tell the caller nothing about why. */
+function serverError(res, err) {
+  console.error('[http]', err);
+  if (!res.headersSent) sendJson(res, 500, { error: 'Server error.' });
+  else res.destroy();
 }
 
 function sendJson(res, status, obj) {
@@ -123,7 +144,7 @@ async function handleAuth(req, res, urlPath) {
   if (urlPath === '/api/auth/config') return sendJson(res, 200, cx.siteConfig(req));
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'POST only.' });
   let body;
-  try { body = JSON.parse(await readBody(req)) || {}; } catch (_) { return sendJson(res, 400, { error: 'Bad request body.' }); }
+  try { body = await readJson(req); } catch (_) { return sendJson(res, 400, { error: 'Bad request body.' }); }
   if (urlPath === '/api/auth/cortexis') {
     const out = signInWithCortexis(body, req);
     return sendJson(res, out.status, out.body);
@@ -381,22 +402,25 @@ async function handleAdmin(req, res, urlPath) {
   if (req.method === 'DELETE') { adminDelete(acc); return sendJson(res, 200, { ok: true }); }
   if (Number(req.headers['content-length']) > 10 * 1024) return sendJson(res, 400, { error: 'Request body too large.' });
   let body;
-  try { body = JSON.parse(await readBody(req, 10 * 1024)); } catch (_) { return sendJson(res, 400, { error: 'Bad request body.' }); }
-  if (!body || typeof body !== 'object' || Array.isArray(body)) return sendJson(res, 400, { error: 'Bad request body.' });
+  try { body = await readJson(req, 10 * 1024); } catch (_) { return sendJson(res, 400, { error: 'Bad request body.' }); }
   const err = adminEdit(acc, body);
   if (err) return sendJson(res, 400, { error: err });
   return sendJson(res, 200, { player: adminPlayers().find((p) => p.id === acc.id) });
 }
 
 function serveStatic(req, res) {
-  let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+  let urlPath;
+  try { urlPath = decodeURIComponent((req.url || '/').split('?')[0]); } catch (_) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });   // a bad percent-escape: answer it, never throw
+    return res.end('Bad request');
+  }
 
   if (urlPath === '/api/admin/players' || urlPath.startsWith('/api/admin/players/')) {
-    return handleAdmin(req, res, urlPath).catch((err) => sendJson(res, 500, { error: err.message }));
+    return handleAdmin(req, res, urlPath).catch((err) => serverError(res, err));
   }
 
   if (urlPath.startsWith('/api/auth/')) {
-    return handleAuth(req, res, urlPath).catch((err) => sendJson(res, 500, { error: err.message }));
+    return handleAuth(req, res, urlPath).catch((err) => serverError(res, err));
   }
   if (urlPath === '/api/stats') {
     const body = JSON.stringify({
@@ -611,8 +635,11 @@ function serveStatic(req, res) {
   });
 }
 
-const server = http.createServer(serveStatic);
-const wss = new WebSocket.Server({ server, maxPayload: cfg.MAX_PAYLOAD });
+// one bad request must never take the server (and every race on it) down
+const server = http.createServer((req, res) => {
+  try { serveStatic(req, res); } catch (err) { serverError(res, err); }
+});
+const wss = new WebSocket.Server({ server, maxPayload: cfg.WS_MAX_PAYLOAD });
 
 /* -------------------------------------------------------- WebSocket */
 
@@ -657,6 +684,10 @@ function handle(player, msg) {
       // just signed in with Cortexis)
       let created = false;
       if (!player.account || (msg.accountId && msg.accountId !== player.account.id)) {
+        if (!accounts.find(msg.accountId, msg.token) && !guestMints.take(player.ip)) {
+          player.send({ type: 'error', message: 'Too many new players from your network. Try again later.' });
+          return player.ws.close(1013, 'Too many new players from this address');
+        }
         const out = accounts.login(msg.accountId, msg.token, { country: player.ipCountry || cx.guessCountry(msg.countryGuess) || cx.guessCountry(msg.country) });
         player.account = out.account;
         created = out.created;
@@ -708,10 +739,12 @@ function handle(player, msg) {
     }
 
     case 'quick':
+      if (!roomAsks.take(player.ip)) return player.send({ type: 'error', message: 'Too many races started. Wait a minute.' });
       manager.quickMatch(player, roomOpts(msg));
       return;
 
     case 'create':
+      if (!roomAsks.take(player.ip)) return player.send({ type: 'error', message: 'Too many rooms made. Wait a minute.' });
       manager.createPrivate(player, roomOpts(msg));
       return;
 
@@ -867,7 +900,13 @@ function handle(player, msg) {
 }
 
 wss.on('connection', (ws, req) => {
+  const ip = ipOf(req, cfg.TRUST_PROXY);
+  if (!sockets.add(ip)) return ws.close(1013, 'Too many connections from this address');
+  ws.on('close', () => sockets.remove(ip));
   const player = new Player({ id: randomId(10), ws });
+  player.ip = ip;   // for the per-IP limits only; never stored
+  player.tokens = cfg.MSG_BURST;
+  player.tokensAt = Date.now();
   player.ipCountry = cx.headerCountry(req);   // the country header only; the IP is never kept
   player.origin = originOf(req);
   clients.set(player.id, player);
@@ -887,6 +926,12 @@ wss.on('connection', (ws, req) => {
   ws.on('pong', () => { ws.isAlive = true; });
 
   ws.on('message', (data) => {
+    // token bucket: MSG_BURST at once, refilled at MSG_PER_SEC; the rest is dropped
+    const now = Date.now();
+    player.tokens = Math.min(cfg.MSG_BURST, player.tokens + ((now - player.tokensAt) / 1000) * cfg.MSG_PER_SEC);
+    player.tokensAt = now;
+    if (player.tokens < 1) return;
+    player.tokens -= 1;
     let msg;
     try { msg = JSON.parse(data); } catch (_) { return; }
     if (!msg || typeof msg.type !== 'string') return;
@@ -916,6 +961,9 @@ const heartbeat = setInterval(() => {
   }
 }, 30000);
 heartbeat.unref();
+
+// a stray promise rejection is logged, not allowed to stop the process
+process.on('unhandledRejection', (err) => console.error('[unhandledRejection]', err));
 
 server.listen(cfg.PORT, () => {
   console.log(`TypeDash listening on http://localhost:${cfg.PORT}  (tick ${cfg.TICK_MS} ms, ${cfg.MAX_PLAYERS} racers/room)`);

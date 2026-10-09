@@ -104,8 +104,8 @@ class Accounts {
    * signed-in device. `country` seeds a freshly minted guest.
    */
   login(id, token, { country = null } = {}) {
-    const acc = id && Object.prototype.hasOwnProperty.call(this.accounts, id) ? this.accounts[id] : null;
-    if (acc && token && this.tokenMatches(acc, token)) {
+    const acc = this.find(id, token);
+    if (acc) {
       acc.lastSeen = Date.now();
       this.rollWindows(acc);
       this.store.touch();
@@ -118,6 +118,12 @@ class Accounts {
     this.accounts[newId] = fresh;
     this.store.touch();
     return { account: fresh, token: newToken, created: true };
+  }
+
+  /** The account these credentials open, or null. Never mints one. */
+  find(id, token) {
+    const acc = id && Object.prototype.hasOwnProperty.call(this.accounts, id) ? this.accounts[id] : null;
+    return acc && token && this.tokenMatches(acc, token) ? acc : null;
   }
 
   tokenMatches(acc, token) {
@@ -301,9 +307,13 @@ class Accounts {
     // A racer who left mid race is settled in last place: no win, podium or
     // placing, and no ranked points (staying to the end always pays more).
     const dropped = !!race.dropped && !race.finished;
+    // Too fast or too regular to be a person (Room.settleAccounts): the race
+    // counts towards the streak and totals, never towards a board.
+    const flagged = !!race.flagged;
     const r = {
-      rank: dropped ? Infinity : race.rank,
+      rank: dropped || flagged ? Infinity : race.rank,
       dropped,
+      flagged,
       wpm: race.wpm,
       accuracy: race.accuracy,
       errors: race.errors,
@@ -317,7 +327,7 @@ class Accounts {
       lane: race.lane,
       racers: race.racers,
       humans: race.humans,
-      ranked: !!race.ranked,
+      ranked: !!race.ranked && !flagged,
       setWr: !!race.setWr,                 // this run became the passage's world record (server/ghosts.js)
       lang: race.lang || 'en',
       category: race.category || 'prose',
@@ -333,10 +343,10 @@ class Accounts {
     acc.nitros += r.nitros;
     if (r.rank === 1) acc.wins += 1;
     if (r.rank <= 3) acc.podiums += 1;
-    if (r.finished) acc.bestWpm = Math.max(acc.bestWpm, r.wpm);
+    if (r.finished && !r.flagged) acc.bestWpm = Math.max(acc.bestWpm, r.wpm);
     acc.bestCombo = Math.max(acc.bestCombo, r.bestCombo);
     acc.bestScore = Math.max(acc.bestScore, r.score || 0);
-    if (!r.ranked && r.humans > 1) {
+    if (!race.ranked && r.humans > 1) {
       acc.friendlies += 1;
       if (r.rank === 1) acc.friendlyWins += 1;
     }

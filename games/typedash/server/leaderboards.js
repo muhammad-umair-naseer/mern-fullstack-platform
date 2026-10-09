@@ -56,7 +56,9 @@ class Leaderboards {
   }
 
   def(category) {
-    return CATEGORIES[category] || this.sources[category] || null;
+    // own keys only: a category named after an Object.prototype key ('constructor') is no board
+    if (Object.hasOwn(CATEGORIES, category)) return CATEGORIES[category];
+    return Object.hasOwn(this.sources, category) ? this.sources[category] : null;
   }
 
   key(category, window, scope) {

@@ -5,8 +5,12 @@ RUN npm ci --omit=dev
 COPY . .
 ENV PORT=3000
 ENV DATA_FILE=/data/pickparty.json
+# runs as the image's unprivileged node user; /data is made theirs before the
+# volume is declared, so a fresh named volume starts out writable by them
+RUN mkdir -p /data && chown -R node:node /data
 # accounts, points and streaks live here — mount a volume so they survive redeploys
 VOLUME ["/data"]
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:3000/healthz || exit 1
+USER node
 CMD ["node", "server/index.js"]

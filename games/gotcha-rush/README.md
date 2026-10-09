@@ -105,24 +105,23 @@ be trusted with.
 | --- | --- | --- |
 | Puzzle bank (code, titles, tags, line counts) | **client** | `GET /api/bank` once, gzipped + ETag, mirrored in localStorage. A match round carries only a puzzle id on the wire (~23 KB bank vs a few hundred bytes per round). |
 | Syntax highlighting, code reveal animation, timers, sounds, confetti, standings animation | **client** | pure DOM/CSS/WebAudio, nothing streamed |
-| **Solo Rush** — puzzle selection, difficulty ramp, clock, lives, grading, scoring, reveal choreography | **client** | `public/js/rush.js`. No room, timer or socket on the server. Per round the client fetches one cached static JSON (`/api/reveal/:id`); at the end it POSTs the answer log once. |
-| Rush verification | server, **stateless** | `POST /api/rush`: the log is re-graded against the real bank with the shared rules (`shared/scoring.js`, loaded by both sides), with timing/repeat sanity checks. One request per run. |
+| **Solo Rush** — clock, grading for the reveal, scoring display, reveal choreography | **client** | `public/js/rush.js`. No room or socket on the server. Per round: `POST /api/rush/next` deals a puzzle id, `POST /api/rush/answer` closes the round and only then returns its answer. |
+| Rush dealing and verification | server, one small record per run | `server/rush.js`: picks each puzzle (difficulty ramp, no repeats), times it on the server clock, keeps the answer log, and at `POST /api/rush` re-grades that log with the shared rules (`shared/scoring.js`) and timing/repeat checks. A run settles once. |
 | Multiplayer rounds: grading, scoring, bots, clocks | server | the only stateful part — needed so nobody can grade their own ranked answers |
 | Ranking boards | server | computed per (category, window, scope) on demand, cached 10 s, pushed at most every 10 s; `/api/board` is HTTP-cacheable so a CDN can absorb it |
-| Static assets, bank, reveals | server → memory | read once, gzipped once, served with strong ETags → 304s and CDN-friendly |
+| Static assets, bank | server → memory | read once, gzipped once, served with strong ETags → 304s and CDN-friendly |
 | Clock sync | client | a short ping burst, then one ping every 15 s |
 
 What a multiplayer room costs the server: a 250 ms tick per room, a string
 comparison per answer, and JSON broadcasts that contain ids and numbers, not
-source code. What a Rush player costs the server: six small HTTP requests over a
-whole run.
+source code. What a Rush player costs the server: two small HTTP requests per
+round and one record per live run.
 
-The trade-off is spelled out rather than hidden: because Rush is graded in the
-browser, a determined cheater can fetch a reveal early. The server's re-grade,
-timing floor (700 ms per answer), repeat detection and deadline checks make
-inflated runs cut off rather than accepted, and ranked *multiplayer* points are
-never client-computed. That is the same risk profile as any client-heavy arcade
-game and the right split for a solo board.
+No answer is public: the bank the browser caches has none, a match reveals a
+round over the socket once it closes, and Rush hands out an answer only for the
+round the server just closed. The server's own clock, timing floor (700 ms per
+answer), repeat detection and deadline checks cut an inflated run off, and a
+run's log is the server's, so it cannot be replayed.
 
 ---
 
@@ -166,7 +165,7 @@ test/
 `create {lang, rounds}` · `join {code}` · `leave` · `start {bots, lang, rounds}` ·
 `answer {lines[]}` · `lifeline` · `puzzle {id}` · `chat {text}` · `emote {e}` · `board {category, window, scope}` · `ping {t}`
 
-**HTTP:** `GET /api/bank` · `GET /api/reveal/:id` · `GET /api/choices/:id` · `POST /api/rush {accountId, token, lang, log[]}` ·
+**HTTP:** `GET /api/bank` · `POST /api/rush/start {accountId, token, lang}` · `POST /api/rush/next|choices|answer {accountId, run, lines?}` · `POST /api/rush {accountId, token, run}` ·
 `GET /api/board?…` · `GET /api/stats` · `POST /api/run` (Lab)
 
 **Server → client:** `welcome {id, serverTime, achievements, boards, avatars, langs, config}` ·
@@ -212,6 +211,13 @@ resyncs from a single payload; `reveal` is also embedded in it while a reveal is
 | `RUNNER_LIVE` | unset | `1` exposes `POST /api/run` for the Lab |
 | `JUDGE0_URL`, `JUDGE0_TOKEN` | — | Judge0 CE endpoint and optional auth token |
 | `RANKED_PRIVATE` | `0` | `1` makes private rooms award ranked points |
+| `GAME_SSO_SECRET` | unset | shared with the website API (`server/.env`). Unset outside production: player sign-in uses the public development secret (with a loud warning) and the admin portal's player tools stay off. Production refuses the development secret. |
+| `TRUST_PROXY` | unset | `1` behind a reverse proxy: per-IP limits use the address it appends to `X-Forwarded-For` |
+| `SOCKETS_PER_IP` | 20 | WebSockets open at once from one address |
+| `ROOMS_PER_IP_PER_MIN` | 20 | create / quick-match requests per address per minute |
+| `GUESTS_PER_IP_PER_HOUR` | 30 | new guest accounts per address per hour |
+| `MSG_BURST` / `MSG_PER_SEC` | 40 / 8 | WebSocket messages per socket: burst, then per second |
+| `WS_MAX_PAYLOAD` | 16384 | largest WebSocket message, bytes |
 
 Every other tunable (scoring weights, bot fill, board size…) is in `server/config.js`.
 

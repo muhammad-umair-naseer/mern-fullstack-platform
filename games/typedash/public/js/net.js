@@ -48,11 +48,17 @@ export class Net {
       try { msg = JSON.parse(ev.data); } catch (_) { return; }
       if (msg && typeof msg.type === 'string') this.emit(msg.type, msg);
     };
-    ws.onclose = () => {
+    ws.onclose = (ev) => {
       const wasConnected = this.connected;
       this.connected = false;
-      this.emit('close', { wasConnected });
-      this.scheduleReconnect();
+      // 1013: the server is turning this address away (too many players from
+      // it); asking again at once only gets the same answer, so wait a minute
+      const refused = ev.code === 1013;
+      this.emit('close', { wasConnected, refused });
+      if (refused) {
+        this.retries = 5;   // a later drop still backs off from 8 s, not 400 ms
+        this.reconnectTimer = setTimeout(() => this.connect(), 60000);
+      } else this.scheduleReconnect();
     };
     ws.onerror = () => { /* onclose follows */ };
   }

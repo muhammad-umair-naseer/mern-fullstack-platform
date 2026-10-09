@@ -43,11 +43,15 @@ class C {
   close() { this.ws.close(); }
 }
 
-/** A plausible finished run: `chars` typed evenly over `time` ms, sampled every 250 ms. */
-function runFor(passage, time, extra = {}) {
+/**
+ * A finished run over `time` ms, sampled every 250 ms: at a person's pace, which
+ * drifts around the average, or with `even` at a script's (solo.machineLike).
+ */
+function runFor(passage, time, extra = {}, { even = false } = {}) {
   const len = passage.text.length;
   const timeline = [];
-  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor((len * t) / time))]);
+  const drift = even ? 0 : 0.03;
+  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(len, Math.floor(len * (t / time + drift * Math.sin((4 * Math.PI * t) / time))))]);
   timeline.push([time, len]);
   return {
     type: 'solo_done', passageId: passage.id, chars: len, finished: true, time, keystrokes: len + 3, errors: 3,
@@ -76,7 +80,7 @@ function runFor(passage, time, extra = {}) {
   const minTime = Math.ceil((len / 30) * 1000);   // MAX_CPS = 30: nothing faster is accepted
   const time = minTime + 400;                     // just under the ceiling (~350 WPM)
 
-  /* ---------------- a verified practice run ---------------- */
+  /* ---------------- a practice run too fast to rank ---------------- */
   const a = new C(url, 'Umair', 'PK');
   await a.ready;
   await a.until((c) => c.account, 4000, 'account');
@@ -90,7 +94,7 @@ function runFor(passage, time, extra = {}) {
   assert.ok(r.solo, 'result is flagged as a practice run');
   assert.strictEqual(r.points, 0, 'no ranked points');
   assert.strictEqual(r.ranked, false);
-  assert.strictEqual(r.solo.verified, true, 'stamped run with a timeline is verified');
+  assert.strictEqual(r.solo.verified, false, 'over RANKED_MAX_WPM: kept as practice, never verified');
   assert.strictEqual(r.solo.chars, len);
   assert.ok(r.solo.wpm > 300 && r.solo.wpm < 360, `server recomputed wpm (${r.solo.wpm})`);
   assert.strictEqual(r.solo.accuracy, Math.floor(((len + 3 - 3) / (len + 3)) * 100), 'server recomputed accuracy');
@@ -158,6 +162,46 @@ function runFor(passage, time, extra = {}) {
   const late = solo.validate(runFor(passage, time), { passageId: passage.id, mode: 'practice', at: Date.now() - time - 200000 });
   assert.ok(late.ok && late.r.verified === false, 'a stamp far older than the run -> accepted but unverified');
   console.log('✓ validate(): partial runs, impossible pace, stale stamps');
+
+  /* ---------------- what a verified run looks like ---------------- */
+  const cfg = require('../server/config.js');
+  const paced = (wpm) => Math.round((len / 5) / wpm * 60000);   // ms to type the passage at `wpm`
+  const judge = (t, opts) => solo.validate(runFor(passage, t, {}, opts), { passageId: passage.id, mode: 'practice', at: Date.now() - t });
+  const human = judge(paced(110));
+  assert.ok(human.ok && human.r.verified && Math.abs(human.r.wpm - 110) <= 1, `a person at 110 WPM is verified (${human.r.wpm})`);
+  const fast = judge(paced(cfg.RANKED_MAX_WPM - 5));
+  assert.ok(fast.ok && fast.r.verified, `a fast typist just under the ceiling (${fast.r.wpm} WPM) is still verified`);
+  const over = judge(paced(cfg.RANKED_MAX_WPM + 15));
+  assert.ok(over.ok && !over.r.verified, `${over.r.wpm} WPM: accepted as practice, not verified`);
+  const ruler = judge(paced(110), { even: true });
+  assert.ok(ruler.ok && !ruler.r.verified, 'an even, script-like pace is not verified, even at 110 WPM');
+  assert.strictEqual(solo.machineLike([[250, 2], [500, 4], [750, 6]]), false, 'too few samples to judge');
+  // an even typist on a short paragraph: each key's gap varies by 20% around the
+  // average (no word-level pauses, so steadier than people really are), sampled
+  // every 250 ms as the browser does; a seeded random keeps the test repeatable
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const gauss = () => Math.sqrt(-2 * Math.log(rnd())) * Math.cos(2 * Math.PI * rnd());
+  const typed = (len, wpm, cv) => {
+    const keys = [];
+    for (let k = 0, t = 0; k < len; k++) keys.push((t += Math.max(20, (12000 / wpm) * (1 + cv * gauss()))));
+    const tl = [];
+    for (let at = 250, k = 0; at < keys[len - 1]; at += 250) {
+      while (keys[k] <= at) k++;
+      tl.push([at, k]);
+    }
+    tl.push([Math.round(keys[len - 1]), len]);   // the finish, as the client sends it
+    return tl;
+  };
+  for (const len of [135, 184]) {
+    for (const wpm of [60, 120, 200]) {
+      let flagged = 0;
+      for (let i = 0; i < 200; i++) if (solo.machineLike(typed(len, wpm, 0.2))) flagged++;
+      assert.ok(flagged <= 4, `even typists at ${wpm} WPM on ${len} chars: ${flagged} of 200 flagged`);
+      assert.ok(solo.machineLike(typed(len, wpm, 0)), `a constant-rate script at ${wpm} WPM on ${len} chars is flagged`);
+    }
+  }
+  console.log(`✓ verified: people up to ${cfg.RANKED_MAX_WPM} WPM; faster runs and machine-even ones stay practice; even typists on short paragraphs pass`);
 
   a.close();
   await wait(150);

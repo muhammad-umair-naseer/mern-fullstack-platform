@@ -298,7 +298,10 @@ Things to get right:
 
 1. **Persist the data file.** Mount a volume and set `DATA_FILE` to a path on it
    (the Dockerfile uses `/data`). Without it, rankings, ghosts, seasons and the
-   generated push keys reset on every redeploy.
+   generated push keys reset on every redeploy. The image runs as `node`, so a
+   volume an older (root) image already wrote to needs its owner changed once, or
+   saving fails with `EACCES`:
+   `docker run --rm -v cortexis_typedash_data:/data alpine chown -R 1000:1000 /data`
 2. **Serve over HTTPS.** The client picks `wss://` automatically on an HTTPS origin,
    so the proxy in front just needs `Upgrade`/`Connection` headers passed through.
    Web Push and PWA installation require HTTPS too.

@@ -479,10 +479,11 @@ export class Solo {
     const d = this.serverMsg && this.serverMsg.daily;
     if (r.mode === 'daily' && d) {
       if (d.counted) {
-        lines.push(`<span class="sr-line win">✅ This one counted — you are #${d.rank} of ${d.of} today</span>`);
+        // guests are not placed on the board (rank is null) unless the server ranks guests
+        lines.push(`<span class="sr-line win">✅ This one counted${d.rank ? ` — you are #${d.rank} of ${d.of} today` : ''}</span>`);
         if (d.streak > 1) lines.push(`<span class="sr-line pb">🔥 ${d.streak} days in a row</span>`);
       } else if (d.reason === 'already-played') {
-        lines.push(`<span class="sr-line dim">You already had your go today, so this one was just for fun. The one that counted: <b>${d.entry.wpm} words a min</b>, #${d.rank} of ${d.of}.</span>`);
+        lines.push(`<span class="sr-line dim">You already had your go today, so this one was just for fun. The one that counted: <b>${d.entry.wpm} words a min</b>${d.rank ? `, #${d.rank} of ${d.of}` : ''}.</span>`);
       } else if (d.reason === 'unverified') {
         lines.push('<span class="sr-line lose">⚠️ This one did not count — your internet dropped part way through. Try again.</span>');
       } else if (d.reason === 'not-today') {

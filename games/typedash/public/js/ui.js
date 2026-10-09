@@ -42,6 +42,7 @@ let toastRoot = null;
 export function toast(message, kind = 'info', ms = 3200, now = false) {
   if (held && !now) return void held.push(() => toast(message, kind, ms));
   toastRoot ||= document.getElementById('toasts');
+  if ([...toastRoot.children].some((t) => t.textContent === message)) return;   // already on screen
   const el = document.createElement('div');
   el.className = `toast ${kind}`;
   el.textContent = message;

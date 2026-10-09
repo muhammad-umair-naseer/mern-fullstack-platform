@@ -1,7 +1,7 @@
-// Crowd read: a solo run that never touches the game server until it ends.
-// The browser has the bank (with the crowd ranking), grades each topic with
-// the shared scoring file, then sends the whole answer log once to be
-// re-graded and banked.
+// Crowd read: a solo run dealt by the game server. The browser's bank has the
+// topics but not the crowd ranking; the server opens each topic on its own
+// clock, grades the picks and only then sends that topic's ranking. At the end
+// it scores the log it kept itself.
 import { $, $$, esc, fmt, flipReorder, show } from './ui.js';
 import * as Bank from './bank.js';
 import { cardArt } from './art.js';
@@ -19,6 +19,13 @@ export function createSolo(net, hooks) {
   let run = null;
   let advanceTimer = null;
 
+  async function call(step, body) {
+    const res = await fetch(`/api/solo${step ? '/' + step : ''}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: net.token, run: run && run.id, ...body }) });
+    const out = await res.json();
+    if (!res.ok) throw new Error(out.error || 'The server said no.');
+    return out;
+  }
+
   // first: a topic id or a list of them to play first, in order; the rest follow shuffled.
   // allow: optional filter on topic ids (the culture pool).
   async function start(first, allow) {
@@ -26,7 +33,10 @@ export function createSolo(net, hooks) {
     const ids = allow ? Bank.ids().filter(allow) : Bank.ids();
     const firsts = (Array.isArray(first) ? first : first ? [first] : []).filter((id, i, a) => ids.includes(id) && a.indexOf(id) === i);
     const order = [...firsts, ...shuffle(ids.filter((id) => !firsts.includes(id)))];
-    run = { v: Bank.version(), order, i: -1, lives: Scoring.RULES.SOLO_LIVES, combo: 0, total: 0, log: [], perfect: 0, done: false };
+    run = null;
+    let id;
+    try { id = (await call('start')).run; } catch { return hooks.toast('Could not reach the server. Check your connection and try again.', 'err'); }
+    run = { id, order, i: -1, lives: Scoring.RULES.SOLO_LIVES, combo: 0, total: 0, log: [], perfect: 0, done: false };
     show('solo');
     el.over.hidden = true;
     el.body.hidden = false;
@@ -34,13 +44,20 @@ export function createSolo(net, hooks) {
     next();
   }
 
-  function next() {
+  async function next() {
     clearTimeout(advanceTimer);
+    if (run.busy) return;
     run.i++;
-    if (run.lives <= 0 || run.i >= run.order.length) return finish();
+    if (run.lives <= 0 || run.i >= run.order.length || run.i >= Scoring.RULES.SOLO_MAX_TOPICS) return finish();
     const id = run.order[run.i];
     const tp = Bank.topic(id);
-    run.cur = { id, tp, layout: shuffle(tp.o.map((_, i) => i)), sel: [], timer: Scoring.soloTimer(run.i), t0: performance.now(), locked: false };
+    const mine = run;
+    let timer;
+    mine.busy = true;
+    try { timer = (await call('topic', { t: id })).timer; } catch (e) { mine.busy = false; return stopRun(e); }
+    mine.busy = false;
+    if (run !== mine) return;
+    run.cur = { id, tp, layout: shuffle(tp.o.map((_, i) => i)), sel: [], timer, t0: performance.now(), locked: false };
     renderHead();
     renderSlots();
     renderBoard();
@@ -110,26 +127,37 @@ export function createSolo(net, hooks) {
     else if (run.cur.locked && !run.done) next();
   });
 
-  function lock() {
+  async function lock() {
     const c = run.cur;
     if (c.locked) return;
     c.locked = true;
-    const ms = Math.max(400, Math.round(Math.min(performance.now() - c.t0, c.timer)));
+    renderSlots();
     const f = [0, 1, 2].map((i) => (c.sel[i] === undefined ? -1 : c.sel[i]));
     const d = c.sel[3] === undefined ? -1 : c.sel[3];
-    const res = Scoring.soloTopic(c.tp.r, f, d, ms, c.timer, run.combo);
+    let res;
+    try { res = await call('pick', { f, d }); } catch (e) { return stopRun(e); }
+    if (!run || run.cur !== c) return;
+    c.r = res.r;
     run.combo = res.combo;
     run.total += res.points;
-    if (!res.survive) run.lives--;
+    run.lives = res.lives;
     if (res.hits === 4) run.perfect++;
-    run.log.push({ t: c.id, f, d, ms });
+    run.log.push({ t: c.id, f, d });
     revealCrowd(res);
+  }
+
+  // The server could not be reached or refused a step: end the run with what it already has.
+  function stopRun(e) {
+    if (!run || run.done) return;
+    hooks.toast(e.message, 'err');
+    run.lives = 0;
+    finish();
   }
 
   function revealCrowd(res) {
     const c = run.cur;
-    const pos = new Map(c.tp.r.map((o, i) => [o, i]));
-    const n = c.tp.r.length;
+    const pos = new Map(c.r.map((o, i) => [o, i]));
+    const n = c.r.length;
     for (const t of $$('.tile', el.board)) {
       const o = +t.dataset.opt, p = pos.get(o);
       t.classList.remove('is-pickable', 'is-sel-love', 'is-sel-dud');
@@ -140,7 +168,7 @@ export function createSolo(net, hooks) {
       const k = c.sel.indexOf(o);
       if (k >= 0) t.classList.add(k < 3 ? (p < 4 ? 'mine-hit' : 'mine-miss') : (p >= n - 4 ? 'mine-hit' : 'mine-miss'));
     }
-    flipReorder(el.board, 'data-opt', c.tp.r);
+    flipReorder(el.board, 'data-opt', c.r);
     renderSlots();
     renderHead();
     const lostLife = !res.survive;
@@ -175,11 +203,11 @@ export function createSolo(net, hooks) {
       <div class="lobby-actions"><button type="button" class="btn btn-go" data-act="again">Play again</button><button type="button" class="btn btn-quiet" data-act="home">Home</button></div>`;
     if (!played) { $('#s-ranked b').textContent = '0'; return; }
     try {
-      const res = await fetch('/api/solo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: net.token, v: run.v, log: run.log }) });
+      const res = await fetch('/api/solo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: net.token, run: run.id }) });
       const body = await res.json();
       if (!res.ok) { $('#s-ranked b').textContent = '0'; $('#s-note').textContent = body.error || 'This run could not be saved.'; return; }
       $('#s-ranked b').textContent = '+' + fmt(body.points);
-      if (body.best) $('#s-note').textContent = 'New personal best.';
+      $('#s-note').textContent = [body.best && 'New personal best.', body.capped && 'You reached today\'s ranked points from solo runs.'].filter(Boolean).join(' ');
       $('#s-unlocks').innerHTML = body.unlocked.map((id) => hooks.achievement(id)).filter(Boolean).map((a) => `<span class="unlock">${a.icon} ${esc(a.name)}</span>`).join('');
       hooks.profile(body.profile, body.unlocked);
     } catch {

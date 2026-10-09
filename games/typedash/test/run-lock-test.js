@@ -16,7 +16,6 @@ require('fs').rmSync(process.env.DATA_FILE, { force: true });
 const assert = require('assert');
 const WebSocket = require('ws');
 const cx = require('../server/cx');
-const cfg = require('../server/config');
 const passages = require('../server/passages');
 const { dayKey } = require('../server/accounts');
 const { challengeFor } = require('../server/daily');
@@ -43,13 +42,14 @@ class C {
   close() { this.ws.close(); }
 }
 
-/** A plausible run: `chars` typed evenly, sampled every 250 ms. */
+/** A plausible run: `chars` typed at a person's uneven pace, sampled every 250 ms. */
 function runFor(p, { mode = 'practice', finished = true } = {}) {
   const len = p.text.length;
   const chars = finished ? len : Math.floor(len / 2);
-  const time = Math.ceil((chars / cfg.MAX_CPS) * 1000) + 1500;
+  const time = chars * 80 + 1500;   // 150 WPM: under the ranked ceiling (RANKED_MAX_WPM), so a daily counts
   const timeline = [];
-  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(chars, Math.floor((chars * t) / time))]);
+  // a person's pace drifts around the average; an even one is a script's (solo.machineLike)
+  for (let t = 250; t < time; t += 250) timeline.push([t, Math.min(chars, Math.floor(chars * (t / time + 0.03 * Math.sin((4 * Math.PI * t) / time))))]);
   timeline.push([time, chars]);
   return { type: 'solo_done', mode, passageId: p.id, chars, finished, time, keystrokes: chars, errors: 0, golden: 0, goldenTotal: 3, bestCombo: chars, nitros: 0, score: 1000, timeline };
 }
