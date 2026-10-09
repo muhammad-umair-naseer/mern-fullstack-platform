@@ -390,6 +390,9 @@ const migrate = async (database) => {
     ['users', 'verifyExpires', 'TEXT'],
     ['users', 'verifySentAt', 'TEXT'],
     ['users', 'verifyAttempts', 'INTEGER NOT NULL DEFAULT 0'],
+    ['users', 'verifyLockUntil', 'TEXT'],
+    // Part of every session token; bumping it signs that account out everywhere.
+    ['users', 'tokenVersion', 'INTEGER NOT NULL DEFAULT 0'],
     // 1 = taken off the website by the admin; the seeder never touches it.
     ['courses', 'hidden', 'INTEGER NOT NULL DEFAULT 0'],
   ];

@@ -18,8 +18,8 @@ import {
 import {
   publicUser,
   issueCode,
-  MAX_CODE_ATTEMPTS,
-  RESEND_COOLDOWN_SEC,
+  codeBlocked,
+  claimAttempt,
 } from '../services/verification.service.js';
 
 /** Registration, email verification, resend, and sign-in. */
@@ -44,8 +44,17 @@ export const register = async (req, res) => {
       // An unverified account is a half-finished signup, not a conflict — let
       // them resume rather than telling them the address is taken.
       if (!existing.emailVerified) {
+        const blocked = codeBlocked(existing);
+        if (blocked) return res.status(blocked.status).json({ message: blocked.message });
+        // Whoever asks for a code now is the one who will confirm it, so their
+        // name and password replace the earlier attempt's. Otherwise someone
+        // could sign up with another person's address first and keep a
+        // password to the account that person later verifies.
+        await db
+          .prepare('UPDATE users SET name = ?, passwordHash = ?, updatedAt = ? WHERE id = ?')
+          .run(value.name, await bcrypt.hash(value.password, 10), new Date().toISOString(), existing.id);
         const code = await issueCode(db, existing);
-        queueVerificationEmail({ name: existing.name, email, code });
+        queueVerificationEmail({ name: value.name, email, code });
         return res.status(200).json({
           needsVerification: true,
           email,
@@ -104,11 +113,15 @@ export const verify = async (req, res) => {
     const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(value.email);
     if (!user) return res.status(400).json({ message: 'Invalid or expired code' });
 
-    if (user.emailVerified) {
-      return res.json({ token: signToken(user), user: publicUser(user), message: 'Already verified' });
-    }
+    // A verified account has no code left to check, so this endpoint has
+    // nothing to give it: a session only comes from signing in.
+    if (user.emailVerified) return res.status(400).json({ message: 'Invalid or expired code' });
 
-    if (user.verifyAttempts >= MAX_CODE_ATTEMPTS) {
+    // Every try is counted before it is checked, in one statement, so guesses
+    // sent in parallel cannot all slip under the cap. At the cap it stays shut
+    // until a new code is sent, which resend and register refuse until the
+    // lockout has run out (verification.service.js).
+    if (!(await claimAttempt(db, user))) {
       return res.status(429).json({
         message: 'Too many incorrect codes — request a new one',
         needsResend: true,
@@ -123,7 +136,6 @@ export const verify = async (req, res) => {
       supplied.length === actual.length && crypto.timingSafeEqual(supplied, actual);
 
     if (expired || !matches) {
-      await db.prepare('UPDATE users SET verifyAttempts = verifyAttempts + 1 WHERE id = ?').run(user.id);
       return res.status(400).json({
         message: expired ? 'That code has expired — request a new one' : 'Invalid or expired code',
         needsResend: expired,
@@ -133,14 +145,14 @@ export const verify = async (req, res) => {
     const now = new Date().toISOString();
     await db.prepare(
       `UPDATE users SET emailVerified = 1, verifyCode = NULL, verifyExpires = NULL,
-       verifyAttempts = 0, updatedAt = ? WHERE id = ?`
+       verifyAttempts = 0, verifyLockUntil = NULL, updatedAt = ? WHERE id = ?`
     ).run(now, user.id);
 
     const verified = await db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
     return res.json({ token: signToken(verified), user: publicUser(verified) });
   } catch (err) {
     console.error('Verify error:', err);
-    alertAdmin({
+    queueAdminAlert({
       key: 'verification-failing',
       subject: 'Verification failing',
       detail: 'An unexpected error was thrown while handling a credential request.',
@@ -164,14 +176,8 @@ export const resend = async (req, res) => {
     const generic = { message: 'If that account needs verifying, a new code is on its way' };
     if (!user || user.emailVerified) return res.json(generic);
 
-    if (user.verifySentAt) {
-      const since = (Date.now() - new Date(user.verifySentAt).getTime()) / 1000;
-      if (since < RESEND_COOLDOWN_SEC) {
-        return res.status(429).json({
-          message: `Please wait ${Math.ceil(RESEND_COOLDOWN_SEC - since)}s before requesting another code`,
-        });
-      }
-    }
+    const blocked = codeBlocked(user);
+    if (blocked) return res.status(blocked.status).json({ message: blocked.message });
 
     const code = await issueCode(db, user);
     queueVerificationEmail({ name: user.name, email: user.email, code });
@@ -184,6 +190,9 @@ export const resend = async (req, res) => {
 
 // --------------------------------------------------------------------- login
 
+// Same cost factor as real hashes; no password matches it.
+const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(16).toString('hex'), 10);
+
 export const login = async (req, res) => {
   try {
     const { error, value } = loginSchema.validate(req.body, { stripUnknown: true });
@@ -192,8 +201,9 @@ export const login = async (req, res) => {
     const user = await getDB().prepare('SELECT * FROM users WHERE email = ?').get(value.email);
 
     // Identical response for unknown email and wrong password, so this endpoint
-    // cannot be used to discover which addresses have accounts.
-    const ok = user && (await bcrypt.compare(value.password, user.passwordHash));
+    // cannot be used to discover which addresses have accounts. An unknown
+    // email still pays for one bcrypt compare, so the timing matches too.
+    const ok = await bcrypt.compare(value.password, user?.passwordHash || DUMMY_HASH);
     if (!ok) return res.status(401).json({ message: 'Invalid email or password' });
 
     // Credentials are correct but the address was never confirmed. Only reached

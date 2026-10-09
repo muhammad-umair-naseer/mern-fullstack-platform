@@ -49,7 +49,11 @@ export const gradeAndRespond = async (req, res, { course, chapterId, lessonId = 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(req.user.id, course.id, chapterId, lessonId, score, total, passed ? 1 : 0, new Date().toISOString());
 
-  return { review, score, total, passed, percent: Math.round((score / total) * 100) };
+  // The right answers and explanations come back only with a pass. A failed
+  // attempt says which questions were wrong, not what the answers are, so one
+  // throwaway submission cannot be replayed into a perfect one.
+  const shown = passed ? review : review.map(({ correct, explanation, ...r }) => r);
+  return { review: shown, score, total, passed, percent: Math.round((score / total) * 100) };
 };
 
 // GET/POST chapter quiz

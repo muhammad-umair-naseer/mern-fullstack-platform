@@ -9,10 +9,17 @@ import { getDB } from '../setup/db.js';
  * - Indexed by (status, score DESC, timeSpentSeconds ASC) for instant sub-ms admin candidate selection
  */
 
+// The learner's page sends a heartbeat about every 30 s of visible study.
+export const HEARTBEAT_SEC = 30;
+
 /**
- * Atomically track active study time and update learner progress
+ * Atomically track active study time and update learner progress.
+ *
+ * Only enrolled learners are tracked, and the time credited is measured here:
+ * the gap since this row's last heartbeat, capped at one heartbeat interval.
+ * Whatever the client claims, a learner cannot bank more than wall-clock time.
  */
-export const trackTimeAndProgress = async ({ userId, courseId, courseSlug, seconds = 30 }) => {
+export const trackTimeAndProgress = async ({ userId, courseId, courseSlug }) => {
   if (!userId) return null;
   const db = getDB();
 
@@ -28,8 +35,10 @@ export const trackTimeAndProgress = async ({ userId, courseId, courseSlug, secon
   // Fetch user info
   const user = await db.prepare('SELECT id, name, email FROM users WHERE id = ?').get(userId);
   if (!user) return null;
+  if (!(await db.prepare('SELECT 1 FROM enrollments WHERE userId = ? AND courseId = ?').get(userId, course.id))) {
+    return null;
+  }
 
-  const validSeconds = Math.min(Math.max(0, parseInt(seconds, 10) || 0), 300); // Bound between 0 and 5 minutes per ping
   const now = new Date().toISOString();
 
   // Count lessons completed by this learner for this course
@@ -67,14 +76,14 @@ export const trackTimeAndProgress = async ({ userId, courseId, courseSlug, secon
       ?, ?, ?, ?, ?, ?
     )
     ON CONFLICT (userId, courseId) DO UPDATE SET
-      timeSpentSeconds = claude_pro_applications.timeSpentSeconds + EXCLUDED.timeSpentSeconds,
+      timeSpentSeconds = claude_pro_applications.timeSpentSeconds + FLOOR(LEAST(${HEARTBEAT_SEC}, GREATEST(0,
+        EXTRACT(EPOCH FROM (EXCLUDED.lastActiveAt - claude_pro_applications.lastActiveAt)))))::bigint,
       lessonsCompleted = GREATEST(claude_pro_applications.lessonsCompleted, EXCLUDED.lessonsCompleted),
       totalLessons = EXCLUDED.totalLessons,
       score = GREATEST(claude_pro_applications.score, EXCLUDED.score),
+      -- only a learner still in progress moves on; an admin's decision stays
       status = CASE
-        WHEN claude_pro_applications.status = 'awarded' THEN 'awarded'
-        WHEN claude_pro_applications.status = 'applied' THEN 'applied'
-        WHEN EXCLUDED.status = 'applied' THEN 'applied'
+        WHEN claude_pro_applications.status = 'in_progress' THEN EXCLUDED.status
         ELSE claude_pro_applications.status
       END,
       appliedAt = COALESCE(claude_pro_applications.appliedAt, EXCLUDED.appliedAt),
@@ -96,7 +105,7 @@ export const trackTimeAndProgress = async ({ userId, courseId, courseSlug, secon
     course.slug,
     course.title,
     initialScore,
-    validSeconds,
+    HEARTBEAT_SEC,
     lessonsCompleted,
     totalLessons,
     initialStatus,
@@ -111,9 +120,10 @@ export const trackTimeAndProgress = async ({ userId, courseId, courseSlug, secon
 };
 
 /**
- * Record successful course completion and automatically apply for 1-Month Free Claude Pro
+ * Record successful course completion and automatically apply for 1-Month Free Claude Pro.
+ * Called only when a certificate is issued (certificate.service.js), with its score.
  */
-export const recordClaudeProApplication = async ({ userId, courseId, courseSlug, score = 100 }) => {
+export const recordClaudeProApplication = async ({ userId, courseId, courseSlug, score }) => {
   if (!userId) return null;
   const db = getDB();
 
@@ -143,8 +153,9 @@ export const recordClaudeProApplication = async ({ userId, courseId, courseSlug,
     )
     ON CONFLICT (userId, courseId) DO UPDATE SET
       score = GREATEST(claude_pro_applications.score, EXCLUDED.score),
+      -- a retake only raises the score; it never reopens an admin's decision
       status = CASE
-        WHEN claude_pro_applications.status = 'awarded' THEN 'awarded'
+        WHEN claude_pro_applications.status IN ('selected', 'awarded', 'rejected') THEN claude_pro_applications.status
         ELSE 'applied'
       END,
       appliedAt = COALESCE(claude_pro_applications.appliedAt, EXCLUDED.appliedAt),

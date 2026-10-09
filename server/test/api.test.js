@@ -83,11 +83,12 @@ const learner = { name: 'Test Learner', email: `learner-${Date.now()}@example.co
 let token;
 let course;
 
-test('health reports the database', async () => {
+test('public health is up-or-down and the version only', async () => {
   const res = await api('GET', '/health');
   assert.equal(res.status, 200);
   assert.equal(res.ok, true);
-  assert.ok(res.database, 'health payload names the database');
+  assert.ok(res.version, 'health names the version');
+  assert.equal(res.redis, undefined, 'infrastructure detail is for the admin only');
 });
 
 test('register, verify by code, sign in', async () => {
@@ -203,6 +204,7 @@ test('play the whole course through to a certificate', async () => {
         });
         assert.equal(fail.status, 200);
         assert.equal(fail.data.passed, false, 'all-wrong answers do not pass');
+        assert.ok(fail.data.review.every((r) => r.correct === undefined && r.explanation === undefined), 'a failed attempt never shows the answers');
         failedOnce = true;
       }
 
@@ -213,6 +215,7 @@ test('play the whole course through to a certificate', async () => {
       assert.equal(pass.status, 200, JSON.stringify(pass));
       assert.equal(pass.data.passed, true);
       assert.equal(pass.data.percent, 100);
+      assert.ok(pass.data.review.every((r) => Number.isInteger(r.correct)), 'a pass shows the answers');
     }
 
     const chapterQuiz = await api('GET', `/api/learn/quiz/chapter/${chapter.id}`, { token });
@@ -533,4 +536,135 @@ test('admin: edit, hide, reset and delete', async () => {
     await api('POST', `/api/admin/courses/${slug}/reset`, { token: A });
     await q("DELETE FROM users WHERE email LIKE 'admin-test+%@example.com'").run();
   }
+});
+
+test('verify gives no session to an account that is already verified', async () => {
+  await getRedisClient()?.flushdb().catch(() => {});
+  const res = await api('POST', '/api/auth/verify', { body: { email: learner.email, code: '000000' } });
+  assert.equal(res.status, 400);
+  assert.equal(res.token, undefined, 'no token without a code check');
+});
+
+// Stand in for the 60-second resend cooldown rather than waiting it out.
+const pastCooldown = (email) =>
+  q(`UPDATE users SET verifySentAt = ? WHERE email = ?`).run(new Date(Date.now() - 120_000).toISOString(), email);
+
+test('signing up again on an unverified address replaces the earlier name and password', async () => {
+  const email = `claim-${Date.now()}@example.com`;
+  assert.equal((await api('POST', '/api/auth/register', { body: { name: 'Squatter', email, password: 'squatter-password' } })).status, 201);
+  assert.equal((await api('POST', '/api/auth/register', { body: { name: 'Owner', email, password: 'the-owners-password' } })).status, 429, 'cooldown applies to signing up again');
+  await pastCooldown(email);
+  assert.equal((await api('POST', '/api/auth/register', { body: { name: 'Owner', email, password: 'the-owners-password' } })).status, 200);
+  const { verifyCode } = await q('SELECT verifyCode FROM users WHERE email = ?').get(email);
+  const verified = await api('POST', '/api/auth/verify', { body: { email, code: verifyCode } });
+  assert.equal(verified.status, 200);
+  assert.equal(verified.user.name, 'Owner');
+  assert.equal((await api('POST', '/api/auth/login', { body: { email, password: 'squatter-password' } })).status, 401);
+  assert.equal((await api('POST', '/api/auth/login', { body: { email, password: 'the-owners-password' } })).status, 200);
+  await q('DELETE FROM users WHERE email = ?').run(email);
+});
+
+test('five wrong codes lock the address; a new code does not reset the count', async () => {
+  await getRedisClient()?.flushdb().catch(() => {});
+  const who = { name: 'Guesser', email: `guess-${Date.now()}@example.com`, password: 'correct horse battery' };
+  assert.equal((await api('POST', '/api/auth/register', { body: who })).status, 201);
+  const row = () => q('SELECT verifyCode, verifyAttempts, verifyLockUntil FROM users WHERE email = ?').get(who.email);
+  const wrong = async () => {
+    const { verifyCode } = await row();
+    return api('POST', '/api/auth/verify', { body: { email: who.email, code: verifyCode === '111111' ? '222222' : '111111' } });
+  };
+
+  for (let i = 0; i < 2; i++) assert.equal((await wrong()).status, 400);
+  await pastCooldown(who.email);
+  assert.equal((await api('POST', '/api/auth/resend', { body: { email: who.email } })).status, 200);
+  assert.equal((await row()).verifyAttempts, 2, 'a resend keeps the count');
+  for (let i = 0; i < 3; i++) assert.equal((await wrong()).status, 400);
+  assert.ok((await row()).verifyLockUntil, 'the fifth wrong code starts the lockout');
+
+  const { verifyCode } = await row();
+  assert.equal((await api('POST', '/api/auth/verify', { body: { email: who.email, code: verifyCode } })).status, 429, 'even the right code waits');
+  await pastCooldown(who.email);
+  assert.equal((await api('POST', '/api/auth/register', { body: who })).status, 429, 'signing up again does not lift it');
+  assert.equal((await api('POST', '/api/auth/resend', { body: { email: who.email } })).status, 429);
+  assert.equal((await row()).verifyAttempts, 5);
+
+  // Once the window has passed, a new code starts a fresh count.
+  await q('UPDATE users SET verifyLockUntil = ? WHERE email = ?').run(new Date(Date.now() - 1000).toISOString(), who.email);
+  assert.equal((await api('POST', '/api/auth/resend', { body: { email: who.email } })).status, 200);
+  assert.equal((await row()).verifyAttempts, 0);
+  const fresh = await row();
+  assert.equal((await api('POST', '/api/auth/verify', { body: { email: who.email, code: fresh.verifyCode } })).status, 200);
+  await q('DELETE FROM users WHERE email = ?').run(who.email);
+
+  // Guesses sent all at once are counted one by one too.
+  await getRedisClient()?.flushdb().catch(() => {});
+  assert.equal((await api('POST', '/api/auth/register', { body: who })).status, 201);
+  const burst = await Promise.all(Array.from({ length: 8 }, () => wrong()));
+  assert.equal(burst.filter((r) => r.status === 400).length, 5, 'only five guesses are checked');
+  await q('DELETE FROM users WHERE email = ?').run(who.email);
+});
+
+test('Claude Pro: no self-apply, a decision survives a retake, heartbeat time is measured here', async () => {
+  const { recordClaudeProApplication } = await import('../src/services/claudePro.service.js');
+  const me = await q('SELECT id FROM users WHERE email = ?').get(learner.email);
+
+  assert.equal((await api('POST', `/api/learn/claude-pro/apply/${course.slug}`, { token })).status, 404, 'the apply route is gone');
+
+  for (const decided of ['rejected', 'selected', 'awarded']) {
+    await q('UPDATE claude_pro_applications SET status = ? WHERE userId = ? AND courseId = ?').run(decided, me.id, course.id);
+    const row = await recordClaudeProApplication({ userId: me.id, courseId: course.id, score: 100 });
+    assert.equal(row.status, decided, `a retake leaves '${decided}' alone`);
+  }
+  await q("UPDATE claude_pro_applications SET status = 'applied' WHERE userId = ? AND courseId = ?").run(me.id, course.id);
+
+  const other = await q('SELECT slug FROM courses WHERE id <> ? LIMIT 1').get(course.id);
+  const beat = (slug, seconds) => api('POST', '/api/learn/claude-pro/heartbeat', { token, body: { courseSlug: slug, seconds } });
+  assert.equal((await beat(other.slug, 300)).status, 404, 'not enrolled, not tracked');
+
+  await q("UPDATE claude_pro_applications SET lastActiveAt = NOW() - INTERVAL '10 minutes' WHERE userId = ? AND courseId = ?").run(me.id, course.id);
+  const start = Number((await q('SELECT timeSpentSeconds AS t FROM claude_pro_applications WHERE userId = ? AND courseId = ?').get(me.id, course.id)).t);
+  const first = await beat(course.slug, 300);
+  assert.equal(first.status, 200);
+  assert.equal(Number(first.data.timeSpentSeconds) - start, 30, 'a long gap credits one heartbeat interval, not the 300 s claimed');
+  const second = await beat(course.slug, 300);
+  assert.ok(Number(second.data.timeSpentSeconds) - Number(first.data.timeSpentSeconds) <= 1, 'back-to-back beats add only the real gap');
+});
+
+test('sessions: revocable, admin tokens short, admin IP allow-list, quiet errors', async () => {
+  await getRedisClient()?.flushdb().catch(() => {});
+  const jwt = (await import('jsonwebtoken')).default;
+  const { signToken } = await import('../src/middleware/auth.js');
+  const admin = await q('SELECT * FROM users WHERE LOWER(email) = ?').get(process.env.ADMIN_EMAIL.toLowerCase());
+  const A = signToken(admin);
+  const claims = jwt.decode(A);
+  assert.equal(claims.exp - claims.iat, 12 * 3600, 'admin sessions last 12 hours');
+
+  const now = new Date().toISOString();
+  const email = `revoke-${Date.now()}@example.com`;
+  const { lastInsertRowid: id } = await q(
+    `INSERT INTO users (name, email, passwordHash, emailVerified, createdAt, updatedAt) VALUES ('Revoke Me', ?, 'x', 1, ?, ?)`
+  ).run(email, now, now);
+  const T = signToken(await q('SELECT * FROM users WHERE id = ?').get(id));
+  assert.equal((await api('GET', '/api/auth/me', { token: T })).status, 200);
+  assert.equal((await api('PATCH', `/api/admin/users/${id}`, { token: A, body: { name: 'Edited' } })).status, 200);
+  assert.equal((await api('GET', '/api/auth/me', { token: T })).status, 401, 'an admin edit signs the student out');
+  await q('DELETE FROM users WHERE id = ?').run(id);
+
+  process.env.ADMIN_ALLOWED_IPS = '203.0.113.9';
+  try {
+    assert.equal((await api('GET', '/api/admin/overview', { token: A })).status, 403, 'not on the list');
+  } finally {
+    delete process.env.ADMIN_ALLOWED_IPS;
+  }
+  assert.equal((await api('GET', '/api/admin/overview', { token: A })).status, 200);
+  assert.equal((await api('GET', '/api/admin/health', { token: A })).ok, true);
+
+  assert.equal((await api('GET', '/api/learn/lessons/abc', { token })).status, 404, 'a malformed id is a quick 404');
+  const bad = await fetch(`${base}/api/contact`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{bad' });
+  assert.equal(bad.status, 400);
+  assert.doesNotMatch(await bad.text(), /at |node_modules|SyntaxError/, 'no stack trace');
+  const evil = await fetch(`${base}/health`, { headers: { origin: 'https://evil.example' } });
+  assert.equal(evil.headers.get('access-control-allow-origin'), null, 'unknown origins get no CORS grant');
+  const site = await fetch(`${base}/health`, { headers: { origin: 'http://localhost:3000' } });
+  assert.equal(site.headers.get('access-control-allow-origin'), 'http://localhost:3000');
 });

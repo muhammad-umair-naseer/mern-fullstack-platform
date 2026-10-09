@@ -1,6 +1,5 @@
 import {
   trackTimeAndProgress,
-  recordClaudeProApplication,
   getLearnerClaudeProStatus,
   listClaudeProApplicants,
   updateApplicantStatus,
@@ -8,15 +7,13 @@ import {
 
 export const postHeartbeat = async (req, res) => {
   try {
-    const { courseSlug, seconds } = req.body;
-    if (!courseSlug) {
+    // Any seconds the client sends are ignored: the service measures the time.
+    const { courseSlug } = req.body || {};
+    if (!courseSlug || typeof courseSlug !== 'string') {
       return res.status(400).json({ message: 'courseSlug is required' });
     }
-    const result = await trackTimeAndProgress({
-      userId: req.user.id,
-      courseSlug,
-      seconds: seconds || 30,
-    });
+    const result = await trackTimeAndProgress({ userId: req.user.id, courseSlug });
+    if (!result) return res.status(404).json({ message: 'Enroll in this course first' });
     return res.json({
       ok: true,
       data: {
@@ -38,24 +35,6 @@ export const getStatus = async (req, res) => {
   } catch (err) {
     console.error('Claude Pro status error:', err);
     return res.status(500).json({ message: 'Failed to retrieve Claude Pro status' });
-  }
-};
-
-export const apply = async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const result = await recordClaudeProApplication({
-      userId: req.user.id,
-      courseSlug: slug,
-    });
-    return res.json({
-      ok: true,
-      message: 'Applied for Claude Pro for free for 1 month successfully!',
-      data: result,
-    });
-  } catch (err) {
-    console.error('Claude Pro apply error:', err);
-    return res.status(500).json({ message: 'Failed to submit Claude Pro application' });
   }
 };
 

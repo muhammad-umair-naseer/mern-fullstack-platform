@@ -12,8 +12,20 @@ export const getSecret = () => {
   return secret;
 };
 
+// v is the account's tokenVersion: bumping it in the database ends every
+// session signed before. The admin's sessions are kept short as well.
 export const signToken = (user) =>
-  jwt.sign({ sub: user.id, email: user.email }, getSecret(), { expiresIn: '30d' });
+  jwt.sign({ sub: user.id, email: user.email, v: user.tokenVersion || 0 }, getSecret(), {
+    expiresIn: isUserAdmin(user) ? '12h' : '30d',
+  });
+
+// The token's account, or null when it is gone or the token was revoked.
+const userFor = async (payload) => {
+  const user = await getDB()
+    .prepare('SELECT id, name, email, role, emailVerified, createdAt, tokenVersion FROM users WHERE id = ?')
+    .get(payload.sub);
+  return user && (payload.v || 0) === user.tokenVersion ? user : null;
+};
 
 const readToken = (req) => {
   const header = req.headers.authorization || '';
@@ -25,13 +37,10 @@ export const requireAuth = async (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Sign in to continue' });
 
   try {
-    const payload = jwt.verify(token, getSecret());
-    const user = await getDB()
-      .prepare('SELECT id, name, email, role, emailVerified, createdAt FROM users WHERE id = ?')
-      .get(payload.sub);
+    const user = await userFor(jwt.verify(token, getSecret()));
 
-    // The token can outlive the account it names.
-    if (!user) return res.status(401).json({ message: 'Account no longer exists' });
+    // The token can outlive the account it names, or have been revoked.
+    if (!user) return res.status(401).json({ message: 'Session expired — please sign in again' });
 
     // Tokens are only issued after verification, but re-check here so a token
     // that predates the rule (or an account later un-verified) cannot slip past.
@@ -55,10 +64,7 @@ export const optionalAuth = async (req, _res, next) => {
   const token = readToken(req);
   if (token) {
     try {
-      const payload = jwt.verify(token, getSecret());
-      const u = await getDB()
-        .prepare('SELECT id, name, email, role, emailVerified, createdAt FROM users WHERE id = ?')
-        .get(payload.sub);
+      const u = await userFor(jwt.verify(token, getSecret()));
       req.user = u && u.emailVerified ? u : null;
     } catch {
       req.user = null;
@@ -74,8 +80,17 @@ export const optionalAuth = async (req, _res, next) => {
  */
 export const isUserAdmin = (user) => Boolean(user) && isAdminEmail(user.email);
 
+// Optional: ADMIN_ALLOWED_IPS=203.0.113.4,198.51.100.7 keeps /api/admin to
+// those client addresses (as req.ip sees them, so set TRUST_PROXY behind a
+// proxy). Empty allows any address.
+const allowedAdminIp = (ip) => {
+  const list = (process.env.ADMIN_ALLOWED_IPS || '').split(',').map((s) => s.trim()).filter(Boolean);
+  return !list.length || list.includes(String(ip).replace(/^::ffff:/, ''));
+};
+
 /** Strictly gates endpoints to authorized administrators only */
 export const requireAdmin = async (req, res, next) => {
+  if (!allowedAdminIp(req.ip)) return res.status(403).json({ message: 'Forbidden: Admin access required.' });
   await requireAuth(req, res, () => {
     if (!isUserAdmin(req.user)) {
       return res.status(403).json({ message: 'Forbidden: Admin access required.' });

@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { requireAdmin } from '../middleware/auth.js';
-import { getDB } from '../setup/db.js';
+import { getDB, dbEngine } from '../setup/db.js';
+import { redisPing, redisStats } from '../services/redis.service.js';
+import { getQueueMetrics } from '../services/queue.service.js';
 import { gameSsoSecret, GAME_TOKEN_ISSUER } from '../services/gameSso.js';
 import { courseBySlug, computeGates, finishedLessonIds } from '../services/progress.service.js';
 import { isAdminEmail } from '../setup/admin.js';
@@ -65,6 +67,20 @@ const wrap = (fn) => (req, res) =>
     console.error(`Admin ${req.method} ${req.path} failed:`, err);
     res.status(500).json({ message: 'Admin request failed' });
   });
+
+// --------------------------------------------------------------- health
+// The detail the public /health no longer shows.
+router.get('/health', wrap(async (_req, res) => {
+  const redis = await redisPing();
+  const stats = await redisStats();
+  res.json({
+    ok: true,
+    uptime: Number(process.uptime().toFixed(2)),
+    database: `${dbEngine()} (connected)`,
+    redis: { status: redis.status, latencyMs: redis.latencyMs, usedMemory: stats.usedMemory ?? 'n/a' },
+    queue: await getQueueMetrics(),
+  });
+}));
 
 // ------------------------------------------------------------- overview
 router.get('/overview', wrap(async (_req, res) => {
@@ -300,7 +316,11 @@ router.patch('/users/:id', wrap(async (req, res) => {
   try {
     await db.transaction(async () => {
       const sets = Object.keys(values).map((k) => `${k} = @${k}`).join(', ');
-      await db.prepare(`UPDATE users SET ${sets}, updatedAt = @now WHERE id = @id`).run({ ...values, now: new Date().toISOString(), id: user.id });
+      // Any admin edit also signs the student out everywhere (tokenVersion),
+      // so a changed email or a withdrawn verification takes effect at once.
+      await db
+        .prepare(`UPDATE users SET ${sets}, tokenVersion = tokenVersion + 1, updatedAt = @now WHERE id = @id`)
+        .run({ ...values, now: new Date().toISOString(), id: user.id });
       // Claude Pro applications keep a copy of who applied; keep it current.
       await db
         .prepare('UPDATE claude_pro_applications SET userName = ?, userEmail = ? WHERE userId = ?')
@@ -316,7 +336,8 @@ router.patch('/users/:id', wrap(async (req, res) => {
   res.json({ data: await db.prepare(`SELECT ${USER_COLUMNS} FROM users WHERE id = ?`).get(user.id) });
 }));
 
-// Everything that belongs to the account goes with it (ON DELETE CASCADE).
+// Everything that belongs to the account goes with it (ON DELETE CASCADE),
+// and its tokens stop working: requireAuth finds no account for them.
 router.delete('/users/:id', wrap(async (req, res) => {
   const user = await editableUser(res, req.params.id);
   if (!user) return;

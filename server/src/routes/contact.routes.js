@@ -30,10 +30,9 @@ router.post('/', async (req, res) => {
 
 
 // GET /api/contact/messages (admin only: names, emails and phones)
-router.get('/messages', requireAdmin, async (_req, res) => {
-const items = await ContactMessage.findAll();
-res.json({ data: items });
-});
+router.get('/messages', requireAdmin, (_req, res, next) =>
+  ContactMessage.findAll().then((items) => res.json({ data: items }), next)
+);
 
 
 export default router;

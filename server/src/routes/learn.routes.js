@@ -18,7 +18,6 @@ import { verifyCertificate } from '../controllers/certificate.controller.js';
 import {
   postHeartbeat,
   getStatus,
-  apply,
   getApplicants,
   patchApplicant,
 } from '../controllers/claudePro.controller.js';
@@ -31,38 +30,50 @@ import {
  */
 const router = Router();
 
+// Express 4 does not catch a rejected async handler, so the request would
+// hang; pass the error on to the app's error handler instead.
+const safe = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
+// Numeric path ids: anything else is a plain 404 before it reaches a query.
+for (const name of ['id', 'lessonId', 'chapterId']) {
+  router.param(name, (req, res, next, value) =>
+    /^\d{1,15}$/.test(value) ? next() : res.status(404).json({ message: 'Not found' })
+  );
+}
+
 // --- catalogue -------------------------------------------------------------
-router.get('/courses', optionalAuth, listCourses);
-router.get('/courses/:slug', optionalAuth, getCourseOutline);
-router.post('/courses/:slug/enroll', requireAuth, enroll);
-router.get('/my', requireAuth, myCourses);
+router.get('/courses', optionalAuth, safe(listCourses));
+router.get('/courses/:slug', optionalAuth, safe(getCourseOutline));
+router.post('/courses/:slug/enroll', requireAuth, safe(enroll));
+router.get('/my', requireAuth, safe(myCourses));
 
 // --- lessons ---------------------------------------------------------------
-router.get('/lessons/:id', requireAuth, getLesson);
-router.post('/lessons/:id/complete', requireAuth, completeLesson);
+router.get('/lessons/:id', requireAuth, safe(getLesson));
+router.post('/lessons/:id/complete', requireAuth, safe(completeLesson));
 
 // --- quizzes ---------------------------------------------------------------
-router.get('/quiz/lesson/:lessonId', requireAuth, getTopicQuiz);
-router.post('/quiz/lesson/:lessonId', requireAuth, submitTopicQuiz);
-router.get('/quiz/chapter/:chapterId', requireAuth, getChapterQuiz);
-router.post('/quiz/chapter/:chapterId', requireAuth, submitChapterQuiz);
+router.get('/quiz/lesson/:lessonId', requireAuth, safe(getTopicQuiz));
+router.post('/quiz/lesson/:lessonId', requireAuth, safe(submitTopicQuiz));
+router.get('/quiz/chapter/:chapterId', requireAuth, safe(getChapterQuiz));
+router.post('/quiz/chapter/:chapterId', requireAuth, safe(submitChapterQuiz));
 
 // --- final exam ------------------------------------------------------------
 // One timed attempt and one retake; see services/finalExam.service.js.
-router.get('/final/:slug', requireAuth, getFinal);
-router.post('/final/:slug/start', requireAuth, startFinal);
-router.post('/final/:slug/answer', requireAuth, answerFinal);
-router.post('/final/:slug/submit', requireAuth, submitFinal);
+router.get('/final/:slug', requireAuth, safe(getFinal));
+router.post('/final/:slug/start', requireAuth, safe(startFinal));
+router.post('/final/:slug/answer', requireAuth, safe(answerFinal));
+router.post('/final/:slug/submit', requireAuth, safe(submitFinal));
 
 // --- certificate -----------------------------------------------------------
 // Public: anyone holding a code can verify it without an account.
-router.get('/certificate/:code', verifyCertificate);
+router.get('/certificate/:code', safe(verifyCertificate));
 
 // --- Claude Pro incentive & tracking ---------------------------------------
-router.get('/claude-pro/status/:slug', requireAuth, getStatus);
-router.post('/claude-pro/heartbeat', requireAuth, postHeartbeat);
-router.post('/claude-pro/apply/:slug', requireAuth, apply);
-router.get('/claude-pro/applicants', requireAdmin, getApplicants);
-router.patch('/claude-pro/applicants/:id', requireAdmin, patchApplicant);
+// No apply route: issuing a certificate records the application, with the
+// real score (services/certificate.service.js).
+router.get('/claude-pro/status/:slug', requireAuth, safe(getStatus));
+router.post('/claude-pro/heartbeat', requireAuth, safe(postHeartbeat));
+router.get('/claude-pro/applicants', requireAdmin, safe(getApplicants));
+router.patch('/claude-pro/applicants/:id', requireAdmin, safe(patchApplicant));
 
 export default router;

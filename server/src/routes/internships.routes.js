@@ -30,10 +30,9 @@ router.post('/apply', async (req, res) => {
 
 
 // GET /api/internships/applications (admin only: names, emails and phones)
-router.get('/applications', requireAdmin, async (_req, res) => {
-const items = await InternshipApplication.findAll();
-res.json({ data: items });
-});
+router.get('/applications', requireAdmin, (_req, res, next) =>
+  InternshipApplication.findAll().then((items) => res.json({ data: items }), next)
+);
 
 
 export default router;

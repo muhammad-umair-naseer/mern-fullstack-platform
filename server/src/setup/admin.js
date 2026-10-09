@@ -36,9 +36,13 @@ export const ensureAdmin = async () => {
 
   const samePassword = await bcrypt.compare(password, user.passwordHash);
   if (user.role === 'admin' && user.emailVerified && samePassword) return;
+  // A new password also ends every admin session signed with the old one.
   await db
-    .prepare('UPDATE users SET role = ?, emailVerified = 1, passwordHash = ?, updatedAt = ? WHERE id = ?')
-    .run('admin', samePassword ? user.passwordHash : await bcrypt.hash(password, 10), now, user.id);
+    .prepare(
+      `UPDATE users SET role = ?, emailVerified = 1, passwordHash = ?, updatedAt = ?,
+         tokenVersion = tokenVersion + ? WHERE id = ?`
+    )
+    .run('admin', samePassword ? user.passwordHash : await bcrypt.hash(password, 10), now, samePassword ? 0 : 1, user.id);
   console.log(`Admin account updated for ${email}`);
 };
 
