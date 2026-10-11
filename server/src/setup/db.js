@@ -395,6 +395,10 @@ const migrate = async (database) => {
     ['users', 'tokenVersion', 'INTEGER NOT NULL DEFAULT 0'],
     // 1 = taken off the website by the admin; the seeder never touches it.
     ['courses', 'hidden', 'INTEGER NOT NULL DEFAULT 0'],
+    ['internship_applications', 'status', "TEXT NOT NULL DEFAULT 'pending'"],
+    ['internship_applications', 'university', 'TEXT'],
+    ['internship_applications', 'experienceLevel', 'TEXT'],
+    ['internship_applications', 'duration', 'TEXT'],
   ];
 
   for (const [table, name, type] of additions) {

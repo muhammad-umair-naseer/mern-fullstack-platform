@@ -318,3 +318,17 @@ textarea:focus-visible { outline: 2px solid var(--copper); outline-offset: 1px; 
   a.stat:hover, .game-card:hover, .card:hover, .back:hover { transform: none; }
   .game-card:hover .game-photo img { transform: none; }
 }
+
+/* Custom enhancements for CV actions, head split & filter pills */
+.head-split { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+.head-split .head { margin-bottom: 0; }
+.cv-action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--r-pill); background: var(--copper-tint); color: var(--copper-3); font-size: 0.82rem; font-weight: 500; text-decoration: none; border: 1px solid rgba(154, 74, 34, 0.3); transition: all var(--dur-fast); }
+.cv-action-btn:hover { background: var(--copper); color: var(--ivory); }
+.cv-action-btn.disabled { opacity: 0.5; pointer-events: none; background: var(--sand); color: var(--ink-4); border-color: transparent; }
+.pill-pending { background: #FEF3C7; color: #92400E; }
+.pill-reviewing { background: #E0E7FF; color: #3730A3; }
+.pill-shortlisted { background: #DBEAFE; color: #1E40AF; }
+.pill-accepted { background: #D1FAE5; color: #065F46; }
+.pill-rejected { background: #FEE2E2; color: #991B1B; }
+.badge-count { font: 500 0.72rem var(--mono); padding: 2px 7px; border-radius: var(--r-pill); background: rgba(22, 19, 15, 0.08); margin-left: 6px; }
+

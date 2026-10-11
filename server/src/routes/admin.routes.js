@@ -86,7 +86,7 @@ router.get('/health', wrap(async (_req, res) => {
 router.get('/overview', wrap(async (_req, res) => {
   const db = getDB();
   const one = async (sql) => Number((await db.prepare(sql).get()).n) || 0;
-  const [users, verified, enrollments, completed, certificates, internships, messagesOpen, claudePending, courses] =
+  const [users, verified, enrollments, completed, certificates, internships, internshipsPending, messagesOpen, claudePending, courses] =
     await Promise.all([
       one("SELECT COUNT(*) AS n FROM users WHERE role <> 'admin'"),
       one("SELECT COUNT(*) AS n FROM users WHERE role <> 'admin' AND emailVerified = 1"),
@@ -94,6 +94,7 @@ router.get('/overview', wrap(async (_req, res) => {
       one('SELECT COUNT(*) AS n FROM enrollments WHERE completedAt IS NOT NULL'),
       one('SELECT COUNT(*) AS n FROM certificates'),
       one('SELECT COUNT(*) AS n FROM internship_applications'),
+      one("SELECT COUNT(*) AS n FROM internship_applications WHERE status = 'pending' OR status IS NULL"),
       one('SELECT COUNT(*) AS n FROM contact_messages WHERE handled = 0'),
       one("SELECT COUNT(*) AS n FROM claude_pro_applications WHERE status = 'applied'"),
       one('SELECT COUNT(*) AS n FROM courses'),
@@ -110,7 +111,7 @@ router.get('/overview', wrap(async (_req, res) => {
     .all();
   res.json({
     data: {
-      counts: { users, verified, enrollments, completed, certificates, internships, messagesOpen, claudePending, courses },
+      counts: { users, verified, enrollments, completed, certificates, internships, internshipsPending, messagesOpen, claudePending, courses },
       recentUsers,
       recentCertificates,
     },
@@ -169,6 +170,7 @@ router.get('/courses/:slug', wrap(async (req, res) => {
   for (const s of students) s.lessonsDone = await finishedFor(s.id, course.slug);
   res.json({ data: { course, students } });
 }));
+
 
 // Course content lives in content/courses/*.js and is re-seeded whenever it
 // changes, so an edit is kept in course_overrides and laid over the seeded
@@ -241,9 +243,30 @@ router.delete('/courses/:slug', wrap(async (req, res) => {
 // ------------------------------------------------------------- students
 router.get('/users', wrap(async (req, res) => {
   const { limit, offset, page } = paging(req.query);
-  // students only: the admin account is not one
-  const where = `WHERE u.role <> 'admin'${req.query.search ? ' AND (u.name ILIKE ? OR u.email ILIKE ?)' : ''}`;
-  const args = req.query.search ? [like(req.query.search), like(req.query.search)] : [];
+  const conds = ["u.role <> 'admin'"];
+  const args = [];
+  if (req.query.search) {
+    conds.push('(u.name ILIKE ? OR u.email ILIKE ?)');
+    args.push(like(req.query.search), like(req.query.search));
+  }
+  if (req.query.status === 'verified') {
+    conds.push('u.emailVerified = 1');
+  } else if (req.query.status === 'unverified') {
+    conds.push('u.emailVerified = 0');
+  } else if (req.query.status === 'enrolled') {
+    conds.push('EXISTS (SELECT 1 FROM enrollments e WHERE e.userId = u.id)');
+  } else if (req.query.status === 'certified') {
+    conds.push('EXISTS (SELECT 1 FROM certificates c WHERE c.userId = u.id)');
+  }
+
+  const orderBy = {
+    oldest: 'u.createdAt ASC',
+    name: 'u.name ASC',
+    courses: 'courses DESC, u.createdAt DESC',
+    certificates: 'certificates DESC, u.createdAt DESC',
+  }[req.query.sort] || 'u.createdAt DESC';
+
+  const where = `WHERE ${conds.join(' AND ')}`;
   const db = getDB();
   const total = Number((await db.prepare(`SELECT COUNT(*) AS n FROM users u ${where}`).get(...args)).n) || 0;
   const rows = await db
@@ -252,7 +275,7 @@ router.get('/users', wrap(async (req, res) => {
               (SELECT COUNT(*) FROM enrollments e WHERE e.userId = u.id) AS courses,
               (SELECT COUNT(*) FROM certificates c WHERE c.userId = u.id) AS certificates
          FROM users u ${where}
-        ORDER BY u.createdAt DESC LIMIT ${limit} OFFSET ${offset}`
+        ORDER BY ${orderBy} LIMIT ${limit} OFFSET ${offset}`
     )
     .all(...args);
   res.json({ data: { rows, total, page, pageSize: limit } });
@@ -375,23 +398,55 @@ router.delete('/users/:id/courses/:slug', wrap(async (req, res) => {
   res.json({ data: { removed: true } });
 }));
 
-// --------------------------------------------------------- certificates
 router.get('/certificates', wrap(async (req, res) => {
   const { limit, offset, page } = paging(req.query);
-  const s = req.query.search;
-  const where = s ? 'WHERE c.code ILIKE ? OR u.name ILIKE ? OR u.email ILIKE ? OR co.title ILIKE ?' : '';
-  const args = s ? [like(s), like(s), like(s), like(s)] : [];
+  const conds = [];
+  const args = [];
+  if (req.query.search) {
+    conds.push('(c.code ILIKE ? OR u.name ILIKE ? OR u.email ILIKE ? OR co.title ILIKE ?)');
+    args.push(like(req.query.search), like(req.query.search), like(req.query.search), like(req.query.search));
+  }
+  if (req.query.course) {
+    conds.push('co.slug = ?');
+    args.push(req.query.course);
+  }
+  if (req.query.score === '90+') {
+    conds.push('c.score >= 90');
+  } else if (req.query.score === '80-89') {
+    conds.push('c.score >= 80 AND c.score < 90');
+  } else if (req.query.score === '70-79') {
+    conds.push('c.score >= 70 AND c.score < 80');
+  } else if (req.query.score === '<70') {
+    conds.push('c.score < 70');
+  }
+
+  const orderBy = {
+    oldest: 'c.issuedAt ASC',
+    'score-desc': 'c.score DESC, c.issuedAt DESC',
+    'score-asc': 'c.score ASC, c.issuedAt DESC',
+  }[req.query.sort] || 'c.issuedAt DESC';
+
   const from = 'FROM certificates c JOIN users u ON u.id = c.userId JOIN courses co ON co.id = c.courseId';
+  const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
   const db = getDB();
   const total = Number((await db.prepare(`SELECT COUNT(*) AS n ${from} ${where}`).get(...args)).n) || 0;
   const rows = await db
     .prepare(
       `SELECT c.id, c.code, c.score, c.issuedAt, u.id AS userId, u.name AS userName, u.email AS userEmail,
               co.slug AS courseSlug, co.title AS courseTitle
-         ${from} ${where} ORDER BY c.issuedAt DESC LIMIT ${limit} OFFSET ${offset}`
+         ${from} ${where} ORDER BY ${orderBy} LIMIT ${limit} OFFSET ${offset}`
     )
     .all(...args);
-  res.json({ data: { rows, total, page, pageSize: limit } });
+
+  const courses = await db
+    .prepare(`
+      SELECT co.slug, co.title, COUNT(c.id) AS count
+        FROM courses co JOIN certificates c ON c.courseId = co.id
+       GROUP BY co.slug, co.title ORDER BY count DESC, co.title
+    `)
+    .all();
+
+  res.json({ data: { rows, total, page, pageSize: limit, courses } });
 }));
 
 const CERTIFICATE_ROW = `SELECT c.id, c.code, c.score, c.issuedAt, u.id AS userId, u.name AS userName, u.email AS userEmail,
@@ -426,18 +481,40 @@ router.get('/internships', wrap(async (req, res) => {
   const s = req.query.search;
   const conds = [];
   const args = [];
-  if (s) { conds.push('(name ILIKE ? OR email ILIKE ? OR internshipTitle ILIKE ?)'); args.push(like(s), like(s), like(s)); }
-  if (req.query.title) { conds.push('internshipTitle = ?'); args.push(req.query.title); }
+  if (s) {
+    conds.push('(name ILIKE ? OR email ILIKE ? OR phone ILIKE ? OR internshipTitle ILIKE ? OR university ILIKE ?)');
+    args.push(like(s), like(s), like(s), like(s), like(s));
+  }
+  if (req.query.title) {
+    conds.push('internshipTitle = ?');
+    args.push(req.query.title);
+  }
+  if (req.query.status && req.query.status !== 'all') {
+    conds.push('status = ?');
+    args.push(req.query.status);
+  }
+
+  const orderBy = {
+    oldest: 'createdAt ASC',
+    name: 'name ASC',
+  }[req.query.sort] || 'createdAt DESC';
+
   const where = conds.length ? `WHERE ${conds.join(' AND ')}` : '';
   const db = getDB();
   const total = Number((await db.prepare(`SELECT COUNT(*) AS n FROM internship_applications ${where}`).get(...args)).n) || 0;
   const rows = await db
-    .prepare(`SELECT * FROM internship_applications ${where} ORDER BY createdAt DESC LIMIT ${limit} OFFSET ${offset}`)
+    .prepare(`SELECT * FROM internship_applications ${where} ORDER BY ${orderBy} LIMIT ${limit} OFFSET ${offset}`)
     .all(...args);
+
   const titles = await db
     .prepare('SELECT internshipTitle AS title, COUNT(*) AS n FROM internship_applications GROUP BY internshipTitle ORDER BY n DESC')
     .all();
-  res.json({ data: { rows, total, page, pageSize: limit, titles } });
+
+  const statuses = await db
+    .prepare('SELECT COALESCE(status, \'pending\') AS status, COUNT(*) AS n FROM internship_applications GROUP BY status ORDER BY n DESC')
+    .all();
+
+  res.json({ data: { rows, total, page, pageSize: limit, titles, statuses } });
 }));
 
 router.patch('/internships/:id', wrap(async (req, res) => {
@@ -447,11 +524,23 @@ router.patch('/internships/:id', wrap(async (req, res) => {
     phone: ['Phone', 0, 50],
     internshipTitle: ['Internship', 2, 200],
     resumeLink: ['Resume link', 0, 2000],
+    university: ['University', 0, 200],
+    experienceLevel: ['Experience level', 0, 100],
+    duration: ['Duration', 0, 100],
     coverLetter: ['Cover letter', 0, 10000],
   });
   if (error) return fail(res, 400, error);
   if (values.email !== undefined && !EMAIL.test(values.email)) return fail(res, 400, 'Enter a valid email address');
   if (values.resumeLink && !/^https?:\/\//i.test(values.resumeLink)) return fail(res, 400, 'Resume link must start with http:// or https://');
+
+  if (req.body?.status !== undefined) {
+    const validStatuses = ['pending', 'reviewing', 'shortlisted', 'accepted', 'rejected'];
+    if (!validStatuses.includes(req.body.status)) {
+      return fail(res, 400, `Status must be one of: ${validStatuses.join(', ')}`);
+    }
+    values.status = req.body.status;
+  }
+
   if (!Object.keys(values).length) return fail(res, 400, 'Nothing to change');
   const id = idOf(req.params.id);
   const sets = Object.keys(values).map((k) => `${k} = @${k}`).join(', ');

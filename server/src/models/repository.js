@@ -3,7 +3,10 @@ import { getDB } from '../setup/db.js';
 // Reproduces the casting the old Mongoose schemas did for us: `trim` on every
 // string field, `lowercase` on emails, and boolean <-> INTEGER for SQLite.
 const cast = (field, raw) => {
-  if (raw === undefined || raw === null) return field.type === 'boolean' ? 0 : null;
+  if (raw === undefined || raw === null) {
+    if (field.default !== undefined) return field.default;
+    return field.type === 'boolean' ? 0 : null;
+  }
   if (field.type === 'boolean') return raw ? 1 : 0;
   if (typeof raw !== 'string') return raw;
   const trimmed = raw.trim();

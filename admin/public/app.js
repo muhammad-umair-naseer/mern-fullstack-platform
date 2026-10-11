@@ -23,7 +23,13 @@
     const d = new Date(typeof v === 'number' ? v : String(v));
     return Number.isNaN(+d) ? '' : `<time datetime="${d.toISOString()}" title="${esc(d.toLocaleString('en-GB'))}">${esc(d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }))}</time>`;
   };
-  const safeUrl = (u) => (/^https?:\/\//i.test(String(u || '')) ? String(u) : '');
+  const safeUrl = (u) => {
+    if (!u) return '';
+    const s = String(u).trim();
+    if (/^https?:\/\//i.test(s)) return s;
+    if (/^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/i.test(s)) return `https://${s}`;
+    return '';
+  };
   const certLink = (code) => (code ? `<a class="mono" href="${esc(SITE)}/certificate/${encodeURIComponent(code)}" target="_blank" rel="noopener">${esc(code)}</a>` : '<span class="dim">—</span>');
   const progress = (done, total) => {
     const p = total ? Math.min(100, Math.round((done / total) * 100)) : 0;
@@ -295,9 +301,11 @@
       { name: 'name', label: 'Name', value: a.name, required: true, max: 200 },
       { name: 'email', label: 'Email', value: a.email, type: 'email', required: true },
       { name: 'phone', label: 'Phone', value: a.phone, type: 'tel', max: 40 },
-      { name: 'internshipTitle', label: 'Internship', value: a.internshipTitle, required: true, max: 200 },
-      { name: 'resumeLink', label: 'Resume link', value: a.resumeLink, type: 'url', wide: true },
-      { name: 'coverLetter', label: 'Cover letter', value: a.coverLetter, type: 'textarea', rows: 6 },
+      { name: 'internshipTitle', label: 'Internship Track', value: a.internshipTitle, required: true, max: 200 },
+      { name: 'status', label: 'Status (pending, reviewing, shortlisted, accepted, rejected)', value: a.status || 'pending', required: true },
+      { name: 'university', label: 'University / Education', value: a.university || '', max: 200 },
+      { name: 'resumeLink', label: 'Resume / CV link', value: a.resumeLink, type: 'url', wide: true },
+      { name: 'coverLetter', label: 'Cover letter / Skills', value: a.coverLetter, type: 'textarea', rows: 6 },
     ], (b) => api(`/admin/internships/${enc(a.id)}`, { method: 'PATCH', body: b })),
     'intern-delete': (a) => confirmSheet({
       title: 'Delete this', em: 'application',
@@ -439,12 +447,28 @@
     },
 
     async students() {
-      const s = st('students');
-      const q = new URLSearchParams({ page: s.page, ...(s.search ? { search: s.search } : {}) });
+      const s = st('students', { status: 'all', sort: 'newest' });
+      const q = new URLSearchParams({ page: s.page, status: s.status, sort: s.sort, ...(s.search ? { search: s.search } : {}) });
       const { data } = await api(`/admin/users?${q}`);
       if (pastEnd(s, data.rows)) return VIEWS.students();
-      view.innerHTML = head('Our', 'students', 'Everyone with a Cortexis account. Open one to see their courses and certificates.') +
-        `<div class="filters">${searchBox('students', 'Search by name or email')}</div>` +
+      view.innerHTML = head('Our', 'students', 'Everyone with a Cortexis account. Filter by status, enrolments, certificates or search by name.') +
+        `<div class="filters">
+          ${searchBox('students', 'Search by name or email')}
+          <select id="student-status" aria-label="Status Filter">
+            <option value="all" ${s.status === 'all' ? 'selected' : ''}>All students</option>
+            <option value="verified" ${s.status === 'verified' ? 'selected' : ''}>Verified only</option>
+            <option value="unverified" ${s.status === 'unverified' ? 'selected' : ''}>Unverified only</option>
+            <option value="enrolled" ${s.status === 'enrolled' ? 'selected' : ''}>Has enrolments</option>
+            <option value="certified" ${s.status === 'certified' ? 'selected' : ''}>Has certificates</option>
+          </select>
+          <select id="student-sort" aria-label="Sort">
+            <option value="newest" ${s.sort === 'newest' ? 'selected' : ''}>Newest joined</option>
+            <option value="oldest" ${s.sort === 'oldest' ? 'selected' : ''}>Oldest joined</option>
+            <option value="name" ${s.sort === 'name' ? 'selected' : ''}>Name (A–Z)</option>
+            <option value="courses" ${s.sort === 'courses' ? 'selected' : ''}>Most courses</option>
+            <option value="certificates" ${s.sort === 'certificates' ? 'selected' : ''}>Most certificates</option>
+          </select>
+        </div>` +
         table([
           { label: 'Student', cell: (u) => `<a href="#/students/${esc(u.id)}"><b>${esc(u.name)}</b></a><small>${esc(u.email)}</small>` },
           { label: 'Status', cell: (u) => (u.role === 'admin' ? '<span class="pill pill-applied">Admin</span>' : u.emailVerified ? '<span class="pill pill-awarded">Verified</span>' : '<span class="pill">Not verified</span>') },
@@ -454,6 +478,8 @@
           { label: '', cell: (u) => userActs(u) },
         ], data.rows, 'No student matches.') + pager(data.total, data.page, data.pageSize);
       bindSearch('students', VIEWS.students); bindPager('students', VIEWS.students);
+      view.querySelector('#student-status').addEventListener('change', (e) => { s.status = e.target.value; s.page = 1; VIEWS.students(); });
+      view.querySelector('#student-sort').addEventListener('change', (e) => { s.sort = e.target.value; s.page = 1; VIEWS.students(); });
     },
 
     async student(id) {
@@ -476,12 +502,38 @@
     },
 
     async certificates() {
-      const s = st('certificates');
-      const q = new URLSearchParams({ page: s.page, ...(s.search ? { search: s.search } : {}) });
+      const s = st('certificates', { course: '', score: 'all', sort: 'newest' });
+      const q = new URLSearchParams({
+        page: s.page,
+        ...(s.course ? { course: s.course } : {}),
+        ...(s.score && s.score !== 'all' ? { score: s.score } : {}),
+        ...(s.sort ? { sort: s.sort } : {}),
+        ...(s.search ? { search: s.search } : {})
+      });
       const { data } = await api(`/admin/certificates?${q}`);
       if (pastEnd(s, data.rows)) return VIEWS.certificates();
-      view.innerHTML = head('Issued', 'certificates', 'Every certificate issued. The code opens the public verification page.') +
-        `<div class="filters">${searchBox('certificates', 'Search by code, student or course')}</div>` +
+      const coursesList = data.courses || [];
+      view.innerHTML = head('Issued', 'certificates', 'Every certificate issued. Filter by course, score performance or search by code/student.') +
+        `<div class="filters">
+          ${searchBox('certificates', 'Search by code, student or course')}
+          <select id="cert-course" aria-label="Course Filter">
+            <option value="">All courses</option>
+            ${coursesList.map((c) => `<option value="${esc(c.slug)}" ${c.slug === s.course ? 'selected' : ''}>${esc(c.title)} (${num(c.n)})</option>`).join('')}
+          </select>
+          <select id="cert-score" aria-label="Score Bracket">
+            <option value="all" ${s.score === 'all' ? 'selected' : ''}>All scores</option>
+            <option value="90+" ${s.score === '90+' ? 'selected' : ''}>Distinction (90%+)</option>
+            <option value="80-89" ${s.score === '80-89' ? 'selected' : ''}>Merit (80–89%)</option>
+            <option value="70-79" ${s.score === '70-79' ? 'selected' : ''}>Pass (70–79%)</option>
+            <option value="<70" ${s.score === '<70' ? 'selected' : ''}>Under 70%</option>
+          </select>
+          <select id="cert-sort" aria-label="Sort">
+            <option value="newest" ${s.sort === 'newest' ? 'selected' : ''}>Newest issued</option>
+            <option value="oldest" ${s.sort === 'oldest' ? 'selected' : ''}>Oldest issued</option>
+            <option value="score_desc" ${s.sort === 'score_desc' ? 'selected' : ''}>Highest score</option>
+            <option value="score_asc" ${s.sort === 'score_asc' ? 'selected' : ''}>Lowest score</option>
+          </select>
+        </div>` +
         table([
           { label: 'Code', cell: (r) => certLink(r.code) },
           { label: 'Student', cell: (r) => `<a href="#/students/${esc(r.userId)}"><b>${esc(r.userName)}</b></a><small>${esc(r.userEmail)}</small>` },
@@ -491,25 +543,111 @@
           { label: '', cell: (r) => acts(keep(`cert:${r.code}`, r), [['cert-edit', 'Edit score'], ['cert-revoke', 'Revoke', true]]) },
         ], data.rows, 'No certificate matches.') + pager(data.total, data.page, data.pageSize);
       bindSearch('certificates', VIEWS.certificates); bindPager('certificates', VIEWS.certificates);
+      view.querySelector('#cert-course').addEventListener('change', (e) => { s.course = e.target.value; s.page = 1; VIEWS.certificates(); });
+      view.querySelector('#cert-score').addEventListener('change', (e) => { s.score = e.target.value; s.page = 1; VIEWS.certificates(); });
+      view.querySelector('#cert-sort').addEventListener('change', (e) => { s.sort = e.target.value; s.page = 1; VIEWS.certificates(); });
     },
 
     async internships() {
-      const s = st('internships', { title: '' });
-      const q = new URLSearchParams({ page: s.page, ...(s.search ? { search: s.search } : {}), ...(s.title ? { title: s.title } : {}) });
+      const s = st('internships', { status: 'all', title: '', sort: 'newest' });
+      const q = new URLSearchParams({
+        page: s.page,
+        ...(s.status && s.status !== 'all' ? { status: s.status } : {}),
+        ...(s.title ? { title: s.title } : {}),
+        ...(s.sort ? { sort: s.sort } : {}),
+        ...(s.search ? { search: s.search } : {})
+      });
       const { data } = await api(`/admin/internships?${q}`);
       if (pastEnd(s, data.rows)) return VIEWS.internships();
-      view.innerHTML = head('Internship', 'applications', 'Everyone who applied through the Internships page.') +
-        `<div class="filters">${searchBox('internships', 'Search by name, email or internship')}
-          <select id="title-filter" aria-label="Internship"><option value="">All internships</option>${data.titles.map((t) => `<option value="${esc(t.title)}" ${t.title === s.title ? 'selected' : ''}>${esc(t.title)} (${num(t.n)})</option>`).join('')}</select></div>` +
-        (data.rows.length ? `<div class="cards">${data.rows.map((a) => `
+
+      const STATUS_META = {
+        pending: { label: 'Pending Review', cls: 'pill-pending' },
+        reviewing: { label: 'Under Review', cls: 'pill-reviewing' },
+        shortlisted: { label: 'Shortlisted', cls: 'pill-shortlisted' },
+        accepted: { label: 'Accepted', cls: 'pill-accepted' },
+        rejected: { label: 'Rejected', cls: 'pill-rejected' },
+      };
+
+      const STATUS_ACTIONS = [
+        { to: 'reviewing', label: 'Review', icon: '🔍', cls: '' },
+        { to: 'shortlisted', label: 'Shortlist', icon: '⭐', cls: '' },
+        { to: 'accepted', label: 'Accept', icon: '✓', cls: 'btn-go' },
+        { to: 'rejected', label: 'Decline', icon: '✕', cls: 'btn-brick' },
+      ];
+
+      view.innerHTML = head('Internship', 'applications', 'Direct applicant portal. Filter candidates, inspect full CV/resumes and update application status.') +
+        `<div class="filters">
+          ${searchBox('internships', 'Search by name, email, degree or track')}
+          <select id="intern-track" aria-label="Internship Track">
+            <option value="">All tracks</option>
+            ${(data.titles || []).map((t) => `<option value="${esc(t.title)}" ${t.title === s.title ? 'selected' : ''}>${esc(t.title)} (${num(t.n)})</option>`).join('')}
+          </select>
+          <select id="intern-status" aria-label="Status Filter">
+            <option value="all" ${s.status === 'all' ? 'selected' : ''}>All statuses</option>
+            <option value="pending" ${s.status === 'pending' ? 'selected' : ''}>Pending Review</option>
+            <option value="reviewing" ${s.status === 'reviewing' ? 'selected' : ''}>Under Review</option>
+            <option value="shortlisted" ${s.status === 'shortlisted' ? 'selected' : ''}>Shortlisted</option>
+            <option value="accepted" ${s.status === 'accepted' ? 'selected' : ''}>Accepted</option>
+            <option value="rejected" ${s.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+          </select>
+          <select id="intern-sort" aria-label="Sort Order">
+            <option value="newest" ${s.sort === 'newest' ? 'selected' : ''}>Newest applicants</option>
+            <option value="oldest" ${s.sort === 'oldest' ? 'selected' : ''}>Oldest applicants</option>
+            <option value="name" ${s.sort === 'name' ? 'selected' : ''}>Candidate name (A–Z)</option>
+          </select>
+        </div>` +
+        (data.rows.length ? `<div class="cards">${data.rows.map((a) => {
+          const stMeta = STATUS_META[a.status] || STATUS_META.pending;
+          return `
           <article class="card glass">
-            <header><div><b>${esc(a.name)}</b><small>${esc(a.internshipTitle)}</small></div>${date(a.createdAt)}</header>
-            <p class="contact"><a href="mailto:${esc(a.email)}">${esc(a.email)}</a>${a.phone ? ` · <a href="tel:${esc(a.phone)}">${esc(a.phone)}</a>` : ''}${safeUrl(a.resumeLink) ? ` · <a href="${esc(safeUrl(a.resumeLink))}" target="_blank" rel="noopener noreferrer">Resume</a>` : ''}</p>
-            ${a.coverLetter ? `<details><summary>Cover letter</summary><p class="body">${esc(a.coverLetter)}</p></details>` : ''}
-            ${acts(keep(`intern:${a.id}`, a), [['intern-edit', 'Edit'], ['intern-delete', 'Delete', true]])}
-          </article>`).join('')}</div>` : '<p class="state">No applications yet.</p>') + pager(data.total, data.page, data.pageSize);
+            <header>
+              <div>
+                <b>${esc(a.name)}</b>
+                <span class="pill ${stMeta.cls}">${stMeta.label}</span>
+                <small>${esc(a.internshipTitle || 'General Internship')}</small>
+              </div>
+              ${date(a.createdAt)}
+            </header>
+            <p class="contact">
+              <a href="mailto:${esc(a.email)}">${esc(a.email)}</a>
+              ${a.phone ? ` · <a href="tel:${esc(a.phone)}">${esc(a.phone)}</a>` : ''}
+            </p>
+            ${a.university ? `<p class="muted small" style="margin:4px 0 2px;">🎓 <b>${esc(a.university)}</b></p>` : ''}
+            ${(a.experienceLevel || a.duration) ? `<p class="muted small" style="margin:2px 0 6px;">💼 ${esc([a.experienceLevel, a.duration].filter(Boolean).join(' · '))}</p>` : ''}
+            
+            <div style="margin: 10px 0;">
+              ${a.resumeLink ? `<a class="cv-action-btn" href="${esc(safeUrl(a.resumeLink) || a.resumeLink)}" target="_blank" rel="noopener noreferrer">📄 View Candidate CV / Resume ↗</a>` : '<span class="muted small" style="display:inline-block; padding: 4px 0;">No CV link provided</span>'}
+            </div>
+
+            ${a.coverLetter ? `<details><summary>Cover Letter &amp; Background</summary><p class="body" style="white-space: pre-wrap;">${esc(a.coverLetter)}</p></details>` : ''}
+            
+            <div class="actions" style="margin-top: 10px; flex-wrap: wrap; gap: 6px;">
+              ${STATUS_ACTIONS.filter(act => act.to !== a.status).map(act =>
+                `<button class="btn btn-sm ${act.cls}" data-intern-status="${esc(act.to)}" data-intern-id="${esc(a.id)}" type="button">${act.icon} ${act.label}</button>`
+              ).join('')}
+              ${acts(keep(`intern:${a.id}`, a), [['intern-edit', 'Edit'], ['intern-delete', 'Delete', true]])}
+            </div>
+          </article>`;
+        }).join('')}</div>` : '<p class="state">No applications found matching your criteria.</p>') + pager(data.total, data.page, data.pageSize);
+      
       bindSearch('internships', VIEWS.internships); bindPager('internships', VIEWS.internships);
-      view.querySelector('#title-filter').addEventListener('change', (e) => { s.title = e.target.value; s.page = 1; VIEWS.internships(); });
+      view.querySelector('#intern-track').addEventListener('change', (e) => { s.title = e.target.value; s.page = 1; VIEWS.internships(); });
+      view.querySelector('#intern-status').addEventListener('change', (e) => { s.status = e.target.value; s.page = 1; VIEWS.internships(); });
+      view.querySelector('#intern-sort').addEventListener('change', (e) => { s.sort = e.target.value; s.page = 1; VIEWS.internships(); });
+      
+      view.querySelectorAll('[data-intern-status]').forEach((b) => b.addEventListener('click', async () => {
+        b.disabled = true;
+        try {
+          const to = b.dataset.internStatus;
+          await api(`/admin/internships/${encodeURIComponent(b.dataset.internId)}`, { method: 'PATCH', body: { status: to } });
+          toast(`Candidate marked as ${(STATUS_META[to] || {}).label || to}`);
+          VIEWS.internships();
+          badges();
+        } catch (err) {
+          alert(err.message);
+          b.disabled = false;
+        }
+      }));
     },
 
     async messages() {
@@ -517,9 +655,13 @@
       const q = new URLSearchParams({ page: s.page, status: s.status, ...(s.search ? { search: s.search } : {}) });
       const { data } = await api(`/admin/messages?${q}`);
       if (pastEnd(s, data.rows)) return VIEWS.messages();
-      view.innerHTML = head('Contact', 'messages', 'Messages sent through the Contact page.') +
-        `<div class="filters">${searchBox('messages', 'Search messages')}
-          <select id="msg-status" aria-label="Status">${[['open', 'Not answered'], ['handled', 'Answered'], ['all', 'All messages']].map(([v, l]) => `<option value="${v}" ${v === s.status ? 'selected' : ''}>${l}</option>`).join('')}</select></div>` +
+      view.innerHTML = `
+        <div class="head-split">
+          ${head('Contact', 'messages', 'Messages sent through the Contact Us page.')}
+          <button class="btn btn-sm" id="btn-refresh-msgs" type="button">↻ Refresh Messages</button>
+        </div>
+        <div class="filters">${searchBox('messages', 'Search messages by sender, email or message text')}
+          <select id="msg-status" aria-label="Status">${[['open', 'Not answered (Open)'], ['handled', 'Answered'], ['all', 'All messages']].map(([v, l]) => `<option value="${v}" ${v === s.status ? 'selected' : ''}>${l}</option>`).join('')}</select></div>` +
         (data.rows.length ? `<div class="cards">${data.rows.map((m) => `
           <article class="card glass ${m.handled ? 'is-done' : ''}">
             <header><div><b>${esc(m.subject || 'No subject')}</b><small>${esc(m.name)}</small></div>${date(m.createdAt)}</header>
@@ -530,6 +672,8 @@
           </article>`).join('')}</div>` : '<p class="state">No messages here.</p>') + pager(data.total, data.page, data.pageSize);
       bindSearch('messages', VIEWS.messages); bindPager('messages', VIEWS.messages);
       view.querySelector('#msg-status').addEventListener('change', (e) => { s.status = e.target.value; s.page = 1; VIEWS.messages(); });
+      const refBtn = view.querySelector('#btn-refresh-msgs');
+      if (refBtn) refBtn.addEventListener('click', () => { VIEWS.messages(); badges(); toast('Messages refreshed'); });
       view.querySelectorAll('[data-msg]').forEach((b) => b.addEventListener('click', async () => {
         b.disabled = true;
         try { await api(`/admin/messages/${encodeURIComponent(b.dataset.msg)}`, { method: 'PATCH', body: { handled: b.dataset.handled === '1' } }); VIEWS.messages(); badges(); }
@@ -685,6 +829,7 @@
       };
       set('badge-messages', data.counts.messagesOpen);
       set('badge-claude', data.counts.claudePending);
+      set('badge-internships', data.counts.internshipsPending);
     } catch { /* badges are a nicety */ }
   }
 

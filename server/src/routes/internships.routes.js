@@ -17,7 +17,7 @@ router.post('/apply', async (req, res) => {
       return res.status(400).json({ message: 'Validation failed', errors: error.details });
     }
 
-    const record = await InternshipApplication.create(value);
+    const record = await InternshipApplication.create({ status: 'pending', ...value });
     // Queue asynchronous alert
     queueInternshipAlert(value);
 

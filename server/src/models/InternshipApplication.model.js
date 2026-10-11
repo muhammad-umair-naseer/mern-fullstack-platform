@@ -6,5 +6,9 @@ export default createRepository('internship_applications', [
   { name: 'phone' },
   { name: 'internshipTitle' },
   { name: 'resumeLink' },
+  { name: 'university' },
+  { name: 'experienceLevel' },
+  { name: 'duration' },
   { name: 'coverLetter' },
+  { name: 'status', default: 'pending' },
 ]);
