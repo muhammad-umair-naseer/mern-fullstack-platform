@@ -1,6 +1,7 @@
 ---
 title: Will WhatsApp ban my number for using a bot?
 description: Yes if the bot drives the normal app, no if it runs on Meta's official platform. Where that line sits, and what actually triggers a ban.
+author: Abdullah
 date: 2026-08-28
 tags: [whatsapp, automation, policy]
 targetQuery: will whatsapp ban my number for using a bot
@@ -27,7 +28,7 @@ That distinction explains nearly every ban story you will read. The rest of this
 
 The first is the consumer product and its sibling, the WhatsApp Business app. Both run on a phone, built for a human tapping a screen. The Business app has sanctioned automation built in, greeting messages, away messages, quick replies and a catalogue, and it is free. What it does not have is a way for your own software to log in and drive it.
 
-The second is the WhatsApp Business Platform, which most people still call the WhatsApp Business API. It is an HTTPS interface. Your server posts JSON to Meta, Meta delivers the message, and inbound messages arrive at your server as webhooks. There is no phone involved. This is the route Meta built for exactly the thing you are trying to do, and using it is not a policy risk, because it *is* the policy.
+The second is the WhatsApp Business Platform, which most people still call the WhatsApp Business API (documented under [Meta's official WhatsApp Cloud API guide](https://developers.facebook.com/docs/whatsapp/cloud-api/)). It is an HTTPS interface. Your server posts JSON to Meta, Meta delivers the message, and inbound messages arrive at your server as webhooks. There is no phone involved. This is the route Meta built for exactly the thing you are trying to do, and using it in compliance with the [WhatsApp Business Messaging Policy](https://www.whatsapp.com/legal/business-policy/) is not a policy risk, because it *is* the policy.
 
 Everything sold as a WhatsApp bot is one or the other. Ask a vendor which, and if the answer takes more than one sentence, it is the first.
 

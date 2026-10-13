@@ -1,21 +1,28 @@
 ---
 title: "PickParty: how to play the online drafting party game"
 description: New to drafting games? Learn PickParty in five minutes. Take turns grabbing cards, win votes, dodge the dud, and play Mind reader, Auction or solo.
+author: Umair
 date: 2026-10-09
 tags: [games, party games, multiplayer]
 targetQuery: drafting party game
 image: /blog/covers/pickparty-online-drafting-party-game.webp
 imageAlt: "The PickParty home screen with a fan of picture cards, the game modes and the culture and match length settings"
-home: /games/pickparty
 ---
 
 PickParty is a drafting party game for 3 to 6 players. Sixteen cards about one topic go on the board, and players claim them before anyone else can, by taking turns or, in Auction, by bidding. To start, pick a mode on the home screen and press **Play**. Then tap a topic (or **Surprise me**) and press Play again. Empty seats are filled with bots, so you never wait long for a game.
 
 ## What "drafting" means
 
-Drafting means **taking turns to choose from a shared pile**. Think of picking teams in the playground, but with cards. Every topic has sixteen cards. A topic might be pizza toppings or superpowers. When it is your turn, you tap one card and it becomes yours. Nobody else can take it now. There are 88 topics in the game.
+Drafting means **taking turns to choose from a shared pile**, a popular board game mechanic documented on [BoardGameGeek's Open Drafting guide](https://boardgamegeek.com/boardgamemechanic/2041/open-drafting). Think of picking teams in the playground, but with cards. Every topic has sixteen cards. A topic might be pizza toppings or superpowers. When it is your turn, you tap one card and it becomes yours. Nobody else can take it now. There are 88 topics in the game.
 
 You get a few seconds for each pick (12 by default). If you run out of time, the game picks a card for you, so the table never gets stuck.
+
+| Mode | Players | Turn Mechanism | Scoring Strategy | Best For |
+| --- | --- | --- | --- | --- |
+| **Crowd Pleaser** | 3–6 | Snake turn order | Vote predictions + Dud round | Casual groups & party warmups |
+| **Mind Reader** | 3–6 | 1 Mind + Snake drafters | Find secrets (200/150/100 pts) | Bluffing & psychological play |
+| **Auction** | 3–6 | Live 20-coin bidding clock | Lineup crowd score + Saved coins | Tactical budgeters |
+| **Crowd Read** | 1 (Solo) | Timed card pick & lock-in | 3 lives, speed & combo multipliers | Quick solo brain training |
 
 ## The snake order, explained simply
 

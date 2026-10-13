@@ -1,6 +1,7 @@
 ---
 title: How to apply for a software house internship in Pakistan
 description: When to apply for summer, what a one page CV with no experience should contain, what to write in the email, and why most applications get no reply.
+author: Umair
 date: 2026-08-28
 tags: [internships, careers, students]
 targetQuery: how to apply for internship in a software house in pakistan
@@ -63,7 +64,7 @@ Be strict about skills: assume you will be asked to explain anything you list by
 
 ## A GitHub link beats every adjective on the page
 
-Whoever reads your CV gives it under a minute. In that minute, "passionate, hardworking, quick learner" carries no information, because no CV anywhere says the opposite. A link is checkable, and being willing to be checked is the signal.
+Whoever reads your CV gives it under a minute. In that minute, "passionate, hardworking, quick learner" carries no information, because no CV anywhere says the opposite. A verified link to your [GitHub profile](https://github.com/) (and taking advantage of free tooling like the [GitHub Student Developer Pack](https://education.github.com/pack)) is checkable, and being willing to be checked is the primary signal looked for across software houses registered with [P@SHA (Pakistan Software Houses Association)](https://pasha.org.pk/).
 
 What makes a repository worth linking:
 

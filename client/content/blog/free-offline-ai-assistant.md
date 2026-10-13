@@ -1,12 +1,12 @@
 ---
 title: A free offline AI assistant that searches your own files
 description: We are building a free offline AI assistant for computer and phone. Ask about your PDFs, Word files and photos and get answers with no internet.
+author: Abdullah
 date: 2026-09-27
 tags: [ai, privacy, tools]
 targetQuery: free offline ai assistant
 image: /blog/covers/free-offline-ai-assistant.webp
 imageAlt: "A developer searching and indexing local desktop documents and files with magnifying focus in warm ambient light"
-home: /services/ai-automation
 ---
 
 We are building a free offline AI assistant: an app for your computer and your phone that reads the files you already have and answers questions about them in plain language. Ask "where is my salary slip from March?" and it finds the PDF, reads it, and tells you, naming the file it used. Nothing is uploaded, it keeps working with the Wi-Fi switched off, and it will be free to download and free to use, with no subscription.
@@ -93,8 +93,8 @@ This is also why it can do what ordinary search cannot. The search box in File E
 
 Everything runs on your own hardware. Nothing is sent to an AI company's servers, and there are no API keys and no per-question charges.
 
-- **A small language model** writes the answers. We are working with compact, quantised models such as Phi-3 Mini, a 7-billion-parameter Llama model at 4-bit precision, and a small Mistral model. Quantised means the model's numbers are stored with fewer bits: a 7-billion-parameter model shrinks from about 14 GB to roughly 4 GB, at a small cost in accuracy. Phi-3 Mini at 4-bit is closer to 2.3 GB.
-- **Tesseract** handles OCR. It is the long-standing open-source OCR engine, and it reads more than 100 languages, Urdu among them. Which languages ship in the first version is still being decided.
+- **A small language model** writes the answers. We are working with compact, quantised models (such as Microsoft Phi-3 Mini, Meta's Llama family, and Mistral, distributed via [Hugging Face](https://huggingface.co/models) and runnable locally via frameworks like [Ollama](https://ollama.com/)) at 4-bit precision. Quantised means the model's numbers are stored with fewer bits: a 7-billion-parameter model shrinks from about 14 GB to roughly 4 GB, at a small cost in accuracy. Phi-3 Mini at 4-bit is closer to 2.3 GB.
+- **Tesseract** handles OCR. Maintained as the [open-source Tesseract OCR engine](https://github.com/tesseract-ocr/tesseract), it reads more than 100 languages, Urdu among them. Which languages ship in the first version is still being decided.
 - **A lightweight image-captioning model** describes what a photo shows, so "the photo of the whiteboard from the Monday meeting" can be found even when nobody typed a word about it.
 
 As a rough guide from those model sizes, a computer with 8 GB of memory can run the smaller models, and 16 GB is comfortable for the 7-billion-parameter ones. A graphics card is not required, although it makes answers noticeably faster. Expect the first scan of a large drive to take a while, because OCR on thousands of images is slow work. After that, only new and changed files are processed.

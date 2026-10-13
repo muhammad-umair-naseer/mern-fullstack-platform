@@ -1,6 +1,7 @@
 ---
 title: A WhatsApp chatbot for Islamabad real estate agents
 description: A bot can answer the same five questions all day and qualify a buyer before you ring them. It cannot close a deal. Where the line sits.
+author: Abdullah
 date: 2026-08-28
 tags: [whatsapp, automation, real-estate]
 targetQuery: whatsapp chatbot for real estate agents islamabad
@@ -44,12 +45,12 @@ All five are lookups. The information already exists, on your sheet or in your h
 | Asking price | Bot, as the asking price only | Quoting is fine. Negotiating is not |
 | Possession, file or plot, balloted or not | Bot, from what you recorded | Still a lookup, with the caution below |
 | "Will he take less?" | Human | Any number a bot agrees to is a number you agreed to |
-| Transfer, dues, NOC, taxes, mutation | Human | Legal consequences, and the answer differs by society and case |
+| Transfer, dues, NOC, taxes, mutation | Human | Legal consequences, differing under [Capital Development Authority (CDA)](https://www.cda.gov.pk/) or RDA jurisdictions |
 | Is this society approved, is this file safe | Human | Not a question a script should ever answer |
 | A voice note | Human, immediately | See below |
 | Wants to visit | Bot offers times, then hands over | The one clerical task worth automating |
 
-One warning on the possession row. Whatever the bot says about status is in writing, and a screenshot of a wrong "yes, it has possession" is a problem you will still be dealing with months later. Where your own sheet is unsure, the correct reply is "let me confirm and come back to you", followed by a handoff. A bot that admits uncertainty is worth more than one that guesses well most of the time.
+One warning on the possession row. Whatever the bot says about status is in writing, and a screenshot of a wrong "yes, it has possession" is a problem you will still be dealing with months later. Where your own sheet is unsure, the correct reply is "let me confirm and come back to you", followed by a handoff via [Meta WhatsApp Cloud API Webhooks](https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks). A bot that admits uncertainty is worth more than one that guesses well most of the time.
 
 ## Roman Urdu and voice notes, which is where these usually break
 

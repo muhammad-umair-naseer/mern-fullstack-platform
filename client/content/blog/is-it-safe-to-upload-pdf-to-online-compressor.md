@@ -1,6 +1,7 @@
 ---
 title: Is it safe to upload a PDF to an online compressor?
 description: What actually happens to your file when you drop it on a compression site, when that genuinely does not matter, and when it does.
+author: Abdullah
 date: 2026-08-28
 tags: [pdf, privacy, tools]
 targetQuery: is it safe to upload pdf to online compressor
@@ -64,9 +65,9 @@ If the answer is "nothing", upload it anywhere you like. If the answer is "I wou
 
 ## What "no upload" actually means
 
-Some tools, including [the PDF compressor on this site](/tools/pdf-compressor), do the work inside your browser instead. Your browser already has everything needed: it can read files, decompress the images inside a PDF, re-encode them at a lower quality, and write a new file. None of that requires a server.
+Some tools, including [the PDF compressor on this site](/tools/pdf-compressor), do the work inside your browser instead. Leveraging modern browser standards like the [MDN File API](https://developer.mozilla.org/en-US/docs/Web/API/File_API) and [W3C WebAssembly](https://webassembly.org/), your browser runs sandboxed binary logic locally: it can read files, decompress the images inside a PDF, re-encode them at a lower quality, and write a new file. None of that requires a remote server.
 
-That difference is not marketing. It is architectural. If the file never travels, there is no deletion policy to trust, because there is nothing to delete.
+That difference is not marketing. It is architectural. If the file never travels across the wire, there is no deletion policy to trust, because there is nothing on any server to delete.
 
 **You can check this yourself, and you should not take our word for it.** Open your browser's developer tools, switch to the Network tab, and compress a file. Watch what happens.
 

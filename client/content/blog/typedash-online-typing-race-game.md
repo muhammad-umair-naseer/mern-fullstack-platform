@@ -1,12 +1,12 @@
 ---
 title: "TypeDash: a free online typing race game and how to play"
 description: TypeDash is a free typing race game in your browser. Learn the modes, how points work, why a typo never gets you stuck, and how levels and streaks grow.
+author: Umair
 date: 2026-10-09
 tags: [games, typing, multiplayer]
 targetQuery: online typing race game
 image: /blog/covers/typedash-online-typing-race-game.webp
 imageAlt: "The TypeDash home screen with a live race track, a button to race other people and options to type on your own or play the daily paragraph"
-home: /games/typedash
 ---
 
 TypeDash is a free typing race game in your browser. A short paragraph appears, everyone types it, and each car on the track moves as its owner types. To start, press **Race other people** above, wait for the countdown, and type the words you see.
@@ -44,11 +44,23 @@ A race ends one minute after the first racer finishes, or when the time limit of
 
 In many typing games a wrong key goes into the text. You have to delete it before you can carry on.
 
-TypeDash works differently. A wrong key never goes into the text. The letter you needed turns red, and you lose 20 points. Then you just press the right key to carry on. You only ever retype that one letter. There is nothing to fix with Backspace, so one typo can never trap you.
+TypeDash works differently. In accordance with standard browser keystroke handling (defined in the [W3C KeyboardEvent specification](https://www.w3.org/TR/uievents/#events-keyboardevents)), a wrong key never goes into the text. The letter you needed turns red, and you lose 20 points. Then you just press the right key to carry on. You only ever retype that one letter. There is nothing to fix with Backspace, so one typo can never trap you.
 
 Every wrong key also counts as one error in your accuracy, and it resets your combo. So it is still worth slowing down a little to type cleanly.
 
 ## How points work in a race
+
+| Scoring Component | Points Value | Trigger / Requirement | Impact on Play |
+| --- | --- | --- | --- |
+| **Correct Key** | 10 pts × Multiplier | Hit expected letter | Base progression |
+| **Combo Tier 1 (10 keys)** | 1.25× multiplier | 10 streak without error | Early score build |
+| **Combo Tier 2 (25 keys)** | 1.50× multiplier | 25 streak without error | High scoring zone |
+| **Combo Tier 3 (50 keys)** | 2.00× multiplier | 50 streak without error | Double points per key |
+| **Combo Tier 4 (100 keys)** | 3.00× multiplier | 100 streak without error | Maximum multiplier |
+| **Flawless Word** | +40 pts | Word typed with 0 typos | Fills nitro meter (5 needed) |
+| **Golden Word** | +250 pts | Typed highlighted golden word cleanly | High-value target |
+| **1st Place Finish** | +1,000 pts | Cross finish line first | Match win bonus |
+| **Typo Penalty** | -20 pts | Wrong key pressed | Resets combo streak to 0 |
 
 Your race score comes from a few simple rules.
 

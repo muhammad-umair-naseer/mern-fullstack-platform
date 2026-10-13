@@ -1,12 +1,12 @@
 ---
 title: Free coding games you can play in your browser
 description: Two free coding games in your browser: guess what JavaScript and Python print, or race other typists on real code. No sign-up, nothing to install.
+author: Umair
 date: 2026-10-03
 tags: [games, coding, typing]
 targetQuery: free coding games
 image: /blog/covers/free-coding-games-in-your-browser.webp
 imageAlt: "A gaming desk lit in purple and pink neon with a monitor, a PC tower and a glowing HELLO sign"
-home: /games
 ---
 
 These are free coding games that run in your browser: **Gotcha Rush**, where you read a short JavaScript or Python snippet and type exactly what it prints, and **TypeDash**, a live typing race where you can type prose or real lines of code against other players. Both are free, both open in a tab, and neither asks you to make an account first.
@@ -28,7 +28,7 @@ Both games on this page were built around those four rules.
 
 Gotcha Rush is a multiplayer **"what does this print?"** game. A room of up to five players sees the same tricky snippet. Everyone types the output they expect, line by line, before the clock runs out. Then the real output prints against your answer, followed by a short explanation of why the language behaved that way.
 
-It is built on the gotchas every developer meets sooner or later: type coercion, floating point, closures in loops, the event loop, mutable default arguments, `is` versus `==`. The puzzle bank has 83 snippets, 41 in JavaScript and 42 in Python, and every expected output was produced by actually running the code, not typed in by hand.
+It is built on the gotchas every developer meets sooner or later: type coercion, floating point, closures in loops, the event loop, mutable default arguments, `is` versus `==`. The puzzle bank has 83 snippets, 41 in JavaScript and 42 in Python, and every expected output was produced by actually running the code on [Node.js](https://nodejs.org/) and official [Python Software Foundation runtime](https://www.python.org/), not typed in by hand.
 
 What keeps it a game rather than a quiz:
 

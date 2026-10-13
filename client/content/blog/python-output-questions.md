@@ -1,6 +1,7 @@
 ---
 title: "Python output questions: 10 tricky snippets, answered"
 description: 10 tricky Python output questions on mutable defaults, closures, rounding, finally and dict keys. Every answer was checked by running it on CPython 3.12.
+author: Abdullah
 date: 2026-10-03
 tags: [games, python, interviews]
 targetQuery: python output questions
@@ -15,6 +16,16 @@ Here are 10 tricky Python output questions with answers and clear explanations. 
 ## How to use these questions
 
 Cover the output, read the code, and write down exactly what you think Python prints, including brackets, quotes and spacing. Then check. Half right is still wrong: `[1, 2]` and `[1]` are different answers. Keep a count and read the explanation for every miss.
+
+| Concept | Code Pattern | Expected Output | Python Under-the-Hood Behavior |
+| --- | --- | --- | --- |
+| **Mutable Default** | `def f(x, acc=[]):` | Accumulates across calls | Default argument evaluated once at function definition time |
+| **Finally Override** | `try: return 1 finally: return 2` | `2` | `finally` block always executes before function returns |
+| **Late Binding** | `[lambda: i for i in range(3)]` | `[2, 2, 2]` | Closures look up variables at call time, not definition |
+| **Identity vs Value** | `256 is 256` vs `[1] is [1]` | `True` vs `False` | Small integer caching vs distinct mutable object allocations |
+| **Dict Key Deduplication** | `{1: 'a', 1.0: 'b', True: 'c'}` | `{1: 'c'}` | `1 == 1.0 == True` and equal hashes share dictionary bucket |
+| **In-place List Extension** | `a += [2]` vs `a = a + [2]` | Mutates `a` and aliases | `+=` calls `__iadd__` in-place; `+` creates fresh list object |
+| **Banker's Rounding** | `round(2.5)` vs `round(3.5)` | `2` and `4` | Rounds to nearest even number to prevent statistical drift |
 
 ## Functions and default arguments
 
@@ -89,7 +100,7 @@ print([g() for g in gs])
 [0, 1, 2]
 ```
 
-**Why:** a closure looks up `i` when it is called, not when it is created. By the time the lambdas run, the loop has finished and `i` is 2. Writing `i=i` as a default argument captures the value at the moment each lambda is defined.
+**Why:** a closure looks up `i` when it is called, not when it is created, in accordance with the [Python Execution Model for scopes and binding](https://docs.python.org/3/reference/executionmodel.html#binding-of-names). By the time the lambdas run, the loop has finished and `i` is 2. Writing `i=i` as a default argument captures the value at the moment each lambda is defined.
 
 ## Identity and equality
 

@@ -56,8 +56,8 @@ const SERVICES = ['website', 'gotcha-rush', 'typedash', 'pickparty', 'postgres',
 // The guide that lives on this page (its markdown names /games as home), and
 // the other game guides, each on its own URL so each can rank for its query.
 const PATH = '/games';
-const ARTICLE = POSTS.find((p) => p.home === PATH);
-const GUIDES = POSTS.filter((p) => p.category === 'games' && !p.home);
+const ARTICLE = POSTS.find((p) => p.slug === 'free-coding-games-in-your-browser' || p.home === PATH);
+const GUIDES = POSTS.filter((p) => (p.category === 'games' || (p.tags && p.tags.includes('games'))) && p.slug !== 'free-coding-games-in-your-browser');
 const SCHEMA = [
   breadcrumbs([
     { name: 'Home', path: '/' },

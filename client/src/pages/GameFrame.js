@@ -398,8 +398,13 @@ export default function GameFrame() {
     );
   }
 
+  const GAME_ARTICLE_SLUG = {
+    'gotcha-rush': 'gotcha-rush-guess-the-output-game',
+    typedash: 'typedash-online-typing-race-game',
+    pickparty: 'pickparty-online-drafting-party-game',
+  };
   const path = `/games/${gameId}`;
-  const article = POSTS.find((p) => p.home === path);
+  const article = POSTS.find((p) => p.slug === GAME_ARTICLE_SLUG[gameId] || p.home === path);
   const schema = [
     breadcrumbs([
       { name: 'Home', path: '/' },

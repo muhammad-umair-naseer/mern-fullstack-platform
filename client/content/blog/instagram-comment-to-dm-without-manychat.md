@@ -1,6 +1,7 @@
 ---
 title: Instagram comment to DM without ManyChat: what it takes
 description: A comment fires a webhook, your server sends the DM. The real cost is Meta's app review and the upkeep, not the code. When to build, when to buy.
+author: Abdullah
 date: 2026-08-28
 tags: [instagram, automation, api]
 targetQuery: instagram comment to dm automation without manychat
@@ -42,9 +43,9 @@ That word "once" is carrying weight.
 Same list whether you build or buy. The difference is who does the work.
 
 - **An Instagram professional account**, meaning Business or Creator. A personal account cannot use any messaging API, and there is no workaround.
-- **A link to a Facebook Page, probably.** For years the account had to be connected to a Page, and the access token came from that Page. Meta has since been rolling out a login path that lets a business account authorise an app directly. Which one applies depends on the product you build against, so check Meta's current Instagram Platform documentation rather than any blog post, ours included.
+- **A link to a Facebook Page, probably.** For years the account had to be connected to a Page, and the access token came from that Page. Meta has since been rolling out a login path that lets a business account authorise an app directly. Which one applies depends on the product you build against, so check the official [Meta Instagram Graph API documentation](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-graph-api/) rather than any blog post, ours included.
 - **A Meta app** with the messaging and comment permissions requested. The exact permission names have changed across API versions more than once.
-- **App Review and business verification**, if your app will ever touch an account you do not personally control. Working against your own account with a role on your own app is much lighter. This is the single largest hidden cost of building, and it is measured in weeks of waiting rather than hours of coding.
+- **App Review and business verification**, if your app will ever touch an account you do not personally control. Working against your own account with a role on your own app is much lighter. This is the single largest hidden cost of building, governed by the [Meta App Review process](https://developers.facebook.com/docs/development/release/app-review), and it is measured in weeks of waiting rather than hours of coding.
 - **A public HTTPS endpoint** that answers Meta's verification challenge, responds fast, and stays up. Webhook retries are not infinite.
 - **Token handling.** Tokens expire, and long lived ones still need refreshing. That refresh is what quietly breaks six months later.
 

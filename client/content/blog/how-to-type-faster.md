@@ -1,6 +1,7 @@
 ---
 title: "How to type faster and more accurately: a 4 week plan"
 description: How to type faster without losing accuracy. Fix posture and the home row, slow down to stop errors, then push your speed with a pacer. A free 4 week plan.
+author: Umair
 date: 2026-10-03
 tags: [games, typing, productivity]
 targetQuery: how to type faster
@@ -24,7 +25,7 @@ A good rule: if you are making more than a few mistakes per passage, you are goi
 
 Two minutes of setup makes every practice session count for more.
 
-- **Sit square to the keyboard.** Feet flat, shoulders relaxed, elbows bent at roughly a right angle, wrists floating rather than bent up.
+- **Sit square to the keyboard.** Feet flat, shoulders relaxed, elbows bent at roughly a right angle, wrists floating rather than bent up (see the [Mayo Clinic Office Ergonomics Guide](https://www.mayoclinic.org/healthy-lifestyle/adult-health/in-depth/office-ergonomics/art-20047551) for healthy wrist and forearm alignment).
 - **Find the home row.** Left fingers rest on A, S, D and F, right fingers on J, K, L and the semicolon. Feel for the small bumps on F and J. Each finger reaches up and down from its home key and comes back.
 - **Use both thumbs for space.** Or pick one and stay consistent.
 - **Stop looking down.** This is the hardest habit to break and the one that matters most. If you have to, cover your hands with a cloth for the first week.
@@ -32,6 +33,13 @@ Two minutes of setup makes every practice session count for more.
 ## A 4 week plan to type faster
 
 Practise for 15 to 20 minutes a day, five or six days a week. Short daily sessions work far better than one long session at the weekend.
+
+| Week | Daily Goal | Focus Area | Target Accuracy | Suggested Mode |
+| --- | --- | --- | --- | --- |
+| **Week 1** | 15 mins | Home row muscle memory & screen focus | 95%+ | Solo practice (35 WPM pacer) |
+| **Week 2** | 20 mins | Zero-error runs & combo maintenance | 98%+ | Solo practice (clean passages) |
+| **Week 3** | 20 mins | Pace acceleration & live room pressure | 96%+ | 50–70 WPM pacer + 1 Live Race |
+| **Week 4** | 20 mins | Numbers, symbols & daily challenge | 97%+ | Daily Challenge + Code mode |
 
 ### Week 1: hands and eyes
 

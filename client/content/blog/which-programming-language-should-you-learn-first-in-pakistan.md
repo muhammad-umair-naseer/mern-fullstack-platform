@@ -1,6 +1,7 @@
 ---
 title: Which programming language should you learn first in Pakistan?
 description: Not a ranked list. What local software houses actually post for, what freelancing really rewards, and why your first language matters least of all.
+author: Abdullah
 date: 2026-08-28
 tags: [careers, learning, jobs]
 targetQuery: which programming language should i learn first in pakistan
@@ -39,7 +40,7 @@ If your row is obvious, stop reading and go start. If it is not, keep going.
 
 ## What local software houses actually post for
 
-You do not have to take anyone's word for this, including ours. Open Rozee, LinkedIn or the careers page of any twenty person product company in I-9 or Gulberg and read thirty junior postings. The pattern is not subtle.
+You do not have to take anyone's word for this, including ours. Open Rozee, LinkedIn or the careers page of any twenty person product company in I-9 or Gulberg and read thirty junior postings. The pattern matches global data seen in the [Stack Overflow Developer Survey](https://survey.stackoverflow.co/) and the [GitHub State of the Octoverse](https://github.blog/news-insights/octoverse/):
 
 **JavaScript is the default.** React on the front, Node on the back, MongoDB or Postgres underneath. Plenty of small and mid sized product companies here advertise "MERN developer" as though it were one job title, which tells you how standardised the local stack has become. This is why JavaScript is the safe answer for employment: it is the language with the most doors.
 

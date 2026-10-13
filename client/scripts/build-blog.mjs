@@ -115,8 +115,8 @@ writeFileSync(
   ` * Add or change a post by editing the markdown, then rebuild. */\n\n` +
   `export const POSTS = ${JSON.stringify(posts, null, 2)};\n\n` +
   `export const postBySlug = (slug) => POSTS.find((p) => p.slug === slug);\n\n` +
-  `/** Where a post is read: its own page, or the page it lives on, anchored to it. */\n` +
-  `export const postPath = (p) => (p.home ? \`\${p.home}#\${p.slug}\` : \`/blog/\${p.slug}\`);\n`
+  `/** Where a post is read: its own crawlable address. */\n` +
+  `export const postPath = (p) => \`/blog/\${p.slug}\`;\n`
 );
 
 const draftNote = drafts.length ? `, ${drafts.length} draft(s) held back` : '';

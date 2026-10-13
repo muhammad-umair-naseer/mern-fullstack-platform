@@ -1,6 +1,7 @@
 ---
 title: "JavaScript output questions: 10 tricky snippets, answered"
 description: 10 tricky JavaScript output questions on coercion, sorting, closures, the event loop and NaN. Every answer was checked by running the code on Node 22.
+author: Abdullah
 date: 2026-10-03
 tags: [games, javascript, interviews]
 targetQuery: javascript output questions
@@ -15,6 +16,16 @@ Below are 10 tricky JavaScript output questions with answers and explanations. M
 ## How to use these questions
 
 Read each snippet and write down your answer **before** you scroll to the output. Be exact: if a line prints `0.30`, then `0.3` is wrong. That is how the game scores it too. Count how many you get fully right, then read the explanations for the ones you missed. They are where the learning is.
+
+| Topic | Tricky Snippet | Actual Output | Core Mechanism |
+| --- | --- | --- | --- |
+| **String coercion** | `"1" + 1` vs `"1" - 1` | `"11"` vs `0` | `+` concats strings; `-` converts to numeric |
+| **NaN Equality** | `NaN === NaN` | `false` | IEEE-754: NaN is never equal to itself |
+| **Empty Math** | `Math.max()` vs `Math.min()` | `-Infinity` vs `Infinity` | Initial accumulator identity values |
+| **Default Sort** | `[10, 9, 1].sort()` | `[1, 10, 9]` | Lexicographical UTF-16 string comparison |
+| **Floating Point** | `0.1 + 0.2 === 0.3` | `false` | Binary float precision (`0.30000000000000004`) |
+| **Loop Closures** | `var` vs `let` in `setTimeout` | `3, 3, 3` vs `0, 1, 2` | Shared function scope vs block scope |
+| **Event Loop** | Macrotask vs Microtask | Promise (`3`) before Timeout (`2`) | Microtask queue drains before macrotask turns |
 
 ## Type coercion questions
 
@@ -183,7 +194,7 @@ console.log(4);
 2
 ```
 
-**Why:** synchronous code runs first, printing 1 and 4. Promise callbacks are microtasks and run as soon as the current script finishes, printing 3. `setTimeout` callbacks are macrotasks and wait for a later turn of the event loop, even with a 0 ms delay, so 2 comes last. This is one of the most common JavaScript interview questions of all.
+**Why:** synchronous code runs first, printing 1 and 4. Promise callbacks are microtasks and run as soon as the current script finishes, printing 3. `setTimeout` callbacks are macrotasks and wait for a later turn of the event loop, even with a 0 ms delay, so 2 comes last. This is one of the most common JavaScript interview questions of all; see [MDN's JavaScript Event Loop and Concurrency Model](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop) for full queue semantics.
 
 ## JSON questions
 

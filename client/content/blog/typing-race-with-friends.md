@@ -1,6 +1,7 @@
 ---
 title: "How to start a typing race with friends (free, no sign-up)"
 description: Start a free typing race with friends in under a minute. Open TypeDash, create a private room, share the invite link and race up to five people live.
+author: Umair
 date: 2026-10-03
 tags: [games, typing, multiplayer]
 targetQuery: typing race with friends
@@ -17,9 +18,16 @@ This guide walks through the steps, explains what a race with friends keeps trac
 1. **Open TypeDash** in your browser. There is nothing to download and no form to fill in. The game creates an account for your browser automatically the first time you visit.
 2. **Create a private room.** You get your own room with an invite link.
 3. **Share the link.** Paste it into WhatsApp, Discord or any chat. Anyone who opens it joins your room straight away.
-4. **Race.** Everyone types the same passage at the same time. You see every car move live, and the results show speed, accuracy and finishing place for everyone.
+4. **Race.** Everyone types the same passage at the same time. Synchronised over low-latency [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API), you see every car move live, and the results show speed, accuracy and finishing place for everyone.
 
 Then run it back. Most groups play more than one race, and the room remembers who is winning.
+
+| Race Format | Opponents | Sync Style | Best Use Case |
+| --- | --- | --- | --- |
+| **Private Room** | 2–5 Friends (Invite Link) | Real-time live track | Game nights, study groups, office breaks |
+| **Public Match** | Up to 5 Global Racers / Bots | Real-time live track | Ranked ladder climbing & level progression |
+| **Ghost Replay** | 1 (Friend's recorded ghost) | Asynchronous | Different schedules or time zones |
+| **Daily Challenge** | Global leaderboard | 1 Attempt per day | Daily consistency & benchmark testing |
 
 ## What a race with friends keeps track of
 

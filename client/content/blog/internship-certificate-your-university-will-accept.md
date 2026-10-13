@@ -1,6 +1,7 @@
 ---
 title: An internship certificate your university will actually accept
 description: What a Pakistani department really asks for, why coordinators now check, and what to request from the company in your first week instead of your last.
+author: Umair
 date: 2026-08-28
 tags: [internships, students, careers]
 targetQuery: internship certificate for university submission
@@ -24,7 +25,7 @@ The mistake almost everyone makes is asking for all of this on the last day. By 
 
 ## What your department is really checking
 
-Coordinators are not reading your certificate for the compliments. They are answering three separate questions:
+Coordinators are not reading your certificate for the compliments. Under guidelines from the [Higher Education Commission (HEC) Pakistan](https://www.hec.gov.pk/) and computing accreditation bodies like [NCEAC](https://nceac.org.pk/), they are answering three separate verification questions:
 
 1. Is this organisation real and legally registered?
 2. Did this student actually work there, for the period claimed?

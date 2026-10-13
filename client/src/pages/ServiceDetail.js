@@ -69,10 +69,11 @@ const ServiceDetail = () => {
 
   const related = relatedServices(service.slug);
 
-  // A blog post can live on this page (its markdown names it as home). Its
-  // Article and FAQ markup join the page's own, since its words are here.
+  const SERVICE_ARTICLE_SLUG = {
+    'ai-automation': 'free-offline-ai-assistant',
+  };
   const path = `/services/${service.slug}`;
-  const article = POSTS.find((p) => p.home === path);
+  const article = POSTS.find((p) => p.slug === SERVICE_ARTICLE_SLUG[service.slug] || p.home === path);
   const articleSchema = article ? hostedArticle(article, path, parseBlogContent(article.body).faqs) : [];
 
   return (

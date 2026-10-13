@@ -1,6 +1,7 @@
 ---
 title: What a mobile app really costs in Pakistan
 description: Real cost bands for building an app in Pakistan, what moves a quote between them, what is always extra, and when a website is the cheaper answer.
+author: Umair
 date: 2026-08-28
 tags: [pricing, mobile, flutter]
 targetQuery: mobile app development cost in pakistan
@@ -75,7 +76,7 @@ None of this is in a development quote. All of it is your bill.
 
 The store accounts are billed in USD, so the rupee cost moves with the exchange rate. Both stores also verify business identity before a company can publish, which takes weeks of paperwork. Apple asks organisations for a D-U-N-S number, Google runs its own verification, and the requirements change often enough that you should read their developer sites this month rather than trust a blog from last year. Start that early, not the week you want to launch.
 
-Google Play charges a one time developer fee and Apple charges annually. Both are billed in dollars, so the rupee figure moves with the exchange rate. Check the current rates on each store's developer page rather than trusting a number in an article.
+Google Play charges a one-time registration fee (see [Google Play Console developer account registration](https://support.google.com/googleplay/android-developer/answer/6112436)) and Apple charges annually through the [Apple Developer Program](https://developer.apple.com/programs/enroll/). Both are billed in dollars, so the rupee figure moves with the exchange rate. Check the current rates on each store's developer page rather than trusting a number in an article.
 
 ## The cost nobody mentions: keeping the app alive
 

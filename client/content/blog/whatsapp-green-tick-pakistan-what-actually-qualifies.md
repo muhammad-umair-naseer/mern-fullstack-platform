@@ -1,6 +1,7 @@
 ---
 title: WhatsApp green tick in Pakistan: what actually qualifies
 description: No agency can sell you the Official Business Account tick. Here is what Meta looks for, why applications get rejected, and what you actually get.
+author: Abdullah
 date: 2026-08-28
 tags: [whatsapp, automation, business]
 targetQuery: whatsapp green tick verification pakistan
@@ -35,7 +36,7 @@ Most of the confusion in this market comes from one word covering three separate
 
 The middle row is the one that changes your day to day results, and it is the one almost nobody in Pakistan is selling, because it does not sound impressive.
 
-Meta Verified deserves a warning. It is a genuine paid product, it has been rolling out country by country, and its coverage across WhatsApp, Instagram and Facebook has changed more than once. Some sellers now use its existence to imply the green tick is purchasable. Check Meta's current documentation for what Meta Verified includes in Pakistan today before you accept anyone's description of it, including ours.
+Meta Verified deserves a warning. It is a genuine paid product, it has been rolling out country by country, and its coverage across WhatsApp, Instagram and Facebook has changed more than once. Some sellers now use its existence to imply the green tick is purchasable. Check Meta's official [Official Business Account verification guidelines](https://www.facebook.com/business/help/2058515294227817) for current requirements before accepting anyone's third-party promises.
 
 ## What Meta means by notable
 

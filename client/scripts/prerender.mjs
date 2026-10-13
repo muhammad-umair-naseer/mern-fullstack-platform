@@ -86,28 +86,96 @@ const SHELL = (await readFile(join(BUILD, 'index.html'), 'utf8'))
   .replace(/<meta\s+(?:property|name)="(?:og|twitter):[^"]*"[^>]*>\s*/gi, '')
   .replace(/<script\s+type="application\/ld\+json"[\s\S]*?<\/script>\s*/gi, '');
 
+// Preload local courses so prerendering never fails even if backend API is offline
+const courseMap = new Map();
+const courseList = [];
+if (existsSync(COURSES)) {
+  for (const f of (await readdir(COURSES)).filter((x) => x.endsWith('.js'))) {
+    try {
+      const mod = (await import(pathToFileURL(`${COURSES}/${f}`).href)).default;
+      if (mod && mod.slug) {
+        courseMap.set(mod.slug, mod);
+        courseList.push({
+          id: mod.slug,
+          slug: mod.slug,
+          title: mod.title,
+          category: mod.category,
+          level: mod.level,
+          duration: mod.duration,
+          accent: mod.accent,
+          coverKey: mod.coverKey,
+          summary: mod.summary,
+          description: mod.description,
+          chapterCount: mod.chapters?.length || 0,
+          lessonCount: mod.chapters?.reduce((acc, c) => acc + (c.lessons?.length || 0), 0) || 0,
+        });
+      }
+    } catch {
+      // ignore
+    }
+  }
+}
+
+let apiReachable = false;
+try {
+  const probe = await fetch(`${API_TARGET}/api/learn/courses`, { signal: AbortSignal.timeout(2500) });
+  if (probe.ok) {
+    const { data } = await probe.json();
+    console.log(`API reachable at ${API_TARGET} (${data.length} courses)`);
+    apiReachable = true;
+  }
+} catch {
+  console.log(`Note: Backend API at ${API_TARGET} is offline. Using local in-memory course repository for prerendering (${courseList.length} courses loaded).`);
+}
+
 // A static server that falls back to index.html, the way the real host must be
 // configured for a single page app.
 const server = createServer(async (req, res) => {
   const raw = req.url || '/';
 
-  // Proxy the API rather than letting the SPA fallback answer it with HTML,
-  // which is what silently produced pages full of "could not load" states.
+  // Answer API calls either via upstream or in-memory fallback
   if (raw.startsWith('/api/')) {
-    try {
-      const upstream = await fetch(API_TARGET + raw, {
-        method: req.method,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const body = Buffer.from(await upstream.arrayBuffer());
-      res.writeHead(upstream.status, {
-        'Content-Type': upstream.headers.get('content-type') || 'application/json',
-      });
-      return res.end(body);
-    } catch {
-      res.writeHead(502, { 'Content-Type': 'application/json' });
-      return res.end('{"message":"prerender proxy could not reach the API"}');
+    if (apiReachable) {
+      try {
+        const upstream = await fetch(API_TARGET + raw, {
+          method: req.method,
+          headers: { 'Content-Type': 'application/json' },
+          signal: AbortSignal.timeout(4000),
+        });
+        if (upstream.ok) {
+          const body = Buffer.from(await upstream.arrayBuffer());
+          res.writeHead(upstream.status, {
+            'Content-Type': upstream.headers.get('content-type') || 'application/json',
+          });
+          return res.end(body);
+        }
+      } catch {
+        // Fall through to local fallback
+      }
     }
+
+    const cleanPath = raw.split('?')[0];
+    if (cleanPath === '/api/learn/courses' || cleanPath === '/api/learn/courses/') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ data: courseList }));
+    }
+
+    if (cleanPath.startsWith('/api/learn/courses/')) {
+      const slug = cleanPath.replace('/api/learn/courses/', '').split('/')[0];
+      const course = courseMap.get(slug);
+      if (course) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ data: course }));
+      }
+    }
+
+    if (cleanPath.startsWith('/api/auth/me')) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ message: 'Unauthenticated' }));
+    }
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ data: [] }));
   }
 
   const url = decodeURIComponent(raw.split('?')[0]);
@@ -137,35 +205,21 @@ if (!CHROME || !existsSync(CHROME)) {
   process.exit(0);
 }
 
-try {
-  const probe = await fetch(`${API_TARGET}/api/learn/courses`);
-  if (!probe.ok) throw new Error(`HTTP ${probe.status}`);
-  const { data } = await probe.json();
-  console.log(`API reachable at ${API_TARGET} (${data.length} courses)`);
-} catch (err) {
-  console.warn(
-    `\n⚠️ The API at ${API_TARGET} is not reachable (${err.message}). Skipping prerender step.\n`
-  );
-  server.close();
-  process.exit(0);
-}
-
 const routes = [
   '/', '/about', '/services', '/courses', '/internships', '/tools',
   '/contact', '/terms', '/privacy', '/your-bot', '/blog', '/faq', '/games',
   '/games/typedash', '/games/gotcha-rush', '/games/pickparty',
 ];
 
-for (const f of (await readdir(COURSES)).filter((x) => x.endsWith('.js'))) {
-  const mod = (await import(pathToFileURL(`${COURSES}/${f}`).href)).default;
-  routes.push(`/learn/${mod.slug}`);
+for (const [slug] of courseMap) {
+  routes.push(`/learn/${slug}`);
 }
 
 // Every post gets its own static page. This is the whole reason posts live as
 // markdown in the repo rather than in a database: the full text ends up in the
 // HTML by construction, so a crawler never has to run JavaScript to read one.
 const { POSTS } = await import(pathToFileURL(resolve(HERE, '../src/data/blog.generated.js')).href);
-for (const post of POSTS) if (!post.home) routes.push(`/blog/${post.slug}`);   // a post with a home renders on that page
+for (const post of POSTS) routes.push(`/blog/${post.slug}`);
 
 // Every service is its own page now, so every service gets prerendered.
 const { SERVICES } = await import(pathToFileURL(resolve(HERE, '../src/data/services.js')).href);

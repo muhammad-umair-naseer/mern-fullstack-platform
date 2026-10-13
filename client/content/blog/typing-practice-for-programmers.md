@@ -1,6 +1,7 @@
 ---
 title: "Typing practice for programmers: race on real code"
 description: Typing practice for programmers on real code in JavaScript, Python, SQL, Go, Rust and more. Train brackets and symbols in a free live typing race.
+author: Umair
 date: 2026-10-03
 tags: [games, typing, coding]
 targetQuery: typing practice for programmers
@@ -40,17 +41,13 @@ Practising these on their own is boring. Practising them inside real lines of co
 
 ## Real code to practise on
 
-TypeDash has a dedicated **code mode** with 20 real one liners and short snippets across the languages developers use every day:
+TypeDash has a dedicated **code mode** featuring syntax from languages ranked highest in the [Stack Overflow Developer Survey](https://survey.stackoverflow.co/)—20 real one liners and short snippets across the languages developers write every day:
 
-- **JavaScript:** filter, map and reduce; a slugify function; a debounce
-- **TypeScript:** a clamp function and a small generic
-- **Python:** word counts and a small dataclass
-- **SQL:** top customers, and ranking inside each group
-- **Go:** a recursive Fibonacci, and handling the error first
-- **Rust:** summing the even squares
-- **Bash and shell:** cleaning old logs, and the top ten lines
-- **Web:** an HTML button, a CSS hover lift and a responsive CSS grid
-- **Config and tools:** a JSON package manifest, a YAML build step, and a Git command for what changed this week
+- **JavaScript & TypeScript:** filter, map, reduce, debounce, and generic constraints
+- **Python & SQL:** word counts, dataclasses, and windowed queries
+- **Go & Rust:** Fibonacci recursion, error handling, and iterators
+- **Shell & Git:** log parsers and commands from [official Git documentation](https://git-scm.com/doc)
+- **Web & Config:** CSS grid layouts, JSON manifests, and YAML pipelines
 
 Each one is typed exactly as written, symbols and all. There is also a **numbers and symbols** mode with dates, prices and codes, which is good training for the top row.
 

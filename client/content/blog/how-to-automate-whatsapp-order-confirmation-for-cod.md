@@ -1,6 +1,7 @@
 ---
 title: How to automate WhatsApp order confirmation for COD
 description: The message flow that confirms a cash on delivery order before dispatch, the wording we would send, and what automation genuinely cannot fix.
+author: Abdullah
 date: 2026-08-28
 tags: [whatsapp, ecommerce, automation]
 targetQuery: how to automate whatsapp order confirmation
@@ -40,9 +41,9 @@ Every row where you start the message needs a template approved in advance. That
 
 When a customer messages your business, a 24 hour window opens, and inside it you can reply with whatever words you like. That has held for years, measured from their most recent message.
 
-A customer who typed their number into a checkout form has not messaged you, so no window is open. The confirmation, the message you most want to send, has to be a **message template**: fixed wording with variable slots, submitted to Meta and reviewed before first use. You also need the customer's opt in.
+A customer who typed their number into a checkout form has not messaged you, so no window is open. The confirmation, the message you most want to send, has to be a **message template**: fixed wording with variable slots, submitted to Meta and reviewed before first use, as outlined in the official [Meta for Developers WhatsApp Cloud API Message Templates guide](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates). You also need the customer's opt in.
 
-Order updates are the textbook case for the utility category rather than marketing, and the categories are priced differently. Be careful with any specific figure on that, including ours. Meta has reworked template pricing more than once, at points making utility templates free inside an open window, and rates vary by country. Check the current rules first.
+Order updates are the textbook case for the utility category rather than marketing, and the categories are priced differently. Be careful with any specific figure on that, including ours. Meta has reworked template pricing more than once, at points making utility templates free inside an open window, and rates vary by country (consult the [Meta WhatsApp Business Platform Pricing schedule](https://developers.facebook.com/docs/whatsapp/pricing/) for current country rates). Check the current rules first.
 
 None of this applies to the cheap tools that log into WhatsApp Web with a QR code, which is why people buy them, and why they lose the number: pushing automated order messages through the consumer app is the pattern that gets numbers banned, usually on the day volume finally matters.
 

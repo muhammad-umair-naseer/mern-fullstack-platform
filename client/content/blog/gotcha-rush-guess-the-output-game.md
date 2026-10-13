@@ -1,12 +1,12 @@
 ---
 title: "Gotcha Rush: a guess the output game for coders"
 description: How to play Gotcha Rush, a free guess the output game. Read a JavaScript or Python snippet, type what it prints, and beat up to four other players.
+author: Abdullah
 date: 2026-10-09
 tags: [games, javascript, python, multiplayer]
 targetQuery: guess the output game
 image: /blog/covers/gotcha-rush-guess-the-output-game.webp
 imageAlt: "The Gotcha Rush home screen with a language picker and buttons for Quick Match, Solo Rush and Play with friends"
-home: /games/gotcha-rush
 ---
 
 Gotcha Rush is a guess the output game: you read a short piece of JavaScript or Python code and type exactly what it prints, while up to four other players try to beat you to it. To start, pick a language on the game's home screen (JavaScript, Python or Both). Then press **Quick Match** to play a ranked room, **Solo Rush** to play alone, or **Play with friends** to make a private room. A room is one shared game that several players join.
@@ -51,7 +51,7 @@ true
 false
 ```
 
-JavaScript works out comparisons from left to right. Each step gives a boolean, which is `true` or `false`. `1 < 2` is `true`, and `true < 3` becomes `1 < 3`, which is `true`. But `3 > 2` is `true`, and `true > 1` becomes `1 > 1`, which is `false`.
+JavaScript works out comparisons from left to right per the [ECMAScript Relational Operators specification](https://tc39.es/ecma262/#sec-relational-operators). Each step gives a boolean, which is `true` or `false`. `1 < 2` is `true`, and `true < 3` becomes `1 < 3`, which is `true`. But `3 > 2` is `true`, and `true > 1` becomes `1 > 1`, which is `false`.
 
 ### Chained comparisons in Python
 
@@ -65,7 +65,7 @@ print(1 < 2 < 3, 1 < 3 > 2, 1 == 1 in [1], "a" < "b" < "B")
 True True True False
 ```
 
-Python reads `a < b < c` as `a < b and b < c`. That is why `1 < 3 > 2` is `True` here. The same chaining works with `in`, so `1 == 1 in [1]` means `1 == 1 and 1 in [1]`. The last one is `False` because capital letters sort before small letters, so `"b" < "B"` is false.
+Python reads `a < b < c` as `a < b and b < c`, as defined in the [Python Language Reference on comparisons](https://docs.python.org/3/reference/expressions.html#comparisons). That is why `1 < 3 > 2` is `True` here. The same chaining works with `in`, so `1 == 1 in [1]` means `1 == 1 and 1 in [1]`. The last one is `False` because capital letters sort before small letters, so `"b" < "B"` is false.
 
 Every output in the game came from really running the code, not from typing it by hand. The game has 83 puzzles: 41 in JavaScript and 42 in Python. Want more practice first? Read our [JavaScript output questions](/blog/javascript-output-questions) and [Python output questions](/blog/python-output-questions). Each has 10 snippets and full explanations.
 
@@ -84,6 +84,12 @@ Your points for a round come from a few pieces.
 Stuck? Press the **Lifeline** button. It turns the round into a multiple choice question with up to four options: the real answer and some wrong ones. The catch is that your points for that round are cut in half. It is a good way to keep a combo alive on a hard puzzle.
 
 ## Quick Match, Solo Rush and private rooms
+
+| Mode | Players | Format | Time per Round | Ranked Points |
+| --- | --- | --- | --- | --- |
+| **Quick Match** | Up to 5 (bots fill) | 8 progressive rounds | 40 seconds | Yes (adds to leaderboards) |
+| **Solo Rush** | 1 (solo survival) | Unlimited rounds (3 lives) | 40s down to 14s | Yes (Rush runs board) |
+| **Play with Friends** | Host + invitees (code/link) | Custom (5, 8, 10, 12 rounds) | 40 seconds | No (friendly stats only) |
 
 ### Quick Match
 

@@ -1,6 +1,7 @@
 ---
 title: What a website actually costs in Pakistan
 description: What you are actually paying for in a brochure site, a WooCommerce store, a custom web app and a SaaS MVP, and what a cheap quote leaves out.
+author: Umair
 date: 2026-08-28
 tags: [pricing, web-development, pakistan]
 targetQuery: how much does it cost to build a website in pakistan
@@ -45,7 +46,7 @@ Most of the spread here is design, not code. A bought theme dressed in your colo
 
 The same site plus a shop: product catalogue, cart, checkout, a payment gateway, order emails, shipping rules and stock counts.
 
-WooCommerce itself is free and installing it takes an afternoon, which is why quotes for stores vary so wildly. The money goes elsewhere: into product data (a hundred products with sizes and colours is a hundred small decisions someone has to make), into shipping rules that match how you actually deliver, and into the payment gateway, which is paperwork with a bank or a local processor rather than a coding problem. Start that paperwork early. It is the most common reason a finished store sits unlaunched. If you want to understand the thing you are buying, our free [WordPress course](/learn/wordpress-development) covers the same stack.
+[WooCommerce](https://woocommerce.com/) itself is free and installing it takes an afternoon, which is why quotes for stores vary so wildly. The money goes elsewhere: into product data (a hundred products with sizes and colours is a hundred small decisions someone has to make), into shipping rules that match how you actually deliver, and into the payment gateway, which is paperwork with a bank or a local processor rather than a coding problem. Start that paperwork early. It is the most common reason a finished store sits unlaunched. If you want to understand the thing you are buying, our free [WordPress course](/learn/wordpress-development) covers the same stack.
 
 ## A custom web application
 
@@ -78,7 +79,7 @@ Integrations deserve a separate warning, because anything that talks to someone 
 Ask explicitly which of these are inside the quote, because often they are not:
 
 - A domain, renewed every year, forever
-- Hosting, on a plan that matches your traffic rather than the cheapest shared box available
+- Hosting, on a plan that matches your traffic rather than the cheapest shared box available (paired with [Cloudflare](https://www.cloudflare.com/) for SSL and DDoS mitigation)
 - Email on your own domain, which is a separate service from hosting
 - Renewals for any paid theme or plugin, since the licence usually buys one year of updates
 - Content: writing, photography, product images, translation

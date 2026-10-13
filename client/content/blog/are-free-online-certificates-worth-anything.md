@@ -1,6 +1,7 @@
 ---
 title: Are free online certificates worth anything on a CV?
 description: A certificate is not a qualification and nobody gets hired for one. Here is what a free certificate is actually good for, and what makes one credible.
+author: Umair
 date: 2026-08-28
 tags: [careers, courses, certificates]
 targetQuery: are free online certificates worth anything
@@ -59,7 +60,7 @@ If a certificate has all five, a hiring manager can confirm your claim without e
 
 ## The global hiring & remote job landscape
 
-Worldwide, the tech hiring market is flooded with certificates. Online academies issue them, bootcamps issue them, and afternoon webinars issue them. The practical result is that a certificate alone has almost no power as a standalone differentiator, because technical recruiters see hundreds of them daily.
+Worldwide, the tech hiring market is flooded with certificates. Online academies issue them, bootcamps issue them, and afternoon webinars issue them. Respected open curricula like [freeCodeCamp's verified certifications](https://www.freecodecamp.org/) and [Harvard University's CS50](https://pll.harvard.edu/course/cs50-introduction-computer-science) hold weight because they demand extensive project verification and proctored automated testing rather than passive video completion. The practical result is that a certificate alone has almost no power as a standalone differentiator, because technical recruiters see hundreds of them daily.
 
 That cuts both ways. It means a certificate alone will not land you an offer. It also means a *verifiable* one stands out from unverified PDF claims, because so few of them survive an automated check.
 

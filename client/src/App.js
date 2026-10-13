@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import RequireAuth from './components/RequireAuth';
 import { AuthProvider } from './context/AuthContext';
@@ -128,12 +128,12 @@ export default function App() {
             <Route path="/learn/:slug/quiz/:chapterId" element={<RequireAuth><ChapterQuiz /></RequireAuth>} />
             <Route path="/learn/:slug/final" element={<RequireAuth><FinalExam /></RequireAuth>} />
 
-            {/* Navigation aliases & redirects */}
-            <Route path="/yourbot" element={<YourBot />} />
-            <Route path="/automations" element={<YourBot />} />
-            <Route path="/apply" element={<Internships />} />
-            <Route path="/apply-now" element={<Internships />} />
-            <Route path="/internship" element={<Internships />} />
+            {/* Navigation aliases & clean 301-style client redirects */}
+            <Route path="/yourbot" element={<Navigate to="/your-bot" replace />} />
+            <Route path="/automations" element={<Navigate to="/your-bot" replace />} />
+            <Route path="/apply" element={<Navigate to="/internships" replace />} />
+            <Route path="/apply-now" element={<Navigate to="/internships" replace />} />
+            <Route path="/internship" element={<Navigate to="/internships" replace />} />
 
             {/* Catch-all fallback to Home */}
             <Route path="*" element={<Home />} />

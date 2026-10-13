@@ -6,7 +6,10 @@ import PostCard, { CATEGORY } from '../components/PostCard';
 import PageHero from '../components/PageHero';
 import BlogPostVisual from '../components/heroes/BlogPostVisual';
 import TableOfContents from '../components/blog/TableOfContents';
+import BlogShare from '../components/blog/BlogShare';
 import BlogFaq from '../components/blog/BlogFaq';
+import AuthorBio from '../components/blog/AuthorBio';
+import { getAuthor } from '../data/authors';
 import { parseBlogContent } from '../lib/blogParser';
 import Seo from '../seo/Seo';
 import { breadcrumbs, faq } from '../seo/schema';
@@ -96,8 +99,20 @@ const BlogPost = () => {
     );
   }
 
-  // A post that lives on another page is read there; this address only forwards.
-  if (post.home) return <Navigate to={postPath(post)} replace />;
+  // Hero action button for interactive games or tools
+  const author = getAuthor(post?.author);
+  const heroActions =
+    post.slug.includes('gotcha-rush')
+      ? [{ to: '/games/gotcha-rush', label: 'Play Gotcha Rush', primary: true }]
+      : post.slug.includes('typedash')
+      ? [{ to: '/games/typedash', label: 'Play TypeDash', primary: true }]
+      : post.slug.includes('pickparty')
+      ? [{ to: '/games/pickparty', label: 'Play PickParty', primary: true }]
+      : post.slug.includes('free-coding-games')
+      ? [{ to: '/games', label: 'Play Browser Games', primary: true }]
+      : post.slug.includes('free-offline-ai')
+      ? [{ to: '/services/ai-automation', label: 'Explore AI Automation', primary: true }]
+      : undefined;
 
   // Read next: the newest other posts
   const more = POSTS.filter((p) => p.slug !== post.slug).slice(0, 2);
@@ -120,7 +135,15 @@ const BlogPost = () => {
             dateModified: post.updated,
             url: absolute(`/blog/${post.slug}`),
             mainEntityOfPage: absolute(`/blog/${post.slug}`),
-            author: { '@type': 'Organization', name: SITE.legalName },
+            author: {
+              '@type': 'Person',
+              name: author.displayName,
+              jobTitle: author.role,
+              worksFor: {
+                '@type': 'Organization',
+                name: SITE.legalName,
+              },
+            },
             publisher: { '@id': `${absolute('/')}#organization`.replace('//#', '/#') },
           },
           breadcrumbs([
@@ -142,9 +165,14 @@ const BlogPost = () => {
             back={{ to: '/blog', label: 'Writing' }}
             label={(CATEGORY[post.category] || { label: 'Notes' }).label}
             lines={headline(post.title)}
+            actions={heroActions}
             // The reading time sits on the cover's dial; without a cover it
             // joins the date here.
-            meta={post.image ? [formatDate(post.date)] : [formatDate(post.date), `${post.minutes} min read`]}
+            meta={
+              post.image
+                ? [formatDate(post.date), `By ${author.displayName}`]
+                : [formatDate(post.date), `${post.minutes} min read`, `By ${author.displayName}`]
+            }
             visual={
               post.image ? (
                 <BlogPostVisual src={post.image} alt={post.imageAlt || post.title} minutes={post.minutes} />
@@ -157,10 +185,19 @@ const BlogPost = () => {
           {/* Interactive Table of Contents Table at top of article */}
           {toc.length > 0 && <TableOfContents items={toc} />}
 
+          {/* Social Share & Copy Link Bar (Top) */}
+          <BlogShare title={post.title} slug={post.slug} placement="top" />
+
           {/* Cleaned Article Body */}
           <div className="cx-lv-in cx-lv-body" style={{ '--i': 3 }}>
             <Markdown>{cleanedBody}</Markdown>
           </div>
+
+          {/* Social Share & Copy Link Bar (Bottom) */}
+          <BlogShare title={post.title} slug={post.slug} placement="bottom" />
+
+          {/* Author Bio Box for E-E-A-T Credibility */}
+          <AuthorBio author={author} />
 
           {/* Interactive FAQ Accordion Component at end of article */}
           {faqs.length > 0 && <BlogFaq faqs={faqs} />}
