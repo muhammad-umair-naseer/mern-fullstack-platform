@@ -11,6 +11,7 @@
     "start:typedash": "cross-env PORT=4001 node --env-file-if-exists=server/.env games/typedash/server/index.js",
     "start:pickparty": "cross-env PORT=5001 node --env-file-if-exists=server/.env games/pickparty/server/index.js",
     "start:admin": "cross-env PORT=6001 node admin/server.js",
+    "start:yourbot": "node scripts/start-yourbot.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

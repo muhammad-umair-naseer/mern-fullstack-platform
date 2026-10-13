@@ -8,6 +8,7 @@ import FaqSection from '../components/FaqSection';
 import PageHero from '../components/PageHero';
 import YourBotVisual from '../components/heroes/YourBotVisual';
 import { faqsFor } from '../data/faqs';
+import { YOURBOT_URL } from '../config';
 
 // The three jobs the hero's conversations play out, each with the reply
 // that closes it there.
@@ -128,7 +129,7 @@ export default function YourBot() {
         lines={['Every message,', <em key="em">answered.</em>]}
         lede="A WhatsApp assistant that qualifies leads and books meetings, day and night."
         actions={[
-          { to: '/contact', label: 'Get early access', primary: true },
+          { href: YOURBOT_URL, label: 'Get early access', primary: true, external: true },
           { to: `${base}/privacy`, label: 'Data privacy' },
         ]}
         visual={<YourBotVisual />}

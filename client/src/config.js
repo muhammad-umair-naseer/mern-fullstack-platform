@@ -13,4 +13,8 @@ const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL ||
   (process.env.NODE_ENV === 'production' ? '' : devApi());
 
+export const YOURBOT_URL =
+  process.env.REACT_APP_YOURBOT_URL || 'https://localhost:5173';
+
 export default API_BASE_URL;
+
