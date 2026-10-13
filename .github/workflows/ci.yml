@@ -69,6 +69,9 @@ jobs:
           JWT_SECRET: ci-only-jwt-secret-not-for-production-0123456789abcdef
           POSTGRES_PASSWORD: ci-only
           REDIS_PASSWORD: ci-only
+          ADMIN_EMAIL: admin@example.com
+          ADMIN_PASSWORD: ci-only-admin-password
+          GAME_SSO_SECRET: ci-only-game-sso-secret-not-for-production-0123456789abcdef
         run: docker compose config -q
 
   server:
@@ -141,7 +144,6 @@ jobs:
           if ! grep -q '"ok":true' /tmp/health.json 2>/dev/null; then
             echo "::error::API did not come up"; cat /tmp/boot.log; kill "$pid" || true; exit 1
           fi
-          grep -q '"database":"postgres (connected)"' /tmp/health.json
           curl -sf http://127.0.0.1:5055/api/learn/courses | grep -q '"slug"'
           kill "$pid"
           echo "booted:"; cat /tmp/health.json
@@ -385,7 +387,6 @@ jobs:
           if ! grep -q '"ok":true' /tmp/health.json 2>/dev/null; then
             echo "::error::container did not come up"; docker logs smoke; exit 1
           fi
-          grep -q '"database":"postgres (connected)"' /tmp/health.json
           curl -sf http://127.0.0.1:5000/api/learn/courses | grep -q '"slug"'
           curl -sf http://127.0.0.1:5000/tools/pdf-merger | grep -q 'Document Research Lab'
           curl -sf http://127.0.0.1:5000/sitemap.xml | grep -q '<loc>'

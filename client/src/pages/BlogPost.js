@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
-import { POSTS, postBySlug, postPath } from '../data/blog.generated';
+import { useParams } from 'react-router-dom';
+import { POSTS, postBySlug } from '../data/blog.generated';
 import Markdown from '../learn/Markdown';
 import PostCard, { CATEGORY } from '../components/PostCard';
 import PageHero from '../components/PageHero';
