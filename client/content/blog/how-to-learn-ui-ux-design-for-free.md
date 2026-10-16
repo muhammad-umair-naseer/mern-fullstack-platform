@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [design, ui ux, careers]
 targetQuery: how to learn ui ux design for free
 course: ui-ux-bootcamp
+home: /learn/ui-ux-bootcamp
 image: /blog/covers/how-to-learn-ui-ux-design-for-free.webp
 imageAlt: "A blue pencil resting on dot grid paper covered in hand drawn website wireframes"
 ---

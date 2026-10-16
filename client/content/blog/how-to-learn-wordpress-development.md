@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, web, wordpress]
 targetQuery: how to learn wordpress development
 course: wordpress-development
+home: /learn/wordpress-development
 image: /blog/covers/how-to-learn-wordpress-development.webp
 imageAlt: "A blue plush elephant with the PHP logo standing on a laptop that shows PHP code in an editor"
 ---

@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [learning, data-science, python]
 targetQuery: data science roadmap
 course: data-science-python
+home: /learn/data-science-python
 image: /blog/covers/data-science-roadmap.webp
 imageAlt: "A laptop screen showing histograms and line charts of page load times on a dark analytics dashboard"
 ---

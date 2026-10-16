@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, nodejs, backend]
 targetQuery: how to learn node js backend
 course: nodejs-backend
+home: /learn/nodejs-backend
 image: /blog/covers/how-to-learn-nodejs-backend.webp
 imageAlt: "Rows of metal server cooling fans lit in purple and pink light inside a data centre"
 ---

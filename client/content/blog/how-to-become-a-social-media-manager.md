@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [marketing, careers, freelancing]
 targetQuery: how to become a social media manager
 course: social-media-marketing
+home: /learn/social-media-marketing
 image: /blog/covers/how-to-become-a-social-media-manager.webp
 imageAlt: "A laptop, a phone, a camera with a flash and a mug of tea laid out on a wooden table"
 ---

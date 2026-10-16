@@ -8,6 +8,7 @@ targetQuery: how to learn react native
 image: /blog/covers/how-to-learn-react-native.webp
 imageAlt: "A person at a desk holding a phone, with a second phone, a laptop and an open notebook beside them"
 course: react-native
+home: /learn/react-native
 ---
 
 If you want to know how to learn React Native, the short answer is this: get comfortable with React and modern JavaScript first, start a project with Expo, learn the native components and Flexbox styling properly, then build one app with navigation, real data and offline storage, and finish by getting a signed build onto a real phone. The people who struggle usually skip the React part, treat the phone like a small browser, and never leave the simulator. Follow the order below and the mobile specific problems stop being surprises.

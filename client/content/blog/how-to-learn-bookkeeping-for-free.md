@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [careers, bookkeeping, quickbooks]
 targetQuery: how to learn bookkeeping for free
 course: bookkeeping-quickbooks
+home: /learn/bookkeeping-quickbooks
 image: /blog/covers/how-to-learn-bookkeeping-for-free.webp
 imageAlt: "A grey printing calculator with a paper roll on a pale yellow desk"
 ---

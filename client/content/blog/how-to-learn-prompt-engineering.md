@@ -5,6 +5,7 @@ author: Umair
 date: 2026-10-16
 tags: [ai, prompt engineering, careers]
 course: prompt-engineering
+home: /learn/prompt-engineering
 targetQuery: how to learn prompt engineering
 image: /blog/covers/how-to-learn-prompt-engineering.webp
 imageAlt: "Overhead view of one hand on a laptop trackpad and the other writing in an open lined notebook on a white desk"

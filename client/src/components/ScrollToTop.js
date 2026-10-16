@@ -35,6 +35,7 @@ import { useLocation, useNavigationType } from 'react-router-dom';
 const positions = new Map();
 
 const RESTORE_DEADLINE_MS = 1200;
+const HASH_DEADLINE_MS = 5000;
 
 const ScrollToTop = () => {
   const { key, pathname, hash } = useLocation();
@@ -60,14 +61,39 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     if (hash) {
-      // The target may not exist yet: routes are lazy loaded, so the element can
-      // be a frame behind the navigation. Try next frame, and give up quietly
-      // rather than scrolling somewhere arbitrary.
-      const raf = requestAnimationFrame(() => {
-        const el = document.getElementById(hash.slice(1));
-        if (el) el.scrollIntoView({ block: 'start' });
-      });
-      return () => cancelAnimationFrame(raf);
+      // The target may not exist yet: routes are lazy loaded, and on pages fed
+      // by the API (a course page and its guide) it arrives with the data. Keep
+      // looking each frame until it appears, and give up quietly at the
+      // deadline rather than scrolling somewhere arbitrary.
+      // Once found it is held in place while the page above it is still
+      // growing (course content and images land after it), until it has stayed
+      // put for a few frames; the reader scrolling takes over at once.
+      let raf;
+      let stable = 0;
+      let userMoved = false;
+      const stop = () => { userMoved = true; };
+      const started = performance.now();
+      const find = () => {
+        if (userMoved) return;
+        const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+        if (el) {
+          const top = el.getBoundingClientRect().top;
+          const offset = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+          if (Math.abs(top - offset) > 2) {
+            el.scrollIntoView({ block: 'start' });
+            stable = 0;
+          } else if (++stable >= 20) {
+            return;
+          }
+        }
+        if (performance.now() - started < HASH_DEADLINE_MS) raf = requestAnimationFrame(find);
+      };
+      ['wheel', 'touchstart', 'keydown'].forEach((t) => window.addEventListener(t, stop, { passive: true, once: true }));
+      raf = requestAnimationFrame(find);
+      return () => {
+        cancelAnimationFrame(raf);
+        ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, stop));
+      };
     }
 
     if (navigationType !== 'POP') {

@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, cpp, learning]
 targetQuery: how to learn c++ for beginners
 course: cpp-development
+home: /learn/cpp-development
 image: /blog/covers/how-to-learn-cpp-for-beginners.webp
 imageAlt: "Close up of an unsoldered dark blue circuit board with gold pads"
 ---

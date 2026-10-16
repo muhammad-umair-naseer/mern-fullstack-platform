@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [careers, web-development, learning]
 targetQuery: how to become a full stack developer
 course: full-stack-web
+home: /learn/full-stack-web
 image: /blog/covers/how-to-become-a-full-stack-developer.webp
 imageAlt: "A man sketching a web page layout in red marker on a whiteboard while a colleague watches"
 ---

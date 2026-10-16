@@ -8,6 +8,7 @@ targetQuery: how to learn git and github
 image: /blog/covers/how-to-learn-git-and-github.webp
 imageAlt: "Thin bare tree branches in focus against a pale grey overcast sky, with blurred trees behind"
 course: git-github
+home: /learn/git-github
 ---
 
 The best way to learn Git and GitHub is to learn the model before the commands. A commit is a snapshot of your whole project, a branch is a label that points at one commit, and almost every "dangerous" command just creates new commits and moves a label. Once those three ideas are solid, learn Git on your own laptop for a week or two, then move to GitHub for remotes and pull requests, and practise undoing mistakes on purpose. Most people who say Git is confusing skipped the first step and memorised commands instead.

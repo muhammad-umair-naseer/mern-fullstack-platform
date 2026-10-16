@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, java, backend]
 targetQuery: how to learn spring boot
 course: java-spring-boot
+home: /learn/java-spring-boot
 image: /blog/covers/how-to-learn-spring-boot.webp
 imageAlt: "Yellow fibre optic cables plugged into rows of green connectors on a network patch panel"
 ---

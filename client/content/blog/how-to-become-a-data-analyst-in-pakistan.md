@@ -5,6 +5,7 @@ author: Umair
 date: 2026-10-16
 tags: [careers, data, analytics]
 course: data-analyst-bootcamp
+home: /learn/data-analyst-bootcamp
 targetQuery: how to become a data analyst in pakistan
 image: /blog/covers/how-to-become-a-data-analyst-in-pakistan.webp
 imageAlt: "A printed report with a blue bar chart and a pie chart beside a red ring binder"

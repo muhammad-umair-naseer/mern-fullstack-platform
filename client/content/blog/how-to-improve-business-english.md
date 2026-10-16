@@ -8,6 +8,7 @@ targetQuery: how to improve business english
 image: /blog/covers/how-to-improve-business-english.webp
 imageAlt: "Two women talking at a standing desk in a glass walled office"
 course: business-english-communication
+home: /learn/business-english-communication
 ---
 
 If you want to know how to improve business English, the honest answer is that you probably do not need more grammar lessons. Most people in Pakistan who search for this already read emails, follow meetings and explain their own job in English. What is missing is speed and confidence: speaking without rehearsing every sentence first, writing an email without copying an old one, disagreeing in a meeting instead of staying quiet. That is fixed by practising the specific situations of office life, every day, for a few weeks, and by correcting a small set of predictable mistakes.

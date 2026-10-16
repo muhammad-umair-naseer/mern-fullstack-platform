@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [careers, data, data-engineering]
 targetQuery: how to become a data engineer
 course: data-engineering
+home: /learn/data-engineering
 image: /blog/covers/how-to-become-a-data-engineer.webp
 imageAlt: "Three pink industrial pipes with flanged elbows and valves running side by side under a pale grey sky"
 ---

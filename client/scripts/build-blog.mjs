@@ -118,7 +118,8 @@ writeFileSync(
   `export const POSTS = ${JSON.stringify(posts, null, 2)};\n\n` +
   `export const postBySlug = (slug) => POSTS.find((p) => p.slug === slug);\n\n` +
   `/** Where a post is read: its own crawlable address. */\n` +
-  `export const postPath = (p) => \`/blog/\${p.slug}\`;\n`
+  // a course guide is read on its course page, so links go there
+  `export const postPath = (p) => (p.home && p.home.startsWith('/learn/') ? \`\${p.home}#\${p.slug}\` : \`/blog/\${p.slug}\`);\n`
 );
 
 const draftNote = drafts.length ? `, ${drafts.length} draft(s) held back` : '';

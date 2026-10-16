@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [learning, machine-learning, ai]
 targetQuery: how to learn machine learning from scratch
 course: ai-ml-essentials
+home: /learn/ai-ml-essentials
 image: /blog/covers/how-to-learn-machine-learning-from-scratch.webp
 imageAlt: "A hand drawn line graph rising from left to right on white paper, with a ruler and two pens on a wooden desk"
 ---

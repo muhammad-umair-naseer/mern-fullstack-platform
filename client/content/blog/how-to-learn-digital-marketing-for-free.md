@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [marketing, seo, careers]
 targetQuery: how to learn digital marketing for free
 course: digital-marketing
+home: /learn/digital-marketing
 image: /blog/covers/how-to-learn-digital-marketing-for-free.webp
 imageAlt: "A hand holding a green mug in front of a laptop showing pie and bar charts"
 ---

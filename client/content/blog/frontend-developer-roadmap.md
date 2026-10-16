@@ -8,6 +8,7 @@ targetQuery: frontend developer roadmap
 image: /blog/covers/frontend-developer-roadmap.webp
 imageAlt: "A hand-drawn website wireframe on white paper next to an orange pen"
 course: frontend-engineering
+home: /learn/frontend-engineering
 ---
 
 A frontend developer roadmap that works goes in this order: HTML and CSS until you can build a page from a screenshot, then JavaScript properly, then Git, then one framework (React is the safe choice), then forms, accessibility and testing, then performance and shipping to production. TypeScript, design systems and server rendering come after you have built and deployed real things. Skipping ahead is the most common reason people spend a year "learning React" and still cannot build a working signup form.

@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, web, laravel]
 targetQuery: how to learn laravel step by step
 course: laravel-fundamentals
+home: /learn/laravel-fundamentals
 image: /blog/covers/how-to-learn-laravel.webp
 imageAlt: "Two monitors showing code in a dim room lit red and blue, with a white keyboard and a small plant on the desk"
 ---

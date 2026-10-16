@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [ai, automation, careers]
 targetQuery: how to learn ai automation
 course: ai-automation-agents
+home: /learn/ai-automation-agents
 image: /blog/covers/how-to-learn-ai-automation.webp
 imageAlt: "A hand drawing a flow diagram with a black marker on a glass whiteboard"
 ---

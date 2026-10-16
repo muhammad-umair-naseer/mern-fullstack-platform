@@ -8,6 +8,7 @@ targetQuery: how to learn docker and kubernetes
 image: /blog/covers/how-to-learn-docker-and-kubernetes.webp
 imageAlt: "Stacks of shipping containers from several lines on a quayside, with blue gantry cranes behind them under a clear sky"
 course: docker-kubernetes
+home: /learn/docker-kubernetes
 ---
 
 The way to learn Docker and Kubernetes is in that order, and with your hands on a terminal the whole time. Spend the first few weeks on Docker alone: run containers, write Dockerfiles for your own apps, and wire several services together with Docker Compose. Only once a container feels ordinary should you start Kubernetes, on a free local cluster on your own laptop, not a cloud account. Kubernetes runs containers. If you do not understand the container, every Kubernetes error will look like magic.

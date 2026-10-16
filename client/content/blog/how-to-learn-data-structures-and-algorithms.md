@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, dsa, interviews]
 targetQuery: how to learn data structures and algorithms
 course: data-structures-algorithms
+home: /learn/data-structures-algorithms
 image: /blog/covers/how-to-learn-data-structures-and-algorithms.webp
 imageAlt: "Bare tree branches seen from below against a pale white sky, in black and white"
 ---

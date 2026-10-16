@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, mobile, flutter]
 targetQuery: how to learn flutter
 course: flutter-mobile
+home: /learn/flutter-mobile
 image: /blog/covers/how-to-learn-flutter.webp
 imageAlt: "A hand holding a smartphone with lines of purple code on the screen, against a grey wall"
 ---

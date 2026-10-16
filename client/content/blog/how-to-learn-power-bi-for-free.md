@@ -8,6 +8,7 @@ targetQuery: how to learn power bi for free
 image: /blog/covers/how-to-learn-power-bi-for-free.webp
 imageAlt: "A hand holding a tablet showing bar and area charts, with a keyboard and a second screen of charts blurred behind it"
 course: power-bi-business-intelligence
+home: /learn/power-bi-business-intelligence
 ---
 
 You can learn Power BI for free, and you do not need to pay for software to start. Power BI Desktop is a free Windows download, and it is where all the real building happens: cleaning data in Power Query, designing the data model, writing DAX and laying out report pages. Learn those four skills in that order, practise on one realistic dataset, and finish with a portfolio project. The only parts that usually cost money are sharing reports inside a company and sitting the Microsoft exam, and you need neither to become good.

@@ -8,6 +8,7 @@ targetQuery: how to learn sql for data analysis
 image: /blog/covers/how-to-learn-sql-for-data-analysis.webp
 imageAlt: "A wall of wooden library card catalogue drawers, each with a small paper label and a metal handle"
 course: sql-data-analysis
+home: /learn/sql-data-analysis
 ---
 
 To learn SQL for data analysis, install a free database such as PostgreSQL, load one small dataset you understand, and learn the language in this order: SELECT and WHERE, then aggregation with GROUP BY, then joins, then CTEs and window functions. At every step, check your answer against something you can count by hand. The syntax takes a few weeks. Learning to notice when a query returns a confident, wrong number is the real skill, and it is the part most tutorials skip.

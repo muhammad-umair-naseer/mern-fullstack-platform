@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [careers, cybersecurity, security]
 targetQuery: how to learn cybersecurity from scratch
 course: cybersecurity-fundamentals
+home: /learn/cybersecurity-fundamentals
 image: /blog/covers/how-to-learn-cybersecurity-from-scratch.webp
 imageAlt: "A metal padlock on a hasp joining a red wooden door to a white wooden frame"
 ---

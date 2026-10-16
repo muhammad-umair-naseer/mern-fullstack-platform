@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, typescript, javascript]
 targetQuery: how to learn typescript
 course: typescript
+home: /learn/typescript
 image: /blog/covers/how-to-learn-typescript.webp
 imageAlt: "Architectural floor plan drawings on a desk with a mechanical pencil, a metal ruler, tape and a case of drafting pens"
 ---

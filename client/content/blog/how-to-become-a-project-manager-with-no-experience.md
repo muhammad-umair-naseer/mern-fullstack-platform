@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [careers, project-management, agile]
 targetQuery: how to become a project manager with no experience
 course: project-management-agile
+home: /learn/project-management-agile
 image: /blog/covers/how-to-become-a-project-manager-with-no-experience.webp
 imageAlt: "A hand pinning a string between printed app screens on a wall planning board"
 ---

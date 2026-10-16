@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [design, video-editing, freelancing]
 targetQuery: how to learn video editing for free
 course: video-editing-short-form
+home: /learn/video-editing-short-form
 image: /blog/covers/how-to-learn-video-editing-for-free.webp
 imageAlt: "A computer monitor on a wooden desk showing a video editing timeline, with a white keyboard and mouse"
 ---

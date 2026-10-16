@@ -123,7 +123,9 @@ const BlogPost = () => {
         title={post.title}
         description={post.description}
         image={post.image ? absolute(post.image) : undefined}
-        path={`/blog/${post.slug}`}
+        // A course guide is read in full on its course page, which is the one
+        // copy search engines should index; this page names it as canonical.
+        path={post.home && post.home.startsWith('/learn/') ? post.home : `/blog/${post.slug}`}
         schema={[
           {
             '@context': 'https://schema.org',

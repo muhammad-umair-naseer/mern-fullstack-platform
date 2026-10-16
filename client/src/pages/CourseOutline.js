@@ -10,9 +10,11 @@ import CourseOutlineVisual from '../components/heroes/CourseOutlineVisual';
 import { courseCover } from '../data/courseCovers';
 import { photos } from '../assets/lux';
 import Seo from '../seo/Seo';
-import { course as courseSchema, breadcrumbs } from '../seo/schema';
+import { course as courseSchema, breadcrumbs, hostedArticle } from '../seo/schema';
 import { ClaudeProPill } from '../learn/ClaudePro';
-import { POSTS, postPath } from '../data/blog.generated';
+import { POSTS } from '../data/blog.generated';
+import ServiceArticle from '../components/ServiceArticle';
+import { parseBlogContent } from '../lib/blogParser';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -309,8 +311,9 @@ const CourseOutline = () => {
     : firstOpen;
 
   const { lines, chars } = headline(course.title);
-  // The blog post written as this course's guide, named by its `course:` line.
-  const guide = POSTS.find((p) => p.course === course.slug);
+  // This course's guide: a blog post whose home is this page. It is read in
+  // full at the bottom, and /blog/<its slug> redirects here.
+  const guide = POSTS.find((p) => p.home === `/learn/${slug}`);
 
   // One chapter starts open: the one holding the learner's next topic, or
   // the first. The rest are a scannable list of twelve titles.
@@ -338,6 +341,7 @@ const CourseOutline = () => {
             { name: 'Courses', path: '/courses' },
             { name: course.title, path: `/learn/${slug}` },
           ]),
+          ...(guide ? hostedArticle(guide, `/learn/${slug}`, parseBlogContent(guide.body).faqs) : []),
         ]}
       />
 
@@ -419,9 +423,9 @@ const CourseOutline = () => {
           )}
           {guide && (
             <p className="lx-co-guide text-sm">
-              <Link to={postPath(guide)} className="lx-link">
+              <a href={`#${guide.slug}`} className="lx-link">
                 Read the guide: {guide.title} <ArrowRight size={14} aria-hidden="true" />
-              </Link>
+              </a>
             </p>
           )}
         </PageHero>
@@ -792,6 +796,8 @@ const CourseOutline = () => {
           </div>
         </section>
       )}
+
+      {guide && <ServiceArticle post={guide} label="The course guide" />}
     </main>
   );
 };

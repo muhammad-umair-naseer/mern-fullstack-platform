@@ -71,7 +71,8 @@ const liveTools = TOOLS.filter((t) => IMPLEMENTED.has(t.slug)).map((t) => ({
 // Posts carry their own lastmod from the markdown, which is the one date
 // Google actually pays attention to here.
 const { POSTS } = await import(pathToFileURL(resolve(HERE, '../src/data/blog.generated.js')).href);
-const posts = POSTS.map((p) => ({
+// A course guide's canonical copy is its course page, already listed above.
+const posts = POSTS.filter((p) => !(p.home && p.home.startsWith('/learn/'))).map((p) => ({
   path: `/blog/${p.slug}`,
   priority: '0.7',
   changefreq: 'monthly',

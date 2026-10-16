@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, python, learning]
 targetQuery: how to learn python for free
 course: python-development
+home: /learn/python-development
 image: /blog/covers/how-to-learn-python-for-free.webp
 imageAlt: "Close up of the coiled, black, yellow and grey patterned scales of a reticulated python"
 ---

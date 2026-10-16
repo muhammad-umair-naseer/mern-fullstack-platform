@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [ai, productivity, learning]
 targetQuery: learn how to use ai tools for free
 course: ai-tools-for-everyone
+home: /learn/ai-tools-for-everyone
 image: /blog/covers/learn-how-to-use-ai-tools-for-free.webp
 imageAlt: "A young man in glasses and a mustard sweater talking on his phone at a desk with an open laptop, a chalkboard wall behind him"
 ---

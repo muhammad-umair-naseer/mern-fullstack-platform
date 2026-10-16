@@ -8,6 +8,7 @@ targetQuery: how to become a qa engineer
 image: /blog/covers/how-to-become-a-qa-engineer.webp
 imageAlt: "A small resistor held by two metal clips, seen through a round magnifying glass on a dark table"
 course: software-testing-qa
+home: /learn/software-testing-qa
 ---
 
 To become a QA engineer, learn to think about risk first and tools second. Start by writing clear test cases and bug reports by hand, then learn enough programming to write unit tests, then move on to API tests, browser automation and running tests in CI. Build a small portfolio that shows real bugs you found and a test suite you wrote for a real app. You do not need a computer science degree, but you do need to be able to read code, because much QA work today involves at least some automation.

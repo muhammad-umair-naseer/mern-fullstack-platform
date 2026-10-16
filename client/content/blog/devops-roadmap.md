@@ -8,6 +8,7 @@ targetQuery: devops roadmap
 image: /blog/covers/devops-roadmap.webp
 imageAlt: "Yellow fiber optic cables plugged into green connectors on a network switch in a server rack"
 course: cloud-devops
+home: /learn/cloud-devops
 ---
 
 A DevOps roadmap that actually works goes in this order: Linux and the shell, then Git, then [containers with Docker](/blog/how-to-learn-docker-and-kubernetes), then a CI/CD pipeline, then one cloud provider and infrastructure as code, then logs, metrics and rollback, and only then Kubernetes. Each step depends on the one before it. People who start with Kubernetes because it appears in every job post usually end up memorising YAML they cannot debug.

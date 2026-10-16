@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [design, graphic design, careers]
 targetQuery: how to learn graphic design for free
 course: graphic-design-ps-ai
+home: /learn/graphic-design-ps-ai
 image: /blog/covers/how-to-learn-graphic-design-for-free.webp
 imageAlt: "A hand drawing a circle on a tablet with a stylus, a speckled mug and keyboard beside it"
 ---

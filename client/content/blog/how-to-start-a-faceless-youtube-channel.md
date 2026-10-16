@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [marketing, youtube, content-creation]
 targetQuery: how to start a faceless youtube channel
 course: youtube-automation
+home: /learn/youtube-automation
 image: /blog/covers/how-to-start-a-faceless-youtube-channel.webp
 imageAlt: "A studio microphone with a pop filter and a pair of headphones hanging beside it, with a computer screen showing an audio editor behind"
 ---

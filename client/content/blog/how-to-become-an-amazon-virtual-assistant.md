@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [business, ecommerce, freelancing]
 targetQuery: how to become an amazon virtual assistant
 course: ecommerce-shopify-amazon-va
+home: /learn/ecommerce-shopify-amazon-va
 image: /blog/covers/how-to-become-an-amazon-virtual-assistant.webp
 imageAlt: "A young woman smiling at her phone while holding a cardboard parcel tied with string, with a laptop and stacked boxes on the desk"
 ---

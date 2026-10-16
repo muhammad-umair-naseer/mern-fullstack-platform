@@ -8,6 +8,7 @@ targetQuery: ai engineer roadmap
 image: /blog/covers/ai-engineer-roadmap.webp
 imageAlt: "An open notebook full of hand-drawn sketches and notes with a wooden pen resting on the page"
 course: ai-engineering
+home: /learn/ai-engineering
 ---
 
 A sensible AI engineer roadmap starts with ordinary programming, then goes in this order: how a model call actually works, structured output, retrieval over your own documents, tools and agents, and finally evaluation, cost and safety. You do not need to train a model from scratch to do this job. You need to build software on top of models that other people trained, and make it hold up when real users arrive with messy input.

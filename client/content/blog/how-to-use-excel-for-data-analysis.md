@@ -8,6 +8,7 @@ targetQuery: how to use excel for data analysis
 image: /blog/covers/how-to-use-excel-for-data-analysis.webp
 imageAlt: "A hand on a laptop trackpad with a spreadsheet open on screen, on a wooden desk beside a notebook and a lamp"
 course: excel-business-analytics
+home: /learn/excel-business-analytics
 ---
 
 To use Excel for data analysis, you work in a fixed order: get the data into a clean table, answer questions with a small set of formulas (IF, SUMIFS, COUNTIFS, XLOOKUP), summarise it with a PivotTable, check the answer makes sense, and only then build a chart. Most people skip straight to the chart and the formulas, and that is where wrong numbers come from. The tools are not hard. The discipline is.

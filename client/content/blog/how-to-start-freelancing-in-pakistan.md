@@ -8,6 +8,7 @@ targetQuery: how to start freelancing in pakistan
 image: /blog/covers/how-to-start-freelancing-in-pakistan.webp
 imageAlt: "A young woman in a mustard cardigan working on a silver laptop at a desk by a window"
 course: freelancing-upwork-fiverr
+home: /learn/freelancing-upwork-fiverr
 ---
 
 To start freelancing in Pakistan, pick one service you can already deliver well, build three or four portfolio pieces that show a result, set up one platform properly (Upwork, Fiverr or LinkedIn, depending on how your service is sold), and send a small number of careful, specific proposals every day for about ninety days. Get paid through a bank transfer or Payoneer in your own name, and register with FBR once money starts arriving. That is the whole plan. The hard part is doing it consistently while the first month feels quiet.

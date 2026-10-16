@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, system-design, interviews]
 targetQuery: how to learn system design
 course: system-design
+home: /learn/system-design
 image: /blog/covers/how-to-learn-system-design.webp
 imageAlt: "Aerial view of a large highway interchange with curving overpasses and landscaped gardens between the roads"
 ---

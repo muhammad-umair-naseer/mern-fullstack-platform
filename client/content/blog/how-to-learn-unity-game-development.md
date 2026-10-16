@@ -6,6 +6,7 @@ date: 2026-10-16
 tags: [programming, game development, unity]
 targetQuery: how to learn unity game development
 course: unity-game-dev
+home: /learn/unity-game-dev
 image: /blog/covers/how-to-learn-unity-game-development.webp
 imageAlt: "A white game controller next to a compact dark mechanical keyboard on a wooden desk"
 ---
