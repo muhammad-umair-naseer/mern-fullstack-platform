@@ -98,6 +98,8 @@ if (existsSync(DIR)) {
       // page it belongs to renders it in full, the blog card links there, and
       // /blog/<slug> redirects, so the words sit at one address only.
       home: meta.home || '',
+      // The course this post is the guide for: its page links back here.
+      course: meta.course || '',
       category: (Array.isArray(meta.tags) ? meta.tags[0] : meta.tags) || 'notes',
       minutes: readingMinutes(body),
       body: body.trim(),

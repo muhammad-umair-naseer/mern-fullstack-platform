@@ -12,6 +12,7 @@ import { photos } from '../assets/lux';
 import Seo from '../seo/Seo';
 import { course as courseSchema, breadcrumbs } from '../seo/schema';
 import { ClaudeProPill } from '../learn/ClaudePro';
+import { POSTS, postPath } from '../data/blog.generated';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -308,6 +309,8 @@ const CourseOutline = () => {
     : firstOpen;
 
   const { lines, chars } = headline(course.title);
+  // The blog post written as this course's guide, named by its `course:` line.
+  const guide = POSTS.find((p) => p.course === course.slug);
 
   // One chapter starts open: the one holding the learner's next topic, or
   // the first. The rest are a scannable list of twelve titles.
@@ -413,6 +416,13 @@ const CourseOutline = () => {
                 See the outline <ArrowRight size={16} aria-hidden="true" />
               </a>
             </div>
+          )}
+          {guide && (
+            <p className="lx-co-guide text-sm">
+              <Link to={postPath(guide)} className="lx-link">
+                Read the guide: {guide.title} <ArrowRight size={14} aria-hidden="true" />
+              </Link>
+            </p>
           )}
         </PageHero>
       </div>
