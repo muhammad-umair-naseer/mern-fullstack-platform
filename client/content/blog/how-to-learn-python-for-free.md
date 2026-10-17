@@ -25,6 +25,11 @@ You do not need a powerful laptop, a paid IDE or a maths background.
 
 If you are still choosing between Python and another first language, read [which programming language should you learn first in Pakistan](/blog/which-programming-language-should-you-learn-first-in-pakistan) before you commit. Then commit.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Python for free: a step by step plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-python-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Python for free: a step by step plan.*
+
 ## How to learn Python for free, step by step
 
 Here is the order that works, with the thing you should be able to build at the end of each stage. The time estimates assume roughly an hour a day, five or six days a week.

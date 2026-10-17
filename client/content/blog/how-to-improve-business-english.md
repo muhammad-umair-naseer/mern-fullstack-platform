@@ -23,6 +23,11 @@ A very common pattern here is strong reading, decent writing, and weaker speakin
 
 Before you start, record a two minute "Tell me about yourself" on your phone and do not listen to it yet. You will compare it with a second recording at the end of the plan.
 
+
+
+![Architectural Blueprint and Learning Stages for How to improve business English: a 30 day plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-improve-business-english-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to improve business English: a 30 day plan.*
+
 ## Plain English beats fancy English
 
 At work, clear English wins. "We need to decide by Friday" beats "It is imperative that a decision be reached at the earliest". Plain does not mean casual: short sentences, the point first, one clear request at the end.

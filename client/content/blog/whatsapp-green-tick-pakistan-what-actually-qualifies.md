@@ -24,6 +24,11 @@ That is the short version. The longer version is more useful, because the thing 
 - [Our Transparent Policy on WhatsApp Verification](#what-we-will-not-do)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for WhatsApp green tick in Pakistan: what actually qualifies — Cortexis Roadmap Diagram](/blog/diagrams/whatsapp-green-tick-pakistan-what-actually-qualifies-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for WhatsApp green tick in Pakistan: what actually qualifies.*
+
 ## Three different things people call "verified"
 
 Most of the confusion in this market comes from one word covering three separate systems. They have different requirements and different outcomes.

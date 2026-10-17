@@ -27,6 +27,11 @@ Cover the output, read the code, and write down exactly what you think Python pr
 | **In-place List Extension** | `a += [2]` vs `a = a + [2]` | Mutates `a` and aliases | `+=` calls `__iadd__` in-place; `+` creates fresh list object |
 | **Banker's Rounding** | `round(2.5)` vs `round(3.5)` | `2` and `4` | Rounds to nearest even number to prevent statistical drift |
 
+
+
+![Architectural Blueprint and Learning Stages for Python output questions: 10 tricky snippets, answered — Cortexis Roadmap Diagram](/blog/diagrams/python-output-questions-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Python output questions: 10 tricky snippets, answered.*
+
 ## Functions and default arguments
 
 ### 1. The mutable default

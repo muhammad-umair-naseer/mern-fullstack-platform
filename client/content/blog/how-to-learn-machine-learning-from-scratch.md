@@ -31,6 +31,11 @@ If the first two rows are shaky, fix them before anything else. Our [Python deve
 
 On hardware: classic machine learning on tabular data runs fine on an ordinary laptop. If yours is old, a free hosted notebook works too.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn machine learning from scratch: a roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-machine-learning-from-scratch-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn machine learning from scratch: a roadmap.*
+
 ## How to learn machine learning from scratch, step by step
 
 Each stage below builds on the one before it. Skipping ahead is the most common reason people feel lost.

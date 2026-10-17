@@ -32,6 +32,11 @@ The term is wide enough to be useless, so it helps to split it into the jobs a m
 
 You do not need to master all eight, but you need to see how they connect.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn digital marketing for free, step by step — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-digital-marketing-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn digital marketing for free, step by step.*
+
 ## How to learn digital marketing for free: the roadmap
 
 Work through these in order. Each step depends on the one before it.

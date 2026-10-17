@@ -27,6 +27,11 @@ The difference shows up quickly. Compare these:
 
 None of that is a trick, just a better brief. Clear communication is what transfers between ChatGPT, Claude, Gemini and whatever comes next.
 
+
+
+![Architectural Blueprint and Learning Stages for How to Learn Prompt Engineering: A Free 6 Week Plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-prompt-engineering-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to Learn Prompt Engineering: A Free 6 Week Plan.*
+
 ## How to learn prompt engineering step by step
 
 ### Step 1: Understand how a model reads your prompt

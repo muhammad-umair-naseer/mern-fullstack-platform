@@ -21,6 +21,11 @@ Python, SQL and Power BI get the attention, but in most offices in Pakistan the 
 
 Excel is also the best place to learn how analysis thinks. You can see every cell, every step, every mistake. That makes it a good teacher, even if you later move on to [SQL for data analysis](/learn/sql-data-analysis) or a full [data analyst bootcamp](/learn/data-analyst-bootcamp).
 
+
+
+![Architectural Blueprint and Learning Stages for How to use Excel for data analysis: a beginner's roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-use-excel-for-data-analysis-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to use Excel for data analysis: a beginner's roadmap.*
+
 ## How to use Excel for data analysis in six steps
 
 Here is the order an experienced analyst follows, whatever the question.

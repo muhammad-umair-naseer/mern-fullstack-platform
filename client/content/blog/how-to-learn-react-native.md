@@ -23,6 +23,11 @@ That makes it a natural next step for web developers: one JavaScript or TypeScri
 
 It is a weaker fit if you have never written React at all, or if your app is mostly deep native work with little interface. If you are still choosing a mobile stack, our guide on [how to learn Flutter](/blog/how-to-learn-flutter) covers the other popular cross platform option. Both are sensible. Picking one and finishing an app matters more than the choice.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn React Native: a roadmap for React devs — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-react-native-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn React Native: a roadmap for React devs.*
+
 ## How to learn React Native: the roadmap
 
 Here is the order that works, with a clear sign that you are ready for the next stage.

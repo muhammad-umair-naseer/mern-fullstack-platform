@@ -239,8 +239,7 @@ const Navbar = () => {
             {/* 6. Apply Now (Internships Form) */}
             <li style={{ '--i': 5 }}>
               <NavLink to="/internships" className="nav-link nav-apply-now" onClick={close} data-intro>
-                <span>Apply Now</span>
-                <span className="nav-apply-pulse" aria-hidden="true" />
+                Apply Now
               </NavLink>
             </li>
 

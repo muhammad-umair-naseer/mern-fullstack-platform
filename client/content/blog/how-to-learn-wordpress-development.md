@@ -21,6 +21,11 @@ Installing themes and stacking plugins is useful work, but it hits a ceiling. Wh
 
 A WordPress developer understands what happens when a page is requested: which file WordPress chooses, how the Loop pulls posts from the database, and how hooks let you change behaviour without editing core files. That understanding is what lets you build something a plugin cannot, fix a site someone else broke, and charge for work that is harder to find.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn WordPress development: a free roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-wordpress-development-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn WordPress development: a free roadmap.*
+
 ## How to learn WordPress development: the roadmap
 
 Each step builds on the one before. Move on when you can do the "ready when" part without copying from a tutorial.

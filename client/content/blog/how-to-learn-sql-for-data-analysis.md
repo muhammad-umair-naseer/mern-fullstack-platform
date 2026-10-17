@@ -23,6 +23,11 @@ A query is written down, so someone else can read it, rerun it next month and ch
 
 You do not need to be a programmer. SQL is declarative: you describe the result you want, and the database works out how to get it. If you can build a PivotTable, you already think in the right shapes.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn SQL for data analysis: an 8 week plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-sql-for-data-analysis-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn SQL for data analysis: an 8 week plan.*
+
 ## What you need before you start
 
 Very little:

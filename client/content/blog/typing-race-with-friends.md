@@ -29,6 +29,11 @@ Then run it back. Most groups play more than one race, and the room remembers wh
 | **Ghost Replay** | 1 (Friend's recorded ghost) | Asynchronous | Different schedules or time zones |
 | **Daily Challenge** | Global leaderboard | 1 Attempt per day | Daily consistency & benchmark testing |
 
+
+
+![Architectural Blueprint and Learning Stages for How to start a typing race with friends (free, no sign-up) — Cortexis Roadmap Diagram](/blog/diagrams/typing-race-with-friends-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to start a typing race with friends (free, no sign-up).*
+
 ## What a race with friends keeps track of
 
 Private rooms in TypeDash are **friendlies**. That means two things.

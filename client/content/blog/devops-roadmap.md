@@ -21,6 +21,11 @@ DevOps is not a job title you can buy a certificate for, and it is not a team th
 
 The single biggest idea in the practice is batch size. Ship four commits instead of four hundred and when something breaks, the cause is obvious and the rollback is one step. Almost every tool below exists to make small, frequent releases cheap and safe. The DORA research program, now part of Google Cloud, popularised four measurements for this (deployment frequency, lead time for changes, change failure rate and time to restore) and reported that speed and stability tend to improve together.
 
+
+
+![Architectural Blueprint and Learning Stages for DevOps roadmap: what to learn first, and in what order — Cortexis Roadmap Diagram](/blog/diagrams/devops-roadmap-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for DevOps roadmap: what to learn first, and in what order.*
+
 ## Before you start: can you build and run a small app?
 
 You need something to deploy. If you cannot yet write a small backend and explain what happens when a request arrives, start there. [Node.js Backend Development](/learn/nodejs-backend) is a sensible first step, and if you are still choosing a language, our post on [which programming language to learn first in Pakistan](/blog/which-programming-language-should-you-learn-first-in-pakistan) will save you from switching four times. This is why the Cloud & DevOps course is marked Intermediate: it uses a Node service as the thing you containerise, test and ship.

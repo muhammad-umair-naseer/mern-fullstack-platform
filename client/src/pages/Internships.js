@@ -429,7 +429,7 @@ export default function Internships() {
                           type="text"
                           id="name"
                           name="name"
-                          placeholder="e.g. Ayesha Khan"
+                          placeholder="e.g. John Doe"
                           value={formData.name}
                           onChange={handleChange}
                           className="cx-glass-input"
@@ -450,7 +450,7 @@ export default function Internships() {
                           type="email"
                           id="email"
                           name="email"
-                          placeholder="ayesha.khan@gmail.com"
+                          placeholder="john.doe@example.com"
                           value={formData.email}
                           onChange={handleChange}
                           className="cx-glass-input"
@@ -471,7 +471,7 @@ export default function Internships() {
                           type="tel"
                           id="phone"
                           name="phone"
-                          placeholder="e.g. +92 300 1234567"
+                          placeholder="e.g. +1 (555) 019-2834"
                           value={formData.phone}
                           onChange={handleChange}
                           className="cx-glass-input"
@@ -492,7 +492,7 @@ export default function Internships() {
                           type="text"
                           id="city"
                           name="city"
-                          placeholder="e.g. Lahore, Karachi, Islamabad"
+                          placeholder="e.g. San Francisco, London, Toronto"
                           value={formData.city}
                           onChange={handleChange}
                           className="cx-glass-input"
@@ -521,7 +521,7 @@ export default function Internships() {
                           type="text"
                           id="university"
                           name="university"
-                          placeholder="e.g. NUST, FAST, COMSATS"
+                          placeholder="e.g. Stanford University, MIT, UC Berkeley"
                           value={formData.university}
                           onChange={handleChange}
                           className="cx-glass-input"
@@ -540,7 +540,7 @@ export default function Internships() {
                           type="text"
                           id="degree"
                           name="degree"
-                          placeholder="e.g. BSCS, 3rd year"
+                          placeholder="e.g. BS Computer Science, 3rd year"
                           value={formData.degree}
                           onChange={handleChange}
                           className="cx-glass-input"
@@ -585,7 +585,7 @@ export default function Internships() {
                         type="url"
                         id="resumeLink"
                         name="resumeLink"
-                        placeholder="https://github.com/ayeshakhan"
+                        placeholder="https://github.com/johndoe"
                         value={formData.resumeLink}
                         onChange={handleChange}
                         className="cx-glass-input cx-glass-input-noicon"
@@ -605,7 +605,7 @@ export default function Internships() {
                         id="coverLetter"
                         name="coverLetter"
                         rows={3}
-                        placeholder="Projects you have built, and what you hope to learn"
+                        placeholder="Tell us about projects you have built, key tech stacks, and what you hope to learn"
                         value={formData.coverLetter}
                         onChange={handleChange}
                         className="cx-glass-textarea"

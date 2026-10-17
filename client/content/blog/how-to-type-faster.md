@@ -21,6 +21,11 @@ There is a second reason. When you type a word correctly many times, your finger
 
 A good rule: if you are making more than a few mistakes per passage, you are going too fast for where you are right now.
 
+
+
+![Architectural Blueprint and Learning Stages for How to type faster and more accurately: a 4 week plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-type-faster-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to type faster and more accurately: a 4 week plan.*
+
 ## Set up before you speed up
 
 Two minutes of setup makes every practice session count for more.

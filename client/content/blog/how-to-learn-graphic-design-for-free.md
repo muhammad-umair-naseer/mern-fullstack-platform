@@ -24,6 +24,11 @@ Beyond taste, a working designer makes four technical decisions on every job:
 - **Colour mode.** Screens mix light in RGB. Printing presses lay down ink in CMYK. A bright screen blue often has no ink equivalent, and if you do not plan for that, the client sees a dull blue on the printed flyer and blames you.
 - **Delivery.** The right file format, bleed for anything that gets trimmed, fonts that travel with the file.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn graphic design for free: an 8 week plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-graphic-design-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn graphic design for free: an 8 week plan.*
+
 ## Photoshop or Illustrator: which one to learn first
 
 You need both, but they do different jobs, and knowing which to open is a skill in itself.

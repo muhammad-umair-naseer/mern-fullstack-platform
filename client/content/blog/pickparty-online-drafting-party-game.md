@@ -24,6 +24,11 @@ You get a few seconds for each pick (12 by default). If you run out of time, the
 | **Auction** | 3–6 | Live 20-coin bidding clock | Lineup crowd score + Saved coins | Tactical budgeters |
 | **Crowd Read** | 1 (Solo) | Timed card pick & lock-in | 3 lives, speed & combo multipliers | Quick solo brain training |
 
+
+
+![Architectural Blueprint and Learning Stages for PickParty: how to play the online drafting party game — Cortexis Roadmap Diagram](/blog/diagrams/pickparty-online-drafting-party-game-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for PickParty: how to play the online drafting party game.*
+
 ## The snake order, explained simply
 
 The order of turns is called a **snake**. It goes forward in one round and backward in the next.

@@ -1,0 +1,27 @@
+# Cortexis Solution Hub
+
+> Cortexis Solution Hub (Pvt.) Ltd. is an SECP-registered technology firm (CUIN: 0306803) based in Pakistan. Cortexis delivers enterprise software engineering, autonomous AI agent automations, 109 client-side privacy-first web utilities, and a 41-course free learning academy with verifiable certificates.
+
+## Core Pillars & Direct Capabilities
+
+- **Enterprise & AI Software Services**: Bespoke software architecture, multi-tenant SaaS engineering, and autonomous LLM workflows.
+- **YourBot AI Automation**: Meta-approved automated conversation systems for WhatsApp Business Platform and Instagram Direct.
+- **109 Free Client-Side Tools**: Zero-cloud document, image, audio, and code manipulation running 100% locally in browser memory via WebAssembly and Canvas.
+- **Free Learning Academy**: 41 comprehensive curriculum tracks covering Full-Stack, AI, Python, DevOps, and Business English, complete with automated quizzes and cryptographic certificate verification.
+
+## Primary Navigation & Direct URLs
+
+- [Cortexis Solution Hub](https://cortexissolutionhub.com/): Official homepage, software portfolio, and academy overview.
+- [About & Corporate Verification](https://cortexissolutionhub.com/about): SECP Certificate of Incorporation details, core leadership, and engineering standards.
+- [Services Hub](https://cortexissolutionhub.com/services): Enterprise software engineering, AI agent pipelines, and SaaS platforms.
+- [YourBot AI Automation](https://cortexissolutionhub.com/your-bot): Meta-reviewed omnichannel conversational agent for WhatsApp and Instagram.
+- [Free Tools Directory](https://cortexissolutionhub.com/tools): 109 privacy-first browser utilities (PDF, image, audio, development).
+- [Free Courses & Academy](https://cortexissolutionhub.com/courses): 41 full online courses with 1,968 modular lessons and free certificates.
+- [Technical Blog & Roadmaps](https://cortexissolutionhub.com/blog): 63 technical guides, career roadmaps, and software architecture articles.
+- [Internships Program](https://cortexissolutionhub.com/internships): Practical software engineering internships for aspiring developers.
+
+## Technical & Privacy Standards
+
+- **Privacy Guarantee**: All Cortexis browser tools process data strictly in the user's browser runtime. Files are never uploaded, stored, logged, or shared across any remote servers.
+- **Verification Portal**: Every certificate issued by Cortexis carries an unforgeable alphanumeric hash verifiable at `https://cortexissolutionhub.com/certificate/<CODE>`.
+- **Full Context for LLMs**: For complete catalogue listings, course structures, and technical specifications, see [llms-full.txt](https://cortexissolutionhub.com/llms-full.txt).

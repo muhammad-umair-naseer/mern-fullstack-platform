@@ -37,6 +37,11 @@ Notice what is missing: calculus, training runs, GPU clusters.
 
 If the right column is what you want, start with [AI and ML Essentials](/learn/ai-ml-essentials) instead. If the left column is what you want, keep reading.
 
+
+
+![Architectural Blueprint and Learning Stages for AI engineer roadmap: what to learn, and in what order — Cortexis Roadmap Diagram](/blog/diagrams/ai-engineer-roadmap-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for AI engineer roadmap: what to learn, and in what order.*
+
 ## Step 0: be able to build a small backend first
 
 This is the step people skip. Nearly every hard bug in an LLM feature is a normal software bug wearing a costume: a request with no timeout, a retry loop that hammers a provider that is already down, user input pasted straight into a string, a refund issued twice because a request was replayed.

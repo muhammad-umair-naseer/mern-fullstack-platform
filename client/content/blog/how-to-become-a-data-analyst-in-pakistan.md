@@ -27,6 +27,11 @@ It also helps to know what the role is not:
 | Data analyst | Queries that data to answer business questions | Spreadsheets, SQL, a BI tool, some Python |
 | Data scientist | Builds predictive models and runs deeper statistics | Python, statistics, machine learning |
 
+
+
+![Architectural Blueprint and Learning Stages for How to become a data analyst in Pakistan, step by step — Cortexis Roadmap Diagram](/blog/diagrams/how-to-become-a-data-analyst-in-pakistan-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to become a data analyst in Pakistan, step by step.*
+
 ## How to become a data analyst in Pakistan: the roadmap
 
 Here is the order that works, with a rough pace for someone studying an hour or two a day alongside a degree or a job.

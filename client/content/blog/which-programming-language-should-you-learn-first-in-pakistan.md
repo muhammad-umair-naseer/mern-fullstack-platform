@@ -23,6 +23,11 @@ That last sentence is the whole article, but you deserve the local detail behind
 - [Practical Action Plan for Your First 7 Days](#what-to-do-this-week)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for Which programming language should you learn first in Pakistan? — Cortexis Roadmap Diagram](/blog/diagrams/which-programming-language-should-you-learn-first-in-pakistan-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Which programming language should you learn first in Pakistan?.*
+
 ## Answer this first, then pick
 
 The question "which language is best" has no answer. The question "what do I want out of this in twelve months" has a very clear one.

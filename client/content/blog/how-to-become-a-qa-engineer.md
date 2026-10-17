@@ -30,6 +30,11 @@ On a normal week, that means some mix of:
 
 Testing cannot prove software works. It buys the team confidence to change things.
 
+
+
+![Architectural Blueprint and Learning Stages for How to become a QA engineer: skills, roadmap, first job — Cortexis Roadmap Diagram](/blog/diagrams/how-to-become-a-qa-engineer-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to become a QA engineer: skills, roadmap, first job.*
+
 ## Manual tester vs QA automation engineer
 
 Many people start in manual testing and move into automation. Both are real QA work, and good automation engineers never stop doing exploratory testing.

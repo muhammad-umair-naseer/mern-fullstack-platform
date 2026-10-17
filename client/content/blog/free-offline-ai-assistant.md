@@ -26,6 +26,11 @@ It is still in development. This page explains what it will do, how it works und
 - [The Same Idea for Your Business](#the-same-idea-for-your-business)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for A free offline AI assistant that searches your own files — Cortexis Roadmap Diagram](/blog/diagrams/free-offline-ai-assistant-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for A free offline AI assistant that searches your own files.*
+
 ## What you can ask it
 
 Most of us know a file exists but not where it is. It came as a WhatsApp attachment, got saved to Downloads, moved to a USB drive, and now sits in a folder called "New folder (3)". The search box on your computer only helps if you remember the file's name or the exact words inside it.

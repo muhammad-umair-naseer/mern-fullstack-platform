@@ -24,6 +24,11 @@ What it buys you is that when you do pick up the phone, you already know which l
 - [When an Agency Should Not Automate](#when-we-would-tell-you-not-to-bother)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for A WhatsApp chatbot for Islamabad real estate agents — Cortexis Roadmap Diagram](/blog/diagrams/whatsapp-chatbot-for-islamabad-real-estate-agents-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for A WhatsApp chatbot for Islamabad real estate agents.*
+
 ## The five questions you answer all day
 
 A listing goes up, or a reel does well, and the enquiries arrive almost identical:

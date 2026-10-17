@@ -29,6 +29,11 @@ This page is the plan we would give a friend. Our free [Docker & Kubernetes](/le
 | Config files | Dockerfile, compose.yaml | YAML manifests, Helm charts |
 | Useful alone? | Yes, from day one | Only after you know containers |
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Docker and Kubernetes, step by step — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-docker-and-kubernetes-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Docker and Kubernetes, step by step.*
+
 ## Should you learn Docker before Kubernetes?
 
 Yes. You can type Kubernetes commands without Docker, but you will not be able to debug anything. When a pod shows `CrashLoopBackOff`, the cause is almost always inside the container: a wrong port, a missing environment variable, a process that exits immediately. Those are Docker skills.

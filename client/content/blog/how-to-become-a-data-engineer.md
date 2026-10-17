@@ -21,6 +21,11 @@ Think of a digital wallet company in Karachi. Transactions sit in a production d
 
 A data engineer makes it answerable. They extract data from each source, land it in a central store, clean and combine it into well modelled tables, schedule all of that to run reliably, monitor it so broken numbers are caught before a manager sees them, and serve the result to dashboards, analysts and models.
 
+
+
+![Architectural Blueprint and Learning Stages for How to become a data engineer: a practical roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-become-a-data-engineer-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to become a data engineer: a practical roadmap.*
+
 ## How to become a data engineer, step by step
 
 Each step depends on the one before.

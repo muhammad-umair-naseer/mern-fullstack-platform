@@ -23,6 +23,11 @@ Most of the pain beginners feel is not the language itself. It is learning from 
 
 If you are a BSCS or BSSE student in Pakistan, your first programming courses very often use C++. We wrote about that situation in [which programming language you should learn first](/blog/which-programming-language-should-you-learn-first-in-pakistan): do the syllabus language properly. This guide is about doing it properly.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn C++ for beginners: a modern roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-cpp-for-beginners-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn C++ for beginners: a modern roadmap.*
+
 ## How to learn C++ for beginners: the roadmap
 
 Here is the order that works, with a rough sense of what "done" looks like at each stage.

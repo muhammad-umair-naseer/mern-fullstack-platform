@@ -24,6 +24,7 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL:?set ADMIN_EMAIL in .env}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
       - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
+      - EMBEDDED_WORKER=${EMBEDDED_WORKER:-true}
       # the admin portal's Games section reads players from each game over the internal network
       - GOTCHA_URL=http://gotcha-rush:3000
       - TYPEDASH_URL=http://typedash:4000
@@ -35,6 +36,35 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  cortexis-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cortexis-worker
+    restart: unless-stopped
+    command: ["node", "src/workers/email.worker.js"]
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/cortexis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - CONTACT_TO=${CONTACT_TO:-}
+      - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
+    networks:
+      - cortexis_internal
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    profiles:
+      - worker
 
   gotcha-rush:
     build:

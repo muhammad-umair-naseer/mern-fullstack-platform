@@ -25,6 +25,11 @@ So "knowing how to use AI" really means three things:
 2. **Checking well**, so a confident mistake never reaches your boss, teacher or customer.
 3. **Sharing carefully**, so your private information stays private.
 
+
+
+![Architectural Blueprint and Learning Stages for Learn How to Use AI Tools for Free: A Beginner's Plan — Cortexis Roadmap Diagram](/blog/diagrams/learn-how-to-use-ai-tools-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Learn How to Use AI Tools for Free: A Beginner's Plan.*
+
 ## Which free AI tool should you start with?
 
 Start with one general chatbot and the AI features already inside apps you use. For most people that covers nearly everything.

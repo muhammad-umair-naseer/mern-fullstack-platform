@@ -8,10 +8,14 @@ import Seo from '../seo/Seo';
 import { breadcrumbs, itemList } from '../seo/schema';
 import { SITE } from '../seo/site';
 
+// A course guide's canonical home is its course page (/learn/*).
+// Only standalone editorial posts appear in the main Blog index.
+const BLOG_POSTS = POSTS.filter((p) => !(p.home && p.home.startsWith('/learn/')));
+
 const labelOf = (p) => (CATEGORY[p.category] || {}).label || 'Notes';
 
 // The hero's deck of titles, in the order the grid lists them.
-const DECK = POSTS.map((p) => ({ slug: p.slug, title: p.title, label: labelOf(p), minutes: p.minutes }));
+const DECK = BLOG_POSTS.map((p) => ({ slug: p.slug, title: p.title, label: labelOf(p), minutes: p.minutes }));
 
 const Blog = () => {
   const [cat, setCat] = useState('All');
@@ -19,7 +23,7 @@ const Blog = () => {
   // Categories in the order they first appear, so the row is stable.
   const categories = useMemo(() => {
     const seen = [];
-    POSTS.forEach((p) => {
+    BLOG_POSTS.forEach((p) => {
       const label = labelOf(p);
       if (!seen.includes(label)) seen.push(label);
     });
@@ -29,8 +33,8 @@ const Blog = () => {
   const filtered = useMemo(
     () =>
       cat === 'All'
-        ? POSTS
-        : POSTS.filter((p) => labelOf(p) === cat),
+        ? BLOG_POSTS
+        : BLOG_POSTS.filter((p) => labelOf(p) === cat),
     [cat]
   );
 
@@ -44,7 +48,7 @@ const Blog = () => {
         path="/blog"
         schema={[
           breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }]),
-          itemList(POSTS, postPath),
+          itemList(BLOG_POSTS, postPath),
         ]}
       />
 

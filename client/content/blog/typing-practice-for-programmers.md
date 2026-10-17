@@ -23,6 +23,11 @@ Typing tests measure words per minute on ordinary sentences. That is useful, but
 
 So the goal for programmers is not a big number on a prose test. It is typing code accurately without looking down, so your attention stays on the problem you are solving.
 
+
+
+![Architectural Blueprint and Learning Stages for Typing practice for programmers: race on real code — Cortexis Roadmap Diagram](/blog/diagrams/typing-practice-for-programmers-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Typing practice for programmers: race on real code.*
+
 ## The characters that slow coders down
 
 Watch yourself type a few lines of your own code and you will probably find the same trouble spots most developers have:

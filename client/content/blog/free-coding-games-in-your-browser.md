@@ -24,6 +24,11 @@ A good coding game should leave you better at the job, not just entertained. Bef
 
 Both games on this page were built around those four rules.
 
+
+
+![Architectural Blueprint and Learning Stages for Free coding games you can play in your browser — Cortexis Roadmap Diagram](/blog/diagrams/free-coding-games-in-your-browser-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Free coding games you can play in your browser.*
+
 ## Gotcha Rush: guess what the code prints
 
 Gotcha Rush is a multiplayer **"what does this print?"** game. A room of up to five players sees the same tricky snippet. Everyone types the output they expect, line by line, before the clock runs out. Then the real output prints against your answer, followed by a short explanation of why the language behaved that way.

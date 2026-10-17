@@ -23,6 +23,11 @@ In practice most full stack developers lean one way, front end or server. That i
 
 If you have not chosen a first language yet, we wrote a longer piece on [which programming language to learn first in Pakistan](/blog/which-programming-language-should-you-learn-first-in-pakistan). For full stack work the short answer is JavaScript, because it runs in the browser and on the server, so you learn one language and use it on both sides.
 
+
+
+![Architectural Blueprint and Learning Stages for How to become a full stack developer: a free roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-become-a-full-stack-developer-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to become a full stack developer: a free roadmap.*
+
 ## The full stack developer roadmap, in order
 
 The order matters more than the speed. Each stage depends on the one before it, and most people who stall skipped a stage rather than failed one.

@@ -21,6 +21,11 @@ A backend developer builds the part of an application that users never see: the 
 
 Writing the first working endpoint is the easy part. The real job is everything after that: rejecting hostile input, not leaking database connections, and keeping one slow handler from freezing the whole process. You are judged on whether the service stays up and stays correct.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Node.js backend: a roadmap to a real API — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-nodejs-backend-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Node.js backend: a roadmap to a real API.*
+
 ## What you need before you start
 
 Node.js is JavaScript on the server, so JavaScript comes first. You do not need to be an expert, but you should be comfortable with:

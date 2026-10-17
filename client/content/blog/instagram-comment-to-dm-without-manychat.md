@@ -25,6 +25,11 @@ Here is the full shape, so you can make that call yourself.
 - [The Recommended Migration Path for Businesses](#the-middle-path-most-businesses-should-take)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for Instagram comment to DM without ManyChat: what it takes — Cortexis Roadmap Diagram](/blog/diagrams/instagram-comment-to-dm-without-manychat-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Instagram comment to DM without ManyChat: what it takes.*
+
 ## What actually happens when a comment becomes a DM
 
 Four steps, none of them magic.

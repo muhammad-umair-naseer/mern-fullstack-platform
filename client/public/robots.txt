@@ -1,14 +1,39 @@
 # https://www.robotstxt.org/robotstxt.html
+
+# Default crawl rules
 User-agent: *
 Allow: /
-
-# Private, per user, or thin pages. Crawling them wastes crawl budget and can
-# surface a half rendered dashboard in results.
 Disallow: /dashboard
 Disallow: /login
 Disallow: /signup
-Disallow: /certificate/
-# Test fixtures that ship inside the toolkit folder.
 Disallow: /toolkit/tests/
 
+# Generative Engine & AI Search Crawlers (Explicitly welcomed)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# Canonical sitemap & Generative Engine knowledge bases
 Sitemap: https://cortexissolutionhub.com/sitemap.xml
+# LLM Context: https://cortexissolutionhub.com/llms.txt
+# Full LLM Context: https://cortexissolutionhub.com/llms-full.txt

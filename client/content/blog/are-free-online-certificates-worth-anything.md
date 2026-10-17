@@ -24,6 +24,11 @@ So the useful question is not whether it is worth anything. It is what it is for
 - [How to Actually Use One on a CV](#how-to-actually-use-one-on-a-cv)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for Are free online certificates worth anything on a CV? — Cortexis Roadmap Diagram](/blog/diagrams/are-free-online-certificates-worth-anything-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Are free online certificates worth anything on a CV?.*
+
 ## What a certificate is not
 
 It is not a qualification. A degree, a medical licence, a chartered accountancy: those are qualifications because a body with legal standing controls who gets one, keeps a register, and can take it away. A course certificate has none of that machinery. It is a statement by whoever issued it that you did what they say you did. Its entire value is borrowed from two places: how much work it took, and how much a stranger trusts the issuer.

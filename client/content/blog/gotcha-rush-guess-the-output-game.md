@@ -24,6 +24,11 @@ You have forty seconds per round. After the answer is shown, a **Why** box expla
 
 A public match has 8 rounds. Every puzzle has a difficulty from 1 (easy) to 5 (hardest). The puzzles get harder as the match goes on. The first rounds use easy snippets (difficulty 1 to 2), and the last ones use medium to hardest (3 to 5).
 
+
+
+![Architectural Blueprint and Learning Stages for Gotcha Rush: a guess the output game for coders — Cortexis Roadmap Diagram](/blog/diagrams/gotcha-rush-guess-the-output-game-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Gotcha Rush: a guess the output game for coders.*
+
 ## How your answer is checked
 
 The game compares your answer with the real output one line at a time. Two rules matter:

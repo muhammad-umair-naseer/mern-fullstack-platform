@@ -19,6 +19,11 @@ A hacking tool only makes sense once you understand what it is attacking. Runnin
 
 Most real security work is also defensive: deciding who can read which data, storing passwords properly, reading logs, patching servers and handling incidents. Learning from the defender's side first gives you both views.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn cybersecurity from scratch, in order — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-cybersecurity-from-scratch-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn cybersecurity from scratch, in order.*
+
 ## How to learn cybersecurity from scratch: the order that works
 
 | Step | What to learn | Why it comes here |

@@ -27,6 +27,11 @@ It sits next to two other jobs:
 
 A good bookkeeper keeps the books so clean that the accountant and tax adviser can work quickly, and does not give tax advice they are not qualified to give.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn bookkeeping for free, step by step — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-bookkeeping-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn bookkeeping for free, step by step.*
+
 ## How to learn bookkeeping for free: the roadmap
 
 Most people who quit bookkeeping quit at debits and credits, usually because they started in software. Software hides the double entry, which is convenient once you understand it and confusing until you do. Learn on paper or in a spreadsheet first.

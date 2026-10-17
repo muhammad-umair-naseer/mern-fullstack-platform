@@ -31,6 +31,11 @@ A VA works inside a seller's business remotely. The seller owns the brand and th
 
 For a US seller, the time zone gap works in your favour: you answer overnight messages and check account health in your morning, and the seller wakes up to an inbox that has already been handled.
 
+
+
+![Architectural Blueprint and Learning Stages for How to become an Amazon virtual assistant: a free roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-become-an-amazon-virtual-assistant-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to become an Amazon virtual assistant: a free roadmap.*
+
 ## Generalist first, specialist later
 
 Start as a generalist for one or two small sellers; it is the fastest way to learn how the pieces connect. Once you have real client work behind you, specialise in what you do best. PPC and listing optimisation are popular specialisms because their results are easy to measure.

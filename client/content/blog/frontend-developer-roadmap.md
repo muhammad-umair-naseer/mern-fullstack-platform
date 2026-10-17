@@ -19,6 +19,11 @@ Most roadmap charts online show dozens of logos with arrows between them. This p
 
 A frontend developer builds the part of a product that people touch: the pages, buttons, forms, menus and loading states. The job is less about making things pretty and more about making them correct. Does the form keep the user's input when the network fails? Can someone use the menu with a keyboard? The hard part is building something a team can change for years without breaking it.
 
+
+
+![Architectural Blueprint and Learning Stages for Frontend developer roadmap: what to learn, in order — Cortexis Roadmap Diagram](/blog/diagrams/frontend-developer-roadmap-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Frontend developer roadmap: what to learn, in order.*
+
 ## The frontend developer roadmap, step by step
 
 Here is the full order, with a rough idea of what "done" looks like at each step. The time column assumes a couple of hours most days, and it will vary a lot from person to person.

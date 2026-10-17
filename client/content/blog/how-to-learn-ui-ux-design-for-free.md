@@ -28,6 +28,11 @@ People search for "UI UX" as one word because in most small teams, one person do
 
 You need both. A UX designer who cannot make a readable screen gets ignored, and a UI designer who cannot explain why a screen exists gets overruled.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn UI UX design for free: an 8 week roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-ui-ux-design-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn UI UX design for free: an 8 week roadmap.*
+
 ## What you need before you start
 
 Less than you think.

@@ -8,9 +8,10 @@ import { toolArticle } from '../data/toolArticles';
 import PageHero from '../components/PageHero';
 import ToolDetailVisual from '../components/heroes/ToolDetailVisual';
 import ToolCard from '../components/tools/ToolCard';
+import PrivacyComparisonTable from '../components/tools/PrivacyComparisonTable';
 import '../learn/ToolCard.css';
 import Seo from '../seo/Seo';
-import { breadcrumbs, softwareApplication, faq } from '../seo/schema';
+import { breadcrumbs, softwareApplication, faq, howTo } from '../seo/schema';
 import ToolkitRunner from '../components/tools/ToolkitRunner';
 import PdfCompressor from '../components/tools/PdfCompressor';
 import PdfMerger from '../components/tools/PdfMerger';
@@ -361,7 +362,7 @@ export default function ToolDetail() {
             { name: tool.name, path: `/tools/${tool.slug}` },
           ]),
           // Only claim to be an application once the tool actually runs.
-          ...(live ? [softwareApplication(tool, category.label)] : []),
+          ...(live ? [softwareApplication(tool, category.label), howTo(tool)] : []),
           ...(faqs.length ? [faq(faqs)] : []),
         ]}
       />
@@ -384,6 +385,9 @@ export default function ToolDetail() {
       {/* Main Tool Content */}
       <section id="tool" className="lx-tool-ui max-w-5xl mx-auto px-6 relative z-10 scroll-mt-24">
         {renderToolComponent()}
+
+        {/* High Information Gain Architecture & Privacy Comparison for AEO & GEO */}
+        {live && <PrivacyComparisonTable toolName={tool.name} />}
 
         {/* The long-form guide, keyed by slug rather than mounted inside the
             tool. One component can serve several URLs and each URL needs its

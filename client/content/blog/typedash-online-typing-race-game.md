@@ -19,6 +19,11 @@ TypeDash is a free typing race game in your browser. A short paragraph appears, 
 
 Want to race people you know? Press **Play with friends**, then **Make a private game**, and share the code or link. Our guide on [how to start a typing race with friends](/blog/typing-race-with-friends) walks through it step by step.
 
+
+
+![Architectural Blueprint and Learning Stages for TypeDash: a free online typing race game and how to play — Cortexis Roadmap Diagram](/blog/diagrams/typedash-online-typing-race-game-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for TypeDash: a free online typing race game and how to play.*
+
 ## Pick a language, a mode and a pacer
 
 Press **Change** under the play buttons. A small panel opens with a few steps.

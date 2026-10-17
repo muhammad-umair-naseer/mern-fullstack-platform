@@ -25,6 +25,11 @@ Here is the whole flow for a cash on delivery order, the wording we would actual
 - [Should You Build This at All?](#should-you-build-this-at-all)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for How to automate WhatsApp order confirmation for COD — Cortexis Roadmap Diagram](/blog/diagrams/how-to-automate-whatsapp-order-confirmation-for-cod-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to automate WhatsApp order confirmation for COD.*
+
 ## The flow, stage by stage
 
 | Stage | What triggers it | Who starts the message | What you may send |

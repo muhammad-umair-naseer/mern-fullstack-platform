@@ -19,6 +19,11 @@ A project is temporary work that creates something unique: opening a second bran
 
 In practice the job is mostly communication: making sure everyone knows what is being delivered and why, fitting the work to the time and money available, getting decisions made, spotting problems early and keeping expectations realistic. You often have little formal authority, so you lead through clarity and reliability rather than rank.
 
+
+
+![Architectural Blueprint and Learning Stages for How to become a project manager with no experience — Cortexis Roadmap Diagram](/blog/diagrams/how-to-become-a-project-manager-with-no-experience-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to become a project manager with no experience.*
+
 ## How to become a project manager with no experience: the roadmap
 
 Learn in this order; each stage is usable on a real project straight away.

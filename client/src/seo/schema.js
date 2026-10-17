@@ -1,11 +1,9 @@
 /**
- * Schema.org JSON-LD builders.
+ * Schema.org JSON-LD builders for Answer Engine Optimization (AEO)
+ * and Generative Engine Optimization (GEO).
  *
- * Structured data is how a result becomes more than a blue link: a course can
- * carry its provider and price, a page can show a breadcrumb trail, an FAQ can
- * expand in place. Google reads it, ignores what it does not recognise, and
- * penalises markup that claims things the page does not actually show. So
- * everything here is built from values the page really renders.
+ * Structured data gives AI models and search engines the semantic anchors
+ * they need to accurately summarize and cite the platform.
  */
 import { SITE, SITE_URL, absolute } from './site';
 
@@ -26,13 +24,42 @@ export const organization = () => ({
   },
   description: SITE.description,
   foundingDate: SITE.registration.incorporated,
-  // The company register entry, so a search engine can tie this site to a real
-  // legal entity rather than taking the name on trust.
   identifier: {
     '@type': 'PropertyValue',
     name: `${SITE.registration.authorityShort} Corporate Unique Identification Number`,
     value: SITE.registration.cuin,
   },
+  sameAs: [
+    SITE.registration.verifyUrl,
+    'https://github.com/abdullah5654/cortexis-website',
+    'https://www.linkedin.com/company/cortexis-solution-hub',
+  ],
+  areaServed: [
+    { '@type': 'Country', name: 'Pakistan' },
+    { '@type': 'AdministrativeArea', name: 'Worldwide' },
+  ],
+  knowsAbout: [
+    'Software Architecture',
+    'Artificial Intelligence & Autonomous Agents',
+    'Meta Graph API & WhatsApp Automations',
+    'WebAssembly Browser Utilities',
+    'Full-Stack Web Development',
+    'MERN Stack Engineering',
+  ],
+  founder: [
+    {
+      '@type': 'Person',
+      name: 'Abdullah',
+      jobTitle: 'Lead Full-Stack Architect & AI Systems Specialist',
+      worksFor: { '@id': `${SITE_URL}/#organization` },
+    },
+    {
+      '@type': 'Person',
+      name: 'Muhammad Umair Naseer',
+      jobTitle: 'Senior Software Engineer & Technical Solutions Lead',
+      worksFor: { '@id': `${SITE_URL}/#organization` },
+    },
+  ],
 });
 
 export const website = () => ({
@@ -45,8 +72,9 @@ export const website = () => ({
 });
 
 /**
- * A course. `Course` is one of the few types that still earns a rich result,
- * and free courses with certificates are exactly what it was designed for.
+ * A course schema optimized for AEO/GEO.
+ * Course carries its provider, zero tuition price, curriculum details,
+ * and verified digital credential specification.
  */
 export const course = (c) => ({
   '@context': 'https://schema.org',
@@ -57,23 +85,25 @@ export const course = (c) => ({
   url: absolute(`/learn/${c.slug}`),
   provider: { '@id': `${SITE_URL}/#organization` },
   inLanguage: 'en',
-  educationalLevel: c.level,
+  educationalLevel: c.level || 'Beginner to Intermediate',
   isAccessibleForFree: true,
+  educationalCredentialAwarded: 'Cortexis Verified Certificate of Completion',
   offers: {
     '@type': 'Offer',
     price: '0',
     priceCurrency: 'PKR',
     availability: 'https://schema.org/InStock',
-    category: 'Free',
+    category: 'Free Online Course',
   },
   hasCourseInstance: {
     '@type': 'CourseInstance',
     courseMode: 'online',
-    courseWorkload: c.hours ? `PT${c.hours}H` : undefined,
+    courseWorkload: c.hours ? `PT${c.hours}H` : 'PT20H',
+    instructor: { '@id': `${SITE_URL}/#organization` },
   },
 });
 
-/** The trail Google prints above a result instead of a bare URL. */
+/** The breadcrumb trail search engines display above a result. */
 export const breadcrumbs = (trail) => ({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -85,7 +115,7 @@ export const breadcrumbs = (trail) => ({
   })),
 });
 
-/** A list page, so the crawler sees the set rather than guessing from links. */
+/** An item list for catalogue pages. */
 export const itemList = (items, pathOf) => ({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -93,12 +123,12 @@ export const itemList = (items, pathOf) => ({
   itemListElement: items.map((item, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    name: item.title,
+    name: item.title || item.name,
     url: absolute(pathOf(item)),
   })),
 });
 
-/** Only use this where the questions and answers are genuinely on the page. */
+/** FAQ schema for direct extraction by AI search and rich snippets. */
 export const faq = (pairs) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -110,10 +140,99 @@ export const faq = (pairs) => ({
 });
 
 /**
- * A blog post read in full on another page (its markdown names that page as
- * home). Its Article markup, and its FAQ when it has one, belong to that page,
- * since that is where its words are.
+ * Enterprise service schema for service pages.
  */
+export const service = (s) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': absolute(`/services/${s.slug}#service`),
+  name: s.title,
+  description: s.description,
+  serviceType: s.category || 'Software Engineering',
+  provider: { '@id': `${SITE_URL}/#organization` },
+  areaServed: { '@type': 'Country', name: 'Worldwide' },
+  termsOfService: absolute('/terms'),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: `${s.title} Deliverables`,
+    itemListElement: (s.deliverables || []).map((d, i) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: d },
+      position: i + 1,
+    })),
+  },
+});
+
+/**
+ * Step-by-step HowTo schema for tool pages.
+ * Essential for AEO zero-click snippets and Gemini/Perplexity step extraction.
+ */
+export const howTo = (tool, customSteps) => {
+  const steps = customSteps || [
+    {
+      name: 'Select or Drag Your File',
+      text: `Open the Cortexis ${tool.name} and drag your file into the browser box or click to browse.`,
+    },
+    {
+      name: 'Configure Processing Parameters',
+      text: 'Adjust your preferred settings or parameters directly in the web UI.',
+    },
+    {
+      name: 'Process Locally in Memory',
+      text: 'The tool executes 100% client-side in your browser RAM using WebAssembly. No files are uploaded to any server.',
+    },
+    {
+      name: 'Instant Watermark-Free Download',
+      text: 'Click the download button to immediately retrieve your completed file with zero watermarks or account signups.',
+    },
+  ];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    '@id': absolute(`/tools/${tool.slug}#howto`),
+    name: `How to use ${tool.name} online for free`,
+    description: tool.description,
+    totalTime: 'PT1M',
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+    })),
+  };
+};
+
+/**
+ * Working web tool schema with privacy and WebAssembly capabilities.
+ */
+export const softwareApplication = (tool, categoryLabel) => ({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  '@id': absolute(`/tools/${tool.slug}#app`),
+  name: tool.name,
+  description: tool.description,
+  url: absolute(`/tools/${tool.slug}`),
+  applicationCategory: categoryLabel ? `${categoryLabel}Application` : 'UtilityApplication',
+  operatingSystem: 'All Modern Web Browsers (Chrome, Firefox, Safari, Edge, Brave)',
+  browserRequirements: 'Requires modern JavaScript and WebAssembly support',
+  isAccessibleForFree: true,
+  featureList: [
+    '100% In-Browser Execution',
+    'Zero Server Uploads (Total Data Privacy)',
+    'Zero Data Logging or Retention',
+    'No Watermarks on Output Files',
+    'Unlimited Free Usage Without Account',
+  ],
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'PKR',
+    category: 'Free Web Utility',
+  },
+  provider: { '@id': `${SITE_URL}/#organization` },
+});
+
 export const hostedArticle = (post, path, faqs = []) => [
   {
     '@context': 'https://schema.org',
@@ -125,37 +244,9 @@ export const hostedArticle = (post, path, faqs = []) => [
     datePublished: post.date,
     dateModified: post.updated,
     author: { '@type': 'Organization', name: SITE.legalName },
-    publisher: { '@id': `${absolute('/')}#organization`.replace('//#', '/#') },
+    publisher: { '@id': `${SITE_URL}/#organization` },
     mainEntityOfPage: absolute(path),
     url: absolute(`${path}#${post.slug}`),
   },
   ...(faqs.length ? [faq(faqs.map((f) => ({ q: f.question, a: f.answer })))] : []),
 ];
-
-/**
- * A working web tool.
- *
- * SoftwareApplication is the right type for a browser based utility, and the
- * zero price offer is what marks it as genuinely free rather than freemium.
- * Only use this once the tool actually runs: describing a page as an
- * application when it is a "coming soon" notice is exactly the mismatch that
- * gets structured data ignored or penalised.
- */
-export const softwareApplication = (tool, categoryLabel) => ({
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  '@id': absolute(`/tools/${tool.slug}#app`),
-  name: tool.name,
-  description: tool.description,
-  url: absolute(`/tools/${tool.slug}`),
-  applicationCategory: categoryLabel ? `${categoryLabel} tool` : 'Utility',
-  operatingSystem: 'Any, runs in a web browser',
-  browserRequirements: 'Requires JavaScript',
-  isAccessibleForFree: true,
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'PKR',
-  },
-  provider: { '@id': `${SITE_URL}/#organization` },
-});

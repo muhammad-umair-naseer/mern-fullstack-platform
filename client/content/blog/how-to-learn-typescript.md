@@ -27,6 +27,11 @@ TypeScript adds nothing at runtime, so every confusing moment is either a JavaSc
 
 If several feel shaky, spend a few weeks on plain JavaScript first through [full stack web](/learn/full-stack-web) or [frontend engineering](/learn/frontend-engineering).
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn TypeScript: a roadmap for JS developers — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-typescript-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn TypeScript: a roadmap for JS developers.*
+
 ## Why bother: what types actually catch
 
 Here is the kind of bug that ships every week in JavaScript:

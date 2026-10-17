@@ -159,6 +159,18 @@ const Heading3 = ({ children }) => {
   );
 };
 
+const MarkdownImage = ({ src, alt }) => (
+  <figure className="cx-md-figure my-8 text-center">
+    <img
+      src={src}
+      alt={alt || 'Technical architecture diagram'}
+      loading="lazy"
+      decoding="async"
+      className="cx-md-img rounded-xl border border-slate-200/80 shadow-md max-w-full h-auto mx-auto"
+    />
+  </figure>
+);
+
 // Lesson and blog bodies. The typography is set in Markdown.css against the
 // house tokens rather than through prose-* utilities: one of those utilities
 // (prose-pre:bg-slate-900) put "bg-slate-9" in the wrapper's class list, which
@@ -172,6 +184,7 @@ const Markdown = ({ children }) => (
         table: Table,
         h2: Heading2,
         h3: Heading3,
+        img: MarkdownImage,
       }}
     >
       {children}

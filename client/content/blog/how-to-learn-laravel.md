@@ -21,6 +21,11 @@ Laravel is a PHP framework that gives PHP a structure. Routes live in one place,
 
 It is a good fit if you want to build complete web applications on your own, if you freelance and keep meeting PHP projects, or if a software house near you lists Laravel in its job posts. It is a weaker fit if you already know you want to work mainly in JavaScript on both ends, in which case our [full stack web course](/learn/full-stack-web) is the more direct route.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Laravel step by step: a practical roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-laravel-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Laravel step by step: a practical roadmap.*
+
 ## How to learn Laravel step by step: the roadmap
 
 Each step below builds on the one before. Do not move on until you can do the "you are ready when" part without looking anything up.

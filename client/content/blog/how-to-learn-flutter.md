@@ -23,6 +23,11 @@ It is a strong fit for business apps, ordering and booking apps, dashboards, int
 
 If you are still deciding between platforms or worried about cost, we wrote about [what a mobile app really costs in Pakistan](/blog/what-a-mobile-app-really-costs-in-pakistan) and why cross platform is usually the sensible default. If your background is JavaScript and React, our [React Native course](/learn/react-native) may feel more familiar, and our guide on [how to learn React Native](/blog/how-to-learn-react-native) compares the route. Picking one and finishing is what matters.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Flutter: a beginner roadmap that ships — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-flutter-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Flutter: a beginner roadmap that ships.*
+
 ## How to learn Flutter: the roadmap
 
 Here is the order that works, with a clear sign that you are ready for the next stage.

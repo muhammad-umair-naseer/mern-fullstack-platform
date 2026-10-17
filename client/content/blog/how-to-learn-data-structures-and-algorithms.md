@@ -23,6 +23,11 @@ In practice a small core does most of the work. A hash map turns "have I seen th
 
 If you are a BSCS or BSSE student in Pakistan, DSA is probably already a semester course, often taught in C++. The ideas transfer between languages. If you are still deciding which language to use for everything else, we covered that in [which programming language you should learn first](/blog/which-programming-language-should-you-learn-first-in-pakistan).
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn data structures and algorithms: a roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-data-structures-and-algorithms-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn data structures and algorithms: a roadmap.*
+
 ## How to learn data structures and algorithms: the roadmap
 
 Here is the order that works, and what "ready to move on" looks like at each stage.

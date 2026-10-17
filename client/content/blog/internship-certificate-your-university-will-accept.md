@@ -23,6 +23,11 @@ The mistake almost everyone makes is asking for all of this on the last day. By 
 - [How Cortexis Handles Verification and University Credit](#where-we-can-help-and-where-we-cannot)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for An internship certificate your university will actually accept — Cortexis Roadmap Diagram](/blog/diagrams/internship-certificate-your-university-will-accept-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for An internship certificate your university will actually accept.*
+
 ## What your department is really checking
 
 Coordinators are not reading your certificate for the compliments. Under guidelines from the [Higher Education Commission (HEC) Pakistan](https://www.hec.gov.pk/) and computing accreditation bodies like [NCEAC](https://nceac.org.pk/), they are answering three separate verification questions:

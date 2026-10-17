@@ -233,7 +233,7 @@ const AuthForm = ({ mode }) => {
                     minLength={2}
                     autoComplete="name"
                     className="lx-auth-input"
-                    placeholder="Ali Raza"
+                    placeholder="John Doe"
                   />
                 </div>
               )}

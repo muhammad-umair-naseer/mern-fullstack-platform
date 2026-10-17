@@ -14,6 +14,7 @@ import { course as courseSchema, breadcrumbs, hostedArticle } from '../seo/schem
 import { ClaudeProPill } from '../learn/ClaudePro';
 import { POSTS } from '../data/blog.generated';
 import ServiceArticle from '../components/ServiceArticle';
+import CourseSnapshot from '../components/learn/CourseSnapshot';
 import { parseBlogContent } from '../lib/blogParser';
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -432,6 +433,9 @@ const CourseOutline = () => {
       </div>
 
       <section id="syllabus" className="max-w-5xl mx-auto px-6 pb-16 md:pb-24" aria-labelledby="syllabus-heading">
+        {/* AEO & GEO Structured Answer Snapshot */}
+        <CourseSnapshot course={course} lessonsCount={allLessons.length} />
+
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-5 mb-8 md:mb-12">
           <div>
             <span className="lx-label">

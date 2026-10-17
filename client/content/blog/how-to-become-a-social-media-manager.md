@@ -29,6 +29,11 @@ The real job is wider than posting on Instagram. In a small business or as a fre
 | Creators | Finding, briefing and managing influencer partnerships |
 | Analytics | Tracking results, writing monthly reports, recommending changes |
 
+
+
+![Architectural Blueprint and Learning Stages for How to become a social media manager, step by step — Cortexis Roadmap Diagram](/blog/diagrams/how-to-become-a-social-media-manager-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to become a social media manager, step by step.*
+
 ## How to become a social media manager: the skills, in order
 
 Each step builds on the one before. Skipping straight to ads or growth hacks wastes months.

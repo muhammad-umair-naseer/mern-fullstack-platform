@@ -30,6 +30,11 @@ It also helps to know the neighbouring roles, because many people searching for 
 
 If the first row sounds like you, a data analyst path is shorter and the hiring bar for juniors is usually lower. If the second row is the one, keep reading.
 
+
+
+![Architectural Blueprint and Learning Stages for Data science roadmap: what to learn, and in what order — Cortexis Roadmap Diagram](/blog/diagrams/data-science-roadmap-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Data science roadmap: what to learn, and in what order.*
+
 ## The data science roadmap, step by step
 
 Each stage depends on the one before it. You can move fast through a stage you already know, but do not skip it.

@@ -9,6 +9,7 @@ import TableOfContents from '../components/blog/TableOfContents';
 import BlogShare from '../components/blog/BlogShare';
 import BlogFaq from '../components/blog/BlogFaq';
 import AuthorBio from '../components/blog/AuthorBio';
+import AiKeyTakeaways from '../components/blog/AiKeyTakeaways';
 import { getAuthor } from '../data/authors';
 import { parseBlogContent } from '../lib/blogParser';
 import Seo from '../seo/Seo';
@@ -114,8 +115,8 @@ const BlogPost = () => {
       ? [{ to: '/services/ai-automation', label: 'Explore AI Automation', primary: true }]
       : undefined;
 
-  // Read next: the newest other posts
-  const more = POSTS.filter((p) => p.slug !== post.slug).slice(0, 2);
+  // Read next: the newest other blog posts
+  const more = POSTS.filter((p) => p.slug !== post.slug && !(p.home && p.home.startsWith('/learn/'))).slice(0, 2);
 
   return (
     <main className="cx-lv text-black min-h-screen">
@@ -189,6 +190,9 @@ const BlogPost = () => {
 
           {/* Social Share & Copy Link Bar (Top) */}
           <BlogShare title={post.title} slug={post.slug} placement="top" />
+
+          {/* AI Key Takeaways / Executive Summary for AEO & GEO */}
+          <AiKeyTakeaways post={post} />
 
           {/* Cleaned Article Body */}
           <div className="cx-lv-in cx-lv-body" style={{ '--i': 3 }}>

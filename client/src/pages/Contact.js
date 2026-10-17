@@ -166,7 +166,7 @@ const Contact = () => {
                     <label htmlFor="name" className={labelBase}>Name *</label>
                     <input
                       id="name" name="name" value={formData.name} onChange={handleChange}
-                      placeholder="Ahsan Raza" autoComplete="name"
+                      placeholder="John Doe" autoComplete="name"
                       aria-invalid={errors.name ? true : undefined} aria-describedby={errors.name ? 'name-error' : undefined}
                       className={`${inputBase} ${errors.name ? 'border-rose-500' : 'border-stone-300'}`}
                     />
@@ -176,7 +176,7 @@ const Contact = () => {
                     <label htmlFor="email" className={labelBase}>Email *</label>
                     <input
                       id="email" name="email" type="email" value={formData.email} onChange={handleChange}
-                      placeholder="ahsan.raza@gmail.com" autoComplete="email"
+                      placeholder="john.doe@example.com" autoComplete="email"
                       aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? 'email-error' : undefined}
                       className={`${inputBase} ${errors.email ? 'border-rose-500' : 'border-stone-300'}`}
                     />
@@ -189,7 +189,7 @@ const Contact = () => {
                     <label htmlFor="phone" className={labelBase}>Phone</label>
                     <input
                       id="phone" name="phone" value={formData.phone} onChange={handleChange}
-                      placeholder="+92 300 1234567" autoComplete="tel" inputMode="tel"
+                      placeholder="+1 (555) 019-2834" autoComplete="tel" inputMode="tel"
                       className={`${inputBase} border-stone-300`}
                     />
                   </div>

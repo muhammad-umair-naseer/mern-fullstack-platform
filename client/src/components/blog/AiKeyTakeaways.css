@@ -1,0 +1,88 @@
+/* AI Key Takeaways styling - Semantic Direct Answer Box */
+.cx-ai-takeaways {
+  margin: 1.75rem 0 2.25rem;
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(246, 243, 238, 0.9));
+  border: 1px solid rgba(220, 214, 204, 0.8);
+  border-left: 4px solid #7c3aed;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cx-ai-takeaways:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px -2px rgba(124, 58, 237, 0.08);
+}
+
+.cx-ai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.cx-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6d28d9;
+  background: rgba(124, 58, 237, 0.08);
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.cx-ai-icon {
+  color: #7c3aed;
+}
+
+.cx-ai-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #78716c;
+  background: #f5f5f4;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #e7e5e4;
+}
+
+.cx-ai-lead {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #292524;
+  margin-bottom: 1rem;
+}
+
+.cx-ai-lead strong {
+  color: #0f172a;
+}
+
+.cx-ai-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  border-top: 1px solid rgba(229, 231, 235, 0.7);
+  padding-top: 0.85rem;
+}
+
+.cx-ai-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #44403c;
+}
+
+.cx-ai-check {
+  color: #10b981;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}

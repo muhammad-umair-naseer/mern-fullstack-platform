@@ -26,6 +26,11 @@ Git is a program that runs on your computer and keeps the history of a folder. G
 | What you do with it | Commit, branch, merge, rebase, undo | Push, open pull requests, review, run Actions |
 | Learn it | First | Second |
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Git and GitHub, the right way round — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-git-and-github-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Git and GitHub, the right way round.*
+
 ## Step 1: learn the mental model, not a cheat sheet
 
 Cheat sheets hide the three facts that make everything else make sense.

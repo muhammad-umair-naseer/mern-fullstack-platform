@@ -27,7 +27,7 @@ RUN if [ -f build/.ci-build ] && [ -f build/tools/pdf-merger/index.html ]; then 
       echo "No prebuilt client; building here (no prerender without an API)"; \
       rm -rf build && npm run build; \
     fi \
-    && test -f build/index.html && test -f build/sitemap.xml
+    && test -f build/index.html && test -f build/sitemap.xml && test -f build/llms.txt && test -f build/llms-full.txt
 
 # -------------------------------------------------------------------- runtime
 FROM node:24-alpine AS runner

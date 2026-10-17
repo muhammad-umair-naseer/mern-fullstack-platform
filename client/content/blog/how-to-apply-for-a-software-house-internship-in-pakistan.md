@@ -22,6 +22,11 @@ Apply between March and May for a summer place, send a one page CV with a link s
 - [How Internships Work at Cortexis](#how-this-works-with-us-and-where-we-will-disappoint-you)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for How to apply for a software house internship in Pakistan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-apply-for-a-software-house-internship-in-pakistan-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to apply for a software house internship in Pakistan.*
+
 ## The summer window closes earlier than you think
 
 Students apply when their exams finish. Companies decide who they are taking weeks before that. Those two facts are the whole problem.

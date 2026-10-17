@@ -27,6 +27,11 @@ Strip away the marketing and there are three layers, and each one depends on the
 
 Most paid work sits in the first two layers. A shop owner copying orders into a sheet every morning needs a webhook and a confirmation message, not an agent. Agents are real and useful, but they are the top of the pyramid, not the entrance.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn AI automation: a beginner roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-ai-automation-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn AI automation: a beginner roadmap.*
+
 ## The skills you need before the AI part
 
 You do not need to be a programmer. You do need to be comfortable with a few ideas that the AI tutorials skip.

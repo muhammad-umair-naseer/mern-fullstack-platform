@@ -24,6 +24,11 @@ That distinction explains nearly every ban story you will read. The rest of this
 - [What to Do if Your Number Is Already Banned](#if-your-number-is-already-gone)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for Will WhatsApp ban my number for using a bot? — Cortexis Roadmap Diagram](/blog/diagrams/will-whatsapp-ban-my-number-for-using-a-bot-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Will WhatsApp ban my number for using a bot?.*
+
 ## There are two WhatsApps, and only one of them may have a bot
 
 The first is the consumer product and its sibling, the WhatsApp Business app. Both run on a phone, built for a human tapping a screen. The Business app has sanctioned automation built in, greeting messages, away messages, quick replies and a catalogue, and it is free. What it does not have is a way for your own software to log in and drive it.

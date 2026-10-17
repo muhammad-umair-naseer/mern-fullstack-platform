@@ -29,6 +29,11 @@ Less than you think. A laptop, camera or subscription is not the bottleneck.
 
 Two honest notes on "free". CapCut is free to use, but some effects, templates and AI features are marked Pro and need a subscription, and using them can block your export or add a watermark. Check before you build an edit around one. Premiere Pro is a subscription through Adobe Creative Cloud, worth paying for once you have client work. The free version of DaVinci Resolve is remarkably complete.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn video editing for free: a 6 week plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-video-editing-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn video editing for free: a 6 week plan.*
+
 ## Learn the vocabulary before the buttons
 
 Every editor uses the same handful of ideas, whichever app they open.

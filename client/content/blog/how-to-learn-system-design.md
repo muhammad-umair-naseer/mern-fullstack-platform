@@ -23,6 +23,11 @@ The course opens with an example that anyone who has ordered food in Pakistan wi
 
 System design is the habit of asking, before you build, how many users, what happens when this part fails, and what you will give up to keep the important things fast and reliable.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn system design: a roadmap from scratch — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-system-design-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn system design: a roadmap from scratch.*
+
 ## How to learn system design: the roadmap
 
 | Stage | What you learn | You are ready to move on when |

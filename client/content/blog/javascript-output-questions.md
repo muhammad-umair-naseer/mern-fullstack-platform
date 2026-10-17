@@ -27,6 +27,11 @@ Read each snippet and write down your answer **before** you scroll to the output
 | **Loop Closures** | `var` vs `let` in `setTimeout` | `3, 3, 3` vs `0, 1, 2` | Shared function scope vs block scope |
 | **Event Loop** | Macrotask vs Microtask | Promise (`3`) before Timeout (`2`) | Microtask queue drains before macrotask turns |
 
+
+
+![Architectural Blueprint and Learning Stages for JavaScript output questions: 10 tricky snippets, answered — Cortexis Roadmap Diagram](/blog/diagrams/javascript-output-questions-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for JavaScript output questions: 10 tricky snippets, answered.*
+
 ## Type coercion questions
 
 ### 1. Plus and minus with a string

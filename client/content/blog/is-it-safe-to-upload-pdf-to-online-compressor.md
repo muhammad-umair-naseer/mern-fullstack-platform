@@ -22,6 +22,11 @@ Here is what actually happens, and how to decide.
 - [Quick Pre-Upload Security Checklist](#a-short-checklist)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 
+
+
+![Architectural Blueprint and Learning Stages for Is it safe to upload a PDF to an online compressor? — Cortexis Roadmap Diagram](/blog/diagrams/is-it-safe-to-upload-pdf-to-online-compressor-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for Is it safe to upload a PDF to an online compressor?.*
+
 ## What "upload" really means
 
 When you drag a PDF onto a typical compression site, the file leaves your computer. It travels across the internet to a server, gets written to that server's disk, is processed there, and the result is sent back to you. The original then sits on that disk until a deletion timer fires.

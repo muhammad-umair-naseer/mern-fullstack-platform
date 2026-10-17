@@ -23,6 +23,11 @@ Scripts are written in C#, a language also used far outside games, so the time y
 
 Unity is especially strong for mobile, 2D and smaller 3D games, which makes it a sensible place for a beginner to start.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Unity game development: a beginner roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-unity-game-development-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Unity game development: a beginner roadmap.*
+
 ## How to learn Unity game development: the roadmap
 
 Each stage has a clear sign that you are ready for the next.

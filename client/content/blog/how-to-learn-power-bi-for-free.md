@@ -27,6 +27,11 @@ Power BI is not one program but a small family of tools.
 
 Microsoft now positions Power BI as part of Microsoft Fabric, so you will see that name around, but the report building skills are the same. Licence rules and prices change, so check Microsoft's own pricing page rather than any blog, this one included.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Power BI for free: a beginner's roadmap — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-power-bi-for-free-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Power BI for free: a beginner's roadmap.*
+
 ## How to learn Power BI for free in six steps
 
 The order matters more than the speed. Most people who struggle with Power BI skipped step three.

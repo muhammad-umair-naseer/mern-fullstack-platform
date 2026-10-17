@@ -21,6 +21,11 @@ Most beginners describe themselves: "I am a graphic designer with 3 years of exp
 
 Behind almost every job post are three hopes: a result, low risk, and low effort on their side. A stranger on the internet is a risk, so everything you write should lower that risk. Cheap prices matter far less than beginners think. A client often pays more for the freelancer who feels safer to hire.
 
+
+
+![Architectural Blueprint and Learning Stages for How to start freelancing in Pakistan: a 90 day plan — Cortexis Roadmap Diagram](/blog/diagrams/how-to-start-freelancing-in-pakistan-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to start freelancing in Pakistan: a 90 day plan.*
+
 ## Step 1: choose one service you can deliver well
 
 Choose one focused service with visible demand and stay with it for about ninety days. "Creative professional for all your digital needs" reads as no clear strength. "Video editor who turns long podcasts into daily short clips" tells the right client in one line that you are for them.

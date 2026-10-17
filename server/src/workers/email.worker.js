@@ -165,7 +165,7 @@ export const closeWorker = async () => {
 
 // --- Standalone CLI execution support ---
 // Enables running `node src/workers/email.worker.js` as an independent microservice/container
-if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
+if (process.argv[1] && import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
   console.log('🚀 Starting Standalone BullMQ Email Worker Process...');
   initWorker(5);
 

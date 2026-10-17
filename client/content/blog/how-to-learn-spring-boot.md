@@ -23,6 +23,11 @@ In Pakistan, Java and Spring Boot roles tend to come from banks, telecom operato
 
 If you are still choosing between languages, read [which programming language should you learn first in Pakistan](/blog/which-programming-language-should-you-learn-first-in-pakistan) before committing. If you already know JavaScript and want to stay there, our [Node.js backend course](/learn/nodejs-backend) covers similar ground. Picking one and finishing it is what matters.
 
+
+
+![Architectural Blueprint and Learning Stages for How to learn Spring Boot: a roadmap from Java to a real API — Cortexis Roadmap Diagram](/blog/diagrams/how-to-learn-spring-boot-architecture.webp)
+*Figure 1: Complete step-by-step architectural workflow and technical execution stages for How to learn Spring Boot: a roadmap from Java to a real API.*
+
 ## How to learn Spring Boot: the roadmap
 
 Here is the order, with a clear sign that you are ready for the next stage.
