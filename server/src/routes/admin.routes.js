@@ -630,6 +630,7 @@ const GAMES = {
   'gotcha-rush': { title: 'Gotcha Rush', url: () => process.env.GOTCHA_URL || 'http://localhost:3001', played: 'Matches', extra: { rounds: 'Rounds', correct: 'Correct', bestRush: 'Best rush' } },
   typedash: { title: 'TypeDash', url: () => process.env.TYPEDASH_URL || 'http://localhost:4001', played: 'Races', extra: { bestWpm: 'Best WPM', practiceRuns: 'Practice runs', dailyBest: 'Daily best' } },
   pickparty: { title: 'PickParty', url: () => process.env.PICKPARTY_URL || 'http://localhost:5001', played: 'Matches', extra: { soloBest: 'Solo best', soloRuns: 'Solo runs', topicsWon: 'Topics won' } },
+  'sketch-and-guess': { title: 'Sketch & Guess', url: () => process.env.SKETCH_URL || 'http://localhost:7001', played: 'Games', extra: { wins: 'Wins', bestScore: 'Best score', streak: 'Win streak' } },
 };
 
 // One call to a game's admin API. Throws only when the game cannot be

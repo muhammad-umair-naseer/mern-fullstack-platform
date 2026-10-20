@@ -40,6 +40,14 @@ const GAMES = [
     tags: ['Snake drafts', 'Live auction', 'Mind reader'],
     port: 5001,
   },
+  {
+    id: 'sketch-and-guess',
+    kind: 'Drawing party',
+    title: 'Sketch & Guess',
+    line: 'Pick a word, sketch it on the canvas, race to guess.',
+    tags: ['Live rooms', 'Smart bots', 'Best Drawing vote'],
+    port: 7001,
+  },
 ];
 
 // The whole stack starts from the compose file at the repository root. It
@@ -51,7 +59,7 @@ const QUICK_START = [
   { cmd: 'docker compose up --build' },
 ];
 
-const SERVICES = ['website', 'gotcha-rush', 'typedash', 'pickparty', 'postgres', 'redis'];
+const SERVICES = ['website', 'gotcha-rush', 'typedash', 'pickparty', 'sketch-and-guess', 'postgres', 'redis'];
 
 // The guide that lives on this page (its markdown names /games as home), and
 // the other game guides, each on its own URL so each can rank for its query.
@@ -83,8 +91,8 @@ export default function Games() {
   return (
     <main className="gp">
       <Seo
-        title="Free Browser Games: Code Quiz, Typing Race, and Party Draft"
-        description="Free multiplayer browser games: guess code outputs in Gotcha Rush, race live in TypeDash, or draft and outwit friends in PickParty. No sign-up required."
+        title="Free Browser Games: Code Quiz, Typing Race, Party Draft, and Drawing Battle"
+        description="Free multiplayer browser games: guess code outputs in Gotcha Rush, race live in TypeDash, draft in PickParty, or sketch and guess in Sketch & Guess. No sign-up required."
         path={PATH}
         image={ARTICLE?.image}
         schema={SCHEMA}
@@ -93,7 +101,7 @@ export default function Games() {
       <PageHero
         label="Playground"
         lines={['Play fast,', <em>think faster.</em>]}
-        lede="Three multiplayer games: a code quiz, a typing race, and a drafting party game."
+        lede="Four multiplayer games: a code quiz, a typing race, a drafting party game, and a live drawing arena."
         actions={[
           { href: '#game-cards', label: 'Choose a game', primary: true },
           { href: '#run-locally', label: 'Run it locally' },
@@ -109,7 +117,7 @@ export default function Games() {
       >
         <header className="gp-head">
           <span className="lx-label" data-reveal>
-            <span className="lx-label-num">01</span>Three games
+            <span className="lx-label-num">01</span>Four games
           </span>
           <h2 id="gp-games-title" className="lx-h2 gp-title" data-reveal>
             Pick your <em>arena.</em>

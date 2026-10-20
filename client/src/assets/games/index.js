@@ -9,6 +9,7 @@ import keys from './playground-keys.webp';
 import gotchaRush from './gotcha-rush.webp';
 import typedash from './typedash.webp';
 import pickparty from './pickparty.webp';
+import sketchAndGuess from './sketch-and-guess.webp';
 
 export const gamesPhotos = {
   // The hero, framed at 4 / 5 behind the game cards.
@@ -31,6 +32,11 @@ export const gamesPhotos = {
   pickparty: {
     src: pickparty,
     alt: 'Hands drafting colorful illustrated cards from a warm wooden table at a party',
+    credit: 'Cortexis Studio',
+  },
+  'sketch-and-guess': {
+    src: sketchAndGuess,
+    alt: 'Hands sketching colorful doodles and illustrations in a warm creative studio',
     credit: 'Cortexis Studio',
   },
 };

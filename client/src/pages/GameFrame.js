@@ -27,6 +27,12 @@ const GAME_CONFIG = {
     tagline: 'Real-Time Multiplayer Drafting Party Game: Pick, Read, Dodge',
     line: 'Draft the room',
   },
+  'sketch-and-guess': {
+    title: 'Sketch & Guess',
+    port: 7001,
+    tagline: 'Real-Time Multiplayer Drawing & Guessing Battle Arena',
+    line: 'Draw & guess',
+  },
 };
 
 /*
@@ -140,6 +146,16 @@ function GameMark({ gameId }) {
         <rect width="32" height="32" rx="9" fill="#16130F" />
         <rect x="7" y="5" width="18" height="23" rx="3" fill="#FAF8F4" transform="rotate(-8 16 16.5)" />
         <circle cx="16" cy="15.5" r="4.2" fill="#B8612E" />
+      </svg>
+    );
+  }
+  if (gameId === 'sketch-and-guess') {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="#16130F" />
+        <path d="M9 22l3-1 11-11-2-2-11 11-1 3z" fill="#FAF8F4" />
+        <path d="M20 9l3 3" stroke="#FAF8F4" strokeWidth="1.8" strokeLinecap="round" />
+        <circle cx="8" cy="23" r="1.8" fill="#B8612E" />
       </svg>
     );
   }
@@ -402,6 +418,7 @@ export default function GameFrame() {
     'gotcha-rush': 'gotcha-rush-guess-the-output-game',
     typedash: 'typedash-online-typing-race-game',
     pickparty: 'pickparty-online-drafting-party-game',
+    'sketch-and-guess': 'sketch-and-guess-online-drawing-game',
   };
   const path = `/games/${gameId}`;
   const article = POSTS.find((p) => p.slug === GAME_ARTICLE_SLUG[gameId] || p.home === path);

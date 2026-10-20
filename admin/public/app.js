@@ -60,7 +60,7 @@
 
   // The arrow disc at the end of a primary pill.
   const DISC = '<span class="disc" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>';
-  const GAME_IMG = { 'gotcha-rush': 1, typedash: 1, pickparty: 1 };
+  const GAME_IMG = { 'gotcha-rush': 1, typedash: 1, pickparty: 1, 'sketch-and-guess': 1 };
   const SKELETON = `<div class="skel" aria-label="Loading"><i class="s-eye"></i><i class="s-title"></i>
     <div class="s-row"><i></i><i></i><i></i><i></i></div><i class="s-line"></i><i class="s-line"></i><i class="s-line"></i></div>`;
 

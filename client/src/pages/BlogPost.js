@@ -109,6 +109,8 @@ const BlogPost = () => {
       ? [{ to: '/games/typedash', label: 'Play TypeDash', primary: true }]
       : post.slug.includes('pickparty')
       ? [{ to: '/games/pickparty', label: 'Play PickParty', primary: true }]
+      : post.slug.includes('sketch-and-guess')
+      ? [{ to: '/games/sketch-and-guess', label: 'Play Sketch & Guess', primary: true }]
       : post.slug.includes('free-coding-games')
       ? [{ to: '/games', label: 'Play Browser Games', primary: true }]
       : post.slug.includes('free-offline-ai')
