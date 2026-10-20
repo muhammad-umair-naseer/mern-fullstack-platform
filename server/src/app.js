@@ -38,7 +38,7 @@ app.set('trust proxy', !trustProxy || trustProxy === 'false' ? false : /^\d+$/.t
 // portal and the three games (they sign in against /api/auth directly).
 // CORS_ORIGINS replaces the list; in development the same ports on a LAN
 // address are let through too, so the site works from a phone on the Wi-Fi.
-const DEV_PORTS = ['3000', '3001', '4001', '5001', '6001'];
+const DEV_PORTS = ['3000', '3001', '4001', '5001', '6001', '7001'];
 const corsOrigins = (process.env.CORS_ORIGINS || DEV_PORTS.map((p) => `http://localhost:${p}`).join(','))
   .split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean);
 const lanOrigin = (origin) => {
