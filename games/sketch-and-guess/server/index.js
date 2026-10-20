@@ -33,19 +33,24 @@ function start({ port = process.env.PORT || 3000, dbPath = process.env.DB_PATH |
   app.use(express.json());
   app.use((req, res, next) => {
     res.set({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-session-token',
       'X-Content-Type-Options': 'nosniff',
-      'Referrer-Policy': 'same-origin',
+      'Referrer-Policy': 'no-referrer-when-downgrade',
       'Content-Security-Policy': [
         "default-src 'self'",
-        "script-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
         "img-src 'self' data: blob:",
         "worker-src 'self' blob:",
-        "connect-src 'self' ws: wss:",
+        "connect-src 'self' ws: wss: http: https:",
         "frame-ancestors *"
       ].join('; ')
     });
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    console.log('[sketch-server]', req.method, req.url, 'from:', req.headers.origin || req.ip);
     next();
   });
   app.use(express.static(PUBLIC));

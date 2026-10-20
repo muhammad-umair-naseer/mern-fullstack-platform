@@ -248,6 +248,8 @@ export default function GameFrame() {
   useEffect(() => {
     const onMessage = (e) => {
       if (e.origin !== gameOrigin || !iframeRef.current || e.source !== iframeRef.current.contentWindow) return;
+      setIsLoaded(true);
+      setHasError(false);
       if (e.data && e.data.type === 'cortexis:need-token') sendToken();
       if (e.data && e.data.type === 'cortexis:size') {
         const h = Math.ceil(Number(e.data.height));
@@ -326,23 +328,29 @@ export default function GameFrame() {
     setHasError(false);
     setIsSlow(false);
     let cancelled = false;
-    const kill = setTimeout(() => {
-      if (!cancelled) setHasError(true);
-    }, 6000);   // no answer in 6s counts as offline
+    let kill = null;
 
-    fetch(`${gameUrl}/healthz`, { mode: 'no-cors', cache: 'no-store' })
-      .then(() => {
-        if (!cancelled) {
-          clearTimeout(kill);
-          setHasError(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          clearTimeout(kill);
-          setHasError(true);
-        }
-      });
+    const probe = () => {
+      fetch(`${gameUrl}/healthz?_t=${Date.now()}`, { mode: 'no-cors' })
+        .then(() => {
+          if (!cancelled) {
+            if (kill) clearTimeout(kill);
+            setHasError(false);
+          }
+        })
+        .catch(() => {
+          // Cross-port opaque fetches may be restricted by some browser configurations;
+          // allow the iframe's own load or the fallback timeout to determine true offline status.
+        });
+    };
+
+    kill = setTimeout(() => {
+      if (!cancelled) {
+        setHasError(true);
+      }
+    }, 8000);
+
+    probe();
 
     const slow = setTimeout(() => {
       if (!cancelled) setIsSlow(true);
@@ -350,7 +358,7 @@ export default function GameFrame() {
 
     return () => {
       cancelled = true;
-      clearTimeout(kill);
+      if (kill) clearTimeout(kill);
       clearTimeout(slow);
     };
   }, [gameId, gameUrl, attempt, config]);
@@ -454,7 +462,7 @@ export default function GameFrame() {
           <h1>{config.title}</h1>
           <span className="gf-line">
             <i className={`gf-dot ${dot}`} aria-hidden="true" />
-            <span className="gf-line-text">{hasError ? 'Offline' : ready ? config.line : 'Connecting'}</span>
+            <span className="gf-line-text">{hasError ? 'Network error' : ready ? config.line : 'Connecting'}</span>
           </span>
         </div>
 
@@ -496,8 +504,8 @@ export default function GameFrame() {
               <path className="gf-spark" d="M44 28l-2 6h4l-2 6" fill="none" stroke="#B8612E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M18 50c-5 0-8 3-8 8M70 38c5 0 8-3 8-8" fill="none" stroke="#16130F" strokeWidth="2.4" strokeLinecap="round" />
             </svg>
-            <h2>The game is <em>offline.</em></h2>
-            <p>Start the game server, then try again: <code>docker compose up</code></p>
+            <h2>Unable to <em>connect.</em></h2>
+            <p>Could not connect to the game server. Please check your network connection and try again.</p>
             <div className="gf-state-actions">
               <button type="button" onClick={handleReload} className="btn lx-btn">
                 Try again
@@ -517,7 +525,10 @@ export default function GameFrame() {
           title={config.title}
           allow="autoplay; fullscreen; clipboard-read; clipboard-write; microphone"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
-          onLoad={() => setIsLoaded(true)}
+          onLoad={() => {
+            setIsLoaded(true);
+            setHasError(false);
+          }}
           onError={() => setHasError(true)}
         />
       </div>
