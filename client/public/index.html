@@ -8,13 +8,13 @@
     <meta charset="utf-8" />
     <!-- Content-Security-Policy. Scripts only from this site, so an injected
          tag cannot run. Elsewhere: the API on :5000 in local dev (same origin
-         in production), the three games on :3001/:4001/:5001 of whichever host
+         in production), the four games on :3001/:4001/:5001/:7001 of whichever host
          served the page, Google Fonts, and microlink for the web capture
          tools. Images may come from any https host. Inline styles stay allowed
          because React and the prerendered pages write style attributes. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' data: blob: http://*:5000 https://*:5000 http://*:3001 http://*:4001 http://*:5001 https://api.microlink.io https://*.microlink.io; frame-src 'self' blob: http://*:3001 http://*:4001 http://*:5001; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' data: blob: http://*:5000 https://*:5000 http://*:3001 http://*:4001 http://*:5001 http://*:7001 https://api.microlink.io https://*.microlink.io; frame-src 'self' blob: http://*:3001 http://*:4001 http://*:5001 http://*:7001; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'"
     />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico?v=2" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png?v=2" />
