@@ -1,0 +1,129 @@
+# Phase 1 server setup (Task A): main site + admin
+
+Contabo Cloud VPS, Ubuntu, IP 13.140.220.173, behind Cloudflare (orange cloud).
+Run each step only when the previous one checks out. Every script is safe to
+re-run. Keep one SSH session open while you test changes in a second window.
+
+SSH always uses the IP, never the domain (Cloudflare proxies the domain).
+
+## A1. SSH key (on your Mac)
+
+```sh
+cd ~/"Documents/Raja/MERN PROJECT"   # this repo
+bash deploy/server/00-mac-ssh-key.sh 13.140.220.173
+ssh root@13.140.220.173 'lsb_release -a'   # no password prompt now
+```
+Type the root password into the Terminal when asked, never into a chat.
+
+## A2. Copy the repo to the server
+
+```sh
+# on your Mac
+rsync -az --delete --exclude node_modules --exclude .git --exclude 'client/build' \
+  --exclude '*.log' ./ root@13.140.220.173:/opt/cortexis/
+```
+(Task B replaces this with `deploy/deploy.sh`.)
+
+## A3. Hardening + deploy user (on the server, as root)
+
+```sh
+ssh root@13.140.220.173
+cd /opt/cortexis && bash deploy/server/01-base-hardening.sh
+```
+Then, in a NEW Mac Terminal window (keep the root one open):
+```sh
+ssh deploy@13.140.220.173
+sudo whoami        # prints: root
+```
+Only when that works: `sudo bash /opt/cortexis/deploy/server/05-ssh-lockdown.sh`
+(turns off password and root logins). Test `ssh deploy@...` again in a new window.
+From now on use `ssh deploy@13.140.220.173`.
+
+## A4. Docker + Nginx (as deploy)
+
+```sh
+sudo chown -R deploy:deploy /opt/cortexis
+cd /opt/cortexis && sudo bash deploy/server/02-install-docker-nginx.sh
+exit                      # log out and back in so the docker group applies
+ssh deploy@13.140.220.173 'docker run --rm hello-world'
+```
+
+## A5. Cloudflare Origin Certificate (in the browser, then the server)
+
+1. dash.cloudflare.com → your domain → **SSL/TLS → Origin Server → Create Certificate**.
+2. Keep "Generate private key and CSR with Cloudflare", key type **RSA (2048)**.
+3. Hostnames: `cortexissolutionhub.com` and `*.cortexissolutionhub.com`
+   (the wildcard covers www, admin, staging and later the games). Validity: 15 years. **Create**.
+4. The page shows the **Origin Certificate** and the **Private Key**. The key is shown
+   ONCE. On the server:
+   ```sh
+   sudo install -d -m 700 /etc/ssl/cloudflare
+   sudo nano /etc/ssl/cloudflare/cortexissolutionhub.com.pem   # paste the certificate, Ctrl+O Enter Ctrl+X
+   sudo nano /etc/ssl/cloudflare/cortexissolutionhub.com.key   # paste the private key
+   ```
+   Paste only into nano on the server, never into chat or a repo.
+5. Install the site config:
+   ```sh
+   cd /opt/cortexis && sudo bash deploy/server/04-nginx-site.sh
+   ```
+6. Back in Cloudflare: **SSL/TLS → Overview → Full (strict)**. Also
+   **SSL/TLS → Edge Certificates → Always Use HTTPS: On**.
+
+The website itself answers once Task B starts the containers; until then
+https://cortexissolutionhub.com shows a 502 from Nginx, which is expected.
+
+## A6. Admin behind Cloudflare Access (free)
+
+1. dash.cloudflare.com → **Zero Trust** (left sidebar). First time: pick a team
+   name (e.g. `cortexis`) and the **Free** plan (it may ask for a card for
+   verification; Free costs nothing).
+2. **Settings → Authentication → Login methods**: "One-time PIN" should be listed
+   (it is on by default). It emails a code; no password to manage.
+3. **Access → Applications → Add an application → Self-hosted**.
+   - Application name: `Cortexis Admin`; session duration: `24 hours`.
+   - Public hostname: subdomain `admin`, domain `cortexissolutionhub.com`, path empty.
+   - Next.
+4. Add a policy: name `Owners`, action **Allow**, include **Emails** →
+   your email and Abdullah's. Save the policy, then **Save** the application.
+5. Test in a private window: https://admin.cortexissolutionhub.com should show a
+   Cloudflare sign-in page; enter your email, then the code it sends you.
+   Anyone else is refused before they ever reach the server.
+
+## A7. Email with Brevo (free tier, about 300 emails a day)
+
+1. Sign up at brevo.com. **Settings (cog) → Senders, domains & IPs → Domains →
+   Add a domain** → `cortexissolutionhub.com`.
+2. If offered, choose to authenticate with **Cloudflare automatically**;
+   otherwise "authenticate yourself", and add each record Brevo shows in
+   Cloudflare **DNS → Records → Add record**. Copy the values exactly from Brevo:
+   - **TXT** `@` → `brevo-code:...` (ownership code)
+   - **DKIM**: the record(s) Brevo lists (CNAME `brevo1._domainkey` /
+     `brevo2._domainkey`, or one TXT), **Proxy status: DNS only (grey cloud)**
+   - **SPF**: one TXT on `@` only. If you have none:
+     `v=spf1 include:spf.brevo.com ~all`. If one exists (e.g. Cloudflare Email
+     Routing's), add `include:spf.brevo.com` to it; never create a second SPF record.
+   - **DMARC**: TXT `_dmarc` → `v=DMARC1; p=none; rua=mailto:<address>`.
+     Easiest: Cloudflare **Email → DMARC Management → Enable**, which adds the
+     record with a free report address. Move to `p=quarantine` after a few
+     clean weeks.
+3. Back in Brevo press **Authenticate / Verify**; all records should turn green
+   (DNS can take a few minutes).
+4. **Settings → SMTP & API → SMTP → Generate a new SMTP key**. You get:
+   server `smtp-relay.brevo.com`, port `587`, a login, and the key. These go into
+   the server's `.env` in Task B (`SMTP_HOST`, `SMTP_PORT=587`, `SMTP_USER`,
+   `SMTP_PASS`, `SMTP_FROM="Cortexis <no-reply@cortexissolutionhub.com>"`).
+   Never paste the key into chat.
+
+## Checklist after Task A
+
+- [ ] `ssh deploy@13.140.220.173` works with no password; `ssh root@...` is refused
+- [ ] `sudo ufw status` shows OpenSSH, 80, 443 allowed
+- [ ] `sudo fail2ban-client status sshd` shows the jail running
+- [ ] `docker run --rm hello-world` works as deploy
+- [ ] `sudo nginx -t` passes; Cloudflare is on Full (strict)
+- [ ] https://staging.cortexissolutionhub.com shows "Staging is not set up yet."
+- [ ] https://admin.cortexissolutionhub.com asks for the Cloudflare email code
+- [ ] Brevo shows the domain as authenticated
+
+Take a **manual Contabo snapshot** (Contabo panel → your VPS → Snapshots) after
+A4 and before every big change.
