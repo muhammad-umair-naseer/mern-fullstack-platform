@@ -8,6 +8,7 @@ dist/
 build/
 client/build/
 server/build/
+/client/public/sitemap.xml
 
 # Environment variables
 .env

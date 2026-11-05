@@ -13,7 +13,7 @@ React 19 + Vite frontend, Express API, PostgreSQL, Redis/BullMQ email jobs, sepa
 - `deploy/`: Nginx, backup, restore drill and production instructions.
 - `data/`: runtime game data. Do not delete it as project cleanup.
 
-Legacy standalone tool projects, audit output and generated guides are not part of this repository or deployment. Keep local archives outside this checkout. Generated PDF/OCR vendor assets are recreated from the client lockfile by `npm run sync:vendors --prefix client` (also run automatically before development and builds); do not commit them. Other hand-maintained vendor assets remain tracked.
+Legacy standalone tool projects, audit output and generated guides are not part of this repository or deployment. Keep local archives outside this checkout. Generated PDF/OCR vendor assets are recreated from the client lockfile by `npm run sync:vendors --prefix client` (also run automatically before development and builds); do not commit them. Other hand-maintained vendor assets remain tracked. The build also generates `client/public/sitemap.xml` for the selected site URL; this dated output is ignored by Git.
 
 ## Local development
 
