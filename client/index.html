@@ -6,13 +6,8 @@
          copy here would be appended to rather than replaced, leaving two of
          each, and a crawler reads the first one it finds. -->
     <meta charset="utf-8" />
-    <!-- Content-Security-Policy. Scripts only from this site, so an injected
-         tag cannot run. Elsewhere: the API on :5000 in local dev (same origin
-         in production), the three games on :3001/:4001/:5001 of whichever host
-         served the page, Google Fonts, and microlink for the web capture
-         tools. Images may come from any https host. Inline styles stay allowed
-         because React and the prerendered pages write style attributes. -->
-    <!-- Production CSP is set by Express/Nginx. -->
+    <!-- Production CSP is set by Express using configured HTTPS game origins,
+         including Sketch & Guess. Development uses the Vite proxy. -->
     <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" />
