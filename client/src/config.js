@@ -14,7 +14,16 @@ const API_BASE_URL =
   (process.env.NODE_ENV === 'production' ? '' : devApi());
 
 export const YOURBOT_URL =
-  process.env.REACT_APP_YOURBOT_URL || 'https://localhost:5173';
+  process.env.REACT_APP_YOURBOT_URL || '/contact?interest=yourbot';
 
 export default API_BASE_URL;
 
+
+// Explicit HTTPS origins prevent mixed-content and broken public localhost links.
+export const gameUrlFor = port => {
+  const key = { 3001: 'GOTCHA', 4001: 'TYPEDASH', 5001: 'PICKPARTY', 7001: 'SKETCH' }[port];
+  const urls = { GOTCHA: process.env.REACT_APP_GAME_GOTCHA_URL, TYPEDASH: process.env.REACT_APP_GAME_TYPEDASH_URL, PICKPARTY: process.env.REACT_APP_GAME_PICKPARTY_URL, SKETCH: process.env.REACT_APP_GAME_SKETCH_URL };
+  const configured = urls[key];
+  if (configured) { try { const url = new URL(configured); return url.protocol === 'https:' && !url.username && !url.password ? url.origin : ''; } catch { return ''; } }
+  return process.env.NODE_ENV === 'production' ? '' : 'http://' + (typeof window === 'undefined' ? 'localhost' : window.location.hostname) + ':' + port;
+};

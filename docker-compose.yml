@@ -6,30 +6,37 @@ services:
     container_name: cortexis-website
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - 127.0.0.1:5000:5000
     environment:
-      - PORT=5000
-      - NODE_ENV=production
-      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/cortexis
-      - JWT_SECRET=${JWT_SECRET:?set JWT_SECRET in .env to a long random value}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
-      - SMTP_HOST=${SMTP_HOST:-}
-      - SMTP_PORT=${SMTP_PORT:-587}
-      - SMTP_USER=${SMTP_USER:-}
-      - SMTP_PASS=${SMTP_PASS:-}
-      - CONTACT_TO=${CONTACT_TO:-}
-      - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
-      - ADMIN_EMAIL=${ADMIN_EMAIL:?set ADMIN_EMAIL in .env}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
-      - EMBEDDED_WORKER=${EMBEDDED_WORKER:-true}
-      # the admin portal's Games section reads players from each game over the internal network
-      - GOTCHA_URL=http://gotcha-rush:3000
-      - TYPEDASH_URL=http://typedash:4000
-      - PICKPARTY_URL=http://pickparty:3000
-      - SKETCH_URL=http://sketch-and-guess:3000
+      PORT: '5000'
+      NODE_ENV: production
+      DATABASE_URL: postgres://cortexis_runtime:${APP_DB_PASSWORD:?set APP_DB_PASSWORD in .env}@postgres:5432/cortexis
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env to a long random value}
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
+      SMTP_HOST: ${SMTP_HOST:?set SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:?set SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS:?set SMTP_PASS}
+      CONTACT_TO: ${CONTACT_TO:?set CONTACT_TO}
+      ADMIN_ALERT_TO: ${ADMIN_ALERT_TO:?set ADMIN_ALERT_TO}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?set ADMIN_EMAIL in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      GAME_SSO_SECRET: ${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
+      EMBEDDED_WORKER: ${EMBEDDED_WORKER:-true}
+      GOTCHA_URL: http://gotcha-rush:3000
+      TYPEDASH_URL: http://typedash:4000
+      PICKPARTY_URL: http://pickparty:3000
+      SKETCH_URL: http://sketch-and-guess:3000
+      HOST: 0.0.0.0
+      SITE_URL: ${SITE_URL:?set SITE_URL}
+      CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS}
+      TRUST_PROXY: '1'
+      GAME_ORIGINS: ${GAME_ORIGINS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      EMAIL_QUEUE_SECRET: ${EMAIL_QUEUE_SECRET:?set EMAIL_QUEUE_SECRET}
+      SCHEMA_MANAGEMENT: external
     networks:
       - cortexis_internal
     depends_on:
@@ -37,36 +44,108 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+  cortexis-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - node
+      - scripts/provision-runtime.mjs
+    restart: 'no'
+    profiles:
+      - maintenance
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://cortexis:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/cortexis
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?set APP_DB_PASSWORD in .env}
+    networks:
+      - cortexis_internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
   cortexis-worker:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: cortexis-worker
     restart: unless-stopped
-    command: ["node", "src/workers/email.worker.js"]
+    command:
+      - node
+      - src/workers/email.worker.js
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgres://cortexis:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/cortexis
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
-      - SMTP_HOST=${SMTP_HOST:-}
-      - SMTP_PORT=${SMTP_PORT:-587}
-      - SMTP_USER=${SMTP_USER:-}
-      - SMTP_PASS=${SMTP_PASS:-}
-      - CONTACT_TO=${CONTACT_TO:-}
-      - ADMIN_ALERT_TO=${ADMIN_ALERT_TO:-}
+      PORT: '5000'
+      NODE_ENV: production
+      DATABASE_URL: postgres://cortexis_runtime:${APP_DB_PASSWORD:?set APP_DB_PASSWORD in .env}@postgres:5432/cortexis
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env to a long random value}
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
+      SMTP_HOST: ${SMTP_HOST:?set SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:?set SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS:?set SMTP_PASS}
+      CONTACT_TO: ${CONTACT_TO:?set CONTACT_TO}
+      ADMIN_ALERT_TO: ${ADMIN_ALERT_TO:?set ADMIN_ALERT_TO}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?set ADMIN_EMAIL in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      GAME_SSO_SECRET: ${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
+      EMBEDDED_WORKER: ${EMBEDDED_WORKER:-true}
+      GOTCHA_URL: http://gotcha-rush:3000
+      TYPEDASH_URL: http://typedash:4000
+      PICKPARTY_URL: http://pickparty:3000
+      SKETCH_URL: http://sketch-and-guess:3000
+      HOST: 0.0.0.0
+      SITE_URL: ${SITE_URL:?set SITE_URL}
+      CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS}
+      TRUST_PROXY: '1'
+      GAME_ORIGINS: ${GAME_ORIGINS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      EMAIL_QUEUE_SECRET: ${EMAIL_QUEUE_SECRET:?set EMAIL_QUEUE_SECRET}
+      SCHEMA_MANAGEMENT: external
     networks:
       - cortexis_internal
     depends_on:
-      redis:
-        condition: service_healthy
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     profiles:
       - worker
-
+    init: true
+    healthcheck:
+      disable: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
   gotcha-rush:
     build:
       context: ./games/gotcha-rush
@@ -74,26 +153,36 @@ services:
     container_name: cortexis-gotcha-rush
     restart: unless-stopped
     ports:
-      - "${GOTCHA_PORT:-3001}:3000"
+      - 127.0.0.1:3001:3000
     environment:
-      - PORT=3000
-      - DATA_FILE=/data/gotcharush.json
-      - RUNNER=off
-      - NODE_ENV=production
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
-      - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
-      - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
-      - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
+      PORT: '3000'
+      DATA_FILE: /data/gotcharush.json
+      RUNNER: 'off'
+      NODE_ENV: production
+      GAME_SSO_SECRET: ${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
+      CORTEXIS_SITE_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_API_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_PARENT_ORIGINS: ${SITE_URL:?set SITE_URL}
+      HOST: 0.0.0.0
     volumes:
       - cortexis_gotcha_data:/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      test:
+        - CMD-SHELL
+        - wget -qO- http://127.0.0.1:3000/healthz || exit 1
       interval: 15s
       timeout: 3s
       retries: 3
-
+    profiles:
+      - games
+    init: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
   typedash:
     build:
       context: ./games/typedash
@@ -101,25 +190,35 @@ services:
     container_name: cortexis-typedash
     restart: unless-stopped
     ports:
-      - "${TYPEDASH_PORT:-4001}:4000"
+      - 127.0.0.1:4001:4000
     environment:
-      - PORT=4000
-      - DATA_FILE=/data/typedash.json
-      - NODE_ENV=production
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
-      - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
-      - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
-      - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
+      PORT: '4000'
+      DATA_FILE: /data/typedash.json
+      NODE_ENV: production
+      GAME_SSO_SECRET: ${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
+      CORTEXIS_SITE_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_API_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_PARENT_ORIGINS: ${SITE_URL:?set SITE_URL}
+      HOST: 0.0.0.0
     volumes:
       - cortexis_typedash_data:/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:4000/healthz || exit 1"]
+      test:
+        - CMD-SHELL
+        - wget -qO- http://127.0.0.1:4000/healthz || exit 1
       interval: 15s
       timeout: 3s
       retries: 3
-
+    profiles:
+      - games
+    init: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
   pickparty:
     build:
       context: ./games/pickparty
@@ -127,25 +226,35 @@ services:
     container_name: cortexis-pickparty
     restart: unless-stopped
     ports:
-      - "${PICKPARTY_PORT:-5001}:3000"
+      - 127.0.0.1:5001:3000
     environment:
-      - PORT=3000
-      - DATA_FILE=/data/pickparty.json
-      - NODE_ENV=production
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
-      - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
-      - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
-      - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
+      PORT: '3000'
+      DATA_FILE: /data/pickparty.json
+      NODE_ENV: production
+      GAME_SSO_SECRET: ${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
+      CORTEXIS_SITE_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_API_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_PARENT_ORIGINS: ${SITE_URL:?set SITE_URL}
+      HOST: 0.0.0.0
     volumes:
       - cortexis_pickparty_data:/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      test:
+        - CMD-SHELL
+        - wget -qO- http://127.0.0.1:3000/healthz || exit 1
       interval: 15s
       timeout: 3s
       retries: 3
-
+    profiles:
+      - games
+    init: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
   sketch-and-guess:
     build:
       context: ./games/sketch-and-guess
@@ -153,25 +262,35 @@ services:
     container_name: cortexis-sketch-and-guess
     restart: unless-stopped
     ports:
-      - "${SKETCH_PORT:-7001}:3000"
+      - 127.0.0.1:7001:3000
     environment:
-      - PORT=3000
-      - DB_PATH=/data/sketch.db
-      - NODE_ENV=production
-      - GAME_SSO_SECRET=${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
-      - CORTEXIS_SITE_URL=${CORTEXIS_SITE_URL:-}
-      - CORTEXIS_API_URL=${CORTEXIS_API_URL:-}
-      - CORTEXIS_PARENT_ORIGINS=${CORTEXIS_PARENT_ORIGINS:-}
+      PORT: '3000'
+      DB_PATH: /data/sketch.db
+      NODE_ENV: production
+      GAME_SSO_SECRET: ${GAME_SSO_SECRET:?set GAME_SSO_SECRET in .env to a long random value}
+      CORTEXIS_SITE_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_API_URL: ${SITE_URL:?set SITE_URL}
+      CORTEXIS_PARENT_ORIGINS: ${SITE_URL:?set SITE_URL}
+      HOST: 0.0.0.0
     volumes:
       - cortexis_sketch_data:/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      test:
+        - CMD-SHELL
+        - wget -qO- http://127.0.0.1:3000/healthz || exit 1
       interval: 15s
       timeout: 3s
       retries: 3
-
+    profiles:
+      - games
+    init: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
   admin:
     build:
       context: ./admin
@@ -179,20 +298,33 @@ services:
     container_name: cortexis-admin
     restart: unless-stopped
     ports:
-      # staff only: keep this port behind a firewall or VPN in production
-      - "${ADMIN_PORT:-6001}:3000"
+      - 127.0.0.1:6001:3000
     environment:
-      - PORT=3000
-      - ADMIN_API_URL=${ADMIN_API_URL:-}
-      - ADMIN_SITE_URL=${ADMIN_SITE_URL:-}
+      PORT: '3000'
+      HOST: 0.0.0.0
+      NODE_ENV: production
+      ADMIN_API_URL: ${SITE_URL:?set SITE_URL}
+      ADMIN_SITE_URL: ${SITE_URL:?set SITE_URL}
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      test:
+        - CMD-SHELL
+        - wget -qO- http://127.0.0.1:3000/healthz || exit 1
       interval: 15s
       timeout: 3s
       retries: 3
-
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
   postgres:
     image: postgres:16-alpine
     container_name: cortexis-postgres
@@ -201,37 +333,51 @@ services:
       - POSTGRES_DB=cortexis
       - POSTGRES_USER=cortexis
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-    # Security: No public ports exposed to host. Only accessible within the internal docker network.
     volumes:
       - cortexis_pg_data:/var/lib/postgresql/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cortexis -d cortexis"]
+      test:
+        - CMD-SHELL
+        - pg_isready -U cortexis -d cortexis
       interval: 5s
       timeout: 3s
       retries: 5
-
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
   redis:
     image: redis:7-alpine
     container_name: cortexis-redis
     restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:?set REDIS_PASSWORD in .env} --maxmemory 256mb --maxmemory-policy volatile-lru
-    # Security: No public ports exposed to host. Only accessible within the internal docker network.
+    command: >-
+      redis-server --appendonly yes --appendfsync everysec --save 60 1 --loglevel warning --requirepass ${REDIS_PASSWORD:?set REDIS_PASSWORD
+      in .env} --maxmemory 256mb --maxmemory-policy noeviction
     volumes:
       - cortexis_redis_data:/data
     networks:
       - cortexis_internal
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}", "ping"]
+      test:
+        - CMD
+        - redis-cli
+        - '-a'
+        - ${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
+        - ping
       interval: 5s
       timeout: 3s
       retries: 5
-
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
 networks:
   cortexis_internal:
     driver: bridge
-
 volumes:
   cortexis_pg_data:
     driver: local
@@ -245,6 +391,3 @@ volumes:
     driver: local
   cortexis_sketch_data:
     driver: local
-
-
-

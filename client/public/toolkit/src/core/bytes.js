@@ -111,9 +111,10 @@ let FIXED_LIT = null, FIXED_DIST = null;
  */
 export function inflateRaw(data, opts = {}) {
   const br = new BitReader(data, opts.start || 0);
-  let out = new Uint8Array(Math.max(1024, data.length * 4));
+  const maxOutput = opts.maxOutput ?? 64 * 1024 * 1024;
+  let out = new Uint8Array(Math.min(maxOutput, Math.max(1024, data.length * 4)));
   let o = 0;
-  const grow = (need) => { if (o + need > out.length) { const n = new Uint8Array(Math.max(out.length * 2, o + need)); n.set(out.subarray(0, o)); out = n; } };
+  const grow = (need) => { if (o + need > maxOutput) throw new RangeError('Expanded data exceeds the processing limit.'); if (o + need > out.length) { const n = new Uint8Array(Math.min(maxOutput, Math.max(out.length * 2, o + need))); n.set(out.subarray(0, o)); out = n; } };
   try {
     let last = 0;
     do {
@@ -178,7 +179,7 @@ export function inflateRaw(data, opts = {}) {
       }
     } while (!last);
   } catch (e) {
-    if (!opts.partial && o === 0) throw e;
+    if (e instanceof RangeError || !opts.partial) throw e;
   }
   return out.subarray(0, o);
 }
@@ -201,7 +202,7 @@ export function inflateGzip(data) {
   const flg = data[3];
   let p = 10;
   if (flg & 4) { const xlen = data[p] | (data[p + 1] << 8); p += 2 + xlen; }
-  if (flg & 8) { while (data[p++] !== 0); }
+  if (flg & 8) { while (p < data.length && data[p++] !== 0); if (p >= data.length) throw new Error('Truncated gzip header'); }
   if (flg & 16) { while (data[p++] !== 0); }
   if (flg & 2) p += 2;
   return inflateRaw(data, { start: p });

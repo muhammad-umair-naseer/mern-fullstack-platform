@@ -23,12 +23,32 @@ if (typeof window !== 'undefined') {
 // font code from being compiled with eval (CVE-2024-4367); pdf.js 4.2.67+ no
 // longer does that anyway, so this guards against a downgrade.
 function getDocument(src) {
-  return pdfjs.getDocument({
+  const task = pdfjs.getDocument({
     ...src,
     isEvalSupported: false,
     standardFontDataUrl: `${VENDOR}/standard_fonts/`,
     wasmUrl: `${VENDOR}/pdfjs-wasm/`,
   });
+  const ready = task.promise.then(async pdf => {
+    if (pdf.numPages > 200) { await task.destroy(); throw new Error('Use a PDF with at most 200 pages. Split larger documents first.'); }
+    const getPage = pdf.getPage.bind(pdf);
+    pdf.getPage = async number => {
+      const page = await getPage(number);
+      if (!page.cortexisPixelBudget) {
+        const viewport = page.getViewport.bind(page);
+        page.getViewport = options => {
+          const view = viewport(options);
+          if (!Number.isFinite(view.width * view.height) || view.width * view.height > 16000000) throw new Error('Page rendering exceeds 16 megapixels. Reduce the output scale.');
+          return view;
+        };
+        page.cortexisPixelBudget = true;
+      }
+      return page;
+    };
+    return pdf;
+  });
+  Object.defineProperty(task, 'promise', { value: ready });
+  return task;
 }
 
 const pdfjsLib = { ...pdfjs, getDocument };

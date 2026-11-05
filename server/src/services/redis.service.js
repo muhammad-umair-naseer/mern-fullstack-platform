@@ -1,3 +1,4 @@
+import { redisOptions } from '../config/redis.js';
 import Redis from 'ioredis';
 
 /**
@@ -13,48 +14,6 @@ let client = null;
 let isConnected = false;
 let isReady = false;
 let connectionAttempted = false;
-
-const getRedisConfig = () => {
-  const env = process.env;
-  
-  if (env.REDIS_URL) {
-    return {
-      url: env.REDIS_URL,
-      options: {
-        maxRetriesPerRequest: null,
-        connectTimeout: Number(env.REDIS_CONNECT_TIMEOUT || 5000),
-        commandTimeout: Number(env.REDIS_COMMAND_TIMEOUT || 2000),
-        retryStrategy(times) {
-          if (times > 10) return 10000;
-          return Math.min(times * 500, 3000);
-        },
-      }
-    };
-  }
-
-  const host = env.REDIS_HOST || '127.0.0.1';
-  const port = Number(env.REDIS_PORT || 6379);
-  const password = env.REDIS_PASSWORD || undefined;
-  const db = Number(env.REDIS_DB || 0);
-  const tls = env.REDIS_TLS === 'true' ? {} : undefined;
-
-  return {
-    options: {
-      host,
-      port,
-      password,
-      db,
-      tls,
-      maxRetriesPerRequest: null,
-      connectTimeout: Number(env.REDIS_CONNECT_TIMEOUT || 5000),
-      commandTimeout: Number(env.REDIS_COMMAND_TIMEOUT || 2000),
-      retryStrategy(times) {
-        if (times > 10) return 10000;
-        return Math.min(times * 500, 3000);
-      },
-    }
-  };
-};
 
 const setupClientListeners = (redisInstance) => {
   redisInstance.on('connect', () => {
@@ -87,9 +46,9 @@ const setupClientListeners = (redisInstance) => {
 
 export const getRedisClient = () => {
   if (!client) {
-    const config = getRedisConfig();
+    if (process.env.REDIS_DISABLED === 'true' && process.env.NODE_ENV === 'test') return null;
     try {
-      client = config.url ? new Redis(config.url, config.options) : new Redis(config.options);
+      client = new Redis({ ...redisOptions(), lazyConnect: true });
       setupClientListeners(client);
     } catch (err) {
       console.warn(`⚠️ Redis client creation error: ${err.message}`);
@@ -102,22 +61,14 @@ export const getRedisClient = () => {
 export const initRedis = async () => {
   const instance = getRedisClient();
   if (!instance) return null;
-
   try {
     connectionAttempted = true;
-    // If not connected yet, initiate connection
-    if (instance.status === 'wait') {
-      await instance.connect().catch((err) => {
-        isReady = false;
-        isConnected = false;
-        console.warn(`⚠️ Redis initial connection bypassed: ${err.message}. Running in DB-fallback mode.`);
-      });
-    }
+    if (instance.status === 'wait') await instance.connect();
+    if (instance.status !== 'ready') throw new Error('Redis not ready');
     return instance;
-  } catch (err) {
-    isReady = false;
-    isConnected = false;
-    console.warn(`⚠️ Redis client failed to initialize: ${err.message}. Using DB-fallback mode.`);
+  } catch {
+    if (process.env.NODE_ENV === 'production') throw new Error('Production Redis is unavailable');
+    console.warn('Redis unavailable; using local rate limits and direct mail');
     return null;
   }
 };
@@ -231,7 +182,7 @@ export const redisStats = async () => {
 export const closeRedis = async () => {
   if (client) {
     try {
-      await client.quit();
+      if (client.status === 'ready') await client.quit(); else client.disconnect();
     } catch {
       client.disconnect();
     }

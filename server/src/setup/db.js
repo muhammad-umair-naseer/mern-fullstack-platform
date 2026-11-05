@@ -1,4 +1,6 @@
 import pg from 'pg';
+import fs from 'node:fs';
+import '../config/environment.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
 /**
@@ -43,20 +45,25 @@ class PostgresDatabase {
     this.pool = null;
     this.url = url;
     this.scope = new AsyncLocalStorage();
+    this.savepointId = 0;
   }
 
   async open() {
     // Parse PostgreSQL int8 (bigint / BIGSERIAL) as numbers for safe JS arithmetic
     pg.types.setTypeParser(20, (val) => (val === null ? null : parseInt(val, 10)));
 
+    const connectionUrl = new URL(this.url);
+    // TLS options must not be silently overridden by URL query parameters.
+    for (const key of ['sslmode', 'sslcert', 'sslkey', 'sslrootcert', 'ssl']) connectionUrl.searchParams.delete(key);
     this.pool = new pg.Pool({
-      connectionString: this.url,
-      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
+      connectionString: connectionUrl.toString(),
+      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: true, ...(process.env.DATABASE_CA_FILE ? { ca: fs.readFileSync(process.env.DATABASE_CA_FILE, 'utf8') } : {}) } : undefined,
       max: Number(process.env.DATABASE_POOL_MAX || 20),
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
     });
 
+    this.pool.on('error', () => console.error('PostgreSQL pool connection failed'));
     // Test connection
     const client = await this.pool.connect();
     try {
@@ -94,6 +101,20 @@ class PostgresDatabase {
 
   transaction(fn) {
     return async (...args) => {
+      const existing = this.scope.getStore();
+      if (existing) {
+        const savepoint = 'nested_' + (++this.savepointId);
+        await existing.query('SAVEPOINT ' + savepoint);
+        try {
+          const result = await fn(...args);
+          await existing.query('RELEASE SAVEPOINT ' + savepoint);
+          return result;
+        } catch (err) {
+          await existing.query('ROLLBACK TO SAVEPOINT ' + savepoint);
+          await existing.query('RELEASE SAVEPOINT ' + savepoint);
+          throw err;
+        }
+      }
       const client = await this.pool.connect();
       try {
         await client.query('BEGIN');
@@ -369,12 +390,17 @@ export const connectDB = async () => {
   db = new PostgresDatabase(url);
   await db.open();
 
-  for (const ddl of Object.values(TABLES)) {
-    await db.exec(ddl);
+  if (process.env.SCHEMA_MANAGEMENT === 'external') {
+    const version = await db.prepare("SELECT value FROM meta WHERE key = 'schema_version'").get();
+    if (version?.value !== '1') throw new Error('Run the schema migration before starting this release');
+  } else {
+    await db.transaction(async () => {
+      await db.prepare('SELECT pg_advisory_xact_lock(72451001)').get();
+      for (const ddl of Object.values(TABLES)) await db.exec(ddl);
+      await migrate(db);
+      await db.prepare("INSERT INTO meta (key, value) VALUES ('schema_version', '1') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value").run();
+    })();
   }
-
-  // Non-blocking additive migrations if needed
-  await migrate(db);
 
   console.log(`📦 Connected to PostgreSQL at ${new URL(url).host}`);
   return db;

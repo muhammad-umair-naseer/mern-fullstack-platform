@@ -1,47 +1,25 @@
-node_modules/
-client/node_modules/
-server/node_modules/
-server/data/
-.env
-.env.*
-server/.env
-server/.env.*
-!.env.example
-!server/.env.example
-.git/
-.gitignore
-.vscode/
-.idea/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# The runtime image only consumes these inputs. Admin and games have their own contexts.
+**
+!Dockerfile
+!server/
+!server/package.json
+!server/package-lock.json
+!server/src/
+!server/src/**
+!server/scripts/
+!server/scripts/**
+!client/
+!client/build/
+!client/build/**
 
-# Exclude standalone tool archives, test files and dumps in root
-/*.pdf
-/*.zip
-extracted_tools/
-brand-source/
-Image Color Picker/
-image-enlarger/
-image-resizer/
-local-image-compressor/
-local-image-compressor-main/
-local-pdf-image-tools-main/
-png-compressor/
-qr-generator/
-tool1-client/
-tool2-compressor/
-tool3-merger/
-tool4-splitter/
-tool7-crop/
-tool8-resize/
-/*.html
-!client/public/**
-# Never part of the image
-.github/
-.claude/
-server/test/
-games/*/node_modules/
-client/public/toolkit/node_modules/
-.DS_Store
+# Never send credentials, local data or editor leftovers, even under allowed paths.
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/*.bak*
+**/*.log
+**/node_modules

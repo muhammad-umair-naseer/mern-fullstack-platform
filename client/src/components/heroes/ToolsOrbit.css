@@ -606,6 +606,8 @@
 @media (max-width: 900px) {
   .lx-to {
     margin-inline: calc(var(--gutter) * -1);
+    /* Prerendered desktop rings must not widen a phone before measurement. */
+    overflow-x: clip;
   }
 }
 

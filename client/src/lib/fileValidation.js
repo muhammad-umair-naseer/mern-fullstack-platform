@@ -103,6 +103,7 @@ export async function validateAudioFile(file, allowed = ['mp3', 'wav', 'ogg', 'f
   const ext = file.name.toLowerCase().split('.').pop();
   const bytes = await readHeaderBytes(file, 12);
 
+  if (!allowed.includes(ext)) return { valid: false, error: 'Unsupported audio extension.' };
   const isWav =
     bytes[0] === 0x52 &&
     bytes[1] === 0x49 &&

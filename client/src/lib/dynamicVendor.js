@@ -19,7 +19,7 @@ export function loadVendorScript(src) {
         return;
       }
       existing.addEventListener('load', () => resolve());
-      existing.addEventListener('error', (e) => reject(new Error(`Failed to load ${src}`)));
+      existing.addEventListener('error', (_e) => reject(new Error(`Failed to load ${src}`)));
       return;
     }
 
@@ -30,7 +30,7 @@ export function loadVendorScript(src) {
       script.setAttribute('data-loaded', 'true');
       resolve();
     };
-    script.onerror = (e) => {
+    script.onerror = (_e) => {
       loadedScripts.delete(src);
       reject(new Error(`Failed to load vendor script: ${src}`));
     };

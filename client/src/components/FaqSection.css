@@ -2,7 +2,7 @@
    pages that already have a lot going on, and its job is to be readable rather
    than to compete. */
 
-@import '../learn/motion.css';
+@import '../features/learning/components/motion.css';
 
 .cx-faq { max-width: 48rem; margin: 0 auto; padding: 56px 24px 72px; }
 

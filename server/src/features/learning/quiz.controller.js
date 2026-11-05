@@ -1,0 +1,98 @@
+import { getDB } from '../../setup/db.js';
+import { enrollmentFor, computeGates, PASS_MARK } from './progress.service.js';
+import { loadQuestions, gradeAndRespond, strip } from './quiz.service.js';
+
+/** Topic and chapter quizzes. The final exam lives in final.controller.js. */
+
+/** A topic's own quiz. Must be passed before the next topic unlocks. */
+export const getTopicQuiz = async (req, res) => {
+  const db = getDB();
+  const lesson = await db
+    .prepare(
+      `SELECT l.id, l.title, l.position, ch.id AS chapterId, ch.position AS chapterPosition, ch.courseId
+       FROM lessons l JOIN chapters ch ON ch.id = l.chapterId WHERE l.id = ?`
+    )
+    .get(req.params.lessonId);
+  if (!lesson) return res.status(404).json({ message: 'Topic not found' });
+  if (!(await enrollmentFor(req.user.id, lesson.courseId))) {
+    return res.status(403).json({ message: 'Not enrolled in this course' });
+  }
+
+  const course = await db.prepare('SELECT * FROM courses WHERE id = ?').get(lesson.courseId);
+  const gate = (await computeGates(req.user.id, course)).lessons[lesson.id];
+  if (!gate?.quizUnlocked) {
+    return res.status(403).json({
+      message: gate?.unlocked ? 'Read the topic before taking its quiz' : gate?.reason || 'Locked',
+    });
+  }
+
+  const questions = await loadQuestions(course.id, null, lesson.id);
+  if (!questions.length) return res.status(404).json({ message: 'This topic has no quiz' });
+
+  res.json({
+    data: { lesson, questions: questions.map(strip), passMark: Math.round(PASS_MARK * 100) },
+  });
+};
+
+export const submitTopicQuiz = async (req, res) => {
+  const db = getDB();
+  const lesson = await db
+    .prepare('SELECT l.id, ch.courseId FROM lessons l JOIN chapters ch ON ch.id = l.chapterId WHERE l.id = ?')
+    .get(req.params.lessonId);
+  if (!lesson) return res.status(404).json({ message: 'Topic not found' });
+
+  const course = await db.prepare('SELECT * FROM courses WHERE id = ?').get(lesson.courseId);
+  if (!(await enrollmentFor(req.user.id, course.id))) {
+    return res.status(403).json({ message: 'Not enrolled in this course' });
+  }
+
+  const gate = (await computeGates(req.user.id, course)).lessons[lesson.id];
+  if (!gate?.quizUnlocked) {
+    return res.status(403).json({ message: gate?.reason || 'This quiz is locked' });
+  }
+
+  const questions = await loadQuestions(course.id, null, lesson.id);
+  const result = await gradeAndRespond(req, res, { course, chapterId: null, lessonId: lesson.id, questions });
+  if (!result) return;
+  res.json({ data: result });
+};
+
+export const getChapterQuiz = async (req, res) => {
+  const db = getDB();
+  const chapter = await db.prepare('SELECT * FROM chapters WHERE id = ?').get(req.params.chapterId);
+  if (!chapter) return res.status(404).json({ message: 'Chapter not found' });
+  if (!(await enrollmentFor(req.user.id, chapter.courseId))) {
+    return res.status(403).json({ message: 'Not enrolled in this course' });
+  }
+
+  const course = await db.prepare('SELECT * FROM courses WHERE id = ?').get(chapter.courseId);
+  const gate = (await computeGates(req.user.id, course)).quizzes[chapter.id];
+  if (!gate?.unlocked) {
+    return res.status(403).json({ message: gate?.reason || 'This quiz is locked' });
+  }
+
+  const questions = await loadQuestions(chapter.courseId, chapter.id);
+  res.json({
+    data: { chapter, questions: questions.map(strip), passMark: Math.round(PASS_MARK * 100) },
+  });
+};
+
+export const submitChapterQuiz = async (req, res) => {
+  const db = getDB();
+  const chapter = await db.prepare('SELECT * FROM chapters WHERE id = ?').get(req.params.chapterId);
+  if (!chapter) return res.status(404).json({ message: 'Chapter not found' });
+  const course = await db.prepare('SELECT * FROM courses WHERE id = ?').get(chapter.courseId);
+  if (!(await enrollmentFor(req.user.id, course.id))) {
+    return res.status(403).json({ message: 'Not enrolled in this course' });
+  }
+
+  const gate = (await computeGates(req.user.id, course)).quizzes[chapter.id];
+  if (!gate?.unlocked) {
+    return res.status(403).json({ message: gate?.reason || 'This quiz is locked' });
+  }
+
+  const questions = await loadQuestions(course.id, chapter.id);
+  const result = await gradeAndRespond(req, res, { course, chapterId: chapter.id, questions });
+  if (!result) return;
+  res.json({ data: result });
+};

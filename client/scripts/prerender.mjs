@@ -202,13 +202,13 @@ await new Promise((r) => server.listen(PORT, r));
 if (!CHROME || !existsSync(CHROME)) {
   console.warn(`⚠️ Chrome executable not found for prerendering. Skipping prerender step.`);
   server.close();
-  process.exit(0);
+  process.exit(1);
 }
 
 const routes = [
   '/', '/about', '/services', '/courses', '/internships', '/tools',
   '/contact', '/terms', '/privacy', '/your-bot', '/blog', '/faq', '/games',
-  '/games/typedash', '/games/gotcha-rush', '/games/pickparty',
+  '/games/typedash', '/games/gotcha-rush', '/games/pickparty', '/games/sketch-and-guess', '/your-bot/privacy', '/your-bot/terms', '/your-bot/data-deletion',
 ];
 
 for (const [slug] of courseMap) {
@@ -241,7 +241,7 @@ try {
   browser = await puppeteer.launch({
     executablePath: CHROME,
     headless: 'new',
-    args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows'],
     // The scroll pass on the heaviest pages can exceed the 180 s default when
     // several tabs share a small CI or container CPU.
     protocolTimeout: 300000,
@@ -249,7 +249,7 @@ try {
 } catch (err) {
   console.warn(`⚠️ Could not launch Chrome (${err.message}). Skipping prerender step.`);
   server.close();
-  process.exit(0);
+  process.exit(1);
 }
 
 let written = 0;
@@ -263,7 +263,10 @@ const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY) || 4);
 const renderRoute = async (route) => {
   const page = await browser.newPage();
   try {
+    await page.setRequestInterception(true);
+    page.on('request', request => { const url = new URL(request.url()); if (['http:', 'https:'].includes(url.protocol) && !['127.0.0.1', 'localhost'].includes(url.hostname)) return request.abort(); return request.continue(); });
     await page.setViewport({ width: 1280, height: 900 });
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
     await page.goto(`http://localhost:${PORT}${route}`, {
       waitUntil: 'networkidle0',
       timeout: 45000,
@@ -285,6 +288,15 @@ const renderRoute = async (route) => {
     // Stepping rather than jumping: a single scrollTo skips the intermediate
     // triggers, and ScrollTrigger only advances the ones it actually passes.
     await page.evaluate(async () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // The site's reduced-motion paths already reveal content. Avoid hundreds
+        // of unnecessary animation frames on long articles; load images explicitly.
+        for (const image of document.images) image.loading = 'eager';
+        window.scrollTo(0, document.documentElement.scrollHeight);
+        await new Promise(resolve => setTimeout(resolve, 400));
+        window.scrollTo(0, 0);
+        return;
+      }
       const step = Math.round(window.innerHeight * 0.8);
       const frame = () => new Promise((r) => requestAnimationFrame(() => r()));
       // Bounded: a page whose height keeps growing (or a starved tab) must not
@@ -304,7 +316,15 @@ const renderRoute = async (route) => {
     });
 
     const html = await page.evaluate(() => {
-      // Scripts still load and run for real visitors; nothing is stripped.
+      // Vite inserts absolute preload URLs while rendering. Never ship the
+      // temporary localhost origin into a production document.
+      for (const node of document.querySelectorAll('[src], [href], [poster]')) {
+        for (const attr of ['src', 'href', 'poster']) {
+          const value = node.getAttribute(attr);
+          if (value?.startsWith(location.origin + '/')) node.setAttribute(attr, value.slice(location.origin.length));
+        }
+      }
+      // Scripts still load and run for real visitors.
       return '<!doctype html>\n' + document.documentElement.outerHTML;
     });
 
@@ -361,3 +381,5 @@ if (failed.length) {
   failed.forEach((f) => console.log('  ' + f));
   process.exit(1);
 }
+
+await writeFile(join(BUILD, 'prerender-manifest.json'), JSON.stringify({ routes: [...new Set(routes)], generatedAt: new Date().toISOString(), site: process.env.REACT_APP_SITE_URL || 'https://cortexissolutionhub.com', complete: true }, null, 2));

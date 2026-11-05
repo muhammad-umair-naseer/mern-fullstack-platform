@@ -45,10 +45,11 @@ export const createRepository = (table, fields) => {
     },
 
     // Newest first, matching the old `.sort({ createdAt: -1 })`.
-    async findAll() {
+    async findAll({ page = 1 } = {}) {
+      const offset = (Math.min(100000, Math.max(1, Number.parseInt(page, 10) || 1)) - 1) * 50;
       const rows = await getDB()
-        .prepare(`SELECT * FROM ${table} ORDER BY createdAt DESC, id DESC`)
-        .all();
+        .prepare(`SELECT * FROM ${table} ORDER BY createdAt DESC, id DESC LIMIT 50 OFFSET ?`)
+        .all(offset);
       return rows.map((row) => revive(fields, row));
     },
 

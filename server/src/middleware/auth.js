@@ -6,7 +6,7 @@ import { isAdminEmail } from '../setup/admin.js';
 // loud failure — so refuse to sign anything without a configured secret.
 export const getSecret = () => {
   const secret = process.env.JWT_SECRET;
-  if (!secret || secret.length < 16) {
+  if (!secret || secret.length < 32) {
     throw new Error('JWT_SECRET missing or too short — set a long random value in server/.env');
   }
   return secret;
@@ -16,7 +16,8 @@ export const getSecret = () => {
 // session signed before. The admin's sessions are kept short as well.
 export const signToken = (user) =>
   jwt.sign({ sub: user.id, email: user.email, v: user.tokenVersion || 0 }, getSecret(), {
-    expiresIn: isUserAdmin(user) ? '12h' : '30d',
+    expiresIn: isUserAdmin(user) ? '2h' : '7d',
+    algorithm: 'HS256', issuer: 'cortexis', audience: 'cortexis-website',
   });
 
 // The token's account, or null when it is gone or the token was revoked.
@@ -37,7 +38,7 @@ export const requireAuth = async (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Sign in to continue' });
 
   try {
-    const user = await userFor(jwt.verify(token, getSecret()));
+    const user = await userFor(jwt.verify(token, getSecret(), { algorithms: ['HS256'], issuer: 'cortexis', audience: 'cortexis-website' }));
 
     // The token can outlive the account it names, or have been revoked.
     if (!user) return res.status(401).json({ message: 'Session expired — please sign in again' });
@@ -64,7 +65,7 @@ export const optionalAuth = async (req, _res, next) => {
   const token = readToken(req);
   if (token) {
     try {
-      const u = await userFor(jwt.verify(token, getSecret()));
+      const u = await userFor(jwt.verify(token, getSecret(), { algorithms: ['HS256'], issuer: 'cortexis', audience: 'cortexis-website' }));
       req.user = u && u.emailVerified ? u : null;
     } catch {
       req.user = null;

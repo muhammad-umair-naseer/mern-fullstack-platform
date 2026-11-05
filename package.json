@@ -1,21 +1,29 @@
 {
-  "name": "dummy-company",
+  "name": "cortexis-platform",
   "version": "1.0.0",
-  "description": "MERN full-stack platform (backend API + React client served together).",
+  "description": "Cortexis React website, PostgreSQL API, staff portal and games",
   "main": "server/src/server.js",
   "scripts": {
-    "build": "npm install --prefix server && npm install --include=dev --prefix client && npm run build --prefix client",
+    "build": "npm run build --prefix client",
     "start": "npm start --prefix server",
+    "start:all": "node scripts/start-all.mjs",
+    "start:games": "node scripts/start-games.mjs",
     "start:client": "npm start --prefix client",
-    "start:gotcha": "cross-env PORT=3001 node --env-file-if-exists=server/.env games/gotcha-rush/server/index.js",
-    "start:typedash": "cross-env PORT=4001 node --env-file-if-exists=server/.env games/typedash/server/index.js",
-    "start:pickparty": "cross-env PORT=5001 node --env-file-if-exists=server/.env games/pickparty/server/index.js",
-    "start:sketch": "cross-env PORT=7001 node --env-file-if-exists=server/.env games/sketch-and-guess/server/index.js",
-    "start:admin": "cross-env PORT=6001 node admin/server.js",
+    "start:gotcha": "node scripts/start-service.mjs gotcha",
+    "start:typedash": "node scripts/start-service.mjs typedash",
+    "start:pickparty": "node scripts/start-service.mjs pickparty",
+    "start:sketch": "node scripts/start-service.mjs sketch",
+    "start:admin": "node scripts/start-service.mjs admin",
     "start:yourbot": "node scripts/start-yourbot.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm test --prefix server && npm test --prefix client && node --test admin/test/*.test.js",
+    "install:all": "npm ci --prefix server && npm ci --prefix client",
+    "lint": "npm run lint --prefix client"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "private": true,
+  "engines": {
+    "node": ">=24.13.1 <25"
+  }
 }

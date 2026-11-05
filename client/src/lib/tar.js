@@ -32,6 +32,7 @@ export function tarParse(bytes) {
     const prefix = readAscii(bytes, 345 + off, 155);
     const size = parseOctal(bytes, 124 + off, 12);
     const type = bytes[156 + off];
+    if (!Number.isSafeInteger(size) || size < 0 || size > 64 * 1024 * 1024 || off + BLOCK + size > bytes.length || entries.length >= 1000) throw new Error('TAR entry exceeds limits or is truncated.');
     const dataOff = off + BLOCK;
     let full = prefix ? prefix + '/' + name : name;
 
@@ -69,8 +70,9 @@ export async function streamThrough(bytes, Ctor) {
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    parts.push(value);
     len += value.length;
+    if (len > 128 * 1024 * 1024) { await reader.cancel(); throw new Error('Archive expansion exceeds 128 MB.'); }
+    parts.push(value);
   }
   const out = new Uint8Array(len);
   let o = 0;
@@ -82,7 +84,7 @@ export async function streamThrough(bytes, Ctor) {
 }
 
 /** Inflate a .gz / .tgz payload with the platform's own gzip decoder. */
-export const gunzip = (bytes) => streamThrough(bytes, DecompressionStream); // eslint-disable-line no-undef
+export const gunzip = (bytes) => streamThrough(bytes, DecompressionStream);
 
 /**
  * Entries of a .tar / .tar.gz / .tgz file in the shape zip.js hands back —

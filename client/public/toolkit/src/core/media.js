@@ -36,6 +36,7 @@ export function seekTo(video, t) {
 export async function eachFrame(video, { start = 0, end = null, fps = 30, width = null, height = null, onProgress = null, signal = null }, cb) {
   end = end == null ? video.duration : Math.min(end, video.duration);
   const w = width || video.videoWidth, hgt = height || video.videoHeight;
+  if (!Number.isFinite(end) || end - start > 60 || (end - start) * fps > 1800 || w * hgt > 2073600) throw new Error('Video processing limit: 60 seconds, 1800 frames and 1920x1080 pixels.');
   const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = hgt;
   const ctx = canvas.getContext('2d', { willReadFrequently: false });
   const total = Math.max(1, Math.round((end - start) * fps));
@@ -221,8 +222,8 @@ export async function fixWebmDuration(blob, durationMs = null) {
 export async function decodeAudio(fileOrBytes) {
   const buf = fileOrBytes instanceof Uint8Array ? fileOrBytes.buffer.slice(fileOrBytes.byteOffset, fileOrBytes.byteOffset + fileOrBytes.byteLength) : await fileOrBytes.arrayBuffer();
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  try { return await ctx.decodeAudioData(buf.slice(0)); }
-  catch (e) { throw new Error('The browser could not decode this audio (unsupported codec/container). Try MP3, WAV, OGG/Opus, M4A/AAC, FLAC or WebM.'); }
+  try { const audio = await ctx.decodeAudioData(buf.slice(0)); if (audio.duration > 300 || audio.length * audio.numberOfChannels > 32000000) throw new RangeError('Audio exceeds 5 minutes or 32 million decoded samples.'); return audio; }
+  catch (e) { if (e instanceof RangeError) throw e; throw new Error('The browser could not decode this audio (unsupported codec/container). Try MP3, WAV, OGG/Opus, M4A/AAC, FLAC or WebM.'); }
   finally { ctx.close?.(); }
 }
 export function sliceAudio(buffer, start, end, { fadeIn = 0, fadeOut = 0, gain = 1 } = {}) {

@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const copy = (from, to) => { const target = path.join(root, 'public/vendor', to); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.cpSync(path.join(root, 'node_modules', from), target, { recursive: true }); };
+copy('@wasm-zoo/qpdf', 'qpdf');
+copy('pdfjs-dist/build/pdf.min.mjs', 'pdf.min.mjs');
+copy('pdfjs-dist/build/pdf.worker.min.mjs', 'pdf.worker.min.mjs');
+copy('pdfjs-dist/standard_fonts', 'standard_fonts');
+copy('pdfjs-dist/wasm', 'pdfjs-wasm');
+copy('tesseract.js/dist/tesseract.min.js', 'tesseract/tesseract.min.js');
+copy('tesseract.js/dist/worker.min.js', 'tesseract/worker.min.js');
+for (const name of fs.readdirSync(path.join(root, 'node_modules/tesseract.js-core'))) if (/\.wasm(?:\.js)?$/.test(name) || /license/i.test(name)) copy('tesseract.js-core/' + name, 'tesseract/core/' + name);
+for (const lang of ['eng', 'ara', 'urd', 'hin', 'spa', 'fra', 'deu', 'ita', 'por']) copy('@tesseract.js-data/' + lang + '/4.0.0_best_int/' + lang + '.traineddata.gz', 'tesseract/lang/' + lang + '.traineddata.gz');
+copy('tesseract.js/LICENSE.md', 'tesseract/LICENSE.md');
+console.log('QPDF and nine OCR language/core assets synchronized from locked packages.');

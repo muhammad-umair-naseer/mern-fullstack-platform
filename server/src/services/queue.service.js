@@ -1,223 +1,71 @@
 import { Queue } from 'bullmq';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
+import { redisOptions, queuePrefix } from '../config/redis.js';
 import { isRedisReady } from './redis.service.js';
-import { sendVerificationCode } from './verificationMail.js';
+import { sendVerificationCode } from '../features/auth/verificationMail.js';
 import { maybeSendContactEmail } from './mailer.js';
 import { alertAdmin, notifySignup } from './adminAlert.js';
 
-// BullMQ rejects custom job ids containing ':' (it is the key separator), so
-// every id is built through this — with ':' in the ids, not one email ever
-// reached the queue and each one fell back to direct dispatch.
-const jobIdOf = (...parts) => parts.map((p) => String(p).replace(/:/g, '-')).join('-');
-
-/**
- * BullMQ Email & Notification Queue Service
- * 
- * Features:
- * 1. Distributed background job processing on Redis.
- * 2. Idempotency & Deduplication: Prevents duplicate job processing on rapid re-submits.
- * 3. Retention Control: Automatically purges old completed/failed jobs to prevent memory bloat.
- * 4. Exponential Backoff: Transient failures retry with 2s, 4s, 8s backoff.
- * 5. Best-Effort Offline Fallback: If Redis is unreachable, dispatches directly in-memory (best-effort).
- */
-
-let emailQueue = null;
-
-const getRedisConnectionOptions = () => {
-  const env = process.env;
-  if (env.REDIS_URL) {
-    return {
-      url: env.REDIS_URL,
-      maxRetriesPerRequest: null,
-      connectTimeout: Number(env.REDIS_CONNECT_TIMEOUT || 5000),
-    };
+let emailQueue;
+const encryptionKey = () => crypto.createHash('sha256').update(process.env.EMAIL_QUEUE_SECRET || process.env.JWT_SECRET || '').digest();
+export function encryptJob(data) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', encryptionKey(), iv);
+  const body = Buffer.concat([cipher.update(JSON.stringify(data), 'utf8'), cipher.final()]);
+  return { v: 1, iv: iv.toString('base64'), tag: cipher.getAuthTag().toString('base64'), body: body.toString('base64') };
+}
+export function decryptJob(data) {
+  if (data.v !== 1) throw new Error('Unsupported email job format; drain old jobs before upgrade');
+  const decipher = crypto.createDecipheriv('aes-256-gcm', encryptionKey(), Buffer.from(data.iv, 'base64'));
+  decipher.setAuthTag(Buffer.from(data.tag, 'base64'));
+  return JSON.parse(Buffer.concat([decipher.update(Buffer.from(data.body, 'base64')), decipher.final()]).toString('utf8'));
+}
+export const deliverEmail = (name, data) => {
+  switch (name) {
+    case 'send-verification': return sendVerificationCode(data);
+    case 'send-contact': return maybeSendContactEmail(data);
+    case 'send-admin-alert': return alertAdmin(data);
+    case 'send-signup-notification': return notifySignup(data);
+    case 'send-internship-alert': return alertAdmin({ subject: 'New internship application', detail: `Applicant: ${data.name} (${data.email})\nInternship: ${data.internshipTitle}`, context: { phone: data.phone, resume: data.resumeLink } });
+    default: throw new Error('Unknown email job');
   }
-
-  return {
-    host: env.REDIS_HOST || '127.0.0.1',
-    port: Number(env.REDIS_PORT || 6379),
-    password: env.REDIS_PASSWORD || undefined,
-    db: Number(env.REDIS_DB || 0),
-    tls: env.REDIS_TLS === 'true' ? {} : undefined,
-    maxRetriesPerRequest: null,
-    connectTimeout: Number(env.REDIS_CONNECT_TIMEOUT || 5000),
-  };
 };
-
 export const getEmailQueue = () => {
+  if (!isRedisReady()) return null;
   if (!emailQueue) {
-    try {
-      const connection = getRedisConnectionOptions();
-      emailQueue = new Queue('emails', {
-        prefix: 'cortexis',
-        connection,
-        defaultJobOptions: {
-          attempts: 3,
-          backoff: {
-            type: 'exponential',
-            delay: 2000,
-          },
-          removeOnComplete: {
-            count: 100,
-            age: 3600, // 1 hour
-          },
-          removeOnFail: {
-            count: 500,
-            age: 86400, // 24 hours
-          },
-        },
-      });
-
-      emailQueue.on('error', (err) => {
-        // Non-fatal: logged as warning
-        console.warn(`⚠️ BullMQ Email Queue notice: ${err.message}`);
-      });
-    } catch (err) {
-      console.warn(`⚠️ Failed to initialize BullMQ Email Queue: ${err.message}`);
-      return null;
-    }
+    emailQueue = new Queue('emails', { prefix: queuePrefix(), connection: redisOptions(), defaultJobOptions: {
+      attempts: 5, backoff: { type: 'exponential', delay: 2000 },
+      removeOnComplete: true, removeOnFail: { count: 500, age: 86400 },
+    } });
+    emailQueue.on('error', () => console.error('Email queue unavailable'));
   }
   return emailQueue;
 };
-
-/**
- * Dispatches a verification email job with idempotency.
- */
-export const queueVerificationEmail = async ({ name, email, code }) => {
+async function dispatch(name, data) {
   const queue = getEmailQueue();
-  const normalizedEmail = String(email).trim().toLowerCase();
-  const jobId = jobIdOf('verify', normalizedEmail, code);
-
-  if (isRedisReady() && queue) {
-    try {
-      await queue.add('send-verification', { name, email: normalizedEmail, code }, { jobId });
-      return { queued: true, jobId };
-    } catch (err) {
-      console.warn(`⚠️ BullMQ enqueue failed (${err.message}). Falling back to best-effort direct dispatch.`);
-    }
+  if (queue) {
+    // Opaque IDs and encrypted payloads keep verification codes/PII out of Redis diagnostics.
+    const jobId = crypto.createHmac('sha256', encryptionKey()).update(JSON.stringify([name, data, Math.floor(Date.now() / 30000)])).digest('hex');
+    await queue.add(name, encryptJob(data), { jobId });
+    return { queued: true, sent: false };
   }
-
-  // Best-Effort Offline Fallback: direct detached execution
-  sendVerificationCode({ name, email: normalizedEmail, code }).catch((err) =>
-    console.error('Best-effort direct verification email failed:', err.message)
-  );
-  return { queued: false, fallback: true };
-};
-
-/**
- * Dispatches a contact form email job with idempotency.
- */
-export const queueContactEmail = async (data) => {
-  const queue = getEmailQueue();
-  const normalizedEmail = String(data.email || '').trim().toLowerCase();
-  const msgHash = crypto.createHash('md5').update(String(data.message || '').trim()).digest('hex').slice(0, 12);
-  const timeWindow = Math.floor(Date.now() / 60000); // 1-minute deduplication window
-  const jobId = jobIdOf('contact', normalizedEmail, msgHash, timeWindow);
-
-  if (isRedisReady() && queue) {
-    try {
-      await queue.add('send-contact', data, { jobId });
-      return { queued: true, jobId };
-    } catch (err) {
-      console.warn(`⚠️ BullMQ enqueue failed (${err.message}). Falling back to best-effort direct dispatch.`);
-    }
-  }
-
-  // Best-Effort Offline Fallback
-  maybeSendContactEmail(data).catch((e) => console.error('Best-effort direct mailer error:', e.message));
-  return { queued: false, fallback: true };
-};
-
-/**
- * Dispatches an admin alert email job with idempotency.
- */
-export const queueAdminAlert = async ({ key, subject, detail, context }) => {
-  const queue = getEmailQueue();
-  const timeWindow = Math.floor(Date.now() / 30000); // 30s deduplication window
-  const jobId = jobIdOf('alert', key, timeWindow);
-
-  if (isRedisReady() && queue) {
-    try {
-      await queue.add('send-admin-alert', { key, subject, detail, context }, { jobId });
-      return { queued: true, jobId };
-    } catch (err) {
-      console.warn(`⚠️ BullMQ enqueue failed (${err.message}). Falling back to best-effort direct dispatch.`);
-    }
-  }
-
-  // Best-Effort Offline Fallback
-  alertAdmin({ key, subject, detail, context });
-  return { queued: false, fallback: true };
-};
-
-/**
- * Dispatches a signup notification email job.
- */
-export const queueSignupNotification = async ({ name, email }) => {
-  const queue = getEmailQueue();
-  const normalizedEmail = String(email).trim().toLowerCase();
-  const jobId = jobIdOf('signup', normalizedEmail);
-
-  if (isRedisReady() && queue) {
-    try {
-      await queue.add('send-signup-notification', { name, email: normalizedEmail }, { jobId });
-      return { queued: true, jobId };
-    } catch (err) {
-      console.warn(`⚠️ BullMQ enqueue failed (${err.message}). Falling back to best-effort direct dispatch.`);
-    }
-  }
-
-  // Best-Effort Offline Fallback
-  notifySignup({ name, email: normalizedEmail });
-  return { queued: false, fallback: true };
-};
-
-/**
- * Dispatches an internship application confirmation & alert job.
- */
-export const queueInternshipAlert = async (data) => {
-  const queue = getEmailQueue();
-  const normalizedEmail = String(data.email || '').trim().toLowerCase();
-  const timeWindow = Math.floor(Date.now() / 60000);
-  const jobId = jobIdOf('intern', normalizedEmail, encodeURIComponent(data.internshipTitle || ''), timeWindow);
-
-  if (isRedisReady() && queue) {
-    try {
-      await queue.add('send-internship-alert', data, { jobId });
-      return { queued: true, jobId };
-    } catch (err) {
-      console.warn(`⚠️ BullMQ enqueue failed (${err.message}). Falling back to best-effort direct dispatch.`);
-    }
-  }
-
-  return { queued: false, fallback: true };
-};
-
-/**
- * Queue diagnostics for health reporting.
- */
+  await deliverEmail(name, data);
+  return { queued: false, sent: true };
+}
+export const queueVerificationEmail = data => dispatch('send-verification', data);
+export const queueContactEmail = data => dispatch('send-contact', data);
+// Secondary notifications never change the result of an already persisted user action.
+const notification = (name, data) => dispatch(name, data).catch(() => {
+  console.error('Secondary email notification failed: ' + name);
+  return { queued: false, sent: false };
+});
+export const queueAdminAlert = data => notification('send-admin-alert', data);
+export const queueSignupNotification = data => notification('send-signup-notification', data);
+export const queueInternshipAlert = data => notification('send-internship-alert', data);
 export const getQueueMetrics = async () => {
   const queue = getEmailQueue();
-  if (!queue || !isRedisReady()) {
-    return { status: 'offline', waiting: 0, active: 0, completed: 0, failed: 0 };
-  }
-  try {
-    const counts = await queue.getJobCounts('waiting', 'active', 'completed', 'failed', 'delayed');
-    return {
-      status: 'active',
-      ...counts,
-    };
-  } catch {
-    return { status: 'unavailable', waiting: 0, active: 0, completed: 0, failed: 0 };
-  }
+  if (!queue) return { status: 'offline' };
+  try { return { status: 'active', ...await queue.getJobCounts('waiting', 'active', 'completed', 'failed', 'delayed') }; }
+  catch { return { status: 'unavailable' }; }
 };
-
-/**
- * Clean queue shutdown hook
- */
-export const closeQueue = async () => {
-  if (emailQueue) {
-    await emailQueue.close().catch(() => {});
-    emailQueue = null;
-  }
-};
+export const closeQueue = async () => { if (emailQueue) { await emailQueue.close(); emailQueue = null; } };

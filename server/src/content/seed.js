@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { getDB } from '../setup/db.js';
 import { loadCourses } from './index.js';
-import { invalidateCourseCache } from '../services/cache.service.js';
+import { invalidateCourseCache } from '../features/learning/cache.service.js';
 
 // Authored answers cluster heavily on one option (LLM- and human-written quizzes
 // both do this), which makes "always pick B" a viable strategy against the 70%

@@ -1,0 +1,136 @@
+import { lazy } from 'react';
+
+/**
+ * The long-form guide under each tool, keyed by slug.
+ *
+ * Guides used to be mounted inside each tool component, which broke the moment
+ * one component started serving several URLs: ConverterHub answers five slugs,
+ * PdfToHtml two, and PdfProtect both /pdf-protect and /pdf-unlock. A guide
+ * mounted in the component appears identically on every one of those pages —
+ * duplicate content across distinct URLs, which is the one thing a search
+ * engine reliably punishes. Keying by slug here means each URL gets its own
+ * guide regardless of which component draws the tool.
+ *
+ * Lazy, because the guides are large — 25 of them is several megabytes of JSX
+ * — and none of it is needed until the tool itself has rendered. The
+ * prerenderer waits for the network to go idle before it snapshots, so the
+ * chunk is in the static HTML regardless.
+ *
+ * To add a guide: write the component, add one line here. Nothing else.
+ */
+const ARTICLES = {
+  'pdf-compressor': lazy(() => import('../features/tools/components/PdfCompressorSeoArticle.jsx')),
+  'pdf-merger': lazy(() => import('../features/tools/components/PdfMergerSeoArticle.jsx')),
+  'pdf-word': lazy(() => import('../features/tools/components/PdfWordSeoArticle.jsx')),
+  'pdf-splitter': lazy(() => import('../features/tools/components/PdfSplitterSeoArticle.jsx')),
+  'pdf-ocr': lazy(() => import('../features/tools/components/PdfOcrSeoArticle.jsx')),
+  'pdf-excel': lazy(() => import('../features/tools/components/PdfToExcelSeoArticle.jsx')),
+  'pdf-page-remover': lazy(() => import('../features/tools/components/PdfPageRemoverSeoArticle.jsx')),
+  'extract-pages-from-pdf': lazy(() => import('../features/tools/components/ExtractPagesSeoArticle.jsx')),
+  'pdf-jpg': lazy(() => import('../features/tools/components/PdfJpgSeoArticle.jsx')),
+  'pdf-organizer': lazy(() => import('../features/tools/components/PdfOrganizerSeoArticle.jsx')),
+  'pdf-protect': lazy(() => import('../features/tools/components/PdfProtectSeoArticle.jsx')),
+  'pdf-unlock': lazy(() => import('../features/tools/components/PdfUnlockSeoArticle.jsx')),
+  'extract-images-from-pdf': lazy(() => import('../features/tools/components/PdfExtractImagesSeoArticle.jsx')),
+  'pdf-rotate': lazy(() => import('../features/tools/components/PdfRotateSeoArticle.jsx')),
+  'pdf-flatten': lazy(() => import('../features/tools/components/PdfFlattenSeoArticle.jsx')),
+  'make-pdf-fillable': lazy(() => import('../features/tools/components/PdfFormBuilderSeoArticle.jsx')),
+  'pdf-crop': lazy(() => import('../features/tools/components/PdfCropSeoArticle.jsx')),
+  'pdf-resize': lazy(() => import('../features/tools/components/PdfResizeSeoArticle.jsx')),
+  'pdf-png-webp-tiff-bmp-gif': lazy(() => import('../features/tools/components/PdfPngWebpSeoArticle.jsx')),
+  'png-compressor': lazy(() => import('../features/tools/components/PngCompressorSeoArticle.jsx')),
+  'qr-generator': lazy(() => import('../features/tools/components/QrGeneratorSeoArticle.jsx')),
+  'image-resizer': lazy(() => import('../features/tools/components/ImageResizerSeoArticle.jsx')),
+  'image-cropper': lazy(() => import('../features/tools/components/ImageCropperSeoArticle.jsx')),
+  'rotate-flip-image': lazy(() => import('../features/tools/components/RotateFlipImageSeoArticle.jsx')),
+  'image-enlarger': lazy(() => import('../features/tools/components/ImageEnlargerSeoArticle.jsx')),
+  'colour-picker': lazy(() => import('../features/tools/components/ColourPickerSeoArticle.jsx')),
+  'save-web-as-pdf': lazy(() => import('../features/tools/components/SaveWebAsPdfSeoArticle.jsx')),
+  'archive-converter': lazy(() => import('../features/tools/components/ArchiveConverterSeoArticle.jsx')),
+  'audio-converter': lazy(() => import('../features/tools/components/AudioConverterSeoArticle.jsx')),
+  'base64-encoder-decoder': lazy(() => import('../features/tools/components/Base64ToolSeoArticle.jsx')),
+  'cad-converter': lazy(() => import('../features/tools/components/CadConverterSeoArticle.jsx')),
+  'colour-format-utilities': lazy(() => import('../features/tools/components/ColorUtilitiesSeoArticle.jsx')),
+  'create-archive': lazy(() => import('../features/tools/components/CreateArchiveSeoArticle.jsx')),
+  'ebook-converter': lazy(() => import('../features/tools/components/EbookConverterSeoArticle.jsx')),
+  'extract-archive': lazy(() => import('../features/tools/components/ExtractArchiveSeoArticle.jsx')),
+  'file-converter-hub': lazy(() => import('../features/tools/components/FileConverterHubSeoArticle.jsx')),
+  'file-renamer': lazy(() => import('../features/tools/components/FileRenamerSeoArticle.jsx')),
+  'font-converter': lazy(() => import('../features/tools/components/FontConverterSeoArticle.jsx')),
+  'gif-compressor': lazy(() => import('../features/tools/components/GifCompressorSeoArticle.jsx')),
+  'gif-maker': lazy(() => import('../features/tools/components/GifMakerSeoArticle.jsx')),
+  'image-compressor': lazy(() => import('../features/tools/components/ImageCompressorSeoArticle.jsx')),
+  'image-converter': lazy(() => import('../features/tools/components/ImageConverterSeoArticle.jsx')),
+  'jpeg-compressor': lazy(() => import('../features/tools/components/JpegCompressorSeoArticle.jsx')),
+  'json-formatter': lazy(() => import('../features/tools/components/JsonFormatterSeoArticle.jsx')),
+  'mp3-compressor': lazy(() => import('../features/tools/components/Mp3CompressorSeoArticle.jsx')),
+  'mp3-mp4': lazy(() => import('../features/tools/components/Mp3ToMp4SeoArticle.jsx')),
+  'mp4-gif': lazy(() => import('../features/tools/components/Mp4ToGifSeoArticle.jsx')),
+  'mp4-mp3': lazy(() => import('../features/tools/components/Mp4ToMp3SeoArticle.jsx')),
+  'pdf-ebook': lazy(() => import('../features/tools/components/PdfToEbookSeoArticle.jsx')),
+  'pdf-html': lazy(() => import('../features/tools/components/PdfHtmlSeoArticle.jsx')),
+  'pdf-txt-html-rtf-odt': lazy(() => import('../features/tools/components/PdfTxtHtmlRtfOdtSeoArticle.jsx')),
+  'pdf-powerpoint': lazy(() => import('../features/tools/components/PdfToPptxSeoArticle.jsx')),
+  'pdf-psd-eps-ps': lazy(() => import('../features/tools/components/PdfToPsdEpsPsSeoArticle.jsx')),
+  'pdf-spreadsheet-suite': lazy(() => import('../features/tools/components/PdfSpreadsheetSuiteSeoArticle.jsx')),
+  'presentation-converter': lazy(() => import('../features/tools/components/PresentationConverterSeoArticle.jsx')),
+  'spreadsheet-converter': lazy(() => import('../features/tools/components/SpreadsheetConverterSeoArticle.jsx')),
+  'vector-converter': lazy(() => import('../features/tools/components/VectorConverterSeoArticle.jsx')),
+  'video-compressor': lazy(() => import('../features/tools/components/VideoCompressorSeoArticle.jsx')),
+  'video-converter': lazy(() => import('../features/tools/components/VideoConverterSeoArticle.jsx')),
+  'wav-compressor': lazy(() => import('../features/tools/components/WavCompressorSeoArticle.jsx')),
+  'webp-png': lazy(() => import('../features/tools/components/WebpPngSeoArticle.jsx')),
+  'website-jpg-screenshot': lazy(() => import('../features/tools/components/WebsiteScreenshotJpgSeoArticle.jsx')),
+  'website-png-screenshot': lazy(() => import('../features/tools/components/WebsiteScreenshotPngSeoArticle.jsx')),
+  'pdf-redact': lazy(() => import('../features/tools/components/PdfRedactSeoArticle.jsx')),
+  'pdf-watermark': lazy(() => import('../features/tools/components/PdfWatermarkSeoArticle.jsx')),
+  'pdf-compare': lazy(() => import('../features/tools/components/PdfCompareSeoArticle.jsx')),
+  'pdf-grayscale': lazy(() => import('../features/tools/components/PdfGrayscaleSeoArticle.jsx')),
+  'pdf-esign': lazy(() => import('../features/tools/components/PdfEsignSeoArticle.jsx')),
+  'pdf-page-numbers': lazy(() => import('../features/tools/components/PdfPageNumbersSeoArticle.jsx')),
+  'docx-to-pdf': lazy(() => import('../features/tools/components/DocxToPdfSeoArticle.jsx')),
+  'xlsx-to-pdf': lazy(() => import('../features/tools/components/XlsxToPdfSeoArticle.jsx')),
+  'avif-to-jpg': lazy(() => import('../features/tools/components/AvifToJpgSeoArticle.jsx')),
+  'image-to-pdf': lazy(() => import('../features/tools/components/ImageToPdfSeoArticle.jsx')),
+  'pdf-bookmarks': lazy(() => import('../features/tools/components/PdfBookmarksSeoArticle.jsx')),
+  'heic-to-jpg': lazy(() => import('../features/tools/components/HeicToJpgSeoArticle.jsx')),
+  'ogg-to-mp3': lazy(() => import('../features/tools/components/OggToMp3SeoArticle.jsx')),
+  'csv-json': lazy(() => import('../features/tools/components/CsvJsonSeoArticle.jsx')),
+  'xml-json': lazy(() => import('../features/tools/components/XmlJsonSeoArticle.jsx')),
+  'gif-to-mp4': lazy(() => import('../features/tools/components/GifToMp4SeoArticle.jsx')),
+  'webm-mp4': lazy(() => import('../features/tools/components/WebmMp4SeoArticle.jsx')),
+  'archive-to-zip': lazy(() => import('../features/tools/components/ArchiveToZipSeoArticle.jsx')),
+  'm4a-to-mp3': lazy(() => import('../features/tools/components/M4aToMp3SeoArticle.jsx')),
+  'timestamp-converter': lazy(() => import('../features/tools/components/TimestampConverterSeoArticle.jsx')),
+  'background-remover': lazy(() => import('../features/tools/components/BackgroundRemoverSeoArticle.jsx')),
+  'markdown-converter': lazy(() => import('../features/tools/components/MarkdownConverterSeoArticle.jsx')),
+  'yaml-json': lazy(() => import('../features/tools/components/YamlJsonSeoArticle.jsx')),
+  'exif-remover': lazy(() => import('../features/tools/components/ExifRemoverSeoArticle.jsx')),
+  'sql-csv': lazy(() => import('../features/tools/components/SqlCsvSeoArticle.jsx')),
+  'image-watermark': lazy(() => import('../features/tools/components/ImageWatermarkSeoArticle.jsx')),
+  'favicon-generator': lazy(() => import('../features/tools/components/FaviconGeneratorSeoArticle.jsx')),
+  'image-blur': lazy(() => import('../features/tools/components/ImageBlurSeoArticle.jsx')),
+  'hash-generator': lazy(() => import('../features/tools/components/HashGeneratorSeoArticle.jsx')),
+  'image-ocr': lazy(() => import('../features/tools/components/ImageOcrSeoArticle.jsx')),
+  'jwt-decoder': lazy(() => import('../features/tools/components/JwtDecoderSeoArticle.jsx')),
+  'meme-generator': lazy(() => import('../features/tools/components/MemeGeneratorSeoArticle.jsx')),
+  'svg-optimizer': lazy(() => import('../features/tools/components/SvgOptimizerSeoArticle.jsx')),
+  'sql-formatter': lazy(() => import('../features/tools/components/SqlFormatterSeoArticle.jsx')),
+  'diff-checker': lazy(() => import('../features/tools/components/DiffCheckerSeoArticle.jsx')),
+  'uuid-generator': lazy(() => import('../features/tools/components/UuidGeneratorSeoArticle.jsx')),
+  'word-counter': lazy(() => import('../features/tools/components/WordCounterSeoArticle.jsx')),
+  'url-encoder': lazy(() => import('../features/tools/components/UrlEncoderSeoArticle.jsx')),
+  'css-generator': lazy(() => import('../features/tools/components/CssGeneratorSeoArticle.jsx')),
+  'regex-tester': lazy(() => import('../features/tools/components/RegexTesterSeoArticle.jsx')),
+  'line-tools': lazy(() => import('../features/tools/components/LineToolsSeoArticle.jsx')),
+  'case-converter': lazy(() => import('../features/tools/components/CaseConverterSeoArticle.jsx')),
+  'video-muter': lazy(() => import('../features/tools/components/VideoMuterSeoArticle.jsx')),
+  'video-trimmer': lazy(() => import('../features/tools/components/VideoTrimmerSeoArticle.jsx')),
+  'audio-trimmer': lazy(() => import('../features/tools/components/AudioTrimmerSeoArticle.jsx')),
+  'video-speed': lazy(() => import('../features/tools/components/VideoSpeedSeoArticle.jsx')),
+};
+
+/** The guide component for a slug, or null when none has been written. */
+export const toolArticle = (slug) => ARTICLES[slug] || null;
+
+export default ARTICLES;

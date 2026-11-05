@@ -4,7 +4,7 @@ import { PdfDocument, N, Dict, Ref, PDFStream, PDFString, pdfDate } from './docu
 import { encodeWinAnsi, textWidth, standardFontDict, pdfStringLiteral, wrapText, toRoman, pickFont } from './fonts.js';
 import { jpegInfo } from '../image-codecs.js';
 import { rgbaToRgb, rgbaAlpha, rgbaToGray } from '../image-codecs.js';
-import { tokenizeContent, serializeContent, redactOps, extractPageText, inverse, apply } from './content.js';
+import { tokenizeContent, serializeContent, extractPageText, inverse, apply } from './content.js';
 
 const f2 = (n) => (Math.round(n * 1000) / 1000).toString();
 
@@ -251,38 +251,9 @@ async function convertPageImages(doc, page, decodeJpeg, seen) {
 }
 
 // ---------- Redaction ----------
-/**
- * rects: [{x,y,w,h}] as fractions of the displayed page (top-left origin).
- * Draws opaque boxes and removes the text underneath (best effort; text inside form XObjects is only covered).
- */
-export async function redactPage(doc, pageIndex, rects, { color = '#000000', removeText = true } = {}) {
-  const page = doc.pages[pageIndex];
-  const userRects = rects.map((r) => visualRectToUser(doc, page, fracToVisual(doc, page, r)));
-  let removed = 0;
-  if (removeText) {
-    const content = doc.pageContent(page);
-    const ops = tokenizeContent(content);
-    const result = redactOps(doc, page, ops, userRects);
-    removed = result.removed;
-    if (removed) await doc.setPageContent(page, serializeContent(result.ops));
-    // drop annotations that intersect (links, text annotations that could leak content)
-    const annots = doc.resolve(page.dict.get('Annots'));
-    if (Array.isArray(annots)) {
-      const keep = annots.filter((a) => {
-        const ad = doc.resolve(a);
-        const rect = ad instanceof Dict ? doc.numArray(ad.get('Rect'), 4) : null;
-        if (!rect) return true;
-        const r = [Math.min(rect[0], rect[2]), Math.min(rect[1], rect[3]), Math.max(rect[0], rect[2]), Math.max(rect[1], rect[3])];
-        return !userRects.some((u) => r[2] > u[0] && r[0] < u[2] && r[3] > u[1] && r[1] < u[3]);
-      });
-      page.dict.set('Annots', keep);
-    }
-  }
-  let ops = `q ${cmVisual(doc, page)} ${rgbOp(color)} `;
-  for (const r of rects) { const v = fracToVisual(doc, page, r); ops += `${f2(v.x)} ${f2(v.y)} ${f2(v.w)} ${f2(v.h)} re f `; }
-  ops += 'Q';
-  await doc.wrapPageContent(page, 'q', 'Q\n' + ops);
-  return { removed };
+/** Legacy object-overlay redaction is unsafe for images and nested objects. */
+export async function redactPage() {
+  throw new Error('Unsafe legacy redaction disabled. Use the rasterRedact engine.');
 }
 
 // ---------- Outlines ----------

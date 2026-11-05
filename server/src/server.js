@@ -1,41 +1,37 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
+import { validateEnvironment, integer } from './config/environment.js';
 import app, { boot } from './app.js';
 import { closeRedis } from './services/redis.service.js';
 import { closeQueue } from './services/queue.service.js';
 import { closeWorker } from './workers/email.worker.js';
+import { closeDB } from './setup/db.js';
+import { closeLimiters } from './middleware/rateLimiter.js';
 
-const PORT = process.env.PORT || 5000;
-
-// A rejected promise nobody awaited (a Redis command that timed out while the
-// cache was down, a queued email that could not be sent) must not take the
-// whole API down with it. Log it with enough context to find, and carry on.
-process.on('unhandledRejection', (reason) => {
-  console.error('Unhandled promise rejection:', reason instanceof Error ? reason.stack : reason);
-});
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught exception:', err.stack || err);
-});
-
-boot()
-  .then(({ courses, lessons }) => {
-    console.log(`📚 Seeded ${courses} course(s), ${lessons} lesson(s)`);
-    app.listen(PORT, () => console.log(`\n✅ Server listening on http://localhost:${PORT}`));
-  })
-  .catch((err) => {
-    console.error('❌ Startup failed:', err);
-    process.exit(1);
-  });
-
-// --- Graceful Shutdown ---
-const handleShutdown = async (signal) => {
-  console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
-  await closeWorker();
-  await closeQueue();
-  await closeRedis();
-  process.exit(0);
-};
-
-process.on('SIGINT', () => handleShutdown('SIGINT'));
-process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+let server;
+let stopping = false;
+async function shutdown(code = 0) {
+  if (stopping) return;
+  stopping = true;
+  const deadline = setTimeout(() => process.exit(1), 15000);
+  deadline.unref();
+  try {
+    if (server) await new Promise(resolve => { server.close(resolve); server.closeIdleConnections(); });
+    await closeWorker(); await closeQueue(); await closeRedis(); await closeDB(); closeLimiters();
+    clearTimeout(deadline);
+    process.exit(code);
+  } catch { process.exit(1); }
+}
+process.on('unhandledRejection', () => { console.error('Unhandled rejection: stopping process'); void shutdown(1); });
+process.on('uncaughtException', () => { console.error('Uncaught exception: stopping process'); void shutdown(1); });
+process.on('SIGINT', () => void shutdown());
+process.on('SIGTERM', () => void shutdown());
+try {
+  validateEnvironment();
+  await boot();
+  const port = integer(process.env.PORT, 5000);
+  server = app.listen(port, process.env.HOST || '127.0.0.1', () => console.log('Cortexis API listening on port ' + port));
+  server.requestTimeout = 30000;
+  server.headersTimeout = 15000;
+} catch (err) {
+  console.error('Startup failed:', err.message?.replace(/:\/\/[^\s]+/g, '://[redacted]'));
+  await shutdown(1);
+}

@@ -1,10 +1,12 @@
 import API_BASE_URL from '../config';
 
 const TOKEN_KEY = 'cortexis.token';
+// The prior persistent token is intentionally invalidated during the security upgrade.
+try { localStorage.removeItem(TOKEN_KEY); } catch { /* storage may be disabled */ }
 
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
-export const setToken = (t) =>
-  t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY);
+let memoryToken = null;
+export const getToken = () => { try { return sessionStorage.getItem(TOKEN_KEY) || memoryToken; } catch { return memoryToken; } };
+export const setToken = t => { memoryToken = t; try { t ? sessionStorage.setItem(TOKEN_KEY, t) : sessionStorage.removeItem(TOKEN_KEY); } catch { /* memory fallback */ } };
 
 // Thin fetch wrapper: attaches the bearer token, unwraps `data`, and turns a
 // non-2xx into a thrown Error carrying the server's message and status.

@@ -12,7 +12,7 @@ import TOOL_SEO from './toolSeo';
 import TOOL_FAQS from './toolFaqs';
 
 const read = (rel) => fs.readFileSync(path.join(__dirname, rel), 'utf8');
-const toolDetail = read('../pages/ToolDetail.js');
+const toolDetail = read('../features/tools/pages/ToolDetail.jsx');
 const slugs = TOOLS.map((t) => t.slug);
 const live = [...IMPLEMENTED];
 // The 46 toolkit tools render through ToolkitRunner from a module under
@@ -54,11 +54,11 @@ describe('tool catalogue', () => {
   });
 
   test('every guide banner exists in public/blog', () => {
-    const dir = path.join(__dirname, '../components/tools');
-    const missing = fs
-      .readdirSync(dir)
-      .filter((f) => f.endsWith('SeoArticle.js'))
-      .flatMap((f) => [...read(`../components/tools/${f}`).matchAll(/src="\/blog\/([^"]+\.webp)"/g)].map((m) => [f, m[1]]))
+    const dir = path.join(__dirname, '../features/tools/components');
+    const guides = fs.readdirSync(dir).filter((f) => f.endsWith('SeoArticle.jsx'));
+    expect(guides.length).toBeGreaterThan(20);
+    const missing = guides
+      .flatMap((f) => [...read(`../features/tools/components/${f}`).matchAll(/src="\/blog\/([^"]+\.webp)"/g)].map((m) => [f, m[1]]))
       .filter(([, img]) => !fs.existsSync(path.join(__dirname, '../../public/blog', img)));
     expect(missing).toEqual([]);
   });

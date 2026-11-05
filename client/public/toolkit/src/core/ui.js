@@ -1,4 +1,5 @@
 // Shared UI helpers. Framework-free, tiny, and used by every tool module.
+import { checkFiles } from './limits.js';
 import { fmtBytes, stripExt } from './bytes.js';
 export { fmtBytes, stripExt };
 
@@ -49,7 +50,7 @@ export function dropzone({ accept = '', multiple = false, onFiles, label = 'Drop
   const zone = h('div.dropzone', { class: compact ? 'compact' : '', tabindex: 0, role: 'button', 'aria-label': label });
   const inner = h('div.dz-inner', h('div.dz-icon', '⬆'), h('div.dz-label', label), hint ? h('div.dz-hint', hint) : null, h('div.dz-hint', accept ? 'Accepted: ' + accept.split(',').map((s) => s.trim()).join(', ') : ''));
   zone.append(inner);
-  const emit = (files) => { const list = [...files].filter(Boolean); if (!list.length) return; try { onFiles(multiple ? list : list.slice(0, 1)); } catch (e) { toast(String(e.message || e), 'error'); } };
+  const emit = (files) => { const list = [...files].filter(Boolean); if (!list.length) return; try { checkFiles(list); Promise.resolve(onFiles(multiple ? list : list.slice(0, 1))).catch(e => toast(e.message || String(e), 'error')); } catch (e) { toast(String(e.message || e), 'error'); } };
   zone.addEventListener('click', () => input.click());
   zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
   input.addEventListener('change', () => { emit(input.files); input.value = ''; });
@@ -99,7 +100,7 @@ export function range(value, { min = 0, max = 100, step = 1, onChange, format = 
   return wrap;
 }
 export function checkbox(label, checked = false, onChange) { const c = h('input', { type: 'checkbox', checked }); if (onChange) c.addEventListener('change', () => onChange(c.checked)); const l = h('label.check', c, h('span', label)); l.input = c; return l; }
-export function textarea(props = {}) { return h('textarea', { spellcheck: false, ...props }); }
+export function textarea(props = {}) { return h('textarea', { spellcheck: false, maxLength: 100000, ...props }); }
 export function button(label, onClick, cls = '') { return h('button.btn', { type: 'button', class: cls, onClick }, label); }
 export function colorInput(value = '#000000', onChange) { const c = h('input', { type: 'color', value }); if (onChange) c.addEventListener('input', () => onChange(c.value)); return c; }
 export function row(...children) { return h('div.row', children); }
@@ -139,7 +140,7 @@ export function loadImage(fileOrBlob) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(fileOrBlob);
     const img = new Image();
-    img.onload = () => { resolve(img); setTimeout(() => URL.revokeObjectURL(url), 5000); };
+    img.onload = () => { if (img.naturalWidth * img.naturalHeight > 16000000) { URL.revokeObjectURL(url); reject(new Error('Image exceeds 16 megapixels. Resize it before processing.')); return; } resolve(img); setTimeout(() => URL.revokeObjectURL(url), 5000); };
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('The browser could not decode this image' + (fileOrBlob.type ? ' (' + fileOrBlob.type + ')' : '') + '.')); };
     img.src = url;
   });

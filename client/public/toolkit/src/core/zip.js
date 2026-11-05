@@ -31,7 +31,8 @@ export function readZip(bytes) {
       if (le32(b, e64) === SIG_EOCD64) { count = le64(b, e64 + 32); cdSize = le64(b, e64 + 40); cdOff = le64(b, e64 + 48); }
     }
   }
-  const entries = [];
+  if (count > 1000 || cdOff + cdSize > b.length) throw new Error('Archive exceeds 1000 entries or is corrupt.');
+  const entries = []; let expanded = 0;
   let p = cdOff;
   for (let i = 0; i < count && p + 46 <= b.length; i++) {
     if (le32(b, p) !== SIG_CENTRAL) break;
@@ -50,6 +51,8 @@ export function readZip(bytes) {
       xp += 4 + sz;
     }
     p = xend + clen;
+    expanded += usize;
+    if (!Number.isSafeInteger(usize) || usize > 64 * 1024 * 1024 || expanded > 128 * 1024 * 1024 || p > b.length) throw new Error('Archive expanded-size limit exceeded (64 MB per entry, 128 MB total).');
     const entry = {
       name, size: usize, compressedSize: csize, method, crc, isDir: name.endsWith('/') || (usize === 0 && csize === 0 && name.endsWith('/')), date: fromDosDate(t, dt), encrypted: !!(flags & 1),
       data() {
@@ -58,8 +61,12 @@ export function readZip(bytes) {
         const ln = le16(b, lho + 26), lx = le16(b, lho + 28);
         const start = lho + 30 + ln + lx;
         const raw = b.subarray(start, start + csize);
-        if (method === 0) return raw;
-        if (method === 8) return inflateRaw(raw);
+        if (start + csize > b.length) throw new Error('Truncated ZIP entry');
+        if (method === 0 || method === 8) {
+          const data = method === 0 ? raw : inflateRaw(raw, { maxOutput: Math.max(1, usize) });
+          if (data.length !== usize || crc32(data) !== crc) throw new Error('ZIP entry size or checksum mismatch');
+          return data;
+        }
         throw new Error(`Unsupported ZIP compression method ${method} in "${name}"`);
       },
     };
@@ -131,6 +138,7 @@ export function readTar(bytes) {
     const name0 = cstr(b, p, 100), size = octal(b, p + 124, 12), mtime = octal(b, p + 136, 12), type = String.fromCharCode(b[p + 156] || 48);
     const magic = latin1.decode(b.subarray(p + 257, p + 262));
     const prefix = magic === 'ustar' ? cstr(b, p + 345, 155) : '';
+    if (!Number.isSafeInteger(size) || size < 0 || size > 64 * 1024 * 1024 || p + 512 + size > b.length || entries.length >= 1000) throw new Error('TAR entry exceeds limits or is truncated.');
     const dataStart = p + 512, blocks = Math.ceil(size / 512);
     if (type === 'L') { longName = cstr(b, dataStart, size); p = dataStart + blocks * 512; continue; }
     if (type === 'x' || type === 'g') {

@@ -7,27 +7,38 @@
  * every direct database read is awaited, which is a no-op on the synchronous
  * SQLite wrapper and exactly what the async pg wrapper needs.
  *
- *   npm test                     # SQLite in a temp file
+ *   npm test                     # requires explicit scratch PostgreSQL URL
  *   DATABASE_URL=postgres://… npm test   # the same suite against Postgres
  */
-import { test, before, after } from 'node:test';
+import { test, before, beforeEach, after, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET ??= 'test-secret-that-is-long-enough-for-jwt';
 process.env.EMBEDDED_WORKER = 'false';
+// This suite talks directly to Express; no reverse proxy overwrites headers.
+process.env.TRUST_PROXY = 'false';
+process.env.CORS_ORIGINS = 'http://localhost:3000';
 process.env.REDIS_DB ??= '15';
-process.env.DATABASE_URL ??= 'postgresql://postgres:postgres@localhost:5432/cortexis_db';
+if (!process.env.DATABASE_URL || !/^cortexis_(test|audit)/.test(new URL(process.env.DATABASE_URL).pathname.slice(1))) throw new Error('Set DATABASE_URL to an isolated cortexis_test* database');
+process.env.REDIS_DISABLED = 'true';
+process.env.SMTP_HOST = 'smtp.test.invalid'; process.env.SMTP_USER = 'test@example.com'; process.env.SMTP_PASS = 'synthetic';
+process.env.CONTACT_TO = 'contact@example.com'; process.env.ADMIN_ALERT_TO = 'admin@example.com';
+const codes = new Map();
+const nodemailer = (await import('nodemailer')).default;
+mock.method(nodemailer, 'createTransport', () => ({ sendMail: async message => {
+  const code = message.text?.match(/verification code is (\d{6})/); if (code) codes.set(message.to, code[1]);
+  return { accepted: [message.to], rejected: [] };
+}, close() {} }));
 process.env.ADMIN_EMAIL ??= 'admin@example.com';
 process.env.ADMIN_PASSWORD ??= 'an-admin-password-for-tests';
 
 const { default: app, boot } = await import('../src/app.js');
 
 const { getDB, closeDB } = await import('../src/setup/db.js');
-const { getRedisClient } = await import('../src/services/redis.service.js');
+const { closeRedis } = await import('../src/services/redis.service.js');
+const { resetTestLimits, closeLimiters } = await import('../src/middleware/rateLimiter.js');
+beforeEach(() => resetTestLimits());
 
 let server;
 let base;
@@ -59,10 +70,8 @@ const answersFor = async (questions) => {
 before(async () => {
   await boot();
   db = getDB();
-  // Isolated Redis DB, wiped so rate-limit counters from a previous run cannot
-  // bleed in. Not gated on the ready flag: the client queues the command until
-  // it connects, and if Redis is absent the rejection is simply ignored.
-  await getRedisClient()?.flushdb().catch(() => {});
+  // Reset this suite's limiter counters only; never flush a shared Redis DB.
+  await resetTestLimits();
   await new Promise((resolve) => {
     server = app.listen(0, () => {
       base = `http://127.0.0.1:${server.address().port}`;
@@ -73,8 +82,7 @@ before(async () => {
 
 after(async () => {
   await new Promise((resolve) => server?.close(resolve));
-  const client = getRedisClient();
-  if (client) await client.quit().catch(() => {});
+  await closeRedis(); closeLimiters();
   await closeDB();
 });
 
@@ -102,10 +110,10 @@ test('register, verify by code, sign in', async () => {
   assert.ok(wrong.status >= 400, 'a wrong code is rejected');
 
   const row = await q('SELECT verifyCode, emailVerified FROM users WHERE email = ?').get(learner.email);
-  assert.match(String(row.verifyCode), /^\d{6}$/);
+  assert.match(String(row.verifyCode), /^[a-f0-9]{64}$/);
   assert.equal(Boolean(row.emailVerified), false);
 
-  const verified = await api('POST', '/api/auth/verify', { body: { email: learner.email, code: row.verifyCode } });
+  const verified = await api('POST', '/api/auth/verify', { body: { email: learner.email, code: codes.get(learner.email) } });
   assert.equal(verified.status, 200, JSON.stringify(verified));
   assert.ok(verified.token);
   assert.equal(verified.user.emailVerified, true);
@@ -321,7 +329,7 @@ test('play the whole course through to a certificate', async () => {
 test('final exam: leaving the page or running out of time submits it', async () => {
   const other = { name: 'Second Learner', email: `learner2-${Date.now()}@example.com`, password: 'correct horse battery' };
   assert.equal((await api('POST', '/api/auth/register', { body: other })).status, 201);
-  const { verifyCode } = await q('SELECT verifyCode FROM users WHERE email = ?').get(other.email);
+  const verifyCode = codes.get(other.email);
   const { token: t2 } = await api('POST', '/api/auth/verify', { body: { email: other.email, code: verifyCode } });
   assert.equal((await api('POST', `/api/learn/courses/${course.slug}/enroll`, { token: t2 })).status, 201);
 
@@ -388,7 +396,7 @@ test('contact and internship forms persist', async () => {
 test('game token: signed, short-lived, for verified learners only', async () => {
   const jwt = (await import('jsonwebtoken')).default;
   const { signToken } = await import('../src/middleware/auth.js');
-  const { gameSsoSecret, GAME_TOKEN_TTL_SEC } = await import('../src/services/gameSso.js');
+  const { gameSsoSecret, GAME_TOKEN_TTL_SEC } = await import('../src/features/auth/gameSso.js');
 
   const anon = await api('POST', '/api/auth/game-token');
   assert.equal(anon.status, 401, 'no site session, no game token');
@@ -456,7 +464,7 @@ test('admin: edit, hide, reset and delete', async () => {
   const { signToken } = await import('../src/middleware/auth.js');
   const { seedCourses } = await import('../src/content/seed.js');
   // The walkthrough above spends most of the learn rate limit.
-  await getRedisClient()?.flushdb().catch(() => {});
+  await resetTestLimits();
   const admin = await q('SELECT id, email FROM users WHERE LOWER(email) = ?').get(process.env.ADMIN_EMAIL.toLowerCase());
   const A = signToken(admin);
   const stamp = Date.now();
@@ -539,7 +547,7 @@ test('admin: edit, hide, reset and delete', async () => {
 });
 
 test('verify gives no session to an account that is already verified', async () => {
-  await getRedisClient()?.flushdb().catch(() => {});
+  await resetTestLimits();
   const res = await api('POST', '/api/auth/verify', { body: { email: learner.email, code: '000000' } });
   assert.equal(res.status, 400);
   assert.equal(res.token, undefined, 'no token without a code check');
@@ -555,7 +563,7 @@ test('signing up again on an unverified address replaces the earlier name and pa
   assert.equal((await api('POST', '/api/auth/register', { body: { name: 'Owner', email, password: 'the-owners-password' } })).status, 429, 'cooldown applies to signing up again');
   await pastCooldown(email);
   assert.equal((await api('POST', '/api/auth/register', { body: { name: 'Owner', email, password: 'the-owners-password' } })).status, 200);
-  const { verifyCode } = await q('SELECT verifyCode FROM users WHERE email = ?').get(email);
+  const verifyCode = codes.get(email);
   const verified = await api('POST', '/api/auth/verify', { body: { email, code: verifyCode } });
   assert.equal(verified.status, 200);
   assert.equal(verified.user.name, 'Owner');
@@ -565,12 +573,12 @@ test('signing up again on an unverified address replaces the earlier name and pa
 });
 
 test('five wrong codes lock the address; a new code does not reset the count', async () => {
-  await getRedisClient()?.flushdb().catch(() => {});
+  await resetTestLimits();
   const who = { name: 'Guesser', email: `guess-${Date.now()}@example.com`, password: 'correct horse battery' };
   assert.equal((await api('POST', '/api/auth/register', { body: who })).status, 201);
   const row = () => q('SELECT verifyCode, verifyAttempts, verifyLockUntil FROM users WHERE email = ?').get(who.email);
   const wrong = async () => {
-    const { verifyCode } = await row();
+    const verifyCode = codes.get(who.email);
     return api('POST', '/api/auth/verify', { body: { email: who.email, code: verifyCode === '111111' ? '222222' : '111111' } });
   };
 
@@ -581,7 +589,7 @@ test('five wrong codes lock the address; a new code does not reset the count', a
   for (let i = 0; i < 3; i++) assert.equal((await wrong()).status, 400);
   assert.ok((await row()).verifyLockUntil, 'the fifth wrong code starts the lockout');
 
-  const { verifyCode } = await row();
+  const verifyCode = codes.get(who.email);
   assert.equal((await api('POST', '/api/auth/verify', { body: { email: who.email, code: verifyCode } })).status, 429, 'even the right code waits');
   await pastCooldown(who.email);
   assert.equal((await api('POST', '/api/auth/register', { body: who })).status, 429, 'signing up again does not lift it');
@@ -592,12 +600,12 @@ test('five wrong codes lock the address; a new code does not reset the count', a
   await q('UPDATE users SET verifyLockUntil = ? WHERE email = ?').run(new Date(Date.now() - 1000).toISOString(), who.email);
   assert.equal((await api('POST', '/api/auth/resend', { body: { email: who.email } })).status, 200);
   assert.equal((await row()).verifyAttempts, 0);
-  const fresh = await row();
-  assert.equal((await api('POST', '/api/auth/verify', { body: { email: who.email, code: fresh.verifyCode } })).status, 200);
+  assert.match((await row()).verifyCode, /^[a-f0-9]{64}$/);
+  assert.equal((await api('POST', '/api/auth/verify', { body: { email: who.email, code: codes.get(who.email) } })).status, 200);
   await q('DELETE FROM users WHERE email = ?').run(who.email);
 
   // Guesses sent all at once are counted one by one too.
-  await getRedisClient()?.flushdb().catch(() => {});
+  await resetTestLimits();
   assert.equal((await api('POST', '/api/auth/register', { body: who })).status, 201);
   const burst = await Promise.all(Array.from({ length: 8 }, () => wrong()));
   assert.equal(burst.filter((r) => r.status === 400).length, 5, 'only five guesses are checked');
@@ -605,7 +613,7 @@ test('five wrong codes lock the address; a new code does not reset the count', a
 });
 
 test('Claude Pro: no self-apply, a decision survives a retake, heartbeat time is measured here', async () => {
-  const { recordClaudeProApplication } = await import('../src/services/claudePro.service.js');
+  const { recordClaudeProApplication } = await import('../src/features/learning/claudePro.service.js');
   const me = await q('SELECT id FROM users WHERE email = ?').get(learner.email);
 
   assert.equal((await api('POST', `/api/learn/claude-pro/apply/${course.slug}`, { token })).status, 404, 'the apply route is gone');
@@ -631,13 +639,13 @@ test('Claude Pro: no self-apply, a decision survives a retake, heartbeat time is
 });
 
 test('sessions: revocable, admin tokens short, admin IP allow-list, quiet errors', async () => {
-  await getRedisClient()?.flushdb().catch(() => {});
+  await resetTestLimits();
   const jwt = (await import('jsonwebtoken')).default;
   const { signToken } = await import('../src/middleware/auth.js');
   const admin = await q('SELECT * FROM users WHERE LOWER(email) = ?').get(process.env.ADMIN_EMAIL.toLowerCase());
   const A = signToken(admin);
   const claims = jwt.decode(A);
-  assert.equal(claims.exp - claims.iat, 12 * 3600, 'admin sessions last 12 hours');
+  assert.equal(claims.exp - claims.iat, 2 * 3600, 'admin sessions last 2 hours');
 
   const now = new Date().toISOString();
   const email = `revoke-${Date.now()}@example.com`;
@@ -667,4 +675,133 @@ test('sessions: revocable, admin tokens short, admin IP allow-list, quiet errors
   assert.equal(evil.headers.get('access-control-allow-origin'), null, 'unknown origins get no CORS grant');
   const site = await fetch(`${base}/health`, { headers: { origin: 'http://localhost:3000' } });
   assert.equal(site.headers.get('access-control-allow-origin'), 'http://localhost:3000');
+});
+
+test('API 404, strict CORS, body limits, headers, and validation reject hostile input', async () => {
+  const missing = await api('GET', '/api/does-not-exist');
+  assert.equal(missing.status, 404);
+  const health = await fetch(base + '/health');
+  assert.equal(health.headers.get('x-content-type-options'), 'nosniff');
+  assert.equal(health.headers.get('x-frame-options'), 'SAMEORIGIN');
+  assert.equal(health.headers.get('x-powered-by'), null);
+  const denied = await fetch(base + '/api/contact', { method: 'POST', headers: { Origin: 'https://attacker.invalid', 'content-type': 'application/json' }, body: '{}' });
+  assert.equal(denied.status, 403);
+  assert.equal(denied.headers.get('access-control-allow-origin'), null);
+  const oversized = await fetch(base + '/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ message: 'x'.repeat(1024 * 1024) }) });
+  assert.equal(oversized.status, 413);
+  const injection = await api('POST', '/api/auth/login', { body: { email: { $ne: null }, password: 'anything' } });
+  assert.equal(injection.status, 400);
+  const secret = 'SENSITIVE-VALIDATION-INPUT'.repeat(5);
+  const invalid = await api('POST', '/api/auth/register', { body: { name: 'Bad Input', email: 'safe@example.com', password: secret } });
+  assert.equal(invalid.status, 400); assert.ok(!JSON.stringify(invalid).includes(secret));
+  const unsafeResume = await api('POST', '/api/internships/apply', { body: { name: 'Unsafe Link', email: 'safe@example.com', internshipTitle: 'Engineering', resumeLink: 'javascript:alert(1)' } });
+  assert.equal(unsafeResume.status, 400);
+  assert.equal((await api('GET', '/ready')).status, 200);
+});
+
+test('credential and form rate limits enforce their ceilings without Redis', async () => {
+  for (let i = 0; i < 30; i++) assert.equal((await api('POST', '/api/auth/login', { body: {} })).status, 400);
+  const limited = await fetch(base + '/api/auth/login', { method: 'POST', headers: { 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.10' }, body: '{}' });
+  assert.equal(limited.status, 429);
+  assert.ok(limited.headers.has('retry-after'));
+  for (let i = 0; i < 20; i++) assert.equal((await api('POST', '/api/contact', { body: {} })).status, 400);
+  assert.equal((await api('POST', '/api/contact', { body: {} })).status, 429);
+});
+
+test('every admin route rejects anonymous and ordinary learner access', async () => {
+  const router = (await import('../src/features/admin/admin.routes.js')).default;
+  let checked = 0;
+  for (const layer of router.stack) {
+    if (!layer.route) continue;
+    for (const method of Object.keys(layer.route.methods)) {
+      const url = '/api/admin' + layer.route.path.replace(/:[A-Za-z]+/g, '1');
+      const anonymous = await api(method.toUpperCase(), url, { body: ['get', 'head'].includes(method) ? undefined : {} });
+      assert.equal(anonymous.status, 401, method + ' ' + url);
+      const ordinary = await api(method.toUpperCase(), url, { token, body: ['get', 'head'].includes(method) ? undefined : {} });
+      assert.equal(ordinary.status, 403, method + ' ' + url);
+      checked++;
+    }
+  }
+  assert.ok(checked >= 20);
+  console.log('Admin route authorization pairs checked:', checked);
+});
+
+test('verification replay, stored password/code hashing and JWT scope enforcement', async () => {
+  const who = { name: 'Security Learner', email: 'security-' + Date.now() + '@example.com', password: 'secure password for test' };
+  assert.equal((await api('POST', '/api/auth/register', { body: who })).status, 201);
+  const row = await q('SELECT * FROM users WHERE email = ?').get(who.email);
+  assert.match(row.passwordHash, /^\$2[aby]\$/);
+  assert.equal(await (await import('bcryptjs')).default.compare(who.password, row.passwordHash), true);
+  assert.notEqual(row.verifyCode, codes.get(who.email));
+  assert.match(row.verifyCode, /^[a-f0-9]{64}$/);
+  const body = { email: who.email, code: codes.get(who.email) };
+  const results = await Promise.all([api('POST', '/api/auth/verify', { body }), api('POST', '/api/auth/verify', { body })]);
+  assert.equal(results.filter(r => r.status === 200).length, 1, 'one-time code cannot create two sessions in parallel');
+  const jwt = (await import('jsonwebtoken')).default;
+  const wrongAudience = jwt.sign({ sub: row.id, v: 0 }, process.env.JWT_SECRET, { issuer: 'cortexis', audience: 'another-app', algorithm: 'HS256' });
+  assert.equal((await api('GET', '/api/auth/me', { token: wrongAudience })).status, 401);
+  await q('DELETE FROM users WHERE id = ?').run(row.id);
+});
+
+test('email jobs encrypt content, reject tampering, and never report failed mail as delivered', async () => {
+  const { encryptJob, decryptJob } = await import('../src/services/queue.service.js');
+  const { processEmailJob } = await import('../src/workers/email.worker.js');
+  const data = { email: 'recipient@example.com', name: '<img src=x onerror=alert(1)>', code: '123456' };
+  const encrypted = encryptJob(data);
+  assert.ok(!JSON.stringify(encrypted).includes(data.code));
+  assert.ok(!JSON.stringify(encrypted).includes(data.email));
+  assert.deepEqual(decryptJob(encrypted), data);
+  assert.throws(() => decryptJob({ ...encrypted, tag: Buffer.alloc(16).toString('base64') }));
+  assert.deepEqual(await processEmailJob({ name: 'send-verification', data: encrypted }), { delivered: true });
+  const host = process.env.SMTP_HOST;
+  process.env.SMTP_HOST = '';
+  try { await assert.rejects(processEmailJob({ name: 'send-verification', data: encrypted }), /Permanent email delivery failure/); }
+  finally { process.env.SMTP_HOST = host; }
+});
+
+test('Redis URL and production environment reject insecure configuration', async () => {
+  const { redisOptions } = await import('../src/config/redis.js');
+  const { validateEnvironment } = await import('../src/config/environment.js');
+  const saved = { ...process.env };
+  try {
+    process.env.REDIS_URL = 'rediss://worker:p%40ss@redis.example.com:6380/2';
+    const options = redisOptions();
+    assert.equal(options.host, 'redis.example.com'); assert.equal(options.port, 6380);
+    assert.equal(options.username, 'worker'); assert.equal(options.password, 'p@ss'); assert.equal(options.db, 2);
+    assert.equal(options.tls.rejectUnauthorized, true);
+    process.env.NODE_ENV = 'production'; process.env.JWT_SECRET = 'weak';
+    assert.throws(validateEnvironment);
+    process.env.JWT_SECRET = 'a'.repeat(48); process.env.SITE_URL = 'https://example.com'; process.env.CORS_ORIGINS = 'https://example.com';
+    process.env.SMTP_PORT = '587'; process.env.DATABASE_SSL = 'false'; process.env.DATABASE_URL = 'postgresql://test@remote.invalid/test';
+    assert.throws(validateEnvironment, /verified TLS/);
+    process.env.DATABASE_URL = saved.DATABASE_URL;
+    process.env.CORS_ORIGINS = '*'; assert.throws(validateEnvironment);
+    process.env.CORS_ORIGINS = 'https://example.com'; validateEnvironment();
+  } finally {
+    for (const key of Object.keys(process.env)) if (!(key in saved)) delete process.env[key];
+    Object.assign(process.env, saved);
+  }
+});
+
+test('nested transactions roll back only the failed savepoint', async () => {
+  const db = getDB();
+  const key = 'test:nested:' + Date.now();
+  await db.transaction(async () => {
+    await q('INSERT INTO meta (key, value) VALUES (?, ?)').run(key, 'outer');
+    await assert.rejects(db.transaction(async () => {
+      await q('UPDATE meta SET value = ? WHERE key = ?').run('inner', key);
+      throw new Error('synthetic rollback');
+    })(), /synthetic rollback/);
+    assert.equal((await q('SELECT value FROM meta WHERE key = ?').get(key)).value, 'outer');
+  })();
+  assert.equal((await q('SELECT value FROM meta WHERE key = ?').get(key)).value, 'outer');
+  await q('DELETE FROM meta WHERE key = ?').run(key);
+});
+
+test('logout revokes the bearer token on the server', async () => {
+  const { signToken } = await import('../src/middleware/auth.js');
+  const row = await q('SELECT * FROM users WHERE email = ?').get(learner.email);
+  const session = signToken(row);
+  assert.equal((await api('POST', '/api/auth/logout', { token: session })).status, 200);
+  assert.equal((await api('GET', '/api/auth/me', { token: session })).status, 401);
 });

@@ -55,7 +55,13 @@ extracted_tools/
 *.tar.gz
 *.pst
 *.sql
+!/deploy/*.sql
 *.db
+*.sqlite
+*.sqlite3
+*.pem
+*.key
+*.p12
 
 # Lockfiles are committed on purpose: npm ci and every Docker build depend on them.
 
@@ -66,3 +72,23 @@ extracted_tools/
 # Large test/dummy files
 dummy-500MB.pdf
 *.dummy.pdf
+
+backups/
+!client/.env.example
+
+# Local application data and disposable test output
+/data/
+/games/*/data/
+coverage/
+test-results/
+playwright-report/
+*.tmp
+
+# Recreated from client/package-lock.json by npm run sync:vendors.
+# Keep hand-maintained vendor assets outside this list tracked.
+/client/public/vendor/qpdf/
+/client/public/vendor/pdf.min.mjs
+/client/public/vendor/pdf.worker.min.mjs
+/client/public/vendor/standard_fonts/
+/client/public/vendor/pdfjs-wasm/
+/client/public/vendor/tesseract/

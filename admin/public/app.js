@@ -429,13 +429,15 @@
     },
 
     async course(slug) {
-      const { data } = await api(`/admin/courses/${encodeURIComponent(slug)}`);
+      const stateKey = 'course:' + slug;
+      const pageState = st(stateKey, {});
+      const { data } = await api(`/admin/courses/${encodeURIComponent(slug)}?page=${pageState.page}`);
       const { course, students } = data;
-      const done = students.filter((x) => x.completedAt).length;
-      const certs = students.filter((x) => x.certificateCode).length;
+      const done = data.completed;
+      const certs = data.certificateTotal;
       view.innerHTML = head(course.title, '', `${coursePills(course)}${esc(course.category)} · ${esc(course.level)} · ${num(course.lessons)} topics`, '#/courses') + `
         <div class="head-tools">${courseActs(course)}</div>
-        <div class="stats">${stat(students.length, 'students')}${stat(done, 'completed')}${stat(certs, 'certificates')}</div>
+        <div class="stats">${stat(data.total, 'students')}${stat(done, 'completed')}${stat(certs, 'certificates')}</div>
         <section class="panel glass"><h2>Students</h2>${table([
           { label: 'Student', cell: (u) => `<a href="#/students/${esc(u.id)}"><b>${esc(u.name)}</b></a><small>${esc(u.email)}</small>` },
           { label: 'Enrolled', cell: (u) => date(u.enrolledAt) },
@@ -443,7 +445,8 @@
           { label: 'Final exam', cls: 'n', cell: (u) => finalCell(u) },
           { label: 'Certificate', cell: (u) => certLink(u.certificateCode) },
           { label: '', cell: (u) => acts(keep(`enrol:${u.id}:${course.slug}`, { userId: u.id, name: u.name, email: u.email, slug: course.slug, title: course.title, code: u.certificateCode }), [['enrol-remove', 'Remove from course', true]]) },
-        ], students, 'Nobody has enrolled in this course yet.')}</section>`;
+        ], students, 'Nobody has enrolled in this course yet.')}${pager(data.total, data.page, data.pageSize)}</section>`;
+      bindPager(stateKey, () => VIEWS.course(slug));
     },
 
     async students() {
@@ -867,7 +870,10 @@
       btn.disabled = false;
     }
   });
-  $('signout').addEventListener('click', signOut);
+  $('signout').addEventListener('click', () => {
+    void api('/auth/logout', { method: 'POST' }).catch(() => {});
+    signOut();
+  });
 
   (async () => {
     if (!store.get()) return showSignin();

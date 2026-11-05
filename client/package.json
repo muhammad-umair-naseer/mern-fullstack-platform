@@ -4,13 +4,19 @@
   "private": true,
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@radix-ui/react-dialog": "^1.1.15",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.11.0",
+    "@tesseract.js-data/ara": "1.0.0",
+    "@tesseract.js-data/deu": "1.0.0",
+    "@tesseract.js-data/eng": "1.0.0",
+    "@tesseract.js-data/fra": "1.0.0",
+    "@tesseract.js-data/hin": "1.0.0",
+    "@tesseract.js-data/ita": "1.0.0",
+    "@tesseract.js-data/por": "1.0.0",
+    "@tesseract.js-data/spa": "1.0.0",
+    "@tesseract.js-data/urd": "1.0.0",
+    "@wasm-zoo/qpdf": "0.1.1",
+    "axios": "^1.21.0",
     "docx": "^9.7.1",
+    "dompurify": "^3.4.17",
     "gsap": "^3.15.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
@@ -26,28 +32,24 @@
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.8.2",
-    "react-scripts": "5.0.1",
+    "react-router-dom": "^7.18.5",
     "remark-gfm": "^4.0.1",
     "tesseract.js": "^7.0.0",
-    "web-vitals": "^2.1.4",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "npm run blog && npm run sitemap && react-scripts build && npm run prerender",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "vite --host 127.0.0.1 --port 3000",
+    "build": "npm run blog && npm run sitemap && vite build && npm run prerender",
+    "test": "vitest run",
     "sitemap": "node scripts/sitemap.mjs",
     "prerender": "node scripts/prerender.mjs",
     "blog": "node scripts/build-blog.mjs",
-    "prestart": "npm run blog"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "prestart": "npm run sync:vendors && npm run blog",
+    "build:bundle": "npm run blog && npm run sitemap && vite build",
+    "lint": "eslint src --max-warnings=0",
+    "sync:vendors": "node scripts/sync-tool-vendors.mjs",
+    "prebuild": "npm run sync:vendors",
+    "prebuild:bundle": "npm run sync:vendors"
   },
   "browserslist": {
     "production": [
@@ -62,11 +64,32 @@
     ]
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.17",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@vitejs/plugin-react": "^6.2.1",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.0.0",
+    "jsdom": "^27.0.0",
     "postcss": "^8.5.6",
     "puppeteer-core": "^25.9.0",
-    "tailwindcss": "^3.4.17"
-  }
+    "tailwindcss": "^3.4.17",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=24.13.1 <25"
+  },
+  "overrides": {
+    "minimatch": "^11.0.1",
+    "postcss-selector-parser": "^7.1.7"
+  },
+  "type": "module"
 }

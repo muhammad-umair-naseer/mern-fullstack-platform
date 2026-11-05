@@ -20,6 +20,7 @@ export class PdfDocument {
 
   // ---------------- Loading ----------------
   static load(bytes) {
+    if (bytes.byteLength > 50 * 1024 * 1024) throw new PdfError('PDF exceeds the 50 MB input limit.');
     const doc = new PdfDocument();
     doc.bytes = bytes;
     doc.headerOffset = Math.max(0, findSeq(bytes, '%PDF-', 0, 1024));
@@ -33,6 +34,7 @@ export class PdfDocument {
     if (doc.trailer.get('Encrypt')) throw new PdfError('This PDF is encrypted. Remove the password protection first, then try again.');
     let max = 0; for (const n of doc.xref.keys()) if (n > max) max = n;
     doc.nextNum = max + 1;
+    if (doc.pages.length > 200) throw new PdfError('PDF exceeds 200 pages. Split it into smaller documents.');
     return doc;
   }
 

@@ -290,7 +290,7 @@ const indexObjects = (buf) => {
 };
 
 /** Parses the object whose header starts at `entry`; returns value, stream bounds and end. */
-const parseObject = (buf, entry, index) => {
+const parseObject = (buf, entry, _index) => {
   const lex = new Lexer(buf, entry.bodyStart);
   const value = parseValue(lex);
   let stream = null;
@@ -366,7 +366,7 @@ const equalBytes = (a, b, n = a.length) => {
 const xorKey = (key, i) => key.map((b) => b ^ i);
 
 const subtle = () => {
-  const s = (typeof window !== 'undefined' ? window : global).crypto?.subtle; // eslint-disable-line no-undef
+  const s = (typeof window !== 'undefined' ? window : global).crypto?.subtle;
   if (!s) throw new Error('This browser does not expose the Web Crypto API needed for AES.');
   return s;
 };
@@ -492,7 +492,7 @@ const decryptData = async (data, key, method) => {
 
 // ------------------------------------------------------------ the main event
 
-const readEncryptDict = (buf, dict, index) => {
+const readEncryptDict = (buf, dict, _index) => {
   const num = (k, d) => {
     const v = dict.get(k);
     return v?.t === 'num' ? v.v : d;

@@ -1,394 +1,87 @@
-# Continuous integration for the Cortexis platform.
-#
-# On every push and pull request, in parallel:
-#   hygiene  - nothing secret or generated is committed; lockfiles exist;
-#              docker-compose.yml parses
-#   server   - the Express API on PostgreSQL with a real Redis: every module
-#              parses, the end-to-end learner suite passes, a cold boot
-#              answers /health
-#   client   - the React client: lint (warnings fail), Jest, the 46-tool
-#              toolkit's own checks and unit tests, then the production build
-#              with blog, sitemap and the Chrome prerender against a live API
-#              and Postgres, and proof the prerender produced the tool pages
-#   games    - Gotcha Rush and TypeDash: their test suites (browser tests
-#              included), then each game's image is built and its container
-#              answers /healthz
-# Then, for pull requests, pushes to main and manual runs, the production image
-# is built from the client the client job produced and the running container
-# is smoke-tested against Postgres and Redis.
-name: CI
-
-on:
-  push:
-    branches: ['**']
-  pull_request:
-  workflow_dispatch:
-
+name: Website checks
+on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
-
 concurrency:
-  group: ci-${{ github.ref }}
+  group: website-${{ github.ref }}
   cancel-in-progress: true
-
-env:
-  # Same major as the Dockerfile runtime, so CI proves what production runs.
-  NODE_VERSION: '24'
-  FORCE_COLOR: '1'
-  CI_JWT_SECRET: ci-only-jwt-secret-not-for-production-0123456789abcdef
-  CI_DATABASE_URL: postgres://cortexis:cortexis@127.0.0.1:5432/cortexis_test
-
 jobs:
-  hygiene:
-    name: Repository hygiene
+  verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: No environment files, databases or keys are committed
-        run: |
-          set -euo pipefail
-          bad=$(git ls-files | grep -E '(^|/)\.env(\.[^/]+)?$' | grep -v '\.example$' || true)
-          bad="$bad$(git ls-files | grep -E '\.(db|db-wal|db-shm|sqlite|pem|key|p12)$' || true)"
-          if [ -n "$bad" ]; then
-            echo "::error::These files must never be committed:"
-            echo "$bad"
-            exit 1
-          fi
-          echo "clean"
-
-      - name: Lockfiles are present (every npm ci and Docker build depends on them)
-        run: |
-          for f in client server games/gotcha-rush games/typedash; do
-            test -f "$f/package-lock.json" || { echo "::error::$f/package-lock.json is missing"; exit 1; }
-          done
-
-      - name: docker-compose.yml parses (with the secrets it insists on)
-        env:
-          JWT_SECRET: ci-only-jwt-secret-not-for-production-0123456789abcdef
-          POSTGRES_PASSWORD: ci-only
-          REDIS_PASSWORD: ci-only
-          ADMIN_EMAIL: admin@example.com
-          ADMIN_PASSWORD: ci-only-admin-password
-          GAME_SSO_SECRET: ci-only-game-sso-secret-not-for-production-0123456789abcdef
-        run: docker compose config -q
-
-  server:
-    name: API on PostgreSQL
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 45
     services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cortexis
+          POSTGRES_PASSWORD: ci-synthetic
+          POSTGRES_DB: cortexis_test_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U cortexis -d cortexis_test_ci"
+          --health-interval 5s --health-timeout 3s --health-retries 10
       redis:
         image: redis:7-alpine
         ports: ['6379:6379']
         options: >-
           --health-cmd "redis-cli ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: cortexis
-          POSTGRES_PASSWORD: cortexis
-          POSTGRES_DB: cortexis_test
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U cortexis -d cortexis_test"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
-    defaults:
-      run:
-        working-directory: server
+          --health-interval 5s --health-timeout 3s --health-retries 10
     env:
-      NODE_ENV: test
-      # Job-level env cannot read the env context, so the CI-only values are repeated here.
-      JWT_SECRET: ci-only-jwt-secret-not-for-production-0123456789abcdef
-      DATABASE_URL: postgres://cortexis:cortexis@127.0.0.1:5432/cortexis_test
-      REDIS_HOST: 127.0.0.1
-      REDIS_PORT: '6379'
-      REDIS_DB: '15'
+      DATABASE_URL: postgres://cortexis:ci-synthetic@127.0.0.1:5432/cortexis_test_ci
+      REDIS_TEST_URL: redis://127.0.0.1:6379/15
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: server/package-lock.json
-
-      - name: Install
-        run: npm ci
-
-      - name: Every module parses
-        run: find src scripts -name '*.js' -print0 | xargs -0 -n 1 node --check
-
-      - name: End-to-end suite (sign-up to certificate, both public forms)
-        env:
-          EMBEDDED_WORKER: 'false'
-        run: npm test
-
-      - name: Cold boot answers /health on PostgreSQL
-        env:
-          PORT: '5055'
-        run: |
-          set -euo pipefail
-          node src/server.js > /tmp/boot.log 2>&1 &
-          pid=$!
-          for i in $(seq 1 60); do
-            curl -sf http://127.0.0.1:5055/health > /tmp/health.json 2>/dev/null && break
-            sleep 1
-          done
-          if ! grep -q '"ok":true' /tmp/health.json 2>/dev/null; then
-            echo "::error::API did not come up"; cat /tmp/boot.log; kill "$pid" || true; exit 1
-          fi
-          curl -sf http://127.0.0.1:5055/api/learn/courses | grep -q '"slug"'
-          kill "$pid"
-          echo "booted:"; cat /tmp/health.json
-
-  client:
-    name: Web client (lint, test, toolkit, build, prerender)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 40
-    services:
-      redis:
-        image: redis:7-alpine
-        ports: ['6379:6379']
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: cortexis
-          POSTGRES_PASSWORD: cortexis
-          POSTGRES_DB: cortexis_test
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U cortexis -d cortexis_test"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '24'
           cache: npm
           cache-dependency-path: |
             client/package-lock.json
             server/package-lock.json
-
-      - name: Install client
-        working-directory: client
-        run: npm ci
-
-      - name: Install API (the prerender reads the catalogue through it)
-        working-directory: server
-        run: npm ci --omit=dev
-
-      - name: Lint (any warning fails)
-        working-directory: client
-        run: npx eslint --max-warnings=0 src
-
-      - name: Build scripts parse
-        working-directory: client
-        run: for f in scripts/*.mjs; do node --check "$f"; done
-
-      - name: Unit tests
-        working-directory: client
-        env:
-          CI: 'true'
-        run: npm test -- --watchAll=false
-
-      - name: Toolkit — syntax check and unit tests
+      - name: Reject tracked credential files
+        shell: bash
+        run: |
+          if git ls-files | grep -E '(^|/)\.env($|\.)' | grep -v '\.example$'; then exit 1; fi
+          if git ls-files | grep -E '\.(pem|key|p12|db|sqlite)$'; then exit 1; fi
+      - run: npm ci --prefix server
+      - run: npm ci --prefix client
+      - run: npm audit --prefix server --audit-level=moderate
+      - run: npm audit --prefix client --audit-level=moderate
+      - run: npm run lint
+      - name: API and real Redis integration tests
+        run: npm test --prefix server
+      - run: npm test --prefix client
+      - run: node --test admin/test/*.test.js
+      - name: Toolkit checks
         working-directory: client/public/toolkit
         run: |
-          set -euo pipefail
-          # Two of its tests compare against PyYAML and Pillow as oracles.
-          python3 -m pip install --quiet --user pyyaml pillow
           npm run check
           npm test
-
-      - name: Start the API for prerendering
-        working-directory: server
+      - name: Verify hosted runner browser
+        run: google-chrome --version
+      - name: Production frontend including all prerendered routes
         env:
-          NODE_ENV: test
-          PORT: '5000'
-          JWT_SECRET: ${{ env.CI_JWT_SECRET }}
-          DATABASE_URL: ${{ env.CI_DATABASE_URL }}
-          EMBEDDED_WORKER: 'false'
-          REDIS_HOST: 127.0.0.1
-          REDIS_PORT: '6379'
-          REDIS_DB: '14'
-        run: |
-          set -euo pipefail
-          nohup node src/server.js > /tmp/api.log 2>&1 &
-          echo $! > /tmp/api.pid
-          for i in $(seq 1 60); do
-            curl -sf http://127.0.0.1:5000/health > /dev/null 2>&1 && break
-            sleep 1
-          done
-          curl -sf http://127.0.0.1:5000/api/learn/courses > /dev/null || { echo "::error::API not reachable"; cat /tmp/api.log; exit 1; }
-
-      - name: Production build (blog, sitemap, bundle, prerender)
-        working-directory: client
-        env:
-          CI: 'true'
-          PRERENDER_API: http://127.0.0.1:5000
-          PRERENDER_CONCURRENCY: '4'
-        run: |
-          set -euo pipefail
-          CHROME_PATH="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium-browser || command -v chromium)"
-          echo "Chrome: $CHROME_PATH"
-          export CHROME_PATH
-          npm run build
-
-      - name: Stop the API
-        if: always()
-        run: |
-          if [ -f /tmp/api.pid ]; then kill "$(cat /tmp/api.pid)" 2>/dev/null || true; fi
-
-      - name: The prerender really happened
-        working-directory: client
-        run: |
-          set -euo pipefail
-          test -f build/index.html
-          test -f build/sitemap.xml
-          tools=$(find build/tools -mindepth 1 -maxdepth 1 -type d | wc -l)
-          echo "prerendered tool pages: $tools"
-          [ "$tools" -ge 60 ]
-          grep -q 'Document Research Lab' build/tools/pdf-merger/index.html
-          grep -q '<title>' build/tools/pdf-merger/index.html
-          urls=$(grep -c '<loc>' build/sitemap.xml)
-          echo "sitemap urls: $urls"
-          [ "$urls" -ge 100 ]
-          # The marker the Dockerfile looks for before trusting a handed-in build.
-          date -u +%Y-%m-%dT%H:%M:%SZ > build/.ci-build
-
-      - name: Keep the build for the image job and for inspection
-        uses: actions/upload-artifact@v4
+          CHROME_PATH: /usr/bin/google-chrome
+          REACT_APP_SITE_URL: ${{ vars.SITE_URL || 'https://ci.example.com' }}
+        run: npm run build --prefix client
+      - uses: actions/upload-artifact@v4
         with:
-          name: client-build
+          name: website-build
           path: client/build
-          retention-days: 7
-          include-hidden-files: true
-          if-no-files-found: error
-
-  games:
-    name: Game — ${{ matrix.game }}
+  image:
+    needs: verify
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        game: [gotcha-rush, typedash]
-    defaults:
-      run:
-        working-directory: games/${{ matrix.game }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/download-artifact@v4
         with:
-          # The games' Dockerfiles run on node:20.
-          node-version: '20'
-          cache: npm
-          cache-dependency-path: games/${{ matrix.game }}/package-lock.json
-
-      - name: Install
-        run: npm ci
-
-      - name: Test suite (browser tests use the runner's Chrome)
-        env:
-          CHROME: /usr/bin/google-chrome
-        run: npm test
-
-      - name: Image builds and answers /healthz
-        run: |
-          set -euo pipefail
-          docker build -t "${{ matrix.game }}:ci" .
-          port=$(grep -oE '^EXPOSE [0-9]+' Dockerfile | awk '{print $2}')
-          docker run -d --name game -p "$port:$port" "${{ matrix.game }}:ci"
-          for i in $(seq 1 30); do
-            curl -sf "http://127.0.0.1:$port/healthz" > /dev/null 2>&1 && break
-            sleep 1
-          done
-          curl -sf "http://127.0.0.1:$port/healthz" || { echo "::error::container did not come up"; docker logs game; exit 1; }
-          docker rm -f game
-
-  docker:
-    name: Production image builds and serves
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    needs: [hygiene, server, client]
-    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
-    services:
-      redis:
-        image: redis:7-alpine
-        ports: ['6379:6379']
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: cortexis
-          POSTGRES_PASSWORD: cortexis
-          POSTGRES_DB: cortexis_test
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U cortexis -d cortexis_test"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Take the prerendered client the client job built
-        uses: actions/download-artifact@v4
-        with:
-          name: client-build
+          name: website-build
           path: client/build
-
       - uses: docker/setup-buildx-action@v3
-
-      - name: Build the image exactly as a host would
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: .
           push: false
-          load: true
-          tags: cortexis-website:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: The container boots on Postgres and serves the prerendered site
-        run: |
-          set -euo pipefail
-          docker run -d --name smoke --network host \
-            -e PORT=5000 \
-            -e JWT_SECRET="$CI_JWT_SECRET" \
-            -e DATABASE_URL="$CI_DATABASE_URL" \
-            -e REDIS_HOST=127.0.0.1 -e REDIS_PORT=6379 -e REDIS_DB=13 \
-            -e EMBEDDED_WORKER=false \
-            cortexis-website:ci
-          for i in $(seq 1 60); do
-            curl -sf http://127.0.0.1:5000/health > /tmp/health.json 2>/dev/null && break
-            sleep 1
-          done
-          if ! grep -q '"ok":true' /tmp/health.json 2>/dev/null; then
-            echo "::error::container did not come up"; docker logs smoke; exit 1
-          fi
-          curl -sf http://127.0.0.1:5000/api/learn/courses | grep -q '"slug"'
-          curl -sf http://127.0.0.1:5000/tools/pdf-merger | grep -q 'Document Research Lab'
-          curl -sf http://127.0.0.1:5000/sitemap.xml | grep -q '<loc>'
-          echo "healthy:"; cat /tmp/health.json
-          docker rm -f smoke

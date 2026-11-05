@@ -1,54 +1,16 @@
 # syntax=docker/dockerfile:1
-
-# ---------------------------------------------------------------- client build
-FROM node:24-alpine AS client-builder
-WORKDIR /app
-
-# The sitemap and the prerender import the course catalogue from the server
-# tree; the course files themselves import the authoring helpers beside them,
-# so the whole content directory comes along, not just courses/.
-COPY server/src/content /app/server/src/content
-
-WORKDIR /app/client
-COPY client/package*.json ./
-RUN npm ci
-COPY client/ ./
-ENV NODE_ENV=production
-
-# Two ways to arrive here. CI hands in a client/build it has already built and
-# prerendered against a live API and Postgres — the marker file proves it —
-# and that build is used as-is. A host building on its own has no API to
-# prerender against, so it builds the bundle here; the prerender step notices
-# there is no API and skips itself, and the site still works, just without
-# static HTML behind each route. Ship CI-built images to production.
-RUN if [ -f build/.ci-build ] && [ -f build/tools/pdf-merger/index.html ]; then \
-      echo "Using the prebuilt, prerendered client from CI"; \
-    else \
-      echo "No prebuilt client; building here (no prerender without an API)"; \
-      rm -rf build && npm run build; \
-    fi \
-    && test -f build/index.html && test -f build/sitemap.xml && test -f build/llms.txt && test -f build/llms-full.txt
-
-# -------------------------------------------------------------------- runtime
-FROM node:24-alpine AS runner
-
-ENV NODE_ENV=production \
-    PORT=5000
-
+# Build and prerender client first (npm ci --prefix client && npm run build --prefix client).
+# CI promotes that checked artifact; Chromium and build tools do not belong on the small VPS.
+FROM node:24-bookworm-slim
+ENV NODE_ENV=production PORT=5000 HOST=0.0.0.0
 WORKDIR /app/server
 COPY server/package*.json ./
-RUN npm ci --omit=dev
-COPY server/ ./
-
-# The compiled client the API serves on its own origin.
-COPY --from=client-builder /app/client/build /app/client/build
-
-RUN chown -R node:node /app
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --chown=node:node server/src ./src
+COPY --chown=node:node server/scripts ./scripts
+COPY --chown=node:node client/build /app/client/build
+RUN test -s /app/client/build/index.html && test -s /app/client/build/prerender-manifest.json
 USER node
-
 EXPOSE 5000
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:5000/health > /dev/null || exit 1
-
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 CMD node -e "fetch('http://127.0.0.1:5000/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "src/server.js"]

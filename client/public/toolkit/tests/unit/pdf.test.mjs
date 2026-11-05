@@ -60,23 +60,10 @@ test('grayscale: white backdrop + saturation layer + DeviceGray images', async (
     assert.ok(Number(spread) <= 8, 'rendered page should be gray, channel spread ' + spread);
   }
 });
-test('redaction removes text under the box and keeps the rest', async () => {
-  const doc = load('classic.pdf');
-  const page = doc.pages[0];
-  // locate the secret via the page layout helper (same code path the redact tool uses)
-  const { pageLayout } = await import('../../src/tools/_pdf-common.js');
-  const { items } = pageLayout(doc, page);
-  const hit = items.find((it) => !it.image && it.text.includes('Secret'));
-  assert.ok(hit, 'layout finds the secret line');
-  const frac = hit.text.indexOf('12345') / hit.text.length;
-  const rect = { x: hit.x + hit.w * frac - 0.002, y: hit.y - hit.h * 0.15, w: hit.w * (1 - frac) + 0.004, h: hit.h * 1.3 };
-  const r = await K.redactPage(doc, 0, [rect], { removeText: true });
-  assert.ok(r.removed > 0, 'glyphs removed');
-  const out = await doc.save(); qpdfCheck(save('redact.pdf', out));
-  const d2 = PdfDocument.load(out); const t = extractPageText(d2, d2.pages[0]);
-  assert.doesNotMatch(t, /12345-6789012-3/);
-  assert.match(t, /Hello page 1/);
+test('unsafe legacy overlay redaction is disabled', async () => {
+  await assert.rejects(() => K.redactPage(load('classic.pdf'), 0, [{x:0,y:0,w:1,h:1}]), /Unsafe legacy/);
 });
+
 test('outlines read/write round-trip + TOC page inserted at the front', async () => {
   const doc = load('outlines.pdf');
   const items = K.readOutlines(doc);

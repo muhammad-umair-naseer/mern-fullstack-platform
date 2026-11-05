@@ -1,4 +1,5 @@
-/* eslint-disable no-control-regex */
+import { createRenderSandbox } from './safeHtml';
+
 /**
  * Client-Side PDF <-> Word Converter
  * 100% in-browser processing using pdfjs-dist, docx, mammoth, html2canvas, and jspdf.
@@ -168,9 +169,10 @@ export async function convertDocxToPdf(file, onProgress, signal) {
   onProgress?.({ progress: 30, message: 'Formatting document layout…' });
   await yieldToMain();
 
-  const container = document.createElement('div');
+  const sandbox = await createRenderSandbox(result.value, 794);
+  const container = sandbox.container;
   container.style.position = 'absolute';
-  container.style.top = '-99999px';
+  container.style.top = '0';
   container.style.left = '0';
   container.style.width = '794px'; // A4 width at 96 dpi
   container.style.padding = '50px';
@@ -180,8 +182,7 @@ export async function convertDocxToPdf(file, onProgress, signal) {
   container.style.lineHeight = '1.6';
   container.style.color = '#000';
   container.style.background = '#fff';
-  container.innerHTML = result.value;
-  document.body.appendChild(container);
+
 
   try {
     onProgress?.({ progress: 50, message: 'Rendering pages…' });
@@ -240,6 +241,6 @@ export async function convertDocxToPdf(file, onProgress, signal) {
     onProgress?.({ progress: 100, message: 'PDF generated successfully!' });
     return pdf.output('blob');
   } finally {
-    container.remove();
+    sandbox.remove();
   }
 }

@@ -3,7 +3,7 @@
  * Uses pdfjs-dist for page rendering and Tesseract.js for in-browser Optical Character Recognition.
  */
 
-import { createWorker } from 'tesseract.js';
+import { createLocalOcrWorker, recognizeWithBudget } from '../../public/toolkit/src/core/ocr.js';
 import { pdfjsLib, yieldToMain } from './pdfCommon';
 
 export async function performPdfOcr(file, options = {}, onProgress, signal) {
@@ -15,8 +15,10 @@ export async function performPdfOcr(file, options = {}, onProgress, signal) {
   const arrayBuffer = await file.arrayBuffer();
   if (signal?.aborted) throw new Error('Operation aborted');
 
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const pdf = await loadingTask.promise;
   const numPages = pdf.numPages;
+  if (numPages > 50) { await loadingTask.destroy(); throw new Error('OCR supports up to 50 pages per operation.'); }
 
   onProgress?.({ progress: 10, message: 'Initializing OCR Engine (Tesseract)…' });
   await yieldToMain();
@@ -24,10 +26,7 @@ export async function performPdfOcr(file, options = {}, onProgress, signal) {
   // The worker script is served from /vendor (copied from
   // node_modules/tesseract.js/dist on upgrade) instead of a blob that imports
   // it from a CDN, so the page's Content-Security-Policy needs no CDN script.
-  const worker = await createWorker(language, 1, {
-    workerPath: `${process.env.PUBLIC_URL || ''}/vendor/tesseract/worker.min.js`,
-    workerBlobURL: false,
-  });
+  const worker = await createLocalOcrWorker(language);
   if (signal?.aborted) {
     await worker.terminate();
     throw new Error('Operation aborted');
@@ -46,6 +45,7 @@ export async function performPdfOcr(file, options = {}, onProgress, signal) {
 
       const page = await pdf.getPage(i);
       const viewport = page.getViewport({ scale: 2.0 }); // 2x resolution for OCR accuracy
+      if (viewport.width * viewport.height > 16000000) throw new Error('Page exceeds 16 megapixels at OCR resolution.');
       const canvas = document.createElement('canvas');
       canvas.width = viewport.width;
       canvas.height = viewport.height;
@@ -58,7 +58,8 @@ export async function performPdfOcr(file, options = {}, onProgress, signal) {
       onProgress?.({ progress: basePct + Math.round(35 / numPages), message: `Recognizing text on page ${i} of ${numPages}…` });
       await yieldToMain();
 
-      const ret = await worker.recognize(canvas);
+      const ret = await recognizeWithBudget(worker, canvas, { signal });
+      canvas.width = 0; canvas.height = 0; page.cleanup();
       const pageText = ret.data.text.trim();
       const confidence = ret.data.confidence || 0;
 
@@ -72,6 +73,7 @@ export async function performPdfOcr(file, options = {}, onProgress, signal) {
       combinedText += (combinedText ? '\n\n--- Page ' + i + ' ---\n\n' : '--- Page 1 ---\n\n') + pageText;
     }
   } finally {
+    await loadingTask.destroy();
     await worker.terminate();
   }
 
