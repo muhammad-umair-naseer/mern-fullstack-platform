@@ -177,3 +177,43 @@ Database rollbacks are a deliberate decision: restore from
 - [ ] A course page and a blog guide render; sign-up shows the form
 - [ ] https://admin.cortexissolutionhub.com returns 403
 - [ ] `docker compose ps` shows postgres, redis, cortexis-website, admin healthy
+
+## Task C: backups
+
+Daily at 22:00 UTC (03:00 Pakistan), `backup.sh` makes one archive: the database dump, the site files with both `.env` files, our Nginx config, the SSL certificate and key, and the cron files. It keeps 7 daily and 4 weekly (Sunday) archives in `/var/backups/cortexis` and the same set on Google Drive, encrypted by rclone in the folder `cortexis-backups`. The log is `/var/log/site-backup.log`, and any failure exits non-zero.
+
+### C1. Authorize Google Drive (on your Mac, once)
+1. Download rclone (no install needed):
+   `cd ~/Downloads && curl -LO https://downloads.rclone.org/rclone-current-osx-amd64.zip && unzip -o rclone-current-osx-amd64.zip`
+2. Run: `~/Downloads/rclone-*-osx-amd64/rclone authorize "drive" "eyJzY29wZSI6ImRyaXZlLmZpbGUifQ"`
+   (the last argument means scope `drive.file`: rclone can see only the files it creates, nothing else in your Drive).
+3. A browser opens. Sign in as cortexis.solution.hub@gmail.com and click Allow. If Google says the app is unverified, use Advanced, then Go to rclone.
+4. The terminal prints a token between `--->` and `<---End paste`. Copy the `{...}` line. It is a secret: never paste it into chat. It goes only into the server prompt in C2.
+
+### C1b. Your own Google OAuth client (needed: rclone's shared one hits Google's rate limit)
+1. https://console.cloud.google.com (signed in as cortexis.solution.hub@gmail.com): create a project, e.g. `cortexis-backup`.
+2. APIs & Services, Library: enable **Google Drive API**.
+3. Google Auth Platform (OAuth consent screen): set it up as **External**, app name `cortexis-backup`, your email. Under Data access, add the scope `.../auth/drive.file`. Under Audience, click **Publish app**. Otherwise Google expires the login after 7 days. drive.file needs no Google review.
+4. Clients, Create client: type **Desktop app**. Keep the Client ID and Client secret on screen. Never paste them into chat.
+5. On the Mac (zsh; it asks for the ID and the hidden secret, then opens the browser):
+   ```
+   read "cid?Client ID: "; read -s "csec?Client secret: "; echo
+   ~/Downloads/rclone-*-osx-amd64/rclone authorize "drive" "$(printf '{"scope":"drive.file","client_id":"%s","client_secret":"%s"}' "$cid" "$csec" | base64 | tr -d '=\n')"
+   unset cid csec
+   ```
+6. On the server: `sudo bash /opt/cortexis/deploy/server/07-backup-setup.sh --reauth` asks for the client ID, the secret and the new token, with all input hidden.
+
+### C2. Set up on the server
+`sudo bash /opt/cortexis/deploy/server/07-backup-setup.sh`: paste the token when asked (the input is hidden). Then read `/root/cortexis-backup-passwords.txt` (`sudo cat`) and save both passwords in your password manager. Without them, the Drive copies cannot be decrypted.
+
+### C3. First backup and restore test
+- `sudo bash /opt/cortexis/deploy/server/backup.sh` runs a backup now.
+- `sudo bash /opt/cortexis/deploy/server/restore.sh list` lists the backups here and on Drive.
+- `sudo bash /opt/cortexis/deploy/server/restore.sh fetch <name>` downloads one from Drive.
+- `sudo bash /opt/cortexis/deploy/server/restore.sh test <archive>` is safe: it restores into a throwaway database, counts users and courses, then drops it.
+- `restore.sh apply <archive>` is destructive: it replaces the live database and config files. It asks you to type RESTORE. On a new server, run Task A (01–05) first, then `fetch` + `apply`.
+
+Repeat the Drive `fetch` + `test` once a month.
+
+### Contabo snapshots
+Before risky changes (OS upgrades, Nginx/SSH changes), take a manual snapshot in the Contabo panel (Your services, then Snapshots). It is a quick whole-disk rollback. It does not replace the offsite backups, because it lives with Contabo.
