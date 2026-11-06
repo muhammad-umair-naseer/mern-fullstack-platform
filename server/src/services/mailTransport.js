@@ -12,7 +12,7 @@ export async function sendMail(message) {
     disableFileAccess: true, disableUrlAccess: true,
   });
   try {
-    const result = await transport.sendMail({ from: { name: 'Cortexis', address: process.env.SMTP_FROM || process.env.SMTP_USER }, ...message });
+    const result = await transport.sendMail({ from: { name: 'Cortexis', address: process.env.SMTP_FROM || process.env.SMTP_USER }, ...(process.env.SMTP_REPLY_TO ? { replyTo: process.env.SMTP_REPLY_TO } : {}), ...message });
     if (result.rejected?.length || !result.accepted?.length) throw new Error('SMTP did not accept the recipient');
     return { sent: true };
   } finally { transport.close(); }

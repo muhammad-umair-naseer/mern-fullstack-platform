@@ -127,3 +127,53 @@ https://cortexissolutionhub.com shows a 502 from Nginx, which is expected.
 
 Take a **manual Contabo snapshot** (Contabo panel → your VPS → Snapshots) after
 A4 and before every big change.
+
+# Task B: deployment
+
+Build happens ON THE SERVER inside a throwaway Node 24 + Chromium container
+(`deploy/build.Dockerfile`); nothing but Docker and Nginx is installed on the host.
+
+## B1. Production settings (server only, once)
+```sh
+ssh deploy@13.140.220.173
+cd /opt/cortexis && bash deploy/server/06-make-env.sh
+```
+Creates `/opt/cortexis/.env` (mode 600, secrets generated there, never printed)
+and `client/.env.production` (public values only). Re-running only adds missing
+keys; it never changes an existing value.
+
+Read your admin password on the server: `grep '^ADMIN_PASSWORD=' /opt/cortexis/.env`
+
+Add Brevo later yourself: `nano /opt/cortexis/.env` → set `SMTP_USER` and
+`SMTP_PASS`, save, then redeploy (B3). Until then the site runs but sends no email.
+
+## B2. Admin stays closed
+`admin.cortexissolutionhub.com` returns 403 from Nginx until Cloudflare Access is
+set up (deploy/nginx/cortexis.conf explains how to open it). Apply with:
+`sudo bash /opt/cortexis/deploy/server/04-nginx-site.sh`
+
+## B3. Deploy (and every future redeploy), from your Mac
+```sh
+bash deploy/deploy.sh
+```
+Uploads the code, then on the server: builds the website, backs up the
+database (keeps the last 5 in /opt/cortexis/backups/predeploy), builds the
+images (the previous website image is tagged `cortexis-website:rollback`),
+runs migrations, restarts the website and admin, and waits for `/ready`.
+
+## Rollback
+```sh
+ssh deploy@13.140.220.173
+cd /opt/cortexis
+docker tag cortexis-website:rollback cortexis-cortexis-website   # the compose image name
+docker compose up -d --no-build cortexis-website
+```
+Database rollbacks are a deliberate decision: restore from
+`backups/predeploy/*.dump` only if a migration went wrong (it loses newer writes).
+
+## Checklist after Task B
+- [ ] https://cortexissolutionhub.com loads (flush the Mac DNS cache if it says not found)
+- [ ] https://cortexissolutionhub.com/ready returns OK
+- [ ] A course page and a blog guide render; sign-up shows the form
+- [ ] https://admin.cortexissolutionhub.com returns 403
+- [ ] `docker compose ps` shows postgres, redis, cortexis-website, admin healthy

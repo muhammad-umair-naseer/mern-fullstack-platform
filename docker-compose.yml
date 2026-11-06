@@ -35,6 +35,7 @@ services:
       TRUST_PROXY: '1'
       GAME_ORIGINS: ${GAME_ORIGINS:-}
       SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_REPLY_TO: ${SMTP_REPLY_TO:-}
       EMAIL_QUEUE_SECRET: ${EMAIL_QUEUE_SECRET:?set EMAIL_QUEUE_SECRET}
       SCHEMA_MANAGEMENT: external
     networks:
@@ -122,6 +123,7 @@ services:
       TRUST_PROXY: '1'
       GAME_ORIGINS: ${GAME_ORIGINS:-}
       SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_REPLY_TO: ${SMTP_REPLY_TO:-}
       EMAIL_QUEUE_SECRET: ${EMAIL_QUEUE_SECRET:?set EMAIL_QUEUE_SECRET}
       SCHEMA_MANAGEMENT: external
     networks:

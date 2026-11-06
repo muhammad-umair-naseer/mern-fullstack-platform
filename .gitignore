@@ -93,3 +93,6 @@ playwright-report/
 /client/public/vendor/standard_fonts/
 /client/public/vendor/pdfjs-wasm/
 /client/public/vendor/tesseract/
+
+# npm cache used by the server-side website build (deploy/server/remote-deploy.sh)
+.npm-cache/
