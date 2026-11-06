@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-import { Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 import { toolsBlurb } from "../data/tools";
 import { COURSE_COUNT } from "../data/catalogue";
 import { useGSAP } from "@gsap/react";
@@ -39,11 +39,6 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  * state in JS the static HTML is the finished footer, and the animation is
  * strictly an enhancement on top of it. The site's useRevealOnScroll hook is
  * not used here for exactly that reason.
- *
- * Facebook is absent on purpose. The only URL we hold is
- * facebook.com/profile.php with no page id, which resolves nowhere — a footer
- * link to a dead page costs more trust than an absent icon. Restore it once
- * there is a real page id to point at.
  *
  * The SECP registration line is deliberately not here. It still appears on
  * /about, which is where someone checking whether the company is real will go
@@ -287,7 +282,7 @@ const Footer = () => {
                     rather than satisfied by weakening the link. */}
                 {/* eslint-disable-next-line react/jsx-no-target-blank */}
                 <a
-                  href="https://www.instagram.com/cortexis.solution.hub"
+                  href="https://www.instagram.com/cortexissolutionhub/"
                   target="_blank"
                   rel="me noopener"
                 >
@@ -301,12 +296,23 @@ const Footer = () => {
               <li>
                 {/* eslint-disable-next-line react/jsx-no-target-blank */}
                 <a
-                  href="https://www.linkedin.com/company/cortexis-solution-hub"
+                  href="https://www.linkedin.com/company/cortexis-solution-hub-pvt-ltd/"
                   target="_blank"
                   rel="me noopener"
                 >
                   <Linkedin size={18} strokeWidth={1.75} aria-hidden="true" focusable="false" />
                   <span className="visually-hidden">LinkedIn (opens in a new tab)</span>
+                </a>
+              </li>
+              <li>
+                {/* eslint-disable-next-line react/jsx-no-target-blank */}
+                <a
+                  href="https://www.facebook.com/p/Cortexis-Solution-Hub-61579434816434/"
+                  target="_blank"
+                  rel="me noopener"
+                >
+                  <Facebook size={18} strokeWidth={1.75} aria-hidden="true" focusable="false" />
+                  <span className="visually-hidden">Facebook (opens in a new tab)</span>
                 </a>
               </li>
             </ul>

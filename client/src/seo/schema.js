@@ -32,7 +32,9 @@ export const organization = () => ({
   sameAs: [
     SITE.registration.verifyUrl,
     'https://github.com/abdullah5654/cortexis-website',
-    'https://www.linkedin.com/company/cortexis-solution-hub',
+    'https://www.linkedin.com/company/cortexis-solution-hub-pvt-ltd/',
+    'https://www.instagram.com/cortexissolutionhub/',
+    'https://www.facebook.com/p/Cortexis-Solution-Hub-61579434816434/',
   ],
   areaServed: [
     { '@type': 'Country', name: 'Pakistan' },
