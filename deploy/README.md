@@ -1,5 +1,13 @@
 # Main website deployment: Contabo VPS + Cloudflare DNS
 
+> Production update, 9 November 2026: the existing live server has automatic
+> Cloudflare purge installed after deployment readiness. See
+> [automation status and setup](CLOUDFLARE-AUTOPURGE.md) and
+> [cache policy](CLOUDFLARE-CACHE.md). Manual purge/content verification passed;
+> a full release through the installed hook is still pending. The older guide
+> below predates the live deployment. This change preserves the server-supplied
+> remote-deploy script and builder; it is not a complete first-install workflow.
+
 Use a Linux VPS with root/SSH access, not ordinary PHP/shared hosting. Begin with the website, PostgreSQL, Redis and staff portal; games are an optional Compose profile. The intended low-cost VPS must be load-tested before promising a traffic capacity. No VPS has been purchased or configured by these changes.
 
 ## Before building
