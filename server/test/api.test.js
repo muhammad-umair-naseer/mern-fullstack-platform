@@ -700,12 +700,16 @@ test('API 404, strict CORS, body limits, headers, and validation reject hostile 
 });
 
 test('credential and form rate limits enforce their ceilings without Redis', async () => {
-  for (let i = 0; i < 30; i++) assert.equal((await api('POST', '/api/auth/login', { body: {} })).status, 400);
+  for (let i = 0; i < 10; i++) assert.equal((await api('POST', '/api/auth/login', { body: {} })).status, 400);
   const limited = await fetch(base + '/api/auth/login', { method: 'POST', headers: { 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.10' }, body: '{}' });
   assert.equal(limited.status, 429);
   assert.ok(limited.headers.has('retry-after'));
-  for (let i = 0; i < 20; i++) assert.equal((await api('POST', '/api/contact', { body: {} })).status, 400);
+  for (let i = 0; i < 5; i++) assert.equal((await api('POST', '/api/contact', { body: {} })).status, 400);
   assert.equal((await api('POST', '/api/contact', { body: {} })).status, 429);
+  // register and resend share one per-IP counter of 10 an hour.
+  await resetTestLimits();
+  for (let i = 0; i < 10; i++) assert.equal((await api('POST', '/api/auth/resend', { body: {} })).status, 400);
+  assert.equal((await api('POST', '/api/auth/register', { body: {} })).status, 429);
 });
 
 test('every admin route rejects anonymous and ordinary learner access', async () => {
@@ -804,4 +808,21 @@ test('logout revokes the bearer token on the server', async () => {
   const session = signToken(row);
   assert.equal((await api('POST', '/api/auth/logout', { token: session })).status, 200);
   assert.equal((await api('GET', '/api/auth/me', { token: session })).status, 401);
+});
+
+test('per-email limiter counts only successful sends and keys on the email', async () => {
+  const express = (await import('express')).default;
+  const { createLimiter } = await import('../src/middleware/rateLimiter.js');
+  const key = req => String(req.body?.email || '').trim().toLowerCase();
+  const limiter = createLimiter({ windowMs: 60000, max: 2, prefix: 'test-email', keyGenerator: key, skip: req => !key(req).includes('@'), skipFailedRequests: true });
+  const app = express().use(express.json()).post('/send', limiter, (req, res) => res.status(req.body.fail ? 429 : 200).end());
+  const server = app.listen(0); await new Promise(resolve => server.once('listening', resolve));
+  const send = body => fetch(`http://127.0.0.1:${server.address().port}/send`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(r => r.status);
+  try {
+    for (let i = 0; i < 5; i++) assert.equal(await send({ email: 'Victim@x.com', fail: true }), 429, 'refused sends never count');
+    assert.equal(await send({ email: 'victim@x.com' }), 200);
+    assert.equal(await send({ email: ' VICTIM@x.com ' }), 200);
+    assert.equal(await send({ email: 'victim@x.com' }), 429, 'third real send to the same email is capped');
+    assert.equal(await send({ email: 'other@x.com' }), 200, 'another email is unaffected');
+  } finally { server.close(); }
 });

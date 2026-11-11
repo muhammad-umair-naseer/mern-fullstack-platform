@@ -76,10 +76,10 @@ app.use(morgan(production ? ':method :url :status :response-time ms' : 'dev', { 
 
 // Rate limits (anti-spam for forms with distributed Redis support & fallback)
 const formLimiter = createLimiter({
-  windowMs: 60 * 1000,
-  max: 20,
+  windowMs: 10 * 60 * 1000,
+  max: 5,
   prefix: 'form',
-  message: 'Too many submissions — please wait a minute',
+  message: 'Too many submissions — please wait a few minutes',
 });
 
 // Learners page through lessons quickly, so this ceiling is much higher than

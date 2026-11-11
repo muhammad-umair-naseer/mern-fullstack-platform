@@ -17,16 +17,24 @@ class ResilientStore {
   }
   async decrement(key) { await this.memory.decrement(key); if (isRedisReady()) await getRedisClient().decr(this.prefix + key).catch(() => {}); }
   async resetKey(key) { await this.memory.resetKey(key); if (isRedisReady()) await getRedisClient().del(this.prefix + key); }
+  async resetAll() {
+    await this.memory.resetAll();
+    if (!isRedisReady()) return;
+    const keys = await getRedisClient().keys(this.prefix + '*');   // test-only, tiny keyspace
+    if (keys.length) await getRedisClient().del(...keys);
+  }
   shutdown() { this.memory.shutdown(); }
 }
-export const createLimiter = ({ windowMs, max, prefix, message }) => {
+// Extra options (keyGenerator, skip, skipFailedRequests) go to express-rate-limit.
+export const createLimiter = ({ windowMs, max, prefix, message, ...options }) => {
   const store = new ResilientStore(queuePrefix() + ':ratelimit:' + prefix + ':');
   stores.push(store);
   return rateLimit({ windowMs, limit: max, standardHeaders: 'draft-7', legacyHeaders: false, store,
-    message: { message: message || 'Too many requests; please try again later' } });
+    message: { message: message || 'Too many requests; please try again later' }, ...options });
 };
-export async function resetTestLimits(key = '127.0.0.1') {
+// With no key, resets every counter (per-IP and per-email alike).
+export async function resetTestLimits(key) {
   if (process.env.NODE_ENV !== 'test') throw new Error('Test-only operation');
-  await Promise.all(stores.map(store => store.resetKey(key)));
+  await Promise.all(stores.map(store => key ? store.resetKey(key) : store.resetAll()));
 }
 export const closeLimiters = () => stores.forEach(store => store.shutdown());
