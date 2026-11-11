@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import Turnstile, { turnstileOn } from "../../../components/Turnstile.jsx";
 import {
   AlertCircle,
   ArrowRight,
@@ -142,6 +143,9 @@ export default function Internships() {
     return Object.keys(err).length === 0;
   };
 
+  const [token, setToken] = useState('');
+  const turnstileRef = useRef(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError("");
@@ -179,7 +183,8 @@ export default function Internships() {
         university: formData.university.trim() || undefined,
         experienceLevel: formData.degree.trim() || undefined,
         duration: `${formData.duration} (${formData.workMode})`,
-        coverLetter: formData.coverLetter.trim() || `Skills: ${formData.skills}. City: ${formData.city}.`
+        coverLetter: formData.coverLetter.trim() || `Skills: ${formData.skills}. City: ${formData.city}.`,
+        turnstileToken: token
       };
 
       const res = await fetch(`${API_BASE_URL}/api/internships/apply`, {
@@ -207,6 +212,7 @@ export default function Internships() {
       setServerError("Network connection issue. Please check your internet connection and retry.");
     } finally {
       setSubmitting(false);
+      turnstileRef.current?.reset();
     }
   };
 
@@ -615,10 +621,11 @@ export default function Internships() {
                 </div>
 
                 {/* Submit Action Button */}
+                <Turnstile ref={turnstileRef} action="internship" onToken={setToken} />
                 <div className="cx-submit-row">
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || (turnstileOn && !token)}
                     className="btn lx-btn cx-submit"
                   >
                     {submitting ? (

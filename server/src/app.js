@@ -13,6 +13,7 @@ import { initRedis, isRedisReady } from './services/redis.service.js';
 import { seedCourses } from './content/seed.js';
 import { ensureAdmin } from './setup/admin.js';
 import { createLimiter } from './middleware/rateLimiter.js';
+import { requireAccess } from './middleware/cloudflareAccess.js';
 import { initWorker } from './workers/email.worker.js';
 import internshipsRouter from './features/forms/internships.routes.js';
 import contactRouter from './features/forms/contact.routes.js';
@@ -51,10 +52,10 @@ app.disable('x-powered-by');
 const production = process.env.NODE_ENV === 'production';
 const gameOrigins = (process.env.GAME_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
 app.use(helmet({ crossOriginEmbedderPolicy: false, contentSecurityPolicy: production ? { directives: {
-  defaultSrc: ["'self'"], scriptSrc: ["'self'", "'wasm-unsafe-eval'"], styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+  defaultSrc: ["'self'"], scriptSrc: ["'self'", "'wasm-unsafe-eval'", 'https://challenges.cloudflare.com'], styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
   fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'], imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
   mediaSrc: ["'self'", 'data:', 'blob:'], connectSrc: ["'self'", 'data:', 'blob:', 'https://api.microlink.io', 'https://*.microlink.io', ...gameOrigins.flatMap(origin => [origin, origin.replace(/^https:/, 'wss:')])],
-  frameSrc: ["'self'", 'blob:', ...gameOrigins], workerSrc: ["'self'", 'blob:'], objectSrc: ["'none'"], baseUri: ["'self'"], formAction: ["'self'"], frameAncestors: ["'none'"],
+  frameSrc: ["'self'", 'blob:', 'https://challenges.cloudflare.com', ...gameOrigins], workerSrc: ["'self'", 'blob:'], objectSrc: ["'none'"], baseUri: ["'self'"], formAction: ["'self'"], frameAncestors: ["'none'"],
 } } : false, strictTransportSecurity: production ? { maxAge: 31536000 } : false }));
 app.use('/api', createLimiter({ windowMs: 60000, max: 1000, prefix: 'api' }));
 app.use('/api', (req, res, next) => {
@@ -95,7 +96,7 @@ app.use('/api/internships', formLimiter, internshipsRouter);
 app.use('/api/contact', formLimiter, contactRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/learn', learnLimiter, learnRouter);
-app.use('/api/admin', createLimiter({ windowMs: 60000, max: 120, prefix: 'admin' }), adminRouter);
+app.use('/api/admin', createLimiter({ windowMs: 60000, max: 120, prefix: 'admin' }), requireAccess, adminRouter);
 app.use('/api', (_req, res) => res.status(404).json({ message: 'API endpoint not found' }));
 
 // Public health is only up-or-down and the version; the details help an

@@ -36,6 +36,9 @@ services:
       GAME_ORIGINS: ${GAME_ORIGINS:-}
       SMTP_FROM: ${SMTP_FROM:-}
       SMTP_REPLY_TO: ${SMTP_REPLY_TO:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      CF_ACCESS_TEAM_DOMAIN: ${CF_ACCESS_TEAM_DOMAIN:-}
+      CF_ACCESS_AUD: ${CF_ACCESS_AUD:-}
       EMAIL_QUEUE_SECRET: ${EMAIL_QUEUE_SECRET:?set EMAIL_QUEUE_SECRET}
       SCHEMA_MANAGEMENT: external
     networks:
@@ -305,7 +308,8 @@ services:
       PORT: '3000'
       HOST: 0.0.0.0
       NODE_ENV: production
-      ADMIN_API_URL: ${SITE_URL:?set SITE_URL}
+      # Same origin as the portal, so every API call passes Cloudflare Access.
+      ADMIN_API_URL: ${ADMIN_URL:?set ADMIN_URL}
       ADMIN_SITE_URL: ${SITE_URL:?set SITE_URL}
       CF_ACCESS_TEAM_DOMAIN: ${CF_ACCESS_TEAM_DOMAIN:-}
       CF_ACCESS_AUD: ${CF_ACCESS_AUD:-}

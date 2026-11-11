@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/AuthContext.jsx';
 import PageHero from '../../../components/PageHero.jsx';
 import AuthFormVisual from '../../../components/heroes/AuthFormVisual.jsx';
 import Seo from '../../../seo/Seo.jsx';
+import Turnstile, { turnstileOn } from '../../../components/Turnstile.jsx';
 
 const RESEND_COOLDOWN = 60;
 
@@ -32,6 +33,11 @@ const AuthForm = ({ mode }) => {
   const [notice, setNotice] = useState('');
   const [cooldown, setCooldown] = useState(0);
   const codeRef = useRef(null);
+  // Bot checks: one for sign-in/sign-up, one for "Send a new code".
+  const [token, setToken] = useState('');
+  const [resendToken, setResendToken] = useState('');
+  const turnstileRef = useRef(null);
+  const resendTurnstileRef = useRef(null);
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
   const destination = location.state?.from || '/dashboard';
@@ -59,8 +65,8 @@ const AuthForm = ({ mode }) => {
     setBusy(true);
     try {
       const result = isSignup
-        ? await register(form.name, form.email, form.password)
-        : await login(form.email, form.password);
+        ? await register(form.name, form.email, form.password, token)
+        : await login(form.email, form.password, token);
 
       if (result?.needsVerification) {
         setPending({ email: result.email, message: result.message, emailSent: result.emailSent });
@@ -72,6 +78,7 @@ const AuthForm = ({ mode }) => {
       setError(err.details?.[0]?.message || err.message);
     } finally {
       setBusy(false);
+      turnstileRef.current?.reset();
     }
   };
 
@@ -94,11 +101,13 @@ const AuthForm = ({ mode }) => {
     setError('');
     setNotice('');
     try {
-      const res = await resend(pending.email);
+      const res = await resend(pending.email, resendToken);
       setNotice(res.message);
       setCooldown(RESEND_COOLDOWN);
     } catch (err) {
       setError(err.message);
+    } finally {
+      resendTurnstileRef.current?.reset();
     }
   };
 
@@ -180,10 +189,11 @@ const AuthForm = ({ mode }) => {
 
                 <p className="lx-auth-switch">
                   Didn&rsquo;t get it?{' '}
-                  <button type="button" onClick={handleResend} disabled={cooldown > 0} className="lx-auth-textbtn">
+                  <button type="button" onClick={handleResend} disabled={cooldown > 0 || (turnstileOn && !resendToken)} className="lx-auth-textbtn">
                     {cooldown > 0 ? `Resend in ${cooldown}s` : 'Send a new code'}
                   </button>
                 </p>
+                <Turnstile ref={resendTurnstileRef} action="resend" onToken={setResendToken} />
                 <p className="lx-auth-switch">
                   Wrong address?{' '}
                   <button type="button" onClick={startOver} className="lx-auth-textbtn">
@@ -272,8 +282,9 @@ const AuthForm = ({ mode }) => {
                 />
               </div>
 
-              <button type="submit" disabled={busy} className="btn lx-btn lx-auth-submit">
-                {busy ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'}
+              <Turnstile ref={turnstileRef} action={isSignup ? 'signup' : 'login'} onToken={setToken} />
+              <button type="submit" disabled={busy || (turnstileOn && !token)} className="btn lx-btn lx-auth-submit">
+                {busy ? 'Please wait…' : turnstileOn && !token ? 'Checking your browser…' : isSignup ? 'Create account' : 'Sign in'}
               </button>
 
               <p className="lx-auth-switch">

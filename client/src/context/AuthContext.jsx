@@ -41,19 +41,19 @@ export const AuthProvider = ({ children }) => {
   // Registration no longer returns a session: the account stays unusable until
   // the emailed code is confirmed, so this resolves to a "needs verification"
   // instruction for the UI rather than a signed-in user.
-  const register = useCallback(async (name, email, password) => {
+  const register = useCallback(async (name, email, password, turnstileToken) => {
     const res = await api('/auth/register', {
       method: 'POST',
-      body: { name, email, password },
+      body: { name, email, password, turnstileToken },
       auth: false,
     });
     return { needsVerification: true, email: res.email, emailSent: res.emailSent, message: res.message };
   }, []);
 
   const login = useCallback(
-    async (email, password) => {
+    async (email, password, turnstileToken) => {
       try {
-        const res = await api('/auth/login', { method: 'POST', body: { email, password }, auth: false });
+        const res = await api('/auth/login', { method: 'POST', body: { email, password, turnstileToken }, auth: false });
         return { user: applySession(res) };
       } catch (err) {
         // Correct password, unconfirmed address — surface it as a step to take
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   const resend = useCallback(
-    (email) => api('/auth/resend', { method: 'POST', body: { email }, auth: false }),
+    (email, turnstileToken) => api('/auth/resend', { method: 'POST', body: { email, turnstileToken }, auth: false }),
     []
   );
 

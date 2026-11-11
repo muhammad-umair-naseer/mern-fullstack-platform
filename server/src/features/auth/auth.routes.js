@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../../middleware/auth.js';
 import { createLimiter } from '../../middleware/rateLimiter.js';
+import { requireTurnstile } from '../../middleware/turnstile.js';
 import { register, verify, resend, login, me, logout, gameToken } from './auth.controller.js';
 
 /** Authentication routing. Handlers live in ../controllers/auth.controller.js. */
@@ -24,10 +25,10 @@ const codeEmailLimiter = createLimiter({
   message: 'Too many codes sent to this email today — please try again tomorrow',
 });
 
-router.post('/register', codeLimiter, codeEmailLimiter, register);
+router.post('/register', codeLimiter, codeEmailLimiter, requireTurnstile('signup'), register);
 router.post('/verify', verifyLimiter, verify);
-router.post('/resend', codeLimiter, codeEmailLimiter, resend);
-router.post('/login', loginLimiter, login);
+router.post('/resend', codeLimiter, codeEmailLimiter, requireTurnstile('resend'), resend);
+router.post('/login', loginLimiter, requireTurnstile('login'), login);
 router.get('/me', requireAuth, me);
 router.post('/logout', requireAuth, logout);
 

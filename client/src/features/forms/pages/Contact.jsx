@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, ArrowUpRight, Check } from 'lucide-react';
 import API_BASE_URL from '../../../config.js';
@@ -7,6 +7,7 @@ import PageHero from '../../../components/PageHero.jsx';
 import ContactVisual from '../../../components/heroes/ContactVisual.jsx';
 import { contactCity } from '../../../assets/unique/index.js';
 import Seo from '../../../seo/Seo.jsx';
+import Turnstile, { turnstileOn } from '../../../components/Turnstile.jsx';
 import { organization, breadcrumbs } from '../../../seo/schema.js';
 
 const monument = contactCity;
@@ -48,12 +49,15 @@ const Contact = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const [token, setToken] = useState('');
+  const turnstileRef = useRef(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      await axios.post(`${API_BASE_URL}/api/contact`, formData);
+      await axios.post(`${API_BASE_URL}/api/contact`, { ...formData, turnstileToken: token });
       setSubmitStatus('success');
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (e2) {
@@ -61,6 +65,7 @@ const Contact = () => {
       console.error(e2);
     } finally {
       setIsSubmitting(false);
+      turnstileRef.current?.reset();
     }
   };
 
@@ -214,8 +219,9 @@ const Contact = () => {
                   {errors.message && <p id="message-error" className="mt-1 text-sm text-rose-700">{errors.message}</p>}
                 </div>
 
+                <Turnstile ref={turnstileRef} action="contact" onToken={setToken} />
                 <button
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || (turnstileOn && !token)}
                   type="submit"
                   className="btn lx-btn disabled:cursor-wait disabled:opacity-70"
                 >

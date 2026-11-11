@@ -4,10 +4,11 @@ import InternshipApplication from './InternshipApplication.model.js';
 import { internshipApplicationSchema } from '../../validation/schemas.js';
 import { queueInternshipAlert } from '../../services/queue.service.js';
 
+import { requireTurnstile } from '../../middleware/turnstile.js';
 const router = Router();
 
 // POST /api/internships/apply
-router.post('/apply', async (req, res) => {
+router.post('/apply', requireTurnstile('internship'), async (req, res) => {
   try {
     const { error, value } = internshipApplicationSchema.validate(req.body, {
       abortEarly: false,

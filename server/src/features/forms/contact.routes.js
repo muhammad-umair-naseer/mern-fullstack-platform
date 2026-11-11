@@ -4,10 +4,11 @@ import ContactMessage from './ContactMessage.model.js';
 import { contactMessageSchema } from '../../validation/schemas.js';
 import { queueContactEmail } from '../../services/queue.service.js';
 
+import { requireTurnstile } from '../../middleware/turnstile.js';
 const router = Router();
 
 // POST /api/contact
-router.post('/', async (req, res) => {
+router.post('/', requireTurnstile('contact'), async (req, res) => {
   try {
     const { error, value } = contactMessageSchema.validate(req.body, {
       abortEarly: false,
