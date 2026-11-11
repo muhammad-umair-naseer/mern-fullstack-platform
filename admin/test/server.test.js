@@ -13,7 +13,7 @@ test('admin static server rejects malformed URLs and keeps serving with security
   const port = reservation.address().port;
   await new Promise(resolve => reservation.close(resolve));
   const child = spawn(process.execPath, [path.join(__dirname, '../server.js')], {
-    env: { ...process.env, NODE_ENV: 'production', HOST: '127.0.0.1', PORT: String(port), ADMIN_API_URL: 'https://website.example.com', ADMIN_SITE_URL: 'https://website.example.com' },
+    env: { ...process.env, NODE_ENV: 'production', HOST: '127.0.0.1', PORT: String(port), ADMIN_API_URL: 'https://website.example.com', ADMIN_SITE_URL: 'https://website.example.com', CF_ACCESS_TEAM_DOMAIN: 'team.cloudflareaccess.com', CF_ACCESS_AUD: 'a'.repeat(64) },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   const request = target => new Promise((resolve, reject) => {
@@ -31,9 +31,10 @@ test('admin static server rejects malformed URLs and keeps serving with security
     assert.equal(health.headers['x-frame-options'], 'DENY');
     assert.equal(health.headers['x-content-type-options'], 'nosniff');
     assert.match(health.headers['content-security-policy'], /script-src 'self'/);
-    assert.equal((await request('/.env')).status, 404);
-    assert.equal((await request('/missing.js')).status, 404);
-    assert.equal((await request('/')).status, 200);
+    // Without a Cloudflare Access token nothing but /healthz is served.
+    assert.equal((await request('/')).status, 403);
+    assert.equal((await request('/config.js')).status, 403);
+    assert.equal((await request('/.env')).status, 403);
   } finally {
     const exited = once(child, 'exit'); child.kill(); await exited;
   }

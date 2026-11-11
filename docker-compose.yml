@@ -307,6 +307,8 @@ services:
       NODE_ENV: production
       ADMIN_API_URL: ${SITE_URL:?set SITE_URL}
       ADMIN_SITE_URL: ${SITE_URL:?set SITE_URL}
+      CF_ACCESS_TEAM_DOMAIN: ${CF_ACCESS_TEAM_DOMAIN:-}
+      CF_ACCESS_AUD: ${CF_ACCESS_AUD:-}
     networks:
       - cortexis_internal
     healthcheck:
