@@ -23,6 +23,7 @@ import { existsSync } from 'fs';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname, resolve, extname, join } from 'path';
 import puppeteer from 'puppeteer-core';
+import Beasties from 'beasties';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const BUILD = resolve(HERE, '../build');
@@ -262,6 +263,7 @@ try {
 }
 
 let written = 0;
+const writtenFiles = [];
 const failed = [];
 
 // Routes render in parallel tabs. Each one is independent — its own page, its
@@ -378,6 +380,7 @@ const renderRoute = async (route) => {
     const dir = route === '/' ? BUILD : join(BUILD, route);
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, 'index.html'), html);
+    writtenFiles.push(join(dir, 'index.html'));
     written += 1;
     process.stdout.write(`  ${route.padEnd(34)} ${check.title.slice(0, 60)}\n`);
   } catch (err) {
@@ -410,5 +413,20 @@ if (failed.length) {
   failed.forEach((f) => console.log('  ' + f));
   process.exit(1);
 }
+
+// Critical CSS. Each page gets the rules its own markup uses inlined in the
+// head, and its stylesheet links move to the end of the body ("body"
+// strategy), so the first paint no longer waits for the full CSS files. The
+// other strategies swap stylesheets in with an inline onload handler, which
+// the site's Content-Security-Policy blocks. The full files still load and
+// apply before the app's scripts run; nothing is removed from them.
+const beasties = new Beasties({
+  path: BUILD, publicPath: '/', preload: 'body', pruneSource: false,
+  inlineFonts: false, preloadFonts: false, reduceInlineStyles: false, logLevel: 'warn',
+});
+for (const file of writtenFiles) {
+  await writeFile(file, await beasties.process(await readFile(file, 'utf8')));
+}
+console.log(`critical CSS inlined in ${writtenFiles.length} pages`);
 
 await writeFile(join(BUILD, 'prerender-manifest.json'), JSON.stringify({ routes: [...new Set(routes)], generatedAt: new Date().toISOString(), site: process.env.REACT_APP_SITE_URL || 'https://cortexissolutionhub.com', complete: true }, null, 2));

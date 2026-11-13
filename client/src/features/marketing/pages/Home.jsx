@@ -13,7 +13,7 @@ import { organization, website } from '../../../seo/schema.js';
 
 const Home = () => {
   return (
-    <div className="home-page-container">
+    <main className="home-page-container">
       <Seo
         title="Cortexis Solution Hub | Software, Training and Consulting in Pakistan" bare
         description="Custom web, mobile and AI software built in Pakistan, plus free online courses with certificates and free internships. Talk to the team that writes the code."
@@ -29,7 +29,7 @@ const Home = () => {
       <Academy />
       <Testimonials />
       <CtaBanner />
-    </div>
+    </main>
   );
 };
 

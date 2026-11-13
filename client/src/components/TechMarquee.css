@@ -54,7 +54,9 @@
   line-height: 1;
   color: var(--ink);
   white-space: nowrap;
-  opacity: 0.55;
+  /* 0.6 is the lightest that keeps the text at WCAG AA contrast (4.7:1 on
+     the page background); 0.55 measured 4.0:1. */
+  opacity: 0.6;
   transition: opacity var(--dur-base) var(--ease-out-expo);
 }
 

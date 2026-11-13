@@ -379,7 +379,12 @@ export default function SilkBackdrop() {
   return (
     <div className="lx-silk" ref={wrap} aria-hidden="true">
       <canvas className="lx-silk-canvas lx-silk-a" ref={canvasA} />
-      <canvas className="lx-silk-canvas lx-silk-b" ref={canvasB} />
+      {/* The cross-fade runs on this wrapper, not the canvas: the canvas
+          already transitions opacity when it turns on, and two opacity
+          effects on one element keep it off the compositor. */}
+      <div className="lx-silk-fader">
+        <canvas className="lx-silk-canvas lx-silk-b" ref={canvasB} />
+      </div>
     </div>
   );
 }

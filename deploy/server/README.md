@@ -217,3 +217,32 @@ Repeat the Drive `fetch` + `test` once a month.
 
 ### Contabo snapshots
 Before risky changes (OS upgrades, Nginx/SSH changes), take a manual snapshot in the Contabo panel (Your services, then Snapshots). It is a quick whole-disk rollback. It does not replace the offsite backups, because it lives with Contabo.
+
+## Performance: what is left on mobile (for a future SSR project)
+
+Lighthouse in November 2026 (after the speed batches; best of two runs):
+- **Desktop:** home 96, courses 98, login 99.
+- **Mobile:** home ~57, courses ~65, services ~75, login ~80.
+- **Accessibility:** 100 on home.
+
+Already handled:
+- responsive images (320 to 1200 px);
+- self-hosted fonts;
+- inlined critical CSS (Beasties);
+- one-year cache on `/assets/*`;
+- phone heroes that start open.
+
+Two structural costs remain on phones.
+
+1. **React redraws the page on startup.** `client/src/index.jsx` uses `createRoot`. The browser first paints the prerendered HTML, then React throws that DOM away and draws everything again once the main bundle has run. On Lighthouse's simulated phone, that takes about 3.5 s of script time, and the largest paint is counted only after the redraw. `hydrateRoot` cannot fix this on its own: the prerender (`client/scripts/prerender.mjs`) saves a snapshot of the drawn page, not React server output, so it has none of the Suspense markers that hydration needs for the lazy-loaded routes. The fix is real server rendering, e.g. `renderToPipeableStream` at build time or on request, followed by `hydrateRoot`.
+2. **Large DOM and heavy layout.** The home page has about 1,570 elements, and many animated layers (hero reel, parallax, scroll reveals). Style and layout cost 2–3 s on the simulated phone. Rendering less above the fold first, and mounting below-the-fold sections when they come near the screen, would cut it.
+
+The only render-blocking request left is `/cx-intro-head.js`. It is under 1 KB and is meant to block: it decides before the first paint whether the logo intro plays.
+
+Measure with:
+
+```
+npx lighthouse@12.8.2 https://cortexissolutionhub.com/ --only-categories=performance
+```
+
+Add `--preset=desktop` for desktop scores. Run it at least twice; scores vary by about ±5.

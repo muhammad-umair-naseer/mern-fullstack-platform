@@ -124,10 +124,10 @@ export const legalPhotos = {
   },
 };
 
-// 480/800/1200 px versions for srcset (lib/srcSet.js).
+// 320/480/640/800/1200 px versions for srcset (lib/srcSet.js).
 addSrcSets(
   import.meta.glob('./*.webp', { eager: true, import: 'default' }),
-  import.meta.glob('./*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  import.meta.glob('./*.webp', { eager: true, import: 'default', query: '?w=320;480;640;800;1200&as=srcset' }),
   [contactCity, contactNote, yourBotPhoto, faqPhoto, blogPhoto, coursesPhoto, internshipsDeskPhoto, academyTeamPhoto, toolsDeskPhoto, toolsMediaPhoto, signupPhoto, legalPhotos],
 );
 

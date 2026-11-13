@@ -128,10 +128,10 @@ export const SERVICE_IMAGES = Object.fromEntries(
 
 export const serviceImage = (slug) => SERVICE_IMAGES[slug];
 
-// 480/800/1200 px versions of both crops (lib/srcSet.js).
+// 320/480/640/800/1200 px versions of both crops (lib/srcSet.js).
 const srcSetOf = addSrcSets(
   import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default' }),
-  import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default', query: '?w=320;480;640;800;1200&as=srcset' }),
   SERVICE_PHOTOS,
 );
 export const serviceSrcSet = (slug) => srcSetOf(SERVICE_IMAGES[slug]);

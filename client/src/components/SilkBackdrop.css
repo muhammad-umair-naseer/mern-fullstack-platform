@@ -43,10 +43,17 @@
   animation: lx-silk-drift-a 34s var(--ease-in-out) infinite alternate;
 }
 
+.lx-silk-fader {
+  position: absolute;
+  inset: 0;
+}
+
 .lx-silk.is-lite:not(.is-still) .lx-silk-b.is-on {
-  animation:
-    lx-silk-drift-b 26s var(--ease-in-out) infinite alternate,
-    lx-silk-fade 13s var(--ease-in-out) 2s infinite alternate;
+  animation: lx-silk-drift-b 26s var(--ease-in-out) infinite alternate;
+}
+
+.lx-silk.is-lite:not(.is-still) .lx-silk-fader:has(.is-on) {
+  animation: lx-silk-fade 13s var(--ease-in-out) 2s infinite alternate;
 }
 
 @keyframes lx-silk-drift-a {

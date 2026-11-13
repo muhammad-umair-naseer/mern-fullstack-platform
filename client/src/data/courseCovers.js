@@ -234,10 +234,10 @@ export const COURSE_COVER_CREDITS = [...new Set(Object.values(COURSE_COVERS).map
 
 export const courseCover = (slug) => COURSE_COVERS[slug];
 
-// 480/800/1200 px versions for srcset (lib/srcSet.js).
+// 320/480/640/800/1200 px versions for srcset (lib/srcSet.js).
 addSrcSets(
   import.meta.glob('../assets/courses-lux/*.webp', { eager: true, import: 'default' }),
-  import.meta.glob('../assets/courses-lux/*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  import.meta.glob('../assets/courses-lux/*.webp', { eager: true, import: 'default', query: '?w=320;480;640;800;1200&as=srcset' }),
   COURSE_COVERS,
 );
 
