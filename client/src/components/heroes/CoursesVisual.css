@@ -753,3 +753,13 @@
   .cv-card[data-pos="2"] { --x: 76%; }
   .cv-card[data-pos="-2"] { --x: -76%; }
 }
+
+/* Phones: the photo frame starts open and the seal is already in place, so
+   the hero is on screen from the first paint instead of after its entrance
+   (on a slow phone that entrance held the largest paint back by seconds). */
+@media (max-width: 760px) {
+  .cv-frame,
+  .cv-seal {
+    animation: none;
+  }
+}

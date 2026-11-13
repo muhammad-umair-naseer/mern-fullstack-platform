@@ -120,7 +120,7 @@ export default function Gallery() {
           <li key={p.caption} className={`lx-reel-item${p.w > p.h ? ' is-wide' : ''}`}>
             <figure>
               <div className="lx-reel-frame">
-                <img className="lx-reel-img" src={p.src} srcSet={p.srcSet} sizes="(max-width: 760px) 80vw, 40vw" alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" />
+                <img className="lx-reel-img" src={p.src} srcSet={p.srcSet} sizes="(max-width: 760px) 75vw, 54vw" alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" />
               </div>
               <figcaption>
                 <span className="tabular">{pad(i + 1)}</span>

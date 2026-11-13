@@ -44,6 +44,7 @@ import crm from '../assets/services-lux/crm-development.webp';
 import crmTall from '../assets/services-lux/crm-development-tall.webp';
 import agents from '../assets/services-lux/autonomous-ai-systems.webp';
 import agentsTall from '../assets/services-lux/autonomous-ai-systems-tall.webp';
+import { addSrcSets } from '../lib/srcSet.js';
 
 export const SERVICE_PHOTOS = {
   'custom-software-development': {
@@ -127,12 +128,20 @@ export const SERVICE_IMAGES = Object.fromEntries(
 
 export const serviceImage = (slug) => SERVICE_IMAGES[slug];
 
+// 480/800/1200 px versions of both crops (lib/srcSet.js).
+const srcSetOf = addSrcSets(
+  import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default' }),
+  import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  SERVICE_PHOTOS,
+);
+export const serviceSrcSet = (slug) => srcSetOf(SERVICE_IMAGES[slug]);
+
 export const serviceImageAlt = (slug) => SERVICE_PHOTOS[slug]?.alt;
 
 // The tall crop in the { src, alt } shape PhotoVisual takes, for the hero.
 export const serviceHeroPhoto = (slug) => {
   const p = SERVICE_PHOTOS[slug];
-  return p ? { src: p.tall, alt: p.alt, credit: p.credit } : undefined;
+  return p ? { src: p.tall, srcSet: srcSetOf(p.tall), alt: p.alt, credit: p.credit } : undefined;
 };
 
 export const SERVICE_PHOTO_CREDITS = Object.values(SERVICE_PHOTOS).map((p) => p.credit);

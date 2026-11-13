@@ -23,7 +23,7 @@ const Cover = ({ course, number }) => {
   const photo = coverOf(course);
 
   if (photo) {
-    return <img src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 760px) 92vw, (max-width: 1100px) 45vw, 30vw" alt="" loading="lazy" decoding="async" />;
+    return <img src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 760px) 88vw, (max-width: 1100px) 45vw, 30vw" alt="" loading="lazy" decoding="async" />;
   }
 
   return <CourseCover course={course} number={number} wide />;

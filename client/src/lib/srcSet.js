@@ -5,7 +5,8 @@
  * them by URL and gives every photo object found in `values` (nested objects
  * and arrays included) a srcSet next to its src. A component then renders
  * <img src={p.src} srcSet={p.srcSet} sizes="…">, and a phone downloads the
- * small version instead of the full-size file.
+ * small version instead of the full-size file. Returns a lookup (url -> srcset)
+ * for registries whose photos are plain URLs.
  */
 export function addSrcSets(urls, sets, values) {
   const bySrc = {};
@@ -16,4 +17,5 @@ export function addSrcSets(urls, sets, values) {
     Object.values(v).forEach(walk);
   };
   walk(values);
+  return (url) => bySrc[url];
 }

@@ -139,7 +139,7 @@ export default function ServicesVisual({ services = [] }) {
         <div className="svx-drift">
           {layers.map(({ key, photo, fresh }) => (
             <div className={`svx-layer${fresh ? ' is-fresh' : ''}`} key={key}>
-              <img src={photo.src} alt="" decoding="async" />
+              <img src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 760px) 80vw, 34vw" alt="" decoding="async" />
             </div>
           ))}
         </div>

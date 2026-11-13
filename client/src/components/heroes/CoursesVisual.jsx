@@ -90,7 +90,7 @@ export function CourseCover({ course, number, wide = false, children }) {
       </span>
       {photo ? (
         <span className="cv-cover-photo">
-          <img src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 760px) 70vw, 30vw" alt="" decoding="async" />
+          <img src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 760px) 30vw, 12vw" alt="" decoding="async" />
         </span>
       ) : (
         <span className="cv-cover-mark">{monogram(course.title)}</span>
@@ -223,7 +223,7 @@ export default function CoursesVisual({ courses = [], total }) {
       <div className="cv-layer cv-layer--photo" data-depth="8">
         <div className="cv-frame" aria-hidden="true">
           <div className="cv-drift">
-            <img src={coursesPhoto.src} srcSet={coursesPhoto.srcSet} sizes="(max-width: 760px) 90vw, 45vw" alt="" decoding="async" />
+            <img src={coursesPhoto.src} srcSet={coursesPhoto.srcSet} sizes="(max-width: 760px) 80vw, 34vw" alt="" decoding="async" />
           </div>
           <span className="lx-pv-sheen" />
         </div>

@@ -184,6 +184,15 @@
   animation: lx-film-settle 2s var(--ease-out-expo) 420ms both;
 }
 
+/* Phones: the frame starts open. Its clip-open entrance grows the photo's
+   visible area for 1.6 s after the page's code has started, which on a slow
+   phone holds the largest paint back by seconds. The film still settles. */
+@media (max-width: 760px) {
+  .lx-hero-frame {
+    animation: none;
+  }
+}
+
 /* ── Facts ───────────────────────────────────────────────────────────── */
 
 .lx-hero-facts {

@@ -1,7 +1,6 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
-import { toolsBlurb } from "../data/tools";
 import { COURSE_COUNT } from "../data/catalogue";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -49,6 +48,15 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const Footer = () => {
   const scope = useRef(null);
   const year = new Date().getFullYear();
+  // The tools list is a 20 KB module; loading it here on its own keeps it out
+  // of every page's first download. The line is below the fold, and the
+  // prerendered HTML already carries it.
+  const [toolsNote, setToolsNote] = useState('');
+  useEffect(() => {
+    let live = true;
+    import('../data/tools').then((m) => { if (live) setToolsNote(m.toolsBlurb()); });
+    return () => { live = false; };
+  }, []);
 
   useGSAP(
     () => {
@@ -239,7 +247,7 @@ const Footer = () => {
             {/* Derived from the isLive flags, not typed. The site ships once
                 every tool is built, so a hardcoded sentence would be wrong on
                 one side of that date or the other. */}
-            <p className="cx-ft-note">{toolsBlurb()}</p>
+            <p className="cx-ft-note">{toolsNote}</p>
           </div>
 
           <div className="cx-ft-col">
