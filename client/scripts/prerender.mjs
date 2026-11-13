@@ -382,6 +382,17 @@ const renderRoute = async (route) => {
       }
       document.getElementById('root').innerHTML = (await window.__cxRenderToString())
         .replace(/<title[^>]*data-cx-seo[^>]*>[\s\S]*?<\/title>|<(?:meta|link)[^>]*data-cx-seo[^>]*>/g, '');
+      // Loading react-dom/server above made Vite add a modulepreload for that
+      // chunk, with this temporary localhost origin. It is prerender-only;
+      // shipped, every visitor's browser would try to fetch it and log a CSP
+      // error. Drop it, and make any other new URL relative as above.
+      document.querySelectorAll('link[rel="modulepreload"][href*="server.browser"]').forEach((l) => l.remove());
+      for (const node of document.querySelectorAll('[src], [href]')) {
+        for (const attr of ['src', 'href']) {
+          const value = node.getAttribute(attr);
+          if (value?.startsWith(location.origin + '/')) node.setAttribute(attr, value.slice(location.origin.length));
+        }
+      }
       // Scripts still load and run for real visitors.
       return '<!doctype html>\n' + document.documentElement.outerHTML;
     }, apiData);

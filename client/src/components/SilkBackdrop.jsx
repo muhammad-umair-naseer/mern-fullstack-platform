@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './SilkBackdrop.css';
+import { INPUT } from '../lib/firstInput';
 
 /**
  * The house background: draped ivory and champagne silk in window light, with
@@ -132,9 +133,8 @@ export default function SilkBackdrop() {
   const canvasA = useRef(null);
   const canvasB = useRef(null);
 
-  // The shader starts once the page has loaded and the browser is idle, so
-  // compiling it never competes with the first paint; until then the still
-  // image in the stylesheet shows (the same one it falls back to without WebGL).
+  // Until the shader runs, the still image in the stylesheet shows (the same
+  // one it falls back to without WebGL).
   useEffect(() => {
     // Phones never start WebGL: the stylesheet's still silk image is the
     // backdrop there, and the shader's compile and paint stay off a slow
@@ -144,12 +144,17 @@ export default function SilkBackdrop() {
     let handle;
     const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
     const cancelIdle = window.cancelIdleCallback || clearTimeout;
-    const schedule = () => { handle = idle(() => { cleanup = startSilk(); }, { timeout: 3000 }); };
-    if (document.readyState === 'complete') schedule();
-    else window.addEventListener('load', schedule, { once: true });
+    // Compiling the shader is one long task (100-200 ms). It waits for the
+    // visitor's first scroll, pointer move, key or touch, then the next idle
+    // moment, so it never lands in page load.
+    const schedule = () => {
+      INPUT.forEach((t) => window.removeEventListener(t, schedule, true));
+      if (handle == null) handle = idle(() => { cleanup = startSilk(); }, { timeout: 3000 });
+    };
+    INPUT.forEach((t) => window.addEventListener(t, schedule, { capture: true, passive: true }));
     return () => {
-      window.removeEventListener('load', schedule);
-      cancelIdle(handle);
+      INPUT.forEach((t) => window.removeEventListener(t, schedule, true));
+      if (handle != null) cancelIdle(handle);
       cleanup?.();
     };
   }, []);

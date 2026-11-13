@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./Footer.css";
 import Photo from "./Photo.jsx";
 import { markPhoto } from "../assets/brand";
+import { useIdleGSAP } from "../hooks/useIdleGSAP";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -60,7 +61,7 @@ const Footer = () => {
     return () => { live = false; };
   }, []);
 
-  useGSAP(
+  useIdleGSAP(
     () => {
       const mm = gsap.matchMedia();
 

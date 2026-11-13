@@ -6,6 +6,7 @@ import './ValueProposition.css';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useIdleGSAP } from '../hooks/useIdleGSAP';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -239,7 +240,7 @@ function shieldLoop(q) {
 export default function ValueProposition() {
   const scope = useRevealOnScroll();
 
-  useGSAP(
+  useIdleGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add('(prefers-reduced-motion: no-preference)', () => {

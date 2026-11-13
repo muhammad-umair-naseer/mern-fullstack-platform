@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { reel } from '../assets/home';
 import './Gallery.css';
 import Photo from './Photo.jsx';
+import { useIdleGSAP } from '../hooks/useIdleGSAP';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -27,7 +28,7 @@ export default function Gallery() {
   const scope = useRef(null);
   const total = reel.length;
 
-  useGSAP(
+  useIdleGSAP(
     () => {
       const section = scope.current;
       const track = section.querySelector('.lx-reel-track');

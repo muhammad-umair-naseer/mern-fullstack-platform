@@ -6,6 +6,7 @@ import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import { processPhoto } from '../assets/home';
 import './ProcessSection.css';
 import Photo from './Photo.jsx';
+import { useIdleGSAP } from '../hooks/useIdleGSAP';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -61,7 +62,7 @@ const steps = [
 export default function ProcessSection() {
   const scope = useRevealOnScroll();
 
-  useGSAP(
+  useIdleGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add('(prefers-reduced-motion: no-preference)', () => {

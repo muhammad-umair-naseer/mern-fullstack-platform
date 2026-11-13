@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Hero from '../../../components/Hero.jsx';
 import TechMarquee from '../../../components/TechMarquee.jsx';
 import ValueProposition from '../../../components/ValueProposition.jsx';
@@ -22,13 +22,17 @@ const Home = () => {
       />
       <Hero />
       <TechMarquee />
-      <ServicesPreview />
-      <ValueProposition />
-      <Gallery />
-      <ProcessSection />
-      <Academy />
-      <Testimonials />
-      <CtaBanner />
+      {/* One Suspense boundary per section below the fold: hydrating the
+          prerendered page, React commits each boundary on its own, so their
+          effects run as separate short tasks instead of one long one. Nothing
+          here suspends; the fallbacks are never shown. */}
+      <Suspense fallback={null}><ServicesPreview /></Suspense>
+      <Suspense fallback={null}><ValueProposition /></Suspense>
+      <Suspense fallback={null}><Gallery /></Suspense>
+      <Suspense fallback={null}><ProcessSection /></Suspense>
+      <Suspense fallback={null}><Academy /></Suspense>
+      <Suspense fallback={null}><Testimonials /></Suspense>
+      <Suspense fallback={null}><CtaBanner /></Suspense>
     </main>
   );
 };

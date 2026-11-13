@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useIdleGSAP } from './useIdleGSAP';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -27,11 +28,15 @@ export function useRevealOnScroll(selector = '[data-reveal]', opts = {}) {
   const scope = useRef(null);
   const { y = 16, duration = 1, stagger = 0.08, start = 'top 88%' } = opts;
 
-  useGSAP(
+  useIdleGSAP(
     () => {
       const root = scope.current;
-      const items = gsap.utils.toArray(selector, root);
-      const media = gsap.utils.toArray('[data-reveal-media]', root);
+      // This runs once the browser is idle (useIdleGSAP), after the first
+      // paint: anything already on screen stays as it is rather than
+      // vanishing and animating back in. Only what is below the fold reveals.
+      const belowFold = (el) => el.getBoundingClientRect().top > window.innerHeight;
+      const items = gsap.utils.toArray(selector, root).filter(belowFold);
+      const media = gsap.utils.toArray('[data-reveal-media]', root).filter(belowFold);
       const drift = gsap.utils.toArray('[data-parallax]', root);
       if (!items.length && !media.length && !drift.length) return;
 

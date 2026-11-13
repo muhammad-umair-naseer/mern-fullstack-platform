@@ -7,6 +7,8 @@ import App from './App';
 
 import startIdleMotion from './lib/idleMotion';
 import startScrollRefresh from './lib/scrollRefresh';
+// Listens for the visitor's first input from the start (the hero reel waits for it).
+import './lib/firstInput';
 
 // Remove prerendered SEO nodes before React takes ownership of the head.
 document.querySelectorAll('head [data-cx-seo]').forEach(node => node.remove());

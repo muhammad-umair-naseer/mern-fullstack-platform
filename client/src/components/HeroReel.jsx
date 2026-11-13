@@ -1,4 +1,5 @@
 import React, { memo, useLayoutEffect, useRef, useState } from 'react';
+import { INPUT, hasInteracted } from '../lib/firstInput';
 import { liveTools } from '../data/tools';
 import { SITE_URL } from '../seo/site';
 import CertificateFrame from '../features/learning/components/CertificateFrame.jsx';
@@ -833,20 +834,40 @@ function runReel(root) {
 
 /* ── Markup ───────────────────────────────────────────────────────────── */
 
+const idle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 1000 }) : setTimeout(fn, 100));
+const cancelIdle = (id) => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : clearTimeout(id));
+
 const HeroReel = ({ className = '' }) => {
   const root = useRef(null);
   // The reel lays itself out in script, so its markup only makes sense once
-  // that has run. The first render (the prerendered HTML, and hydration)
-  // is a still of the first scene; the live reel replaces it in a layout
-  // effect, before the browser paints, so in-app navigation never shows the
-  // still. It also makes the first scene's photo the page's first large paint.
+  // that has run, and starting it (rendering the stage, then measuring and
+  // scaling it) is one ~280 ms task of forced layout. The first render (the
+  // prerendered HTML, and hydration) is therefore a still of the first scene,
+  // which is also the page's first large paint. On a fresh page load the
+  // live reel takes over at the visitor's first scroll, pointer move, key or
+  // touch, or after 4 s for someone who only watches, at the next idle moment
+  // either way. After in-app navigation it takes over at once, before the
+  // browser paints, so the still is never seen there.
   const [live, setLive] = useState(false);
 
   // Layout rather than passive: the canvas has to be measured and scaled
   // before the first paint, or it flashes at its design size.
   useLayoutEffect(() => {
-    if (!live) { setLive(true); return undefined; }
-    return runReel(root.current);
+    if (live) return runReel(root.current);
+    if (hasInteracted()) { setLive(true); return undefined; }
+    let handle = null;
+    const go = () => {
+      INPUT.forEach((type) => window.removeEventListener(type, go, true));
+      clearTimeout(timer);
+      if (handle == null) handle = idle(() => setLive(true));
+    };
+    INPUT.forEach((type) => window.addEventListener(type, go, { capture: true, passive: true }));
+    const timer = setTimeout(go, 4000);
+    return () => {
+      INPUT.forEach((type) => window.removeEventListener(type, go, true));
+      clearTimeout(timer);
+      if (handle != null) cancelIdle(handle);
+    };
   }, [live]);
 
   return (

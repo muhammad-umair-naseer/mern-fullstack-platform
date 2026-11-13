@@ -52,9 +52,9 @@ app.disable('x-powered-by');
 const production = process.env.NODE_ENV === 'production';
 const gameOrigins = (process.env.GAME_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
 app.use(helmet({ crossOriginEmbedderPolicy: false, contentSecurityPolicy: production ? { directives: {
-  defaultSrc: ["'self'"], scriptSrc: ["'self'", "'wasm-unsafe-eval'", 'https://challenges.cloudflare.com'], styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+  defaultSrc: ["'self'"], scriptSrc: ["'self'", "'wasm-unsafe-eval'", 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com'], styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
   fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'], imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
-  mediaSrc: ["'self'", 'data:', 'blob:'], connectSrc: ["'self'", 'data:', 'blob:', 'https://api.microlink.io', 'https://*.microlink.io', ...gameOrigins.flatMap(origin => [origin, origin.replace(/^https:/, 'wss:')])],
+  mediaSrc: ["'self'", 'data:', 'blob:'], connectSrc: ["'self'", 'data:', 'blob:', 'https://api.microlink.io', 'https://*.microlink.io', 'https://cloudflareinsights.com', ...gameOrigins.flatMap(origin => [origin, origin.replace(/^https:/, 'wss:')])],
   frameSrc: ["'self'", 'blob:', 'https://challenges.cloudflare.com', ...gameOrigins], workerSrc: ["'self'", 'blob:'], objectSrc: ["'none'"], baseUri: ["'self'"], formAction: ["'self'"], frameAncestors: ["'none'"],
 } } : false, strictTransportSecurity: production ? { maxAge: 31536000 } : false }));
 app.use('/api', createLimiter({ windowMs: 60000, max: 1000, prefix: 'api' }));

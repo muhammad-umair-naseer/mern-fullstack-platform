@@ -643,14 +643,16 @@ h2 em {
   html .lx-afv-cert, html .lx-afv-chip {
     animation-play-state: running, paused;
   }
+}
 
-  /* Below-the-fold home sections are laid out and painted only near the
-     screen. lib/scrollRefresh.js re-measures ScrollTrigger when one first
-     renders, since its height settles then. Sections that pin are left out. */
-  html .lx-services, html .lx-academy, html .lx-work, html .lx-cta {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 900px;
-  }
+/* Below-the-fold home sections are laid out and painted only near the
+   screen, on every screen size: the first style and layout then covers the
+   hero instead of the whole long page. lib/scrollRefresh.js re-measures
+   ScrollTrigger when one first renders, since its height settles then. The
+   reel gallery pins on desktop and is left out. */
+html .lx-services, html .lx-values, html .lx-process, html .lx-academy, html .lx-work, html .lx-cta {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 /* <picture> (components/Photo.jsx) adds no box: its <img> lays out as if it
