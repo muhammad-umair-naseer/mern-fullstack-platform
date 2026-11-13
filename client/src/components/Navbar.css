@@ -94,6 +94,12 @@
   color: #d8843c;
   margin-top: 4px;
   white-space: nowrap;
+  /* An SVG (Navbar.jsx): sized in em so it follows the font size; the text
+     is 11.6em wide at this letter-spacing. */
+  display: block;
+  width: 11.7em;
+  height: 1em;
+  overflow: visible;
 }
 
 

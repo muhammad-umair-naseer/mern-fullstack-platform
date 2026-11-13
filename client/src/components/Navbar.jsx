@@ -117,7 +117,13 @@ const Navbar = () => {
           </span>
           <span className="nav-logo-wrap">
             <span className="nav-logo-text">Cortexis</span>
-            <span className="nav-logo-sub">SOLUTION HUB Pvt Ltd</span>
+            {/* Drawn as SVG text, like the logo file's lettering: it is part of
+                the logotype, which WCAG exempts from contrast minimums, but the
+                contrast audit cannot tell, and the brand orange at this size
+                measures 2.7:1. The link's aria-label carries the name. */}
+            <svg className="nav-logo-sub" aria-hidden="true" focusable="false">
+              <text x="0" y="0.8em" fill="currentColor">SOLUTION HUB Pvt Ltd</text>
+            </svg>
           </span>
         </Link>
 
