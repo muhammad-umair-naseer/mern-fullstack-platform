@@ -1,4 +1,4 @@
-import React, { memo, useLayoutEffect, useRef } from 'react';
+import React, { memo, useLayoutEffect, useRef, useState } from 'react';
 import { liveTools } from '../data/tools';
 import { SITE_URL } from '../seo/site';
 import CertificateFrame from '../features/learning/components/CertificateFrame.jsx';
@@ -835,10 +835,19 @@ function runReel(root) {
 
 const HeroReel = ({ className = '' }) => {
   const root = useRef(null);
+  // The reel lays itself out in script, so its markup only makes sense once
+  // that has run. The first render (the prerendered HTML, and hydration)
+  // is a still of the first scene; the live reel replaces it in a layout
+  // effect, before the browser paints, so in-app navigation never shows the
+  // still. It also makes the first scene's photo the page's first large paint.
+  const [live, setLive] = useState(false);
 
   // Layout rather than passive: the canvas has to be measured and scaled
   // before the first paint, or it flashes at its design size.
-  useLayoutEffect(() => runReel(root.current), []);
+  useLayoutEffect(() => {
+    if (!live) { setLive(true); return undefined; }
+    return runReel(root.current);
+  }, [live]);
 
   return (
     <figure
@@ -848,6 +857,13 @@ const HeroReel = ({ className = '' }) => {
       aria-roledescription="carousel"
       aria-label="What Cortexis builds: WhatsApp bots, free tools, free courses and web apps"
     >
+      {!live ? (
+        <div className="rl-settle">
+          <div className="rl-poster" style={{ backgroundImage: 'url(/media/reel/s0.webp)' }} />
+          <div className="rl-wash" />
+        </div>
+      ) : (
+        <>
       <div className="rl-settle">
         <div className="rl-stage" data-k="stage" aria-hidden="true" data-nosnippet="">
           <div className="rl-layer rl-bgs" data-k="bgs">
@@ -1276,6 +1292,8 @@ const HeroReel = ({ className = '' }) => {
           </div>
         </div>
       </div>
+        </>
+      )}
     </figure>
   );
 };

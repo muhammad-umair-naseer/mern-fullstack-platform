@@ -44,3 +44,16 @@ export const api = async (path, { method = 'GET', body, auth = true, keepalive =
 
   return payload;
 };
+
+// The API responses a prerendered page was built with (scripts/prerender.mjs
+// embeds them as JSON). A page starts from them, so its first render matches
+// the saved HTML and React can hydrate it; it still fetches fresh data after.
+let embedded;
+export const prerendered = (path) => {
+  if (typeof window === 'undefined') return undefined;
+  if (window.__CX_DATA__) return window.__CX_DATA__[path];
+  if (embedded === undefined) {
+    try { embedded = JSON.parse(document.getElementById('cx-data')?.textContent || 'null') || {}; } catch { embedded = {}; }
+  }
+  return embedded[path];
+};

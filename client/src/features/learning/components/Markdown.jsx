@@ -171,6 +171,14 @@ const MarkdownImage = ({ src, alt }) => (
   </figure>
 );
 
+// A paragraph holding an image renders as a div: the image is a <figure>,
+// which HTML does not allow inside <p>. Parsing a prerendered page, the
+// browser would close the <p> early, and React could not hydrate the page.
+const Paragraph = ({ node, children, ...props }) =>
+  node?.children?.some((c) => c.tagName === 'img')
+    ? <div {...props}>{children}</div>
+    : <p {...props}>{children}</p>;
+
 // Lesson and blog bodies. The typography is set in Markdown.css against the
 // house tokens rather than through prose-* utilities: one of those utilities
 // (prose-pre:bg-slate-900) put "bg-slate-9" in the wrapper's class list, which
@@ -185,6 +193,7 @@ const Markdown = ({ children }) => (
         h2: Heading2,
         h3: Heading3,
         img: MarkdownImage,
+        p: Paragraph,
       }}
     >
       {children}

@@ -5,6 +5,7 @@ import { Check } from 'lucide-react';
 import { authPhoto } from '../../assets/authform';
 import { signupPhoto } from '../../assets/unique';
 import './AuthFormVisual.css';
+import Photo from '../Photo.jsx';
 
 gsap.registerPlugin(useGSAP);
 
@@ -77,7 +78,7 @@ export default function AuthFormVisual({ mode, children }) {
       <div className="lx-afv-photo-pos" data-depth="-8" aria-hidden="true">
         <div className="lx-pv-frame lx-afv-photo">
           <div className="lx-pv-drift">
-            <img src={(isSignup ? signupPhoto : authPhoto).src} srcSet={(isSignup ? signupPhoto : authPhoto).srcSet} sizes="(max-width: 900px) 92vw, 30vw" alt="" decoding="async" />
+            <Photo src={(isSignup ? signupPhoto : authPhoto).src} srcSet={(isSignup ? signupPhoto : authPhoto).srcSet} avifSrcSet={(isSignup ? signupPhoto : authPhoto).avifSrcSet} sizes="(max-width: 900px) 92vw, 30vw" alt="" decoding="async" />
           </div>
           <span className="lx-pv-sheen" />
         </div>

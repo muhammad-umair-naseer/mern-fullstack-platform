@@ -128,20 +128,22 @@ export const SERVICE_IMAGES = Object.fromEntries(
 
 export const serviceImage = (slug) => SERVICE_IMAGES[slug];
 
-// 320/480/640/800/1200 px versions of both crops (lib/srcSet.js).
+// 320/480/640/800/1200 px versions, WebP and AVIF of both crops (lib/srcSet.js).
 const srcSetOf = addSrcSets(
   import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default' }),
   import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default', query: '?w=320;480;640;800;1200&as=srcset' }),
   SERVICE_PHOTOS,
+  import.meta.glob('../assets/services-lux/*.webp', { eager: true, import: 'default', query: '?w=320;480;640;800;1200&format=avif&as=srcset' }),
 );
 export const serviceSrcSet = (slug) => srcSetOf(SERVICE_IMAGES[slug]);
+export const serviceAvifSrcSet = (slug) => srcSetOf.avif(SERVICE_IMAGES[slug]);
 
 export const serviceImageAlt = (slug) => SERVICE_PHOTOS[slug]?.alt;
 
 // The tall crop in the { src, alt } shape PhotoVisual takes, for the hero.
 export const serviceHeroPhoto = (slug) => {
   const p = SERVICE_PHOTOS[slug];
-  return p ? { src: p.tall, srcSet: srcSetOf(p.tall), alt: p.alt, credit: p.credit } : undefined;
+  return p ? { src: p.tall, srcSet: srcSetOf(p.tall), avifSrcSet: srcSetOf.avif(p.tall), alt: p.alt, credit: p.credit } : undefined;
 };
 
 export const SERVICE_PHOTO_CREDITS = Object.values(SERVICE_PHOTOS).map((p) => p.credit);

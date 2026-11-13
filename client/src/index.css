@@ -624,3 +624,37 @@ h2 em {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Phones: less work per frame (desktop unchanged) ──────────────────────
+   Decorative loops (slow photo drifts, floats, sheens, turning seal rings,
+   the CTA sun) stay still, so a phone only animates what carries meaning:
+   entrances, the hero reel and the marquee still play. `html` raises the
+   specificity above each component's own rule, which loads later. Where an
+   entrance and a loop share one element, only the loop is held. */
+@media (max-width: 760px) {
+  html .lx-cta-panel::after, html .rl-shafts, html .lx-pv-sheen,
+  html .lx-ad-frame::after, html .lx-afv-seal-ring, html .lx-afv-cert-sheen,
+  html .bpv-kb, html .bv-drift, html .lx-cv-drift, html .lx-cov-seal-ring,
+  html .cv-drift, html .cv-seal-ring, html .iv-seal-ring, html .tdv-drift,
+  html .tdv-chip, html .ybv-drift, html .cx-rail-photo img {
+    animation: none;
+  }
+  html .lx-pv-chip, html .bv-topics, html .bpv-chip, html .ybv-chan,
+  html .lx-afv-cert, html .lx-afv-chip {
+    animation-play-state: running, paused;
+  }
+
+  /* Below-the-fold home sections are laid out and painted only near the
+     screen. lib/scrollRefresh.js re-measures ScrollTrigger when one first
+     renders, since its height settles then. Sections that pin are left out. */
+  html .lx-services, html .lx-academy, html .lx-work, html .lx-cta {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+}
+
+/* <picture> (components/Photo.jsx) adds no box: its <img> lays out as if it
+   were the frame's own child. */
+picture {
+  display: contents;
+}

@@ -6,6 +6,7 @@ import { COURSE_COUNT } from '../data/catalogue';
 import { academyTeamPhoto } from '../assets/unique';
 import { academyPhoto } from '../assets/home';
 import './Academy.css';
+import Photo from './Photo.jsx';
 
 /**
  * The learning side of the company, which the home page otherwise mentions
@@ -32,12 +33,12 @@ export default function Academy() {
         <div className="lx-academy-media">
           <div className="lx-frame lx-academy-main" data-reveal-media>
             <div className="lx-academy-drift" data-parallax="4">
-              <img src={academyPhoto.src} srcSet={academyPhoto.srcSet} sizes="(max-width: 760px) 90vw, 45vw" alt={academyPhoto.alt} loading="lazy" decoding="async" width={academyPhoto.w} height={academyPhoto.h} />
+              <Photo src={academyPhoto.src} srcSet={academyPhoto.srcSet} avifSrcSet={academyPhoto.avifSrcSet} sizes="(max-width: 760px) 90vw, 45vw" alt={academyPhoto.alt} loading="lazy" decoding="async" width={academyPhoto.w} height={academyPhoto.h} />
             </div>
           </div>
           <div className="lx-academy-inset" data-parallax="10">
             <div className="lx-frame lx-academy-inset-frame" data-reveal-media>
-              <img src={academyTeamPhoto.src} srcSet={academyTeamPhoto.srcSet} sizes="(max-width: 760px) 50vw, 25vw" alt={academyTeamPhoto.alt} loading="lazy" decoding="async" width="900" height="675" />
+              <Photo src={academyTeamPhoto.src} srcSet={academyTeamPhoto.srcSet} avifSrcSet={academyTeamPhoto.avifSrcSet} sizes="(max-width: 760px) 50vw, 25vw" alt={academyTeamPhoto.alt} loading="lazy" decoding="async" width="900" height="675" />
             </div>
           </div>
         </div>

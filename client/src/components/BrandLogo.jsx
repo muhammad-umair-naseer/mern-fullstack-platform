@@ -1,4 +1,6 @@
 import React, { useId, useState } from 'react';
+import Photo from './Photo.jsx';
+import { markPhoto } from '../assets/brand';
 
 /**
  * Cortexis Solution Hub logomark.
@@ -12,8 +14,9 @@ const BrandLogo = ({ size = 40, className = '' }) => {
 
   if (!imgFailed) {
     return (
-      <img
-        src={`${process.env.PUBLIC_URL}/cortexis-mark.png`}
+      <Photo
+        {...markPhoto}
+        sizes={`${size}px`}
         width={size}
         height={size}
         alt="Cortexis Solution Hub logo"

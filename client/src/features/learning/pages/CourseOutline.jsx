@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Award, Check, Lock } from 'lucide-react';
-import { api } from '../../../lib/api.js';
+import { api, prerendered } from '../../../lib/api.js';
 import { useAuth } from '../../../context/AuthContext.jsx';
 import ProgressBar from '../components/ProgressBar.jsx';
 import '../components/CourseOutline.css';
@@ -165,8 +165,10 @@ const CourseOutline = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [course, setCourse] = useState(null);
-  const [status, setStatus] = useState('loading');
+  // A prerendered outline starts from the data it was built with (lib/api.js).
+  const initial = prerendered(`/learn/courses/${slug}`);
+  const [course, setCourse] = useState(() => initial?.data ?? null);
+  const [status, setStatus] = useState(initial ? 'ready' : 'loading');
   const [enrolling, setEnrolling] = useState(false);
   // Chapters a reader has opened or closed by hand; the rest follow the
   // default (only the chapter they are in, or the first).
@@ -179,7 +181,8 @@ const CourseOutline = () => {
       setCourse(data);
       setStatus('ready');
     } catch {
-      setStatus('error');
+      // Keep the outline the page was prerendered with if the refresh fails.
+      if (!prerendered(`/learn/courses/${slug}`)) setStatus('error');
     }
   }, [slug]);
 

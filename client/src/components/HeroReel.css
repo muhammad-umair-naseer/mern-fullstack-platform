@@ -48,6 +48,14 @@
   inset: 0;
 }
 
+/* The still shown until the reel's script runs (HeroReel.jsx). */
+.rl-poster {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
 .rl-stage {
   position: absolute;
   left: 0;

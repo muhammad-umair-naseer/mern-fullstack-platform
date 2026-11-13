@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Award, Search, X } from "lucide-react";
-import { api } from "../../../lib/api.js";
+import { api, prerendered } from "../../../lib/api.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useCatalogueFilter } from "../../../hooks/useCatalogueFilter.jsx";
 import { useGridReveal } from "../../../hooks/useGridReveal.jsx";
@@ -13,6 +13,7 @@ import FaqSection from "../../../components/FaqSection.jsx";
 import { faqsFor } from "../../../data/faqs.js";
 import { COURSE_COUNT } from "../../../data/catalogue.js";
 import { courseCover } from "../../../data/courseCovers.js";
+import Photo from '../../../components/Photo.jsx';
 
 // Every course has its own photograph (data/courseCovers.js). A course added
 // before its photo falls back to the typographic cover. Both are decorative:
@@ -23,7 +24,7 @@ const Cover = ({ course, number }) => {
   const photo = coverOf(course);
 
   if (photo) {
-    return <img src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 760px) 88vw, (max-width: 1100px) 45vw, 30vw" alt="" loading="lazy" decoding="async" />;
+    return <Photo src={photo.src} srcSet={photo.srcSet} avifSrcSet={photo.avifSrcSet} sizes="(max-width: 760px) 88vw, (max-width: 1100px) 45vw, 30vw" alt="" loading="lazy" decoding="async" />;
   }
 
   return <CourseCover course={course} number={number} wide />;
@@ -84,8 +85,10 @@ const CertificateTile = ({ count, signedIn }) => {
 const Courses = () => {
   const { user } = useAuth();
 
-  const [courses, setCourses] = useState([]);
-  const [status, setStatus] = useState("loading");
+  // Prerendered pages start from the list they were built with (lib/api.js).
+  const initial = prerendered("/learn/courses");
+  const [courses, setCourses] = useState(() => initial?.data ?? []);
+  const [status, setStatus] = useState(initial ? "ready" : "loading");
 
   useEffect(() => {
     let cancelled = false;
@@ -98,7 +101,8 @@ const Courses = () => {
           setStatus("ready");
         }
       } catch {
-        if (!cancelled) setStatus("error");
+        // Keep the list the page was prerendered with if the refresh fails.
+        if (!cancelled && !prerendered("/learn/courses")) setStatus("error");
       }
     })();
 

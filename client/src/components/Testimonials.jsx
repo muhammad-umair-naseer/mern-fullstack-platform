@@ -4,6 +4,7 @@ import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { workPhotos } from "../assets/home";
 import "./Testimonials.css";
+import Photo from './Photo.jsx';
 
 // Each card keeps its visible destination label: "Offline AI Assistant" lands
 // on the AI services page rather than a product page of its own, and the label
@@ -67,7 +68,7 @@ const Work = () => {
                   <div className="lx-work-drift" data-parallax="5">
                     {/* alt is empty: the card is named by its title, and the
                         photograph is mood rather than the product itself. */}
-                    <img src={item.photo.src} srcSet={item.photo.srcSet} sizes="(max-width: 760px) 90vw, 33vw" alt="" loading="lazy" decoding="async" />
+                    <Photo src={item.photo.src} srcSet={item.photo.srcSet} avifSrcSet={item.photo.avifSrcSet} sizes="(max-width: 760px) 90vw, 33vw" alt="" loading="lazy" decoding="async" />
                   </div>
                   <span className="lx-work-num tabular" aria-hidden="true">0{i + 1}</span>
                 </div>

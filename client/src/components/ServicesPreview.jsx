@@ -5,6 +5,7 @@ import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import { photos } from '../assets/lux';
 import { SERVICE_COUNT_WORD } from '../data/services.js';
 import './ServicesPreview.css';
+import Photo from './Photo.jsx';
 
 /**
  * Home-page teaser for the services.
@@ -81,7 +82,7 @@ const ServicesPreview = () => {
                       so alt text here would make a screen reader announce the
                       card twice. */}
                   <div className="lx-plate-drift" data-parallax="5">
-                    <img src={s.photo.src} srcSet={s.photo.srcSet} sizes="(max-width: 760px) 100vw, 34vw" alt="" loading="lazy" decoding="async" width="900" height="1125" />
+                    <Photo src={s.photo.src} srcSet={s.photo.srcSet} avifSrcSet={s.photo.avifSrcSet} sizes="(max-width: 760px) 100vw, 34vw" alt="" loading="lazy" decoding="async" width="900" height="1125" />
                   </div>
                 </div>
                 <div className="lx-plate-body">

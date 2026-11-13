@@ -6,6 +6,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./Footer.css";
+import Photo from "./Photo.jsx";
+import { markPhoto } from "../assets/brand";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -266,7 +268,7 @@ const Footer = () => {
         <div className="cx-ft-base">
           <div className="cx-ft-id">
             <p className="cx-ft-mark">
-              <img src="/cortexis-mark.png" alt="" width="26" height="26" decoding="async" />
+              <Photo {...markPhoto} sizes="26px" alt="" width="26" height="26" decoding="async" />
               <span>Cortexis Solution Hub (Pvt.) Ltd.</span>
             </p>
             {/* City and country only. The street line on the SECP filing is a

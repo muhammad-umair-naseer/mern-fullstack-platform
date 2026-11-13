@@ -278,6 +278,15 @@ const renderRoute = async (route) => {
     page.on('request', request => { const url = new URL(request.url()); if (['http:', 'https:'].includes(url.protocol) && !['127.0.0.1', 'localhost'].includes(url.hostname)) return request.abort(); return request.continue(); });
     await page.setViewport({ width: 1280, height: 900 });
     await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+    // The API responses this page renders from (course list, course outline).
+    // They go into the page as JSON, so a visitor's first render uses the
+    // same data as the saved HTML and can hydrate it (src/lib/api.js).
+    const apiData = {};
+    page.on('response', async (response) => {
+      const url = new URL(response.url());
+      if (response.request().method() !== 'GET' || !response.ok() || !url.pathname.startsWith('/api/') || url.pathname.startsWith('/api/auth/')) return;
+      try { apiData[url.pathname.slice(4) + url.search] = await response.json(); } catch { /* not JSON */ }
+    });
     await page.goto(`http://localhost:${PORT}${route}`, {
       waitUntil: 'networkidle0',
       timeout: 45000,
@@ -326,7 +335,7 @@ const renderRoute = async (route) => {
       await new Promise((r) => setTimeout(r, 1500));
     });
 
-    const html = await page.evaluate(() => {
+    const html = await page.evaluate(async (apiData) => {
       // Vite inserts absolute preload URLs while rendering. Never ship the
       // temporary localhost origin into a production document.
       for (const node of document.querySelectorAll('[src], [href], [poster]')) {
@@ -355,9 +364,27 @@ const renderRoute = async (route) => {
         Object.assign(link, { rel: 'preload', as: 'font', type: 'font/woff2', href: path, crossOrigin: 'anonymous' });
         document.head.prepend(link);
       }
+      // The body is React's own render of this route (renderToString, via
+      // index.jsx), not the drawn DOM: it matches what the client renders
+      // first and carries the Suspense markers, so the client can hydrate it
+      // instead of drawing the page again. The drawn DOM has been changed by
+      // effects and animations and could never hydrate.
+      // Its <title>, <meta> and <link> (seo/Seo.jsx) are hoisted into <head>
+      // in the browser, where the page already has them; the string carries
+      // them inline, so drop them there. The JSON-LD <script>s are not
+      // hoisted and stay where React renders them.
+      window.__CX_DATA__ = apiData;
+      if (Object.keys(apiData).length) {
+        const data = document.createElement('script');
+        Object.assign(data, { id: 'cx-data', type: 'application/json' });
+        data.textContent = JSON.stringify(apiData).replace(/</g, '\\u003c');
+        document.body.appendChild(data);
+      }
+      document.getElementById('root').innerHTML = (await window.__cxRenderToString())
+        .replace(/<title[^>]*data-cx-seo[^>]*>[\s\S]*?<\/title>|<(?:meta|link)[^>]*data-cx-seo[^>]*>/g, '');
       // Scripts still load and run for real visitors.
       return '<!doctype html>\n' + document.documentElement.outerHTML;
-    });
+    }, apiData);
 
     // A route that rendered nothing is worse than no prerender at all, because
     // it would ship an empty page to the crawler as if it were the content.
@@ -392,7 +419,10 @@ const renderRoute = async (route) => {
 
 // A route that fails once (almost always a timeout under CPU contention) gets
 // a second, solo attempt after the pool drains, before it counts as failed.
-const queue = [...routes];
+// ONLY_ROUTES=/,/courses prerenders just those (local testing; the build
+// always renders every route).
+const only = process.env.ONLY_ROUTES?.split(',').map((r) => r.trim()).filter(Boolean);
+const queue = only ? routes.filter((r) => only.includes(r)) : [...routes];
 await Promise.all(
   Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
     for (let route = queue.shift(); route !== undefined; route = queue.shift()) await renderRoute(route);

@@ -136,6 +136,10 @@ export default function SilkBackdrop() {
   // compiling it never competes with the first paint; until then the still
   // image in the stylesheet shows (the same one it falls back to without WebGL).
   useEffect(() => {
+    // Phones never start WebGL: the stylesheet's still silk image is the
+    // backdrop there, and the shader's compile and paint stay off a slow
+    // phone's main thread and GPU entirely.
+    if (window.matchMedia('(max-width: 760px)').matches) return undefined;
     let cleanup;
     let handle;
     const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));

@@ -4,6 +4,7 @@ import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import { ArrowUpRight, MessageCircle } from 'lucide-react';
 import { photos } from '../assets/lux';
 import './CtaBanner.css';
+import Photo from './Photo.jsx';
 
 export default function CtaBanner() {
   const scope = useRevealOnScroll();
@@ -25,7 +26,7 @@ export default function CtaBanner() {
       <div className="lx-wrap">
         <div className="lx-cta-panel" data-reveal-media>
           <div className="lx-cta-drift" data-parallax="6">
-            <img src={photos.cta.src} srcSet={photos.cta.srcSet} sizes="100vw" alt="" loading="lazy" decoding="async" width="2000" height="1125" />
+            <Photo src={photos.cta.src} srcSet={photos.cta.srcSet} avifSrcSet={photos.cta.avifSrcSet} sizes="100vw" alt="" loading="lazy" decoding="async" width="2000" height="1125" />
           </div>
           <div className="lx-cta-content">
             <span className="lx-label" data-reveal><span className="lx-label-num">06</span>Have something to build?</span>

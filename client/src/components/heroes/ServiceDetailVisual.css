@@ -442,12 +442,15 @@
   box-shadow: var(--shadow-raised);
 }
 
-.svd-card-frame > img {
+.svd-card-frame > img,
+.svd-card-frame > picture > img {
   filter: saturate(0.84);
 }
 
 .svd-card:hover .svd-card-frame > img,
-.svd-card:focus-visible .svd-card-frame > img {
+.svd-card:focus-visible .svd-card-frame > img,
+.svd-card:hover .svd-card-frame > picture > img,
+.svd-card:focus-visible .svd-card-frame > picture > img {
   transform: scale(1.05);
   filter: saturate(1);
 }

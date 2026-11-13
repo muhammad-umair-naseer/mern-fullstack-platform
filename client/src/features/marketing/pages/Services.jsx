@@ -8,7 +8,7 @@ import { useCatalogueFilter } from "../../../hooks/useCatalogueFilter.jsx";
 import { useModalIntro } from '../../../hooks/useModalIntro.jsx';
 import { useRevealOnScroll } from '../../../hooks/useRevealOnScroll.jsx';
 import { SERVICES, SERVICE_COUNT_WORD } from '../../../data/services.js';
-import { serviceImage, serviceSrcSet } from '../../../data/serviceImages.js';
+import { serviceImage, serviceSrcSet, serviceAvifSrcSet } from '../../../data/serviceImages.js';
 import { COURSE_COUNT } from '../../../data/catalogue.js';
 import Seo from '../../../seo/Seo.jsx';
 import { organization, breadcrumbs, faq as faqSchema } from '../../../seo/schema.js';
@@ -16,6 +16,7 @@ import FaqSection from '../../../components/FaqSection.jsx';
 import PageHero from '../../../components/PageHero.jsx';
 import ServicesVisual from '../../../components/heroes/ServicesVisual.jsx';
 import { faqsFor } from '../../../data/faqs.js';
+import Photo from '../../../components/Photo.jsx';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -81,7 +82,7 @@ export default function Services() {
   const closeBtnRef = useRef(null);
   const openerRef = useRef(null);
 
-  const services = SERVICES.map((s, i) => ({ ...s, n: i + 1, image: serviceImage(s.slug), srcSet: serviceSrcSet(s.slug) }));
+  const services = SERVICES.map((s, i) => ({ ...s, n: i + 1, image: serviceImage(s.slug), srcSet: serviceSrcSet(s.slug), avifSrcSet: serviceAvifSrcSet(s.slug) }));
 
   const panelRef = useModalIntro(show);
   const altRef = useRevealOnScroll();
@@ -189,7 +190,7 @@ export default function Services() {
                         by its title. */}
                     <Link to={`/services/${service.slug}`} className="svc-card-link">
                       <div className="svc-card-frame">
-                        <img src={service.image} srcSet={service.srcSet} sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 34vw" alt="" loading="lazy" decoding="async" width="1200" height="630" />
+                        <Photo src={service.image} srcSet={service.srcSet} avifSrcSet={service.avifSrcSet} sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 34vw" alt="" loading="lazy" decoding="async" width="1200" height="630" />
                         <span className="svc-card-cat">{service.category}</span>
                       </div>
                       <div className="svc-card-body">

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Check, KeyRound } from 'lucide-react';
 import { serviceBySlug, relatedServices } from '../../../data/services.js';
-import { serviceImage, serviceSrcSet, serviceHeroPhoto } from '../../../data/serviceImages.js';
+import { serviceImage, serviceSrcSet, serviceAvifSrcSet, serviceHeroPhoto } from '../../../data/serviceImages.js';
 import PageHero from '../../../components/PageHero.jsx';
 import ServiceDetailVisual from '../../../components/heroes/ServiceDetailVisual.jsx';
 import ServiceArticle from '../../../components/ServiceArticle.jsx';
@@ -13,6 +13,7 @@ import { useRevealOnScroll } from '../../../hooks/useRevealOnScroll.jsx';
 import Seo from '../../../seo/Seo.jsx';
 import { breadcrumbs, hostedArticle, organization } from '../../../seo/schema.js';
 import { SITE, absolute } from '../../../seo/site.js';
+import Photo from '../../../components/Photo.jsx';
 
 // Each service opens on its own photograph: the tall crop of the same picture
 // its card and share image use (data/serviceImages.js).
@@ -169,7 +170,7 @@ const ServiceDetail = () => {
                 <li key={r.slug} data-reveal>
                   <Link to={`/services/${r.slug}`} className="svd-card">
                     <div className="svd-card-frame lx-frame" data-reveal-media>
-                      <img src={serviceImage(r.slug)} srcSet={serviceSrcSet(r.slug)} sizes="(max-width: 760px) 100vw, 34vw" alt="" loading="lazy" decoding="async" width="1200" height="630" />
+                      <Photo src={serviceImage(r.slug)} srcSet={serviceSrcSet(r.slug)} avifSrcSet={serviceAvifSrcSet(r.slug)} sizes="(max-width: 760px) 100vw, 34vw" alt="" loading="lazy" decoding="async" width="1200" height="630" />
                       <span className="svd-card-cat">{r.category}</span>
                     </div>
                     <div className="svd-card-body">

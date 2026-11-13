@@ -96,3 +96,6 @@ playwright-report/
 
 # npm cache used by the server-side website build (deploy/server/remote-deploy.sh)
 .npm-cache/
+
+# vite-imagetools encode cache (client/vite.config.mjs); kept between builds, never committed
+client/.imagetools-cache/

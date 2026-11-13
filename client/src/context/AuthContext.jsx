@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, startTransition } from 'react';
 import { api, setToken, getToken } from '../lib/api';
 
 const AuthContext = createContext(null);
@@ -11,19 +11,27 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let cancelled = false;
+    // The start-up result is applied as a transition. The page under this
+    // provider may still be hydrating the prerendered HTML (index.jsx), and an
+    // urgent context change would make React throw that HTML away and draw
+    // the page again; a transition lets hydration finish first.
+    const settle = (signedIn) => startTransition(() => {
+      if (signedIn) setUser(signedIn);
+      setLoading(false);
+    });
 
     (async () => {
       if (!getToken()) {
-        setLoading(false);
+        settle(null);
         return;
       }
+      let signedIn = null;
       try {
-        const { user } = await api('/auth/me');
-        if (!cancelled) setUser(user);
+        ({ user: signedIn } = await api('/auth/me'));
       } catch {
         setToken(null); // expired or revoked
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) settle(signedIn);
       }
     })();
 

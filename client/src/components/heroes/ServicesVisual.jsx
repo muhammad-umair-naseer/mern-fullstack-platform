@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { photos } from '../../assets/lux';
 import { serviceHeroPhoto } from '../../data/serviceImages';
 import './ServicesVisual.css';
+import Photo from '../Photo.jsx';
 
 gsap.registerPlugin(useGSAP);
 
@@ -139,7 +140,7 @@ export default function ServicesVisual({ services = [] }) {
         <div className="svx-drift">
           {layers.map(({ key, photo, fresh }) => (
             <div className={`svx-layer${fresh ? ' is-fresh' : ''}`} key={key}>
-              <img src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 760px) 80vw, 34vw" alt="" decoding="async" />
+              <Photo src={photo.src} srcSet={photo.srcSet} avifSrcSet={photo.avifSrcSet} sizes="(max-width: 760px) 80vw, 34vw" alt="" decoding="async" />
             </div>
           ))}
         </div>

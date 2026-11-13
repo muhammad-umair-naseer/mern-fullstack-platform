@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import { processPhoto } from '../assets/home';
 import './ProcessSection.css';
+import Photo from './Photo.jsx';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -101,7 +102,7 @@ export default function ProcessSection() {
             </h2>
             <div className="lx-frame lx-process-photo" data-reveal-media>
               <div className="lx-process-drift" data-parallax="5">
-                <img src={processPhoto.src} srcSet={processPhoto.srcSet} sizes="(max-width: 760px) 90vw, 45vw" alt={processPhoto.alt} loading="lazy" decoding="async" width={processPhoto.w} height={processPhoto.h} />
+                <Photo src={processPhoto.src} srcSet={processPhoto.srcSet} avifSrcSet={processPhoto.avifSrcSet} sizes="(max-width: 760px) 90vw, 45vw" alt={processPhoto.alt} loading="lazy" decoding="async" width={processPhoto.w} height={processPhoto.h} />
               </div>
             </div>
           </div>

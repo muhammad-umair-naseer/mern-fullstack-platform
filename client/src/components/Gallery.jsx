@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { reel } from '../assets/home';
 import './Gallery.css';
+import Photo from './Photo.jsx';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -120,7 +121,7 @@ export default function Gallery() {
           <li key={p.caption} className={`lx-reel-item${p.w > p.h ? ' is-wide' : ''}`}>
             <figure>
               <div className="lx-reel-frame">
-                <img className="lx-reel-img" src={p.src} srcSet={p.srcSet} sizes="(max-width: 760px) 75vw, 54vw" alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" />
+                <Photo className="lx-reel-img" src={p.src} srcSet={p.srcSet} avifSrcSet={p.avifSrcSet} sizes="(max-width: 760px) 75vw, 54vw" alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" />
               </div>
               <figcaption>
                 <span className="tabular">{pad(i + 1)}</span>
