@@ -101,7 +101,7 @@ export default function ProcessSection() {
             </h2>
             <div className="lx-frame lx-process-photo" data-reveal-media>
               <div className="lx-process-drift" data-parallax="5">
-                <img src={processPhoto.src} alt={processPhoto.alt} loading="lazy" decoding="async" width={processPhoto.w} height={processPhoto.h} />
+                <img src={processPhoto.src} srcSet={processPhoto.srcSet} sizes="(max-width: 760px) 90vw, 45vw" alt={processPhoto.alt} loading="lazy" decoding="async" width={processPhoto.w} height={processPhoto.h} />
               </div>
             </div>
           </div>

@@ -39,6 +39,7 @@ import uiUxBootcamp from '../assets/courses-lux/ui-ux-bootcamp.webp';
 import unityGameDev from '../assets/courses-lux/unity-game-dev.webp';
 import videoEditingShortForm from '../assets/courses-lux/video-editing-short-form.webp';
 import wordpressDevelopment from '../assets/courses-lux/wordpress-development.webp';
+import { addSrcSets } from '../lib/srcSet.js';
 
 export const COURSE_COVERS = {
   'ai-automation-agents': {
@@ -232,3 +233,11 @@ export const COURSE_COVERS = {
 export const COURSE_COVER_CREDITS = [...new Set(Object.values(COURSE_COVERS).map((c) => c.credit))];
 
 export const courseCover = (slug) => COURSE_COVERS[slug];
+
+// 480/800/1200 px versions for srcset (lib/srcSet.js).
+addSrcSets(
+  import.meta.glob('../assets/courses-lux/*.webp', { eager: true, import: 'default' }),
+  import.meta.glob('../assets/courses-lux/*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  COURSE_COVERS,
+);
+

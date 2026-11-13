@@ -21,6 +21,7 @@ import legalPrivacy from './legal-privacy.webp';
 import legalBotTerms from './legal-bot-terms.webp';
 import legalBotPrivacy from './legal-bot-privacy.webp';
 import legalBotDeletion from './legal-bot-deletion.webp';
+import { addSrcSets } from '../../lib/srcSet.js';
 
 /** /contact: the "Where we are" plate. */
 export const contactCity = {
@@ -122,3 +123,11 @@ export const legalPhotos = {
     credit: 'Kelly Sikkema', unsplashId: 'iiaUVel-cJE',
   },
 };
+
+// 480/800/1200 px versions for srcset (lib/srcSet.js).
+addSrcSets(
+  import.meta.glob('./*.webp', { eager: true, import: 'default' }),
+  import.meta.glob('./*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  [contactCity, contactNote, yourBotPhoto, faqPhoto, blogPhoto, coursesPhoto, internshipsDeskPhoto, academyTeamPhoto, toolsDeskPhoto, toolsMediaPhoto, signupPhoto, legalPhotos],
+);
+

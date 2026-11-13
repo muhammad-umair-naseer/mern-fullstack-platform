@@ -67,7 +67,7 @@ const Work = () => {
                   <div className="lx-work-drift" data-parallax="5">
                     {/* alt is empty: the card is named by its title, and the
                         photograph is mood rather than the product itself. */}
-                    <img src={item.photo.src} alt="" loading="lazy" decoding="async" />
+                    <img src={item.photo.src} srcSet={item.photo.srcSet} sizes="(max-width: 760px) 90vw, 33vw" alt="" loading="lazy" decoding="async" />
                   </div>
                   <span className="lx-work-num tabular" aria-hidden="true">0{i + 1}</span>
                 </div>

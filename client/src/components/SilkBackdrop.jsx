@@ -132,7 +132,25 @@ export default function SilkBackdrop() {
   const canvasA = useRef(null);
   const canvasB = useRef(null);
 
+  // The shader starts once the page has loaded and the browser is idle, so
+  // compiling it never competes with the first paint; until then the still
+  // image in the stylesheet shows (the same one it falls back to without WebGL).
   useEffect(() => {
+    let cleanup;
+    let handle;
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
+    const cancelIdle = window.cancelIdleCallback || clearTimeout;
+    const schedule = () => { handle = idle(() => { cleanup = startSilk(); }, { timeout: 3000 }); };
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
+    return () => {
+      window.removeEventListener('load', schedule);
+      cancelIdle(handle);
+      cleanup?.();
+    };
+  }, []);
+
+  function startSilk() {
     const root = wrap.current;
     const cA = canvasA.current;
     const cB = canvasB.current;
@@ -356,7 +374,7 @@ export default function SilkBackdrop() {
       cancelAnimationFrame(raf);
       cleanups.forEach((fn) => fn());
     };
-  }, []);
+  }
 
   return (
     <div className="lx-silk" ref={wrap} aria-hidden="true">

@@ -32,12 +32,12 @@ export default function Academy() {
         <div className="lx-academy-media">
           <div className="lx-frame lx-academy-main" data-reveal-media>
             <div className="lx-academy-drift" data-parallax="4">
-              <img src={academyPhoto.src} alt={academyPhoto.alt} loading="lazy" decoding="async" width={academyPhoto.w} height={academyPhoto.h} />
+              <img src={academyPhoto.src} srcSet={academyPhoto.srcSet} sizes="(max-width: 760px) 90vw, 45vw" alt={academyPhoto.alt} loading="lazy" decoding="async" width={academyPhoto.w} height={academyPhoto.h} />
             </div>
           </div>
           <div className="lx-academy-inset" data-parallax="10">
             <div className="lx-frame lx-academy-inset-frame" data-reveal-media>
-              <img src={academyTeamPhoto.src} alt={academyTeamPhoto.alt} loading="lazy" decoding="async" width="900" height="675" />
+              <img src={academyTeamPhoto.src} srcSet={academyTeamPhoto.srcSet} sizes="(max-width: 760px) 50vw, 25vw" alt={academyTeamPhoto.alt} loading="lazy" decoding="async" width="900" height="675" />
             </div>
           </div>
         </div>

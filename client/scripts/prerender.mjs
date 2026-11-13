@@ -343,6 +343,16 @@ const renderRoute = async (route) => {
         link.setAttribute('fetchpriority', 'high');
         document.head.prepend(link);
       }
+      // The two faces every page paints first (body and display type): preload
+      // them so text is not waiting on the CSS to be parsed before they start.
+      for (const r of performance.getEntriesByType('resource')) {
+        const path = new URL(r.name).pathname;
+        if (!/^\/assets\/(geist-300-700-normal-latin|instrument-serif-400-normal-latin)-[A-Za-z0-9_-]{8}\.woff2$/.test(path)) continue;
+        if (document.querySelector(`link[rel="preload"][href="${path}"]`)) continue;
+        const link = document.createElement('link');
+        Object.assign(link, { rel: 'preload', as: 'font', type: 'font/woff2', href: path, crossOrigin: 'anonymous' });
+        document.head.prepend(link);
+      }
       // Scripts still load and run for real visitors.
       return '<!doctype html>\n' + document.documentElement.outerHTML;
     });

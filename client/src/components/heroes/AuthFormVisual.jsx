@@ -77,7 +77,7 @@ export default function AuthFormVisual({ mode, children }) {
       <div className="lx-afv-photo-pos" data-depth="-8" aria-hidden="true">
         <div className="lx-pv-frame lx-afv-photo">
           <div className="lx-pv-drift">
-            <img src={(isSignup ? signupPhoto : authPhoto).src} alt="" decoding="async" />
+            <img src={(isSignup ? signupPhoto : authPhoto).src} srcSet={(isSignup ? signupPhoto : authPhoto).srcSet} sizes="(max-width: 900px) 90vw, 45vw" alt="" decoding="async" />
           </div>
           <span className="lx-pv-sheen" />
         </div>

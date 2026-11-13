@@ -13,6 +13,7 @@ import cta from './cta.webp';
 import about from './about.webp';
 import gIslamabad from './g-islamabad.webp';
 import gTeam from './g-team.webp';
+import { addSrcSets } from '../../lib/srcSet.js';
 
 export const photos = {
   serviceWeb: {
@@ -64,3 +65,11 @@ export const reel = [
 // Every photographer whose work is on the site; the reel above reuses the
 // same photographs, so the list is complete.
 export const photoCredits = Object.values(photos).map((p) => p.credit);
+
+// 480/800/1200 px versions for srcset (lib/srcSet.js).
+addSrcSets(
+  import.meta.glob('./*.webp', { eager: true, import: 'default' }),
+  import.meta.glob('./*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  [photos, reel],
+);
+

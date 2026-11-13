@@ -20,6 +20,7 @@ import processScope from './process-scope.webp';
 import academyStudy from './academy-study.webp';
 import workTools from './work-tools.webp';
 import workOffline from './work-offline.webp';
+import { addSrcSets } from '../../lib/srcSet.js';
 
 export const reel = [
   { src: islamabad, w: 1600, h: 920, caption: 'Pakistan', alt: 'The Faisal Mosque and the Margalla Hills in Pakistan seen through a car window in soft evening haze', credit: 'Tahamie Farooqui' },
@@ -66,3 +67,11 @@ export const homeCredits = [
   processPhoto.credit,
   academyPhoto.credit,
 ];
+
+// 480/800/1200 px versions for srcset (lib/srcSet.js).
+addSrcSets(
+  import.meta.glob('./*.webp', { eager: true, import: 'default' }),
+  import.meta.glob('./*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  [reel, workPhotos, processPhoto, academyPhoto],
+);
+

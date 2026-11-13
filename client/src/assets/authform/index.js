@@ -4,6 +4,7 @@
  * shown on /login and /signup only.
  */
 import desk from './desk.webp';
+import { addSrcSets } from '../../lib/srcSet.js';
 
 export const authPhoto = {
   src: desk,
@@ -12,3 +13,11 @@ export const authPhoto = {
 };
 
 export const AUTHFORM_CREDITS = [authPhoto.credit];
+
+// 480/800/1200 px versions for srcset (lib/srcSet.js).
+addSrcSets(
+  import.meta.glob('./*.webp', { eager: true, import: 'default' }),
+  import.meta.glob('./*.webp', { eager: true, import: 'default', query: '?w=480;800;1200&as=srcset' }),
+  [authPhoto],
+);
+

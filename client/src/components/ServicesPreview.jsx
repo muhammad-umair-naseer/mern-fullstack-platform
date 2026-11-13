@@ -81,7 +81,7 @@ const ServicesPreview = () => {
                       so alt text here would make a screen reader announce the
                       card twice. */}
                   <div className="lx-plate-drift" data-parallax="5">
-                    <img src={s.photo.src} alt="" loading="lazy" decoding="async" width="900" height="1125" />
+                    <img src={s.photo.src} srcSet={s.photo.srcSet} sizes="(max-width: 760px) 90vw, 25vw" alt="" loading="lazy" decoding="async" width="900" height="1125" />
                   </div>
                 </div>
                 <div className="lx-plate-body">
