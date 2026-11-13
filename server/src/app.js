@@ -116,11 +116,17 @@ app.get('/ready', async (_req, res) => {
 // Registered after the API so the catch-all cannot swallow /api/* requests.
 if (process.env.NODE_ENV === 'production') {
   const buildDir = path.join(__dirname, '../../client/build');
-  const shell = path.join(buildDir, 'index.html');
+  // shell.html is the bare app page; index.html is the prerendered home page
+  // (older builds have no shell.html).
+  const shell = fs.existsSync(path.join(buildDir, 'shell.html')) ? path.join(buildDir, 'shell.html') : path.join(buildDir, 'index.html');
   // redirect:false — a directory URL such as /tools/pdf-merger must not 301 to
   // a trailing slash; the sitemap lists it without one, and a redirect on every
   // tool page is what search engines then index instead of the page.
-  app.use(express.static(buildDir, { redirect: false }));
+  // /assets/* names carry a content hash, so a file under one name never
+  // changes: browsers may keep it for a year without asking again.
+  app.use(express.static(buildDir, { redirect: false, setHeaders: (res, file) => {
+    if (file.startsWith(path.join(buildDir, 'assets') + path.sep)) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  } }));
   app.get('*', (req, res) => {
     // The prerender writes <route>/index.html for every public route. Serve
     // that page when it exists, and the SPA shell for everything else.

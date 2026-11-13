@@ -86,6 +86,15 @@ const SHELL = (await readFile(join(BUILD, 'index.html'), 'utf8'))
   .replace(/<meta\s+(?:property|name)="(?:og|twitter):[^"]*"[^>]*>\s*/gi, '')
   .replace(/<script\s+type="application\/ld\+json"[\s\S]*?<\/script>\s*/gi, '');
 
+// The server's fallback page for routes that are not prerendered (/login,
+// /signup, /dashboard, certificates, lessons). build/index.html becomes the
+// home page below, so serving it there made those pages download the home
+// page's images and code first.
+// Written only from a fresh Vite build: on a second run index.html is already
+// the prerendered home page and its root is no longer empty.
+if (/<div id="root"><\/div>/.test(SHELL)) await writeFile(join(BUILD, 'shell.html'), SHELL);
+else console.warn('shell.html not written: build/index.html is already prerendered (run vite build first)');
+
 // Preload local courses so prerendering never fails even if backend API is offline
 const courseMap = new Map();
 const courseList = [];
@@ -323,6 +332,16 @@ const renderRoute = async (route) => {
           const value = node.getAttribute(attr);
           if (value?.startsWith(location.origin + '/')) node.setAttribute(attr, value.slice(location.origin.length));
         }
+      }
+      // The home hero's first frame is the page's LCP, but it is a CSS
+      // background inside JS-drawn markup, so the browser finds it late.
+      // A preload in the head starts it with the HTML.
+      const heroBg = document.querySelector('.rl-bg')?.style.backgroundImage.match(/url\(["']?([^"')]+)/)?.[1];
+      if (heroBg && !document.querySelector(`link[rel="preload"][href="${heroBg}"]`)) {
+        const link = document.createElement('link');
+        Object.assign(link, { rel: 'preload', as: 'image', href: heroBg });
+        link.setAttribute('fetchpriority', 'high');
+        document.head.prepend(link);
       }
       // Scripts still load and run for real visitors.
       return '<!doctype html>\n' + document.documentElement.outerHTML;
