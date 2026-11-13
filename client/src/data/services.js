@@ -29,7 +29,7 @@ const raw = [
   },
   {
     title: "AI Automation",
-    description: "End-to-end intelligent automation, autonomous AI agents, and custom LLM workflows to supercharge efficiency.",
+    description: "End-to-end intelligent automation and custom LLM workflows.",
     category: "AI/ML",
     features: [
       "Custom autonomous AI agents & RAG pipelines",
@@ -119,10 +119,40 @@ const raw = [
     category: "AI/ML",
     features: ["Model training & evaluation", "MLOps pipelines", "Responsible AI guidelines"],
     deliverables: ["Model cards", "Serving infra", "Retraining schedule"],
+  },
+  {
+    title: "CRM Development",
+    description: "Custom CRM systems built around how your team actually sells, supports and follows up.",
+    category: "Development",
+    features: [
+      "Custom pipelines, lead and customer records",
+      "Integrations with email, WhatsApp, forms and payments",
+      "Role-based access, reports and dashboards",
+    ],
+    deliverables: ["CRM application with full source code", "Data migration from spreadsheets or your old CRM", "Admin guide & team onboarding"],
+  },
+  {
+    title: "Autonomous AI Systems",
+    description: "AI agents and automated workflows that run a business process end to end, with human approval where it matters.",
+    category: "AI/ML",
+    features: [
+      "Multi-step AI agents that work with your tools and data",
+      "End-to-end workflows: intake, decisions, actions and reporting",
+      "Guardrails, human approvals and audit logs",
+    ],
+    deliverables: ["Deployed agent system & workflow maps", "Integrations with your apps and APIs", "Monitoring dashboard & runbook"],
   }
 ];
 
 export const SERVICES = raw.map((s) => ({ ...s, slug: slugify(s.title) }));
+
+// "Twelve", for headlines that count the services, so they stay true when one is added.
+const NUMBER_WORDS = [
+  '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen',
+  'Eighteen', 'Nineteen', 'Twenty',
+];
+export const SERVICE_COUNT_WORD = NUMBER_WORDS[SERVICES.length] || String(SERVICES.length);
 
 export const serviceBySlug = (slug) => SERVICES.find((s) => s.slug === slug);
 

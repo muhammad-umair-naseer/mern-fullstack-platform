@@ -40,6 +40,10 @@ import ecommerce from '../assets/services-lux/e-commerce-solutions.webp';
 import ecommerceTall from '../assets/services-lux/e-commerce-solutions-tall.webp';
 import aiml from '../assets/services-lux/ai-ml-solutions.webp';
 import aimlTall from '../assets/services-lux/ai-ml-solutions-tall.webp';
+import crm from '../assets/services-lux/crm-development.webp';
+import crmTall from '../assets/services-lux/crm-development-tall.webp';
+import agents from '../assets/services-lux/autonomous-ai-systems.webp';
+import agentsTall from '../assets/services-lux/autonomous-ai-systems-tall.webp';
 
 export const SERVICE_PHOTOS = {
   'custom-software-development': {
@@ -101,6 +105,18 @@ export const SERVICE_PHOTOS = {
     tall: aimlTall,
     alt: 'An AI engineer analyzing deep learning neural networks and training loss curves on an ultrawide display',
     credit: 'Cortexis Studio',
+  },
+  'crm-development': {
+    src: crm,
+    tall: crmTall,
+    alt: 'Hands on a laptop showing a sales dashboard with pipeline charts on a bright white desk',
+    credit: 'Campaign Creators',
+  },
+  'autonomous-ai-systems': {
+    src: agents,
+    tall: agentsTall,
+    alt: 'A row of small white AI robots, each working at its own laptop',
+    credit: 'Mohamed Nohassi',
   },
 };
 

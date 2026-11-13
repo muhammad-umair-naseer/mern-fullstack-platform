@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useCatalogueFilter } from "../../../hooks/useCatalogueFilter.jsx";
 import { useModalIntro } from '../../../hooks/useModalIntro.jsx';
 import { useRevealOnScroll } from '../../../hooks/useRevealOnScroll.jsx';
-import { SERVICES } from '../../../data/services.js';
+import { SERVICES, SERVICE_COUNT_WORD } from '../../../data/services.js';
 import { serviceImage } from '../../../data/serviceImages.js';
 import { COURSE_COUNT } from '../../../data/catalogue.js';
 import Seo from '../../../seo/Seo.jsx';
@@ -22,12 +22,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const categories = ["All", "Development", "Design", "Marketing", "AI/ML"];
 
 // The headline counts the services, so it stays true when one is added.
-const NUMBER_WORDS = [
-  '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen',
-  'Eighteen', 'Nineteen', 'Twenty',
-];
-const serviceCount = NUMBER_WORDS[SERVICES.length] || String(SERVICES.length);
+const serviceCount = SERVICE_COUNT_WORD;
 const pad = (n) => String(n).padStart(2, '0');
 
 // Where else a visitor can start. Services linked nowhere except contact,

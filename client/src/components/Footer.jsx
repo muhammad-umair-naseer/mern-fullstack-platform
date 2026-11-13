@@ -19,9 +19,9 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  * gap between the headline and the next largest type is the whole design —
  * if a middle size ever creeps in here, the footer collapses back into a strip.
  *
- * Link budget is 26, deliberately. Internal equity divides across every link
+ * Link budget is 28, deliberately. Internal equity divides across every link
  * on a page, and a sitewide block this size already accounts for a third of
- * the outgoing links on a short service page. Six of twelve services and five
+ * the outgoing links on a short service page. Seven of twelve services and five
  * of twenty-three courses are listed because the selectivity is the signal:
  * the hubs carry the rest, and everything remains two clicks from home.
  *
@@ -212,6 +212,8 @@ const Footer = () => {
               <li><Link to="/services/wordpress-development">WordPress development</Link></li>
               <li><Link to="/services/ai-automation">AI automation</Link></li>
               <li><Link to="/services/e-commerce-solutions">E-commerce</Link></li>
+              <li><Link to="/services/crm-development">CRM development</Link></li>
+              <li><Link to="/services/autonomous-ai-systems">Autonomous AI systems</Link></li>
             </ul>
           </div>
 

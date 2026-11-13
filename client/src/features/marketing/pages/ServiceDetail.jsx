@@ -29,11 +29,13 @@ const headline = (title) => {
 // description and the structured data.
 const LEDE = {
   'custom-software-development': 'Tailored software that scales with your operations.',
-  'ai-automation': 'AI agents, automation and custom LLM workflows.',
+  'ai-automation': 'Intelligent automation and custom LLM workflows.',
   'saas-platform-development': 'Multi-tenant SaaS, secure and built to scale.',
   'web-development': 'Custom web apps and responsive websites.',
   'mobile-app-development': 'Native and cross-platform apps for iOS and Android.',
   'wordpress-development': 'Custom themes, plugins and WooCommerce sites.',
+  'crm-development': 'Custom CRMs for sales, support and follow-ups.',
+  'autonomous-ai-systems': 'AI agents that run whole processes, end to end.',
   'ui-ux-design': 'Intuitive, accessible interfaces, designed around users.',
   'digital-marketing': 'Data-driven marketing that widens your reach.',
   'e-commerce-solutions': 'Online stores with secure payments and inventory.',

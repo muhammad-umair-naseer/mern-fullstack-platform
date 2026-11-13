@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
 import { photos } from '../assets/lux';
+import { SERVICE_COUNT_WORD } from '../data/services.js';
 import './ServicesPreview.css';
 
 /**
- * Home-page teaser for the twelve services.
+ * Home-page teaser for the services.
  *
  * Deliberately not a map over data/services.js: this section groups the
  * catalogue into the three things a visitor actually arrives looking for
@@ -64,7 +65,7 @@ const ServicesPreview = () => {
           <div className="lx-section-aside" data-reveal>
             <p>Delivered with the source code and the documentation.</p>
             <Link to="/services" className="lx-link">
-              All twelve services <ArrowRight size={16} aria-hidden="true" />
+              All {SERVICE_COUNT_WORD.toLowerCase()} services <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </div>
         </header>
