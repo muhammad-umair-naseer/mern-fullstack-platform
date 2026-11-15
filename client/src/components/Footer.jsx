@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, MessageCircle } from "lucide-react";
 import { COURSE_COUNT } from "../data/catalogue";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -63,6 +63,7 @@ const Footer = () => {
 
   useIdleGSAP(
     () => {
+      if (window.matchMedia('(max-width: 760px), (pointer: coarse)').matches) return;
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
@@ -326,6 +327,17 @@ const Footer = () => {
                 >
                   <Facebook size={18} strokeWidth={1.75} aria-hidden="true" focusable="false" />
                   <span className="visually-hidden">Facebook (opens in a new tab)</span>
+                </a>
+              </li>
+              <li>
+                {/* eslint-disable-next-line react/jsx-no-target-blank */}
+                <a
+                  href="https://wa.me/923475769500"
+                  target="_blank"
+                  rel="me noopener"
+                >
+                  <MessageCircle size={18} strokeWidth={1.75} aria-hidden="true" focusable="false" />
+                  <span className="visually-hidden">WhatsApp (opens in a new tab)</span>
                 </a>
               </li>
             </ul>

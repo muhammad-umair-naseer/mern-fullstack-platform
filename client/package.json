@@ -38,6 +38,7 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "scripts": {
+    "dev": "npm start",
     "start": "vite --host 127.0.0.1 --port 3000",
     "build": "npm run blog && npm run sitemap && vite build && npm run prerender",
     "test": "vitest run",

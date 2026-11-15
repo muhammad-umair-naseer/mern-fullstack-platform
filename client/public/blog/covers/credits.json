@@ -2,6 +2,11 @@
   "license": "Unsplash License (https://unsplash.com/license): free to use, attribution appreciated",
   "note": "Blog covers. Each file is the Unsplash photo cropped to 1200x675 (16:9, the card aspect) and encoded to WebP. One photo per post; none is reused elsewhere on the site.",
   "covers": {
+    "are-gpu-prices-going-to-drop-after-nvidia-controversy.webp": {
+      "photographer": "Cortexis Research Team",
+      "profile": "https://cortexissolutionhub.com",
+      "photo": "Original hardware market analytics and architectural visualization"
+    },
     "are-free-online-certificates-worth-anything.webp": {
       "photographer": "Romain V",
       "profile": "https://unsplash.com/@romainv",

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, ArrowUpRight, Check } from 'lucide-react';
+import { Mail, Phone, MessageCircle, MapPin, Send, CheckCircle2, AlertCircle, ArrowUpRight, Check } from 'lucide-react';
 import API_BASE_URL from '../../../config.js';
 import { useRevealOnScroll } from '../../../hooks/useRevealOnScroll.jsx';
 import PageHero from '../../../components/PageHero.jsx';
@@ -72,6 +72,7 @@ const Contact = () => {
   const chips = [
     { icon: Mail, label: 'Email', value: 'cortexis.solution.hub@gmail.com', href: 'mailto:cortexis.solution.hub@gmail.com' },
     { icon: Phone, label: 'Phone', value: '+92 347-5769500', href: 'tel:+923475769500' },
+    { icon: MessageCircle, label: 'WhatsApp', value: '+92 347-5769500', href: 'https://wa.me/923475769500' },
     { icon: MapPin, label: 'Address', value: 'Pakistan', href: 'https://maps.google.com/?q=Pakistan' }
   ];
 
