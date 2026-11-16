@@ -285,7 +285,8 @@ const renderRoute = async (route) => {
     page.on('response', async (response) => {
       const url = new URL(response.url());
       if (response.request().method() !== 'GET' || !response.ok() || !url.pathname.startsWith('/api/') || url.pathname.startsWith('/api/auth/')) return;
-      try { apiData[url.pathname.slice(4) + url.search] = await response.json(); } catch { /* not JSON */ }
+      // Same key as dataKey in src/lib/api.js: no slashes, so it never reads as a URL.
+      try { apiData[(url.pathname.slice(4) + url.search).replace(/^\//, '').replace(/\//g, ':')] = await response.json(); } catch { /* not JSON */ }
     });
     await page.goto(`http://localhost:${PORT}${route}`, {
       waitUntil: 'networkidle0',

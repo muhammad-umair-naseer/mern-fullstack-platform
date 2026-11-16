@@ -132,6 +132,13 @@ if (process.env.NODE_ENV === 'production') {
     // that page when it exists, and the SPA shell for everything else.
     const target = path.normalize(path.join(buildDir, req.path, 'index.html'));
     if (target.startsWith(buildDir + path.sep) && fs.existsSync(target)) return res.sendFile(target);
+    // /learn/courses/<slug> is the API's path, never a page, but crawlers
+    // picked it up from embedded page data; send them to the course page.
+    // Unknown slugs fall through to the 404 below.
+    const legacyCourse = /^\/learn\/courses\/([a-z0-9-]+)\/?$/.exec(req.path);
+    if (legacyCourse && fs.existsSync(path.join(buildDir, 'learn', legacyCourse[1], 'index.html'))) {
+      return res.redirect(301, `/learn/${legacyCourse[1]}`);
+    }
     const aliases = { '/yourbot': '/your-bot', '/automations': '/your-bot', '/apply': '/internships', '/apply-now': '/internships', '/internship': '/internships' };
     if (aliases[req.path]) return res.redirect(301, aliases[req.path]);
     if (/^\/whatsapp-bot(?:\/|$)/.test(req.path)) return res.redirect(301, req.path.replace('/whatsapp-bot', '/your-bot'));

@@ -48,9 +48,14 @@ export const api = async (path, { method = 'GET', body, auth = true, keepalive =
 // The API responses a prerendered page was built with (scripts/prerender.mjs
 // embeds them as JSON). A page starts from them, so its first render matches
 // the saved HTML and React can hydrate it; it still fetches fresh data after.
+// Keyed "learn:courses:<slug>", not by the API path: crawlers pull URL-like
+// strings out of pages and requested /learn/courses/<slug>, which 404ed.
+// scripts/prerender.mjs builds the same key.
+export const dataKey = (path) => path.replace(/^\//, '').replace(/\//g, ':');
 let embedded;
 export const prerendered = (path) => {
   if (typeof window === 'undefined') return undefined;
+  path = dataKey(path);
   if (window.__CX_DATA__) return window.__CX_DATA__[path];
   if (embedded === undefined) {
     try { embedded = JSON.parse(document.getElementById('cx-data')?.textContent || 'null') || {}; } catch { embedded = {}; }
