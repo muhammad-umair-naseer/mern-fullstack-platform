@@ -96,6 +96,21 @@ const SHELL = (await readFile(join(BUILD, 'index.html'), 'utf8'))
 if (/<div id="root"><\/div>/.test(SHELL)) await writeFile(join(BUILD, 'shell.html'), SHELL);
 else console.warn('shell.html not written: build/index.html is already prerendered (run vite build first)');
 
+// The same public shape GET /api/learn/courses/:slug returns: titles, summaries
+// and minutes, never lesson bodies, quizzes, answers or the final exam. The
+// page's data is embedded in the HTML for hydration (see renderRoute), so the
+// raw course file must never be served here: it carries every answer.
+const publicCourse = (mod) => ({
+  id: mod.slug, slug: mod.slug, title: mod.title, category: mod.category, level: mod.level,
+  duration: mod.duration, accent: mod.accent, coverKey: mod.coverKey, summary: mod.summary,
+  description: mod.description, hours: mod.hours, finalCount: mod.final?.length || 0,
+  chapters: (mod.chapters || []).map((ch, ci) => ({
+    id: `${mod.slug}-${ci + 1}`, position: ci + 1, title: ch.title, summary: ch.summary,
+    quizCount: ch.quiz?.length || 0,
+    lessons: (ch.lessons || []).map((l, li) => ({ id: `${mod.slug}-${ci + 1}-${li + 1}`, position: li + 1, title: l.title, minutes: l.minutes })),
+  })),
+});
+
 // Preload local courses so prerendering never fails even if backend API is offline
 const courseMap = new Map();
 const courseList = [];
@@ -175,7 +190,7 @@ const server = createServer(async (req, res) => {
       const course = courseMap.get(slug);
       if (course) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ data: course }));
+        return res.end(JSON.stringify({ data: publicCourse(course) }));
       }
     }
 

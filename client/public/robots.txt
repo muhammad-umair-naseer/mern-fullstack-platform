@@ -7,31 +7,41 @@ Disallow: /dashboard
 Disallow: /login
 Disallow: /signup
 Disallow: /toolkit/tests/
+# Cloudflare's internal paths (e.g. /cdn-cgi/l/email-protection) are not pages.
+Disallow: /cdn-cgi/
 
 # Generative Engine & AI Search Crawlers (Explicitly welcomed)
 User-agent: GPTBot
 Allow: /
+Disallow: /cdn-cgi/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /cdn-cgi/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /cdn-cgi/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /cdn-cgi/
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /cdn-cgi/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /cdn-cgi/
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /cdn-cgi/
 
 User-agent: Amazonbot
 Allow: /
+Disallow: /cdn-cgi/
 
 # Canonical sitemap & Generative Engine knowledge bases
 Sitemap: https://cortexissolutionhub.com/sitemap.xml
