@@ -2,7 +2,7 @@ import React from 'react';
 import LegalPage from './LegalPage.jsx';
 
 const PRODUCT = 'Cortexis Your Bot';
-const EMAIL = 'cortexis.solution.hub@gmail.com';
+const EMAIL = 'info@cortexissolutionhub.com';
 
 const sections = [
   {

@@ -122,7 +122,7 @@ const sections = [
     blocks: [
       { p: 'Questions about these Terms? We’re here to help.' },
       { list: [
-        'Email: cortexis.solution.hub@gmail.com',
+        'Email: info@cortexissolutionhub.com',
         'Phone: +92 347-5769500',
         'Address: Pakistan',
       ] },

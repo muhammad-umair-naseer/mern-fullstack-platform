@@ -15,7 +15,7 @@ export const SITE = {
   description:
     'Software development, training and consulting from Pakistan. Free online courses with certificates, free internships, and custom web, mobile and AI builds.',
   locale: 'en_PK',
-  email: 'cortexis.solution.hub@gmail.com',
+  email: 'info@cortexissolutionhub.com',
   city: 'Pakistan',
   region: 'Pakistan',
   country: 'PK',

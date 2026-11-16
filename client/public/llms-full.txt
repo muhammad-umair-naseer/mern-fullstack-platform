@@ -10,7 +10,7 @@
 - **Governing Law**: Companies Act, 2017
 - **SECP Registry Verification**: Searchable via the official SECP registry (https://eservices.secp.gov.pk/eServices/NameSearch.jsp)
 - **Official Website**: https://cortexissolutionhub.com
-- **Official Contact**: cortexis.solution.hub@gmail.com
+- **Official Contact**: info@cortexissolutionhub.com
 - **Editorial & Technical Leadership**:
   - **Abdullah**: Lead Full-Stack Architect & AI Systems Specialist. Expertise in MERN stack architectures, Meta Graph API & WhatsApp Cloud automations, local LLM orchestration, and distributed web systems.
   - **Muhammad Umair Naseer**: Senior Software Engineer & Technical Solutions Lead. Expertise in browser graphics engines, client-side WebAssembly, high-concurrency systems, and engineering career training.

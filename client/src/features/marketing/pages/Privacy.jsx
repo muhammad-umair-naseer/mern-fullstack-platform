@@ -130,7 +130,7 @@ const sections = [
       { p: 'We may update this Privacy Policy from time to time. The “Last updated” date reflects the latest revision, and material changes will be communicated through the Services. Your continued use after changes take effect constitutes acceptance.' },
       { h: 'Contact us' },
       { list: [
-        'Email: cortexis.solution.hub@gmail.com',
+        'Email: info@cortexissolutionhub.com',
         'Phone: +92 347-5769500',
         'Address: Pakistan',
       ] },

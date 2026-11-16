@@ -3,7 +3,7 @@ import LegalPage from './LegalPage.jsx';
 
 const PRODUCT = 'Cortexis Your Bot';
 const COMPANY = 'Cortexis Solution Hub Pvt Ltd';
-const EMAIL = 'cortexis.solution.hub@gmail.com';
+const EMAIL = 'info@cortexissolutionhub.com';
 
 const sections = [
   {

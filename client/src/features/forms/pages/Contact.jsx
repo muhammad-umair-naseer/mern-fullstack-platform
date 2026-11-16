@@ -70,7 +70,7 @@ const Contact = () => {
   };
 
   const chips = [
-    { icon: Mail, label: 'Email', value: 'cortexis.solution.hub@gmail.com', href: 'mailto:cortexis.solution.hub@gmail.com' },
+    { icon: Mail, label: 'Email', value: 'info@cortexissolutionhub.com', href: 'mailto:info@cortexissolutionhub.com' },
     { icon: Phone, label: 'Phone', value: '+92 347-5769500', href: 'tel:+923475769500' },
     { icon: MessageCircle, label: 'WhatsApp', value: '+92 347-5769500', href: 'https://wa.me/923475769500' },
     { icon: MapPin, label: 'Address', value: 'Pakistan', href: 'https://maps.google.com/?q=Pakistan' }
@@ -95,7 +95,7 @@ const Contact = () => {
         lede="Projects, training or internships. We reply within one business day."
         actions={[
           { href: '#contact-form', label: 'Write to us', primary: true },
-          { href: 'mailto:cortexis.solution.hub@gmail.com', label: 'Email us' },
+          { href: 'mailto:info@cortexissolutionhub.com', label: 'Email us' },
         ]}
         visual={<ContactVisual />}
       />
