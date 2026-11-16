@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# RETIRED 2026-11-16: YourBot now binds its ports to 127.0.0.1 and publishes no
+# database port, so this guard was removed from the server (unit, helper and
+# DOCKER-USER rules). Kept for reference; re-run only if a container publishes
+# on 0.0.0.0 again.
+#
 # Temporary guard: keep YourBot's published Docker ports off the internet.
 # Run on the server as deploy:  sudo bash /opt/cortexis/deploy/server/09-yourbot-port-guard.sh
 #
