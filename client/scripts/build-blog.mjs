@@ -93,6 +93,8 @@ if (existsSync(DIR)) {
       // file. Without it the card draws a designed cover from the category.
       image: meta.image || '',
       imageAlt: meta.imageAlt || meta.alt || meta.title || '',
+      ...(meta.imageWidth && meta.imageHeight ? { imageWidth: Number(meta.imageWidth), imageHeight: Number(meta.imageHeight) } : {}),
+      ...(meta.answer ? { answer: meta.answer, takeaways: [meta.takeaway1, meta.takeaway2, meta.takeaway3].filter(Boolean) } : {}),
       author: meta.author || 'Cortexis Solution Hub',
       // A post can live on another page instead of /blog/<slug>: the service
       // page it belongs to renders it in full, the blog card links there, and

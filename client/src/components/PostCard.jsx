@@ -52,7 +52,7 @@ const PostCard = ({ post, featured = false }) => (
     <Link to={postPath(post)} className="cx-pc-link">
       <div className="cx-pc-cover">
         {post.image ? (
-          <img src={post.image} alt={post.imageAlt || ''} loading="lazy" decoding="async" />
+          <img src={post.image} alt={post.imageAlt || ''} width={post.imageWidth} height={post.imageHeight} loading="lazy" decoding="async" />
         ) : (
           <span className="cx-pc-mono" aria-hidden="true">{monogram(post.title)}</span>
         )}

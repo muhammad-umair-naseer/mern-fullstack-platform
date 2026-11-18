@@ -21,7 +21,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  *   src, alt  the cover image
  *   minutes   reading time, shown on the dial (capped at an hour)
  */
-export default function BlogPostVisual({ src, alt, minutes = 0 }) {
+export default function BlogPostVisual({ src, alt, width, height, minutes = 0 }) {
   const scope = useRef(null);
   const m = Math.max(0, Math.min(60, Math.round(minutes)));
 
@@ -59,7 +59,7 @@ export default function BlogPostVisual({ src, alt, minutes = 0 }) {
       <div className="bpv-frame">
         <div className="bpv-drift">
           <div className="bpv-kb">
-            <img src={src} alt={alt} decoding="async" fetchPriority="high" />
+            <img src={src} alt={alt} width={width} height={height} decoding="async" fetchPriority="high" />
           </div>
         </div>
         <span className="lx-pv-sheen" aria-hidden="true" />

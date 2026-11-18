@@ -27,6 +27,8 @@ const Seo = ({
   noindex = false,
   schema,
   bare = false,
+  type = 'website',
+  robots,
   children,
 }) => {
   const fullTitle = !title ? SITE.name : bare ? title : `${title} | ${SITE.titleSuffix}`;
@@ -44,8 +46,9 @@ const Seo = ({
           rule is noindex rather than a robots.txt Disallow: blocking the crawl
           would also stop it seeing the canonical and the links out. */}
       {noindex && <meta data-cx-seo="" name="robots" content="noindex, follow" />}
+      {!noindex && robots && <meta data-cx-seo="" name="robots" content={robots} />}
 
-      <meta data-cx-seo="" property="og:type" content="website" />
+      <meta data-cx-seo="" property="og:type" content={type} />
       <meta data-cx-seo="" property="og:site_name" content={SITE.name} />
       <meta data-cx-seo="" property="og:locale" content={SITE.locale} />
       <meta data-cx-seo="" property="og:title" content={fullTitle} />

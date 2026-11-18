@@ -159,17 +159,23 @@ const Heading3 = ({ children }) => {
   );
 };
 
-const MarkdownImage = ({ src, alt }) => (
+const MarkdownImage = ({ src, alt, title }) => {
+  const dimensions = /^(\d+)x(\d+)$/.exec(title || '');
+  return (
   <figure className="cx-md-figure my-8 text-center">
     <img
       src={src}
       alt={alt || 'Technical architecture diagram'}
+      width={dimensions ? Number(dimensions[1]) : undefined}
+      height={dimensions ? Number(dimensions[2]) : undefined}
+      title={dimensions ? undefined : title}
       loading="lazy"
       decoding="async"
       className="cx-md-img rounded-xl border border-slate-200/80 shadow-md max-w-full h-auto mx-auto"
     />
   </figure>
-);
+  );
+};
 
 // A paragraph holding an image renders as a div: the image is a <figure>,
 // which HTML does not allow inside <p>. Parsing a prerendered page, the

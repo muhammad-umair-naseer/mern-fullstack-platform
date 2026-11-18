@@ -124,6 +124,8 @@ const BlogPost = () => {
     <main className="cx-lv text-black min-h-screen">
       <Seo
         title={post.title}
+        type="article"
+        robots="index, follow, max-image-preview:large"
         description={post.description}
         image={post.image ? absolute(post.image) : undefined}
         // A course guide is read in full on its course page, which is the one
@@ -159,7 +161,11 @@ const BlogPost = () => {
           // The questions render below the post (BlogFaq), so the markup matches the page.
           ...(faqs.length ? [faq(faqs.map((f) => ({ q: f.question, a: f.answer })))] : []),
         ]}
-      />
+      >
+        <meta data-cx-seo="" property="article:published_time" content={post.date} />
+        <meta data-cx-seo="" property="article:modified_time" content={post.updated} />
+        <meta data-cx-seo="" property="og:image:alt" content={post.imageAlt || post.title} />
+      </Seo>
 
       {/* Keyed on the post: a Read next click keeps this route mounted, and
           without a fresh tree the next post would appear with no entrance and
@@ -180,7 +186,7 @@ const BlogPost = () => {
             }
             visual={
               post.image ? (
-                <BlogPostVisual src={post.image} alt={post.imageAlt || post.title} minutes={post.minutes} />
+                <BlogPostVisual src={post.image} alt={post.imageAlt || post.title} width={post.imageWidth} height={post.imageHeight} minutes={post.minutes} />
               ) : undefined
             }
           />

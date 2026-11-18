@@ -11,7 +11,7 @@ const AiKeyTakeaways = ({ post }) => {
   if (!post || !post.description) return null;
 
   // Generate 3 concise takeaways from the post metadata
-  const takeaways = [
+  const takeaways = post.takeaways?.length ? post.takeaways : [
     post.description,
     `Authored by ${post.author || 'Cortexis Technical Team'} with actionable, zero-fluff implementation guidance.`,
     'Verified for immediate practical application, production workflows, and professional skill enhancement.',
@@ -29,7 +29,7 @@ const AiKeyTakeaways = ({ post }) => {
 
       <p className="cx-ai-lead">
         <strong>Direct Answer: </strong>
-        {post.description}
+        {post.answer || post.description}
       </p>
 
       <ul className="cx-ai-list">
