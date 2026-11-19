@@ -90,6 +90,8 @@ If you are at the very start, a game works best next to a course. Our free [Pyth
 
 Both games let you open a private room and share an invite link. Private rooms are friendlies: they do not change the public rankings, but they keep your streak alive, record your head to head results and keep a running score for the room. That makes them a good fit for a group of friends, a study group or a class warm up. Our step by step guide shows [how to start a typing race with friends](/blog/typing-race-with-friends).
 
+If you are choosing between free browser sessions and a paid console game, our [GTA 6 platform, price and download guide](/blog/gta-6-how-to-play-pc-requirements-price) explains the different hardware, storage and ownership costs. These coding games remain a separate lightweight option; they do not provide access to GTA VI.
+
 ## Keep going: guides for both games
 
 - [JavaScript output questions: 10 tricky snippets, answered](/blog/javascript-output-questions)

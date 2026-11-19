@@ -13,6 +13,8 @@ Sketch & Guess is a real-time multiplayer drawing-and-guessing game in your brow
 
 To start playing right away, jump into **Quick Play** to match with other players (empty seats are filled with intelligent bots), or create a **Private Room** to play with friends using your own custom rules and word packs.
 
+Planning a gaming evening? Sketch & Guess is designed for short multiplayer browser rounds. For a different kind of purchase, see our [GTA 6 single-player launch and platform guide](/blog/gta-6-how-to-play-pc-requirements-price) before assuming that a console game's launch includes an online mode for your group.
+
 ## How one round works
 
 Every round follows a clear and fast-paced turn structure:

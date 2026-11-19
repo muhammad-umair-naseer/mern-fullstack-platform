@@ -15,6 +15,8 @@ For gamers and workstation builders priced out of the flagship market over recen
 
 Below, we dissect what actually happened, examine real empirical pricing data from retail tracking indexes across 2025 and 2026, and analyze the true supply-chain bottlenecks dictating what you will actually pay for current-generation graphics cards.
 
+If GTA VI is the reason you are considering an upgrade, first read our [GTA 6 PC requirements and hardware-readiness guide](/blog/gta-6-how-to-play-pc-requirements-price). It separates announced platform access from unknown PC specifications and includes a worksheet to help you avoid buying a GPU before there is a verified workload to compare against.
+
 ## Direct Answer: Will Nvidia GPU Prices Drop?
 
 > **Quick Answer:** **No, GPU prices are not going down because of Nvidia's executive controversy, board inquiry, or shareholder lawsuits.** Although public scrutiny created temporary stock price volatility for Nvidia shares, consumer retail pricing is determined strictly by physical silicon wafer allocation at TSMC, persistent global shortages of high-speed GDDR7 memory, and institutional demand for AI accelerators. Hardware price tracking across North American and European retailers confirms that cards like the GeForce RTX 5090 and RTX 5080 remain severely constrained, trading anywhere from 1.8x to 3.5x their original Manufacturer Suggested Retail Prices (MSRP).
