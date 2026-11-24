@@ -64,22 +64,11 @@ jobs:
           CHROME_PATH: /usr/bin/google-chrome
           REACT_APP_SITE_URL: ${{ vars.SITE_URL || 'https://ci.example.com' }}
         run: npm run build --prefix client
-      - uses: actions/upload-artifact@v4
-        with:
-          name: website-build
-          path: client/build
-  image:
-    needs: verify
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: website-build
-          path: client/build
+      # Validate the image using the build already on this runner. Moving it
+      # between jobs via artifacts makes checks depend on account storage quota.
       - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
+      - name: Verify production Docker image
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: false
