@@ -21,7 +21,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  *   src, alt  the cover image
  *   minutes   reading time, shown on the dial (capped at an hour)
  */
-export default function BlogPostVisual({ src, alt, width, height, minutes = 0 }) {
+export default function BlogPostVisual({ src, alt, width, height, fit = 'cover', minutes = 0 }) {
   const scope = useRef(null);
   const m = Math.max(0, Math.min(60, Math.round(minutes)));
 
@@ -39,6 +39,7 @@ export default function BlogPostVisual({ src, alt, width, height, minutes = 0 })
 
   useGSAP(
     () => {
+      if (fit === 'contain') return undefined;
       const mm = gsap.matchMedia();
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         gsap.to(scope.current.querySelector('.bpv-drift'), {
@@ -49,11 +50,11 @@ export default function BlogPostVisual({ src, alt, width, height, minutes = 0 })
       });
       return () => mm.revert();
     },
-    { scope }
+    { scope, dependencies: [fit], revertOnUpdate: true }
   );
 
   return (
-    <div className="bpv group" ref={scope} style={{ '--m': m, '--deg': `${m * 6}deg` }}>
+    <div className={`bpv group${fit === 'contain' ? ' bpv--diagram' : ''}`} ref={scope} style={{ '--m': m, '--deg': `${m * 6}deg`, '--image-ratio': width && height ? `${width} / ${height}` : '16 / 9' }}>
       <span className="bpv-mat" aria-hidden="true" />
 
       <div className="bpv-frame">

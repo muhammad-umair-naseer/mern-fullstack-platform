@@ -80,6 +80,7 @@ if (existsSync(DIR)) {
     posts.push({
       slug,
       title: meta.title,
+      ...(meta.seoTitle ? { seoTitle: meta.seoTitle } : {}),
       description: meta.description,
       date: meta.date,
       updated: meta.updated || meta.date,
@@ -93,9 +94,11 @@ if (existsSync(DIR)) {
       // file. Without it the card draws a designed cover from the category.
       image: meta.image || '',
       imageAlt: meta.imageAlt || meta.alt || meta.title || '',
+      ...(meta.imageFit === 'contain' ? { imageFit: 'contain' } : {}),
       ...(meta.imageWidth && meta.imageHeight ? { imageWidth: Number(meta.imageWidth), imageHeight: Number(meta.imageHeight) } : {}),
       ...(meta.answer ? { answer: meta.answer, takeaways: [meta.takeaway1, meta.takeaway2, meta.takeaway3].filter(Boolean) } : {}),
       author: meta.author || 'Cortexis Solution Hub',
+      ...(meta.showAuthorBio === 'false' ? { showAuthorBio: false } : {}),
       // A post can live on another page instead of /blog/<slug>: the service
       // page it belongs to renders it in full, the blog card links there, and
       // /blog/<slug> redirects, so the words sit at one address only.

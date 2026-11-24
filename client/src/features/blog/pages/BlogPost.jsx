@@ -123,7 +123,8 @@ const BlogPost = () => {
   return (
     <main className="cx-lv text-black min-h-screen">
       <Seo
-        title={post.title}
+        title={post.seoTitle || post.title}
+        bare={Boolean(post.seoTitle)}
         type="article"
         robots="index, follow, max-image-preview:large"
         description={post.description}
@@ -143,13 +144,15 @@ const BlogPost = () => {
             url: absolute(`/blog/${post.slug}`),
             mainEntityOfPage: absolute(`/blog/${post.slug}`),
             author: {
-              '@type': 'Person',
+              '@type': author.type || 'Person',
               name: author.displayName,
+              ...(author.type === 'Organization' ? { url: absolute('/') } : {
               jobTitle: author.role,
               worksFor: {
                 '@type': 'Organization',
                 name: SITE.legalName,
               },
+              }),
             },
             publisher: { '@id': `${absolute('/')}#organization`.replace('//#', '/#') },
           },
@@ -159,7 +162,7 @@ const BlogPost = () => {
             { name: post.title, path: `/blog/${post.slug}` },
           ]),
           // The questions render below the post (BlogFaq), so the markup matches the page.
-          ...(faqs.length ? [faq(faqs.map((f) => ({ q: f.question, a: f.answer })))] : []),
+          ...(faqs.length ? [faq(faqs.map((f) => ({ q: f.question, a: f.answer.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*/g, '') })))] : []),
         ]}
       >
         <meta data-cx-seo="" property="article:published_time" content={post.date} />
@@ -186,7 +189,7 @@ const BlogPost = () => {
             }
             visual={
               post.image ? (
-                <BlogPostVisual src={post.image} alt={post.imageAlt || post.title} width={post.imageWidth} height={post.imageHeight} minutes={post.minutes} />
+                <BlogPostVisual src={post.image} alt={post.imageAlt || post.title} width={post.imageWidth} height={post.imageHeight} fit={post.imageFit} minutes={post.minutes} />
               ) : undefined
             }
           />
@@ -211,7 +214,7 @@ const BlogPost = () => {
           <BlogShare title={post.title} slug={post.slug} placement="bottom" />
 
           {/* Author Bio Box for E-E-A-T Credibility */}
-          <AuthorBio author={author} />
+          {post.showAuthorBio !== false && <AuthorBio author={author} />}
 
           {/* Interactive FAQ Accordion Component at end of article */}
           {faqs.length > 0 && <BlogFaq faqs={faqs} />}

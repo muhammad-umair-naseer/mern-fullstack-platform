@@ -50,7 +50,7 @@ const monogram = (title) =>
 const PostCard = ({ post, featured = false }) => (
   <article className={`cx-pc${featured ? ' is-featured' : ''}`} data-card>
     <Link to={postPath(post)} className="cx-pc-link">
-      <div className="cx-pc-cover">
+      <div className={`cx-pc-cover${post.imageFit === 'contain' ? ' cx-pc-cover--diagram' : ''}`}>
         {post.image ? (
           <img src={post.image} alt={post.imageAlt || ''} width={post.imageWidth} height={post.imageHeight} loading="lazy" decoding="async" />
         ) : (

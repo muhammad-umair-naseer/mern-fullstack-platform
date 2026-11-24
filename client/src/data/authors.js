@@ -4,6 +4,18 @@
  */
 
 export const AUTHORS = {
+  cortexis: {
+    id: 'cortexis',
+    type: 'Organization',
+    name: 'Cortexis Solution Hub',
+    displayName: 'Cortexis Solution Hub',
+    role: 'Cortexis Insights',
+    company: 'Cortexis Solution Hub',
+    bio: 'Guides from Cortexis Solution Hub on software development, business automation, and digital technology. This article draws on the linked official sources and clearly identified illustrative examples.',
+    expertise: ['Software Development', 'Business Automation', 'Digital Technology'],
+    initials: 'CX',
+    badgeColor: 'indigo',
+  },
   abdullah: {
     id: 'abdullah',
     name: 'Abdullah',
@@ -31,6 +43,7 @@ export const AUTHORS = {
 export const getAuthor = (nameOrId) => {
   if (!nameOrId) return AUTHORS.abdullah;
   const key = String(nameOrId).trim().toLowerCase();
+  if (key === 'cortexis-editorial') return AUTHORS.cortexis;
   if (key.includes('umair')) return AUTHORS.umair;
   return AUTHORS.abdullah;
 };

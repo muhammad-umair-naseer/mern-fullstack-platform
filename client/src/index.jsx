@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './fonts/fonts.css';
 import './index.css';
-import App from './App';
+import App, { prepareBlogRoute } from './App';
 
 import startIdleMotion from './lib/idleMotion';
 import startScrollRefresh from './lib/scrollRefresh';
@@ -28,9 +28,14 @@ if (navigator.webdriver) {
 } else if (container.firstElementChild) {
   // A prerendered page: reuse its HTML instead of drawing it again. Where the
   // markup cannot be reused, React falls back to drawing that part itself.
-  ReactDOM.hydrateRoot(container, tree, {
+  const hydrate = () => ReactDOM.hydrateRoot(container, tree, {
     onRecoverableError: (error, info) => console.warn('[hydrate]', error?.message || error, info?.componentStack || ''),
   });
+  if (window.location.pathname.replace(/\/$/, '') === '/blog/chatgpt-advertising-benefits-costs-2026') {
+    prepareBlogRoute().then(hydrate);
+  } else {
+    hydrate();
+  }
 } else {
   ReactDOM.createRoot(container).render(tree);
 }

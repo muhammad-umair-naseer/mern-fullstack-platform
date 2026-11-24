@@ -132,6 +132,14 @@
   animation: lx-film-settle 2s var(--ease-out-expo) 300ms both;
 }
 
+/* Diagrams retain their full frame and keep the reading-time badge outside. */
+.bpv--diagram .bpv-frame { aspect-ratio: var(--image-ratio); }
+.bpv--diagram .bpv-drift { top: 0; height: 100%; }
+.bpv--diagram .bpv-kb,
+.bpv--diagram .bpv-kb img { animation: none; }
+.bpv--diagram .bpv-kb img { object-fit: contain; }
+.bpv--diagram .bpv-chip { position: relative; left: auto; bottom: auto; width: fit-content; margin-top: 1rem; animation: none; }
+
 /* ── The reading-time dial ──────────────────────────────────────────── */
 
 .bpv-chip {

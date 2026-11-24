@@ -58,7 +58,12 @@ const ToolDetail = lazy(() => import('./features/tools/pages/ToolDetail.jsx'));
 const ServiceDetail = lazy(() => import('./features/marketing/pages/ServiceDetail.jsx'));
 const Faq = lazy(() => import('./features/marketing/pages/Faq.jsx'));
 const Blog = lazy(() => import('./features/blog/pages/Blog.jsx'));
-const BlogPost = lazy(() => import('./features/blog/pages/BlogPost.jsx'));
+let BlogPost = lazy(() => import('./features/blog/pages/BlogPost.jsx'));
+
+// Resolve the article before hydrating its static HTML to avoid a loading flash.
+export async function prepareBlogRoute() {
+  BlogPost = (await import('./features/blog/pages/BlogPost.jsx')).default;
+}
 
 // Playground & multiplayer games
 const Games = lazy(() => import('./features/games/pages/Games.jsx'));

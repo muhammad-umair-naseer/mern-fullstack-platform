@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import FaqSection from '../FaqSection';
 
 /** A post's own questions, in the same folded list as the rest of the site. */
@@ -14,7 +15,10 @@ const BlogFaq = ({ faqs = [] }) => {
             Questions, <em>answered</em>
           </>
         }
-        items={faqs.map((f) => ({ q: f.question, a: f.answer }))}
+        items={faqs.map((f) => ({
+          q: f.question,
+          a: <ReactMarkdown components={{ p: ({ children }) => <>{children}</> }}>{f.answer}</ReactMarkdown>,
+        }))}
       />
     </div>
   );

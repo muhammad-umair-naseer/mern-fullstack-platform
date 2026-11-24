@@ -327,7 +327,10 @@ const renderRoute = async (route) => {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         // The site's reduced-motion paths already reveal content. Avoid hundreds
         // of unnecessary animation frames on long articles; load images explicitly.
-        for (const image of document.images) image.loading = 'eager';
+        // Keep the new article's inline image loading hints in saved HTML.
+        if (location.pathname !== '/blog/chatgpt-advertising-benefits-costs-2026') {
+          for (const image of document.images) image.loading = 'eager';
+        }
         window.scrollTo(0, document.documentElement.scrollHeight);
         await new Promise(resolve => setTimeout(resolve, 400));
         window.scrollTo(0, 0);

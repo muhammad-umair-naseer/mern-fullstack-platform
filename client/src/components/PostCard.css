@@ -66,6 +66,11 @@
   transform: scale(1.045);
 }
 
+.cx-pc-cover--diagram { background: #0b1523; }
+.cx-pc-cover--diagram img { object-fit: contain; }
+.cx-pc:hover .cx-pc-cover--diagram img,
+.cx-pc:focus-within .cx-pc-cover--diagram img { transform: none; }
+
 .cx-pc-mono {
   font-family: var(--font-display);
   font-style: italic;

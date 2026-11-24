@@ -6,9 +6,9 @@ import './BlogShare.css';
 const BlogShare = ({ title, slug, placement = 'top' }) => {
   const [copied, setCopied] = useState(false);
 
-  const url = typeof window !== 'undefined'
-    ? `${window.location.origin}/blog/${slug}`
-    : `${SITE_URL}/blog/${slug}`;
+  // Static prerendering runs on localhost; share the public address in every
+  // environment so the saved HTML and hydrated page agree.
+  const url = `${SITE_URL}/blog/${slug}`;
 
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
