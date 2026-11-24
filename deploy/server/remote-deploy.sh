@@ -6,6 +6,7 @@
 #   bash /opt/cortexis/deploy/server/remote-deploy.sh
 set -euo pipefail
 cd "$(dirname "$0")/../.."
+umask 002   # files we write stay writable by the shared cortexis group
 APP_DIR="$(pwd)"
 log() { printf '\n== %s\n' "$*"; }
 
@@ -16,12 +17,14 @@ log "1/6 Build environment (Node 24 + Chromium, cached after the first time)"
 docker build -q -t cortexis-builder -f deploy/build.Dockerfile deploy >/dev/null
 
 log "2/6 Build the website (install, blog, sitemap, Vite, SEO prerender)"
-# Runs as the deploy user so the files it writes stay ours; the npm cache lives
-# in the repo folder (never uploaded or committed) so later builds are faster.
-docker run --rm --user "$(id -u):$(id -g)" \
+# Runs as the deploying user with the shared cortexis group (Docker drops
+# supplementary groups), so either operator can replace what the other built.
+# The npm cache lives in the repo folder (never uploaded or committed).
+gid="$(getent group cortexis | cut -d: -f3)"
+docker run --rm --user "$(id -u):${gid:-$(id -g)}" \
   -e HOME=/tmp -e npm_config_cache=/src/.npm-cache -e NODE_ENV=production \
   -v "$APP_DIR:/src" cortexis-builder \
-  sh -c 'npm ci --include=dev --no-audit && npm run build'
+  sh -c 'umask 002 && npm ci --include=dev --no-audit && npm run build'
 test -s client/build/index.html
 test -s client/build/prerender-manifest.json
 echo "Built: $(find client/build -name '*.html' | wc -l) pages"
@@ -50,12 +53,8 @@ log "6/6 Start the new website and admin"
 docker compose up -d cortexis-website admin
 for i in $(seq 1 45); do
   if curl -fsS -o /dev/null http://127.0.0.1:5000/ready; then
-    # Cortexis automatic cache purge (after readiness). deploy/deploy.sh sets
-    # CORTEXIS_PURGE_LATER when it builds as another user and runs the purge
-    # itself, as the owner of the purge credentials, right after this returns.
-    if [ -n "${CORTEXIS_PURGE_LATER:-}" ]; then
-      echo "Cache purge: run by deploy.sh next."
-    elif ! python3 "$APP_DIR/deploy/cloudflare-purge.py"; then
+    # Cortexis automatic cache purge (after readiness)
+    if ! python3 "$APP_DIR/deploy/cloudflare-purge.py"; then
       echo "Website deployed, but cache purge/verification failed. Run deploy/cloudflare-purge.py again after fixing the error." >&2
       exit 2
     fi

@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const copy = (from, to) => { const target = path.join(root, 'public/vendor', to); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.cpSync(path.join(root, 'node_modules', from), target, { recursive: true }); };
+// A fresh copy each time: cpSync onto an existing folder changes its mode, which
+// only the folder's owner may do (the server is shared by two deploy users).
+const copy = (from, to) => { const target = path.join(root, 'public/vendor', to); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.rmSync(target, { recursive: true, force: true }); fs.cpSync(path.join(root, 'node_modules', from), target, { recursive: true }); };
 copy('@wasm-zoo/qpdf', 'qpdf');
 copy('pdfjs-dist/build/pdf.min.mjs', 'pdf.min.mjs');
 copy('pdfjs-dist/build/pdf.worker.min.mjs', 'pdf.worker.min.mjs');

@@ -7,6 +7,7 @@ from a protected file, never command-line arguments. See CLOUDFLARE-AUTOPURGE.md
 import argparse
 import hashlib
 import json
+import grp
 import os
 from pathlib import Path
 import re
@@ -115,8 +116,13 @@ def collect(name):
 
 def credentials(path):
     path = Path(path)
-    if os.name == "posix" and stat.S_IMODE(path.stat().st_mode) & 0o077:
-        raise RuntimeError("Credential file must have mode 600 (no group/other access).")
+    # 600, or 640 for the shared cortexis deploy group (server/10-shared-group.sh).
+    if os.name == "posix":
+        st = path.stat()
+        mode = stat.S_IMODE(st.st_mode)
+        shared = mode & 0o040 and grp.getgrgid(st.st_gid).gr_name == "cortexis"
+        if mode & 0o037 or (mode & 0o040 and not shared):
+            raise RuntimeError("Credential file must have mode 600, or 640 with group cortexis.")
     value = json.loads(path.read_text())
     zone, token = value.get("zone_id", ""), value.get("api_token", "")
     if not isinstance(zone, str) or not re.fullmatch(r"[a-fA-F0-9]{32}", zone):

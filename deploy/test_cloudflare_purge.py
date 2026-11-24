@@ -114,5 +114,26 @@ class CacheTests(unittest.TestCase):
             installer.patched('echo "different deploy script"\n')
 
 
+class CredentialModeTests(unittest.TestCase):
+    def test_owner_only_or_shared_group_read(self):
+        import grp, os
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "creds.json"
+            f.write_text(json.dumps({"zone_id": "a" * 32, "api_token": "t" * 40}))
+            os.chmod(f, 0o600)
+            purger.credentials(f)
+            for bad in (0o644, 0o660, 0o604):
+                os.chmod(f, bad)
+                with self.assertRaises(RuntimeError):
+                    purger.credentials(f)
+            os.chmod(f, 0o640)          # group read: only for the cortexis group
+            shared = grp.getgrgid(f.stat().st_gid).gr_name == "cortexis"
+            if shared:
+                purger.credentials(f)
+            else:
+                with self.assertRaises(RuntimeError):
+                    purger.credentials(f)
+
+
 if __name__ == "__main__":
     unittest.main()
