@@ -21,7 +21,15 @@ list="$(mktemp)"
 trap 'rm -f "$list"' EXIT
 git ls-files -co --exclude-standard | grep -vE '^(cortexis-tools/|logooo\.png$)' > "$list"
 
-rsync -az --files-from="$list" ./ "$SERVER:$APP_DIR/"
-ssh "$SERVER" "bash $APP_DIR/deploy/server/remote-deploy.sh"
+# Upload and build as whoever owns the app folder (another operator may have
+# deployed from their own account), so file ownership never flips between
+# people. The Cloudflare purge then runs as the SSH user, who owns the purge
+# credentials in /etc/cortexis, once the release is ready.
+owner="$(ssh "$SERVER" "stat -c %U $APP_DIR")"
+me="$(ssh "$SERVER" "id -un")"
+as=(); [ "$owner" = "$me" ] || as=(sudo -n -u "$owner")
+rsync -az --rsync-path="${as[*]:+${as[*]} }rsync" --files-from="$list" ./ "$SERVER:$APP_DIR/"
+ssh "$SERVER" "${as[*]:+${as[*]} }env CORTEXIS_PURGE_LATER=1 bash $APP_DIR/deploy/server/remote-deploy.sh"
+ssh "$SERVER" "python3 $APP_DIR/deploy/cloudflare-purge.py"
 echo
 echo "Done: https://cortexissolutionhub.com"

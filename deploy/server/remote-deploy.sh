@@ -50,8 +50,12 @@ log "6/6 Start the new website and admin"
 docker compose up -d cortexis-website admin
 for i in $(seq 1 45); do
   if curl -fsS -o /dev/null http://127.0.0.1:5000/ready; then
-    # Cortexis automatic cache purge (after readiness)
-    if ! python3 "$APP_DIR/deploy/cloudflare-purge.py"; then
+    # Cortexis automatic cache purge (after readiness). deploy/deploy.sh sets
+    # CORTEXIS_PURGE_LATER when it builds as another user and runs the purge
+    # itself, as the owner of the purge credentials, right after this returns.
+    if [ -n "${CORTEXIS_PURGE_LATER:-}" ]; then
+      echo "Cache purge: run by deploy.sh next."
+    elif ! python3 "$APP_DIR/deploy/cloudflare-purge.py"; then
       echo "Website deployed, but cache purge/verification failed. Run deploy/cloudflare-purge.py again after fixing the error." >&2
       exit 2
     fi
