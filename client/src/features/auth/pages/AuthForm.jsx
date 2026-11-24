@@ -35,6 +35,7 @@ const AuthForm = ({ mode }) => {
   const codeRef = useRef(null);
   // Bot checks: one for sign-in/sign-up, one for "Send a new code".
   const [token, setToken] = useState('');
+  const [checkFailed, setCheckFailed] = useState(false);
   const [resendToken, setResendToken] = useState('');
   const turnstileRef = useRef(null);
   const resendTurnstileRef = useRef(null);
@@ -282,9 +283,9 @@ const AuthForm = ({ mode }) => {
                 />
               </div>
 
-              <Turnstile ref={turnstileRef} action={isSignup ? 'signup' : 'login'} onToken={setToken} />
+              <Turnstile ref={turnstileRef} action={isSignup ? 'signup' : 'login'} onToken={setToken} onFail={setCheckFailed} />
               <button type="submit" disabled={busy || (turnstileOn && !token)} className="btn lx-btn lx-auth-submit">
-                {busy ? 'Please wait…' : turnstileOn && !token ? 'Checking your browser…' : isSignup ? 'Create account' : 'Sign in'}
+                {busy ? 'Please wait…' : turnstileOn && !token ? (checkFailed ? 'Security check failed — retry above' : 'Checking your browser…') : isSignup ? 'Create account' : 'Sign in'}
               </button>
 
               <p className="lx-auth-switch">

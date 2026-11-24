@@ -10,8 +10,9 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
  * visitor finishes typing; only the submit button waits for it. If there is no
  * token after SLOW_MS (slow in-app browsers, mobile data), the visible
  * checkbox is shown with a retry link. An error retries once on its own, then
- * offers the same retry. Expired tokens refresh automatically (Turnstile's
- * default).
+ * says the check failed and offers a retry that draws a fresh widget; onFail
+ * tells the form, so its button never sits on "Checking…". Expired tokens
+ * refresh automatically (Turnstile's default).
  *
  * Tokens are single-use: call ref.reset() after every submit, success or not.
  * Without REACT_APP_TURNSTILE_SITE_KEY (local dev) it renders nothing and the
@@ -39,15 +40,28 @@ const loadScript = () => {
 // one of them opens, before React has even rendered the form.
 if (active()) loadScript().catch(() => {});
 
-const Turnstile = forwardRef(function Turnstile({ action, onToken }, ref) {
+// Error codes go to the server log (no personal data) so we can see why checks
+// fail: 600xxx = the browser failed the challenge (extensions, strict privacy,
+// VPN), 110200 = hostname not allowed for the site key, 'script' = api.js was
+// blocked, 'timeout' / 'unsupported' = Turnstile's own callbacks.
+const report = (action, code) => {
+  try {
+    console.warn('[turnstile]', action, code);
+    navigator.sendBeacon?.('/api/telemetry/turnstile', new Blob([JSON.stringify({ action, code: String(code) })], { type: 'application/json' }));
+  } catch { /* reporting must never break the form */ }
+};
+
+const Turnstile = forwardRef(function Turnstile({ action, onToken, onFail }, ref) {
   const box = useRef(null);
   const id = useRef(null);
   const [visible, setVisible] = useState(false);   // show the checkbox itself
-  const [stuck, setStuck] = useState(false);       // offer "tap here to retry"
+  const [problem, setProblem] = useState(null);    // null | 'slow' | error code
   const [attempt, setAttempt] = useState(0);       // bump to start a fresh widget
-  // Latest callback, so a new onToken function never restarts the check.
+  // Latest callbacks, so new functions never restart the check.
   const emit = useRef(onToken);
   emit.current = onToken;
+  const fail = useRef(onFail);
+  fail.current = onFail;
 
   useImperativeHandle(ref, () => ({
     reset() {
@@ -56,31 +70,41 @@ const Turnstile = forwardRef(function Turnstile({ action, onToken }, ref) {
     },
   }), []);
 
+  useEffect(() => { fail.current?.(problem != null && problem !== 'slow'); }, [problem]);
+
   useEffect(() => {
     if (!active()) return undefined;
     let cancelled = false;
     let hasToken = false;
     let errors = 0;
-    const slow = visible ? null : setTimeout(() => {
-      if (!hasToken) { setStuck(true); setVisible(true); }
-    }, SLOW_MS);
+    const failed = (code) => {
+      hasToken = false;
+      emit.current('');
+      report(action, code);
+      setProblem(String(code || 'error'));
+      setVisible(true);
+    };
+    // No token yet: show the checkbox (first try) or the retry link (later tries).
+    const slow = setTimeout(() => {
+      if (!hasToken) { setProblem((p) => p || 'slow'); setVisible(true); }
+    }, visible ? SLOW_MS * 2 : SLOW_MS);
     loadScript().then((ts) => {
       if (cancelled || !box.current) return;
       id.current = ts.render(box.current, {
         sitekey: SITE_KEY,
         action,
         appearance: visible ? 'always' : 'interaction-only',
-        callback: (token) => { hasToken = true; setStuck(false); emit.current(token); },
+        callback: (token) => { hasToken = true; setProblem(null); emit.current(token); },
         'expired-callback': () => { hasToken = false; emit.current(''); },
-        'error-callback': () => {
-          hasToken = false;
-          emit.current('');
-          if (++errors === 1) ts.reset(id.current);       // one quiet retry
-          else { setStuck(true); setVisible(true); }
+        'timeout-callback': () => failed('timeout'),
+        'unsupported-callback': () => failed('unsupported'),
+        'error-callback': (code) => {
+          if (++errors === 1) { hasToken = false; emit.current(''); ts.reset(id.current); } // one quiet retry
+          else failed(code);
           return true;                                    // handled; no console noise
         },
       });
-    }).catch(() => { if (!cancelled) setStuck(true); });
+    }).catch(() => { if (!cancelled) failed('script'); });
     return () => {
       cancelled = true;
       clearTimeout(slow);
@@ -89,19 +113,23 @@ const Turnstile = forwardRef(function Turnstile({ action, onToken }, ref) {
     };
   }, [action, visible, attempt]);
 
+  const retry = () => { setProblem(null); setVisible(true); setAttempt((a) => a + 1); };
+
   if (!SITE_KEY) return null;
   return (
     <div className="cx-turnstile">
       <div ref={box} />
-      {stuck && (
+      {problem && (
         <p className="lx-auth-hint" role="status">
-          <button
-            type="button"
-            className="lx-auth-textbtn"
-            onClick={() => { setStuck(false); setVisible(true); setAttempt((a) => a + 1); }}
-          >
-            Still checking… tap here to retry
-          </button>
+          {problem === 'slow' ? (
+            <button type="button" className="lx-auth-textbtn" onClick={retry}>Still checking… tap here to retry</button>
+          ) : (
+            <>
+              Security check failed —{' '}
+              <button type="button" className="lx-auth-textbtn" onClick={retry}>retry</button>
+              , or try another browser / turn off ad-blockers.
+            </>
+          )}
         </p>
       )}
     </div>

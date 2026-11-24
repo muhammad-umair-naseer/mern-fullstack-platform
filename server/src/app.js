@@ -14,6 +14,7 @@ import { seedCourses } from './content/seed.js';
 import { ensureAdmin } from './setup/admin.js';
 import { createLimiter } from './middleware/rateLimiter.js';
 import { requireAccess } from './middleware/cloudflareAccess.js';
+import { turnstileReport } from './middleware/turnstile.js';
 import { initWorker } from './workers/email.worker.js';
 import internshipsRouter from './features/forms/internships.routes.js';
 import contactRouter from './features/forms/contact.routes.js';
@@ -97,6 +98,9 @@ app.use('/api/contact', formLimiter, contactRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/learn', learnLimiter, learnRouter);
 app.use('/api/admin', createLimiter({ windowMs: 60000, max: 120, prefix: 'admin' }), requireAccess, adminRouter);
+// Per visitor IP (express-rate-limit keys on req.ip; Nginx passes the Cloudflare
+// real IP), so one noisy client cannot crowd out other visitors' reports.
+app.post('/api/telemetry/turnstile', createLimiter({ windowMs: 600000, max: 20, prefix: 'tsreport' }), turnstileReport);
 app.use('/api', (_req, res) => res.status(404).json({ message: 'API endpoint not found' }));
 
 // Public health is only up-or-down and the version; the details help an

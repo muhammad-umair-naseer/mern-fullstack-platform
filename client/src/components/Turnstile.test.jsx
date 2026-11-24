@@ -49,6 +49,35 @@ test('a token in time hides nothing extra; one error retries quietly, a second o
   act(() => { renders.at(-1)['error-callback'](); });
   expect(window.turnstile.reset).toHaveBeenCalledTimes(1);
   expect(screen.queryByText(/tap here to retry/)).toBeNull();
-  await act(async () => { renders.at(-1)['error-callback'](); });
-  expect(screen.getByText(/tap here to retry/)).toBeTruthy();
+  await act(async () => { renders.at(-1)['error-callback']('600010'); });
+  expect(screen.getByText(/Security check failed/)).toBeTruthy();
+});
+
+test('a failure tells the form, logs the code, and retry draws a fresh widget whose token clears it', async () => {
+  vi.useFakeTimers();
+  navigator.sendBeacon = vi.fn(() => true);
+  vi.stubEnv('REACT_APP_TURNSTILE_SITE_KEY', '0xTEST');
+  const { default: Turnstile } = await import('./Turnstile.jsx');
+  const fails = [];
+  render(<Turnstile action="signup" onToken={() => {}} onFail={(f) => fails.push(f)} />);
+  await act(() => vi.advanceTimersByTimeAsync(0));
+  act(() => { renders.at(-1)['error-callback']('600010'); });
+  await act(async () => { renders.at(-1)['error-callback']('600010'); });
+  expect(fails.at(-1)).toBe(true);
+  expect(navigator.sendBeacon).toHaveBeenCalledWith('/api/telemetry/turnstile', expect.any(Blob));
+  const before = renders.length;
+  fireEvent.click(screen.getByText('retry'));
+  await act(() => vi.advanceTimersByTimeAsync(0));
+  expect(renders.length).toBe(before + 1);
+  expect(fails.at(-1)).toBe(false);
+  act(() => renders.at(-1).callback('tok2'));
+  expect(screen.queryByText(/Security check failed/)).toBeNull();
+});
+
+test('timeout-callback counts as a failure', async () => {
+  vi.useFakeTimers();
+  const host = await mount();
+  await act(async () => { renders.at(-1)['timeout-callback'](); });
+  expect(screen.getByText(/Security check failed/)).toBeTruthy();
+  expect(host.token()).toBe('');
 });

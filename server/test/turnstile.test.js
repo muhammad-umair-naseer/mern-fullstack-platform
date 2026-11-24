@@ -30,3 +30,21 @@ test('turnstile middleware: enforced only with a secret, checks action and hostn
   assert.equal((await run({ turnstileToken: 't' }, new Error('down'))).code, 503, 'Cloudflare unreachable: refused');
   delete process.env.TURNSTILE_SECRET_KEY;
 });
+
+test('turnstile client report: logs only a known action, a short code and the browser family', async () => {
+  const { turnstileReport } = await import('../src/middleware/turnstile.js');
+  const lines = [];
+  const warn = console.warn;
+  console.warn = (l) => lines.push(l);
+  const send = (body, ua = 'Mozilla/5.0 Chrome/157 Safari/537.36 Edg/157.0') => {
+    const res = { code: 0, status(c) { this.code = c; return this; }, end() { return this; } };
+    turnstileReport({ body, get: () => ua }, res);
+    return res.code;
+  };
+  try {
+    assert.equal(send({ action: 'signup', code: '600010' }), 204);
+    assert.equal(send({ action: 'signup', code: 'x\ninjected' }), 204);
+    assert.equal(send({ action: 'nope', code: '1' }), 204);
+  } finally { console.warn = warn; }
+  assert.deepEqual(lines, ['[turnstile-client] action=signup code=600010 browser=edge']);
+});

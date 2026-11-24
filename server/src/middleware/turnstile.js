@@ -43,3 +43,17 @@ export const requireTurnstile = action => async (req, res, next) => {
   if (!result.success || result.action !== action || !ownHosts().includes(result.hostname)) return refuse(res);
   next();
 };
+
+// Browser-side failures (client/src/components/Turnstile.jsx) never reach
+// siteverify, so the widget beacons its error code here. Only the action, the
+// code and the browser family are logged: no IP, no full user agent.
+const ACTIONS = new Set(['signup', 'login', 'resend', 'contact', 'internship']);
+const browser = ua => (/Edg\//.test(ua) ? 'edge' : /OPR\//.test(ua) ? 'opera' : /Firefox\//.test(ua) ? 'firefox'
+  : /Chrome\//.test(ua) ? 'chrome' : /Safari\//.test(ua) ? 'safari' : 'other');
+export const turnstileReport = (req, res) => {
+  const { action, code } = req.body || {};
+  if (ACTIONS.has(action) && /^[\w-]{1,24}$/.test(String(code))) {
+    console.warn(`[turnstile-client] action=${action} code=${code} browser=${browser(req.get('user-agent') || '')}`);
+  }
+  res.status(204).end();
+};
