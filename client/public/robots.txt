@@ -10,6 +10,15 @@ Disallow: /toolkit/tests/
 # Cloudflare's internal paths (e.g. /cdn-cgi/l/email-protection) are not pages.
 Disallow: /cdn-cgi/
 
+# Google AdSense crawlers. AdsBot ignores the * group, so both are named.
+User-agent: Mediapartners-Google
+Allow: /
+Disallow: /cdn-cgi/
+
+User-agent: AdsBot-Google
+Allow: /
+Disallow: /cdn-cgi/
+
 # Generative Engine & AI Search Crawlers (Explicitly welcomed)
 User-agent: GPTBot
 Allow: /

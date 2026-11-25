@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import { AdSense } from './lib/adsense.jsx';
 import RequireAuth from './components/RequireAuth';
 import { AuthProvider } from './context/AuthContext';
 import Footer from './components/Footer';
@@ -74,6 +75,7 @@ export default function App() {
     <Router>
       {/* Must sit inside Router: it reads the current location. */}
       <ScrollToTop />
+      <AdSense />
       <AuthProvider>
       <div className="App">
         <SilkBackdrop />

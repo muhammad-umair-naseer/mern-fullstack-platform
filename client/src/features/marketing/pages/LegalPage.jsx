@@ -10,7 +10,7 @@ import Seo from '../../../seo/Seo.jsx';
 import { breadcrumbs } from '../../../seo/schema.js';
 
 /* Render one content block. Blocks keep pages declarative:
-   { p } paragraph · { h } sub-heading · { list } bullet list (items are strings or
+   { p } paragraph · { h } sub-heading · { list } bullet list (items are strings, JSX, or
    { b, t } bold-lead) · { note } callout · { table:{head,rows} } · { cards:[{icon,title,text}] }
    · { callout:{variant:'info'|'warn', title, text} } */
 function Block({ block }) {
@@ -24,7 +24,7 @@ function Block({ block }) {
           <li key={i} className="flex gap-3 text-slate-600 leading-relaxed">
             <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-brand-accent to-brand-magenta" />
             <span className="min-w-0 break-words">
-              {typeof item === 'string' ? (
+              {typeof item === 'string' || !item.b ? (
                 item
               ) : (
                 <>

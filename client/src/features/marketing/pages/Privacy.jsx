@@ -65,6 +65,15 @@ const sections = [
     title: 'Cookies & Tracking',
     blocks: [
       { p: 'We use cookies and similar technologies to keep the Services functioning, remember preferences, and measure performance. You can control cookies through your browser settings; disabling some cookies may affect functionality.' },
+      { h: 'Advertising cookies (Google AdSense)' },
+      { p: 'Some public pages of our website, such as articles, tools and course outlines, may show ads served by Google AdSense. Ads never appear on sign-in, account, lesson or exam pages.' },
+      { list: [
+        'Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this website or other websites.',
+        'Google’s use of advertising cookies enables it and its partners to serve ads to you based on your visits to this site and/or other sites on the Internet.',
+        <>You can opt out of personalized advertising by visiting <a className="lx-link" href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>, or opt out of some third-party vendors’ cookies for personalized advertising at <a className="lx-link" href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>.</>,
+        <>Learn how Google uses information from sites that use its services at <a className="lx-link" href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>.</>,
+      ] },
+      { p: 'Visitors in the European Economic Area, the United Kingdom and Switzerland are shown a consent message, provided through a Google-certified consent management platform, before any advertising cookies are used. You can choose to accept or decline, and you can change your choice at any time through the privacy options link that message provides.' },
     ],
   },
   {
@@ -74,6 +83,7 @@ const sections = [
       { p: 'We share personal data only as needed and never sell it. Recipients may include:' },
       { list: [
         'Service providers: trusted vendors who host our infrastructure, deliver email, or provide analytics, acting on our instructions.',
+        'Advertising partners: Google, which serves ads on some public pages and may collect cookie and device data as described under “Cookies & Tracking”.',
         'Program partners: where you apply to a jointly delivered internship or course, and only as necessary for that program.',
         'Legal & safety: authorities when required by law, or to protect the rights, safety, and property of Cortexis, our users, and the public.',
         'Business transfers: in connection with a merger, acquisition, or sale of assets, subject to this policy.',
@@ -146,7 +156,7 @@ export default function Privacy() {
       seo={{ title: "Privacy Policy", description: "How Cortexis Solution Hub collects, uses and protects your personal data across our website, courses and internship applications.", path: "/privacy" }}
       title={[{ text: 'Privacy ' }, { text: 'Policy', grad: true }]}
       subtitle="How Cortexis Solution Hub collects, uses, and protects your personal information across our website, courses, and programs."
-      lastUpdated="July 3, 2026"
+      lastUpdated="November 25, 2026"
       sections={sections}
     />
   );
